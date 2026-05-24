@@ -181,6 +181,9 @@ importers:
       '@repo/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@repo/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@repo/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -315,6 +318,15 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.4
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
+  packages/core:
+    devDependencies:
+      '@repo/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/tsconfig
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
@@ -604,7 +616,7 @@ packages:
         optional: true
 
   '@better-auth/drizzle-adapter@https://pkg.pr.new/@better-auth/drizzle-adapter@9489':
-    resolution: {integrity: sha512-P6IRsdzR+uy9xB9GXtlkXECUbeXk34K0RvEkbEDTMTENzyJVmS9KsYA5yxEg6rF2Skf78qA0YT5D2CwIyPtvEQ==, tarball: https://pkg.pr.new/@better-auth/drizzle-adapter@9489}
+    resolution: {tarball: https://pkg.pr.new/@better-auth/drizzle-adapter@9489}
     version: 1.7.0-beta.3
     peerDependencies:
       '@better-auth/core': ^1.7.0-beta.3

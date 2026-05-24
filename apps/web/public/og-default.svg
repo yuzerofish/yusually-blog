@@ -1,0 +1,15 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#f8f5ef"/>
+  <rect x="72" y="68" width="1056" height="494" rx="18" fill="#ffffff" stroke="#2f3a34" stroke-width="2"/>
+  <rect x="112" y="108" width="380" height="64" rx="6" fill="#1f6f5b"/>
+  <rect x="112" y="202" width="706" height="26" rx="4" fill="#2f3a34"/>
+  <rect x="112" y="254" width="560" height="20" rx="4" fill="#6f7a74"/>
+  <rect x="112" y="292" width="660" height="20" rx="4" fill="#6f7a74"/>
+  <rect x="112" y="372" width="196" height="116" rx="8" fill="#e7d36a"/>
+  <rect x="336" y="372" width="196" height="116" rx="8" fill="#e96f3a"/>
+  <rect x="560" y="372" width="196" height="116" rx="8" fill="#4b8fbf"/>
+  <rect x="844" y="126" width="210" height="210" rx="18" fill="#1f6f5b"/>
+  <path d="M902 238c29-76 112-70 122 8 4 32-19 63-55 69-49 8-88-23-67-77Z" fill="#f8f5ef"/>
+  <text x="112" y="151" fill="#ffffff" font-family="Arial, sans-serif" font-size="34" font-weight="700">Cloud Blog CMS</text>
+  <text x="112" y="548" fill="#2f3a34" font-family="Arial, sans-serif" font-size="34" font-weight="700">Cloudflare-native publishing for humans, CLI, and AI</text>
+</svg>

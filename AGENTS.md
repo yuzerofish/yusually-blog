@@ -3,6 +3,9 @@
 ## Essentials
 
 - Stack: TypeScript + React (TanStack Start) in a pnpm + Vite+ monorepo, with Drizzle ORM, shadcn/ui, and Better Auth.
+- Product: Cloudflare-native Personal Blog CMS + AI Init Skill for `github.com/01mvp/blog-starter`.
+- Reader-facing pages and docs must not expose internal reasoning, author notes, or agent-only implementation instructions.
+- Replies, docs, and UI copy should avoid common AI stock phrases such as "先给结论" and "稳稳的接住你".
 - Prefer shared `@repo/ui` components; add primitives via shadcn CLI (`pnpm ui add <component>`).
 - Use `lucide-react` for UI icons (use `Icon` suffix, e.g. `import { Loader2Icon } from "lucide-react"`); for brand icons use `@icons-pack/react-simple-icons` (e.g. `SiGithub`).
 - Use shared pnpm catalog versions (`pnpm-workspace.yaml`) via `catalog:`.

@@ -1,0 +1,40 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "blog-starter",
+  "main": "./.output/server/index.mjs",
+  "compatibility_date": "2026-05-24",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./.output/public",
+    "binding": "ASSETS",
+  },
+  "vars": {
+    "VITE_BASE_URL": "https://blog-starter.01mvp.com",
+    "CMS_PUBLIC_SITE_URL": "https://blog-starter.01mvp.com",
+    "CMS_EMAIL_SENDING_ENABLED": "false",
+  },
+  "d1_databases": [
+    {
+      "binding": "CMS_DB",
+      "database_name": "blog-starter-cms",
+      "database_id": "replace-with-cloudflare-d1-id",
+      "migrations_dir": "../../packages/db/migrations",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "CMS_ASSETS",
+      "bucket_name": "blog-starter-assets",
+    },
+    {
+      "binding": "CMS_BACKUPS",
+      "bucket_name": "blog-starter-backups",
+    },
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "CMS_CACHE",
+      "id": "replace-with-cloudflare-kv-id",
+    },
+  ],
+}
