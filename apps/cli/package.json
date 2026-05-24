@@ -1,0 +1,12 @@
+{
+  "name": "@repo/cli",
+  "version": "0.1.0",
+  "private": true,
+  "bin": {
+    "blogcms": "./bin/blogcms.mjs"
+  },
+  "type": "module",
+  "scripts": {
+    "check": "node ./bin/blogcms.mjs status"
+  }
+}
