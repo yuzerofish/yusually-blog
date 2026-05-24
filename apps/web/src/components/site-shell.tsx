@@ -48,7 +48,9 @@ export function SiteShell({ children }: { readonly children: React.ReactNode }) 
               <RssIcon />
             </Button>
             <Button
-              render={<a href="https://github.com/01mvp/blog-starter" />}
+              render={
+                <a href="https://github.com/01mvp/blog-starter" aria-label="GitHub repository" />
+              }
               variant="ghost"
               size="icon-sm"
               nativeButton={false}
@@ -79,7 +81,7 @@ export function SiteShell({ children }: { readonly children: React.ReactNode }) 
             {siteSettings.socialLinks.map((link) => (
               <Button
                 key={link.href}
-                render={<a href={link.href} />}
+                render={<a href={link.href} aria-label={link.label} />}
                 variant="outline"
                 size="sm"
                 nativeButton={false}

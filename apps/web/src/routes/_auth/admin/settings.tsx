@@ -22,26 +22,26 @@ function AdminSettingsPage() {
       </div>
 
       <form className="mt-6 grid gap-5 md:grid-cols-2">
-        <label className="grid gap-2">
+        <div className="grid gap-2">
           <Label htmlFor="site-name">Site name</Label>
           <Input id="site-name" defaultValue={siteSettings.name} />
-        </label>
-        <label className="grid gap-2">
+        </div>
+        <div className="grid gap-2">
           <Label htmlFor="site-url">Site URL</Label>
           <Input id="site-url" defaultValue={siteSettings.url} />
-        </label>
-        <label className="grid gap-2 md:col-span-2">
+        </div>
+        <div className="grid gap-2 md:col-span-2">
           <Label htmlFor="site-description">Description</Label>
           <Input id="site-description" defaultValue={siteSettings.description} />
-        </label>
-        <label className="grid gap-2">
+        </div>
+        <div className="grid gap-2">
           <Label htmlFor="author-name">Author name</Label>
           <Input id="author-name" defaultValue={siteSettings.authorName} />
-        </label>
-        <label className="grid gap-2">
+        </div>
+        <div className="grid gap-2">
           <Label htmlFor="default-og">Default OG image</Label>
           <Input id="default-og" defaultValue={siteSettings.defaultOgImage} />
-        </label>
+        </div>
       </form>
     </section>
   );
