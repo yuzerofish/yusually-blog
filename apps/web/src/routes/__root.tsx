@@ -32,18 +32,36 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "cloud-blog-cms",
+        title: "Cloud Blog CMS",
       },
       {
         name: "description",
-        content: "A TanStack Start project scaffolded with create-mugnavo.",
+        content:
+          "Cloudflare-native personal blog CMS with visual writing, Markdown publishing, and AI automation.",
+      },
+      {
+        property: "og:title",
+        content: "Cloud Blog CMS",
+      },
+      {
+        property: "og:description",
+        content: "A reusable Cloudflare-native blog CMS template and AI initialization Skill.",
+      },
+      {
+        property: "og:image",
+        content: "/og-default.svg",
       },
     ],
     links: [
-      // Replace with your icons here, or remove if you have a favicon.ico in public/
       {
         rel: "icon",
-        href: "https://mugnavo.com/favicon.ico",
+        href: "/og-default.svg",
+      },
+      {
+        rel: "alternate",
+        type: "application/rss+xml",
+        title: "Cloud Blog CMS RSS",
+        href: "/rss.xml",
       },
       { rel: "stylesheet", href: appCss },
     ],

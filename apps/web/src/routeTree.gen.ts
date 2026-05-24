@@ -9,15 +9,73 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as ProjectsRouteImport } from './routes/projects'
+import { Route as OpenapiDotjsonRouteImport } from './routes/openapi[.]json'
+import { Route as FeedDotxmlRouteImport } from './routes/feed[.]xml'
+import { Route as ArchiveRouteImport } from './routes/archive'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as GuestRouteRouteImport } from './routes/_guest/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TagsIndexRouteImport } from './routes/tags/index'
+import { Route as BlogIndexRouteImport } from './routes/blog/index'
+import { Route as TagsSlugRouteImport } from './routes/tags/$slug'
+import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as GuestSignupRouteImport } from './routes/_guest/signup'
 import { Route as GuestLoginRouteImport } from './routes/_guest/login'
 import { Route as AuthAppRouteRouteImport } from './routes/_auth/app/route'
+import { Route as AuthAdminRouteRouteImport } from './routes/_auth/admin/route'
 import { Route as AuthAppIndexRouteImport } from './routes/_auth/app/index'
+import { Route as AuthAdminIndexRouteImport } from './routes/_auth/admin/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as AuthAdminSettingsRouteImport } from './routes/_auth/admin/settings'
+import { Route as AuthAdminPostsRouteImport } from './routes/_auth/admin/posts'
+import { Route as AuthAdminCommentsRouteImport } from './routes/_auth/admin/comments'
+import { Route as AuthAdminAssetsRouteImport } from './routes/_auth/admin/assets'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RssDotxmlRoute = RssDotxmlRouteImport.update({
+  id: '/rss.xml',
+  path: '/rss.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsRoute = ProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OpenapiDotjsonRoute = OpenapiDotjsonRouteImport.update({
+  id: '/openapi.json',
+  path: '/openapi.json',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeedDotxmlRoute = FeedDotxmlRouteImport.update({
+  id: '/feed.xml',
+  path: '/feed.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArchiveRoute = ArchiveRouteImport.update({
+  id: '/archive',
+  path: '/archive',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GuestRouteRoute = GuestRouteRouteImport.update({
   id: '/_guest',
   getParentRoute: () => rootRouteImport,
@@ -29,6 +87,26 @@ const AuthRouteRoute = AuthRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TagsIndexRoute = TagsIndexRouteImport.update({
+  id: '/tags/',
+  path: '/tags/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TagsSlugRoute = TagsSlugRouteImport.update({
+  id: '/tags/$slug',
+  path: '/tags/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GuestSignupRoute = GuestSignupRouteImport.update({
@@ -46,30 +124,95 @@ const AuthAppRouteRoute = AuthAppRouteRouteImport.update({
   path: '/app',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AuthAdminRouteRoute = AuthAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
 const AuthAppIndexRoute = AuthAppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthAppRouteRoute,
+} as any)
+const AuthAdminIndexRoute = AuthAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthAdminRouteRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthAdminSettingsRoute = AuthAdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthAdminRouteRoute,
+} as any)
+const AuthAdminPostsRoute = AuthAdminPostsRouteImport.update({
+  id: '/posts',
+  path: '/posts',
+  getParentRoute: () => AuthAdminRouteRoute,
+} as any)
+const AuthAdminCommentsRoute = AuthAdminCommentsRouteImport.update({
+  id: '/comments',
+  path: '/comments',
+  getParentRoute: () => AuthAdminRouteRoute,
+} as any)
+const AuthAdminAssetsRoute = AuthAdminAssetsRouteImport.update({
+  id: '/assets',
+  path: '/assets',
+  getParentRoute: () => AuthAdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/archive': typeof ArchiveRoute
+  '/feed.xml': typeof FeedDotxmlRoute
+  '/openapi.json': typeof OpenapiDotjsonRoute
+  '/projects': typeof ProjectsRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/rss.xml': typeof RssDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin': typeof AuthAdminRouteRouteWithChildren
   '/app': typeof AuthAppRouteRouteWithChildren
   '/login': typeof GuestLoginRoute
   '/signup': typeof GuestSignupRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/tags/$slug': typeof TagsSlugRoute
+  '/blog/': typeof BlogIndexRoute
+  '/tags/': typeof TagsIndexRoute
+  '/admin/assets': typeof AuthAdminAssetsRoute
+  '/admin/comments': typeof AuthAdminCommentsRoute
+  '/admin/posts': typeof AuthAdminPostsRoute
+  '/admin/settings': typeof AuthAdminSettingsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/admin/': typeof AuthAdminIndexRoute
   '/app/': typeof AuthAppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/archive': typeof ArchiveRoute
+  '/feed.xml': typeof FeedDotxmlRoute
+  '/openapi.json': typeof OpenapiDotjsonRoute
+  '/projects': typeof ProjectsRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/rss.xml': typeof RssDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/login': typeof GuestLoginRoute
   '/signup': typeof GuestSignupRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/tags/$slug': typeof TagsSlugRoute
+  '/blog': typeof BlogIndexRoute
+  '/tags': typeof TagsIndexRoute
+  '/admin/assets': typeof AuthAdminAssetsRoute
+  '/admin/comments': typeof AuthAdminCommentsRoute
+  '/admin/posts': typeof AuthAdminPostsRoute
+  '/admin/settings': typeof AuthAdminSettingsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/admin': typeof AuthAdminIndexRoute
   '/app': typeof AuthAppIndexRoute
 }
 export interface FileRoutesById {
@@ -77,26 +220,108 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_guest': typeof GuestRouteRouteWithChildren
+  '/about': typeof AboutRoute
+  '/archive': typeof ArchiveRoute
+  '/feed.xml': typeof FeedDotxmlRoute
+  '/openapi.json': typeof OpenapiDotjsonRoute
+  '/projects': typeof ProjectsRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/rss.xml': typeof RssDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/_auth/admin': typeof AuthAdminRouteRouteWithChildren
   '/_auth/app': typeof AuthAppRouteRouteWithChildren
   '/_guest/login': typeof GuestLoginRoute
   '/_guest/signup': typeof GuestSignupRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/tags/$slug': typeof TagsSlugRoute
+  '/blog/': typeof BlogIndexRoute
+  '/tags/': typeof TagsIndexRoute
+  '/_auth/admin/assets': typeof AuthAdminAssetsRoute
+  '/_auth/admin/comments': typeof AuthAdminCommentsRoute
+  '/_auth/admin/posts': typeof AuthAdminPostsRoute
+  '/_auth/admin/settings': typeof AuthAdminSettingsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/_auth/admin/': typeof AuthAdminIndexRoute
   '/_auth/app/': typeof AuthAppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/login' | '/signup' | '/api/auth/$' | '/app/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/archive'
+    | '/feed.xml'
+    | '/openapi.json'
+    | '/projects'
+    | '/robots.txt'
+    | '/rss.xml'
+    | '/sitemap.xml'
+    | '/admin'
+    | '/app'
+    | '/login'
+    | '/signup'
+    | '/blog/$slug'
+    | '/tags/$slug'
+    | '/blog/'
+    | '/tags/'
+    | '/admin/assets'
+    | '/admin/comments'
+    | '/admin/posts'
+    | '/admin/settings'
+    | '/api/auth/$'
+    | '/admin/'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/api/auth/$' | '/app'
+  to:
+    | '/'
+    | '/about'
+    | '/archive'
+    | '/feed.xml'
+    | '/openapi.json'
+    | '/projects'
+    | '/robots.txt'
+    | '/rss.xml'
+    | '/sitemap.xml'
+    | '/login'
+    | '/signup'
+    | '/blog/$slug'
+    | '/tags/$slug'
+    | '/blog'
+    | '/tags'
+    | '/admin/assets'
+    | '/admin/comments'
+    | '/admin/posts'
+    | '/admin/settings'
+    | '/api/auth/$'
+    | '/admin'
+    | '/app'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/_guest'
+    | '/about'
+    | '/archive'
+    | '/feed.xml'
+    | '/openapi.json'
+    | '/projects'
+    | '/robots.txt'
+    | '/rss.xml'
+    | '/sitemap.xml'
+    | '/_auth/admin'
     | '/_auth/app'
     | '/_guest/login'
     | '/_guest/signup'
+    | '/blog/$slug'
+    | '/tags/$slug'
+    | '/blog/'
+    | '/tags/'
+    | '/_auth/admin/assets'
+    | '/_auth/admin/comments'
+    | '/_auth/admin/posts'
+    | '/_auth/admin/settings'
     | '/api/auth/$'
+    | '/_auth/admin/'
     | '/_auth/app/'
   fileRoutesById: FileRoutesById
 }
@@ -104,11 +329,79 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   GuestRouteRoute: typeof GuestRouteRouteWithChildren
+  AboutRoute: typeof AboutRoute
+  ArchiveRoute: typeof ArchiveRoute
+  FeedDotxmlRoute: typeof FeedDotxmlRoute
+  OpenapiDotjsonRoute: typeof OpenapiDotjsonRoute
+  ProjectsRoute: typeof ProjectsRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
+  RssDotxmlRoute: typeof RssDotxmlRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  BlogSlugRoute: typeof BlogSlugRoute
+  TagsSlugRoute: typeof TagsSlugRoute
+  BlogIndexRoute: typeof BlogIndexRoute
+  TagsIndexRoute: typeof TagsIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rss.xml': {
+      id: '/rss.xml'
+      path: '/rss.xml'
+      fullPath: '/rss.xml'
+      preLoaderRoute: typeof RssDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects': {
+      id: '/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/openapi.json': {
+      id: '/openapi.json'
+      path: '/openapi.json'
+      fullPath: '/openapi.json'
+      preLoaderRoute: typeof OpenapiDotjsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feed.xml': {
+      id: '/feed.xml'
+      path: '/feed.xml'
+      fullPath: '/feed.xml'
+      preLoaderRoute: typeof FeedDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/archive': {
+      id: '/archive'
+      path: '/archive'
+      fullPath: '/archive'
+      preLoaderRoute: typeof ArchiveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_guest': {
       id: '/_guest'
       path: ''
@@ -128,6 +421,34 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tags/': {
+      id: '/tags/'
+      path: '/tags'
+      fullPath: '/tags/'
+      preLoaderRoute: typeof TagsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tags/$slug': {
+      id: '/tags/$slug'
+      path: '/tags/$slug'
+      fullPath: '/tags/$slug'
+      preLoaderRoute: typeof TagsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_guest/signup': {
@@ -151,12 +472,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppRouteRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/_auth/admin': {
+      id: '/_auth/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthAdminRouteRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
     '/_auth/app/': {
       id: '/_auth/app/'
       path: '/'
       fullPath: '/app/'
       preLoaderRoute: typeof AuthAppIndexRouteImport
       parentRoute: typeof AuthAppRouteRoute
+    }
+    '/_auth/admin/': {
+      id: '/_auth/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthAdminIndexRouteImport
+      parentRoute: typeof AuthAdminRouteRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -165,8 +500,56 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/admin/settings': {
+      id: '/_auth/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthAdminSettingsRouteImport
+      parentRoute: typeof AuthAdminRouteRoute
+    }
+    '/_auth/admin/posts': {
+      id: '/_auth/admin/posts'
+      path: '/posts'
+      fullPath: '/admin/posts'
+      preLoaderRoute: typeof AuthAdminPostsRouteImport
+      parentRoute: typeof AuthAdminRouteRoute
+    }
+    '/_auth/admin/comments': {
+      id: '/_auth/admin/comments'
+      path: '/comments'
+      fullPath: '/admin/comments'
+      preLoaderRoute: typeof AuthAdminCommentsRouteImport
+      parentRoute: typeof AuthAdminRouteRoute
+    }
+    '/_auth/admin/assets': {
+      id: '/_auth/admin/assets'
+      path: '/assets'
+      fullPath: '/admin/assets'
+      preLoaderRoute: typeof AuthAdminAssetsRouteImport
+      parentRoute: typeof AuthAdminRouteRoute
+    }
   }
 }
+
+interface AuthAdminRouteRouteChildren {
+  AuthAdminAssetsRoute: typeof AuthAdminAssetsRoute
+  AuthAdminCommentsRoute: typeof AuthAdminCommentsRoute
+  AuthAdminPostsRoute: typeof AuthAdminPostsRoute
+  AuthAdminSettingsRoute: typeof AuthAdminSettingsRoute
+  AuthAdminIndexRoute: typeof AuthAdminIndexRoute
+}
+
+const AuthAdminRouteRouteChildren: AuthAdminRouteRouteChildren = {
+  AuthAdminAssetsRoute: AuthAdminAssetsRoute,
+  AuthAdminCommentsRoute: AuthAdminCommentsRoute,
+  AuthAdminPostsRoute: AuthAdminPostsRoute,
+  AuthAdminSettingsRoute: AuthAdminSettingsRoute,
+  AuthAdminIndexRoute: AuthAdminIndexRoute,
+}
+
+const AuthAdminRouteRouteWithChildren = AuthAdminRouteRoute._addFileChildren(
+  AuthAdminRouteRouteChildren,
+)
 
 interface AuthAppRouteRouteChildren {
   AuthAppIndexRoute: typeof AuthAppIndexRoute
@@ -181,10 +564,12 @@ const AuthAppRouteRouteWithChildren = AuthAppRouteRoute._addFileChildren(
 )
 
 interface AuthRouteRouteChildren {
+  AuthAdminRouteRoute: typeof AuthAdminRouteRouteWithChildren
   AuthAppRouteRoute: typeof AuthAppRouteRouteWithChildren
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthAdminRouteRoute: AuthAdminRouteRouteWithChildren,
   AuthAppRouteRoute: AuthAppRouteRouteWithChildren,
 }
 
@@ -210,6 +595,18 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
   GuestRouteRoute: GuestRouteRouteWithChildren,
+  AboutRoute: AboutRoute,
+  ArchiveRoute: ArchiveRoute,
+  FeedDotxmlRoute: FeedDotxmlRoute,
+  OpenapiDotjsonRoute: OpenapiDotjsonRoute,
+  ProjectsRoute: ProjectsRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
+  RssDotxmlRoute: RssDotxmlRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  BlogSlugRoute: BlogSlugRoute,
+  TagsSlugRoute: TagsSlugRoute,
+  BlogIndexRoute: BlogIndexRoute,
+  TagsIndexRoute: TagsIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

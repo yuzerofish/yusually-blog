@@ -1,4 +1,3 @@
-import { relations } from "drizzle-orm";
 import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 export const siteSettings = sqliteTable("site_settings", {
@@ -180,9 +179,3 @@ export const apiTokens = sqliteTable(
   },
   (table) => [uniqueIndex("api_tokens_hash_idx").on(table.tokenHash)],
 );
-
-export const cmsRelations = relations(posts, ({ many }) => ({
-  postTags: many(postTags),
-  comments: many(comments),
-  assets: many(assets),
-}));
