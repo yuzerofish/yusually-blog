@@ -24,6 +24,7 @@
     "CMS_PASSWORD_RESET_TTL_MINUTES": "30",
     "CMS_TURNSTILE_SECRET_KEY": "",
     "VITE_TURNSTILE_SITE_KEY": "",
+    "GITHUB_CLIENT_ID": "",
   },
   "d1_databases": [
     {

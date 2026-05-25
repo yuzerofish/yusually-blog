@@ -7,7 +7,9 @@ import {
   type Post,
 } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
+import { Label } from "@repo/ui/components/label";
 import { createFileRoute } from "@tanstack/react-router";
+import { CheckIcon, ShieldAlertIcon, Trash2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { getCurrentLocale } from "#/lib/i18n";
@@ -23,6 +25,8 @@ function AdminCommentsPage() {
     comments.map((comment) => localizeComment(comment, locale)),
   );
   const [postRows, setPostRows] = useState<Post[]>(posts.map((post) => localizePost(post, locale)));
+  const [statusFilter, setStatusFilter] = useState<Comment["status"] | "all">("all");
+  const [postFilter, setPostFilter] = useState("all");
 
   useEffect(() => {
     let ignore = false;
@@ -66,13 +70,61 @@ function AdminCommentsPage() {
     setRows((current) => current.map((comment) => (comment.id === id ? payload.data : comment)));
   };
 
+  const filteredRows = rows.filter((comment) => {
+    const statusMatches = statusFilter === "all" || comment.status === statusFilter;
+    const postMatches = postFilter === "all" || comment.postId === postFilter;
+
+    return statusMatches && postMatches;
+  });
+
   return (
     <section className="rounded-lg border border-border/80 bg-card p-6 shadow-xs">
       <h1 className="text-2xl font-semibold">{m.admin_comments_title()}</h1>
       <p className="mt-2 text-sm text-muted-foreground">{m.admin_comments_description()}</p>
 
+      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-2">
+          <Label htmlFor="comment-status-filter">{m.admin_posts_filter_status()}</Label>
+          <select
+            id="comment-status-filter"
+            value={statusFilter}
+            onChange={(event) =>
+              setStatusFilter(event.currentTarget.value as Comment["status"] | "all")
+            }
+            className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
+          >
+            <option value="all">{m.admin_posts_filter_all_status()}</option>
+            <option value="pending">pending</option>
+            <option value="approved">approved</option>
+            <option value="spam">spam</option>
+            <option value="deleted">deleted</option>
+          </select>
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="comment-post-filter">{m.admin_comments_filter_post()}</Label>
+          <select
+            id="comment-post-filter"
+            value={postFilter}
+            onChange={(event) => setPostFilter(event.currentTarget.value)}
+            className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
+          >
+            <option value="all">{m.admin_comments_all_posts()}</option>
+            {postRows.map((post) => (
+              <option key={post.id} value={post.id}>
+                {post.title}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       <div className="mt-6 grid gap-4">
-        {rows.map((comment) => {
+        {filteredRows.length ? null : (
+          <p className="rounded-md border border-border bg-muted/35 p-4 text-sm text-muted-foreground">
+            {m.admin_comments_empty()}
+          </p>
+        )}
+        {filteredRows.map((comment) => {
           const localizedPost = postRows.find((candidate) => candidate.id === comment.postId);
           const localizedComment = comment;
 
@@ -96,6 +148,7 @@ function AdminCommentsPage() {
                   onClick={() => void moderate(comment.id, "approve")}
                   disabled={localizedComment.status === "approved"}
                 >
+                  <CheckIcon className="size-4" />
                   {m.admin_comments_approve()}
                 </Button>
                 <Button
@@ -104,6 +157,7 @@ function AdminCommentsPage() {
                   onClick={() => void moderate(comment.id, "spam")}
                   disabled={localizedComment.status === "spam"}
                 >
+                  <ShieldAlertIcon className="size-4" />
                   {m.admin_comments_mark_spam()}
                 </Button>
                 <Button
@@ -112,6 +166,7 @@ function AdminCommentsPage() {
                   onClick={() => void moderate(comment.id, "delete")}
                   disabled={localizedComment.status === "deleted"}
                 >
+                  <Trash2Icon className="size-4" />
                   {m.admin_comments_delete()}
                 </Button>
               </div>

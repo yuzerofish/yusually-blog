@@ -21,6 +21,9 @@
   "i18nRuntime": "paraglide-js",
   "themePreset": "claude",
   "commentsEnabled": true,
+  "commentsRequireApproval": true,
+  "commentAutoBlockEnabled": true,
+  "commentBlockedKeywords": ["博彩", "赌博", "色情", "诈骗", "辱骂", "violence", "scam", "spam"],
   "emailSendingEnabled": false,
   "githubActionsEnabled": false
 }

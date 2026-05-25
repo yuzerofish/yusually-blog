@@ -14,10 +14,18 @@
 /** @typedef {{}} Admin_Assets_UploadingInputs */
 /** @typedef {{}} Admin_Assets_UrlInputs */
 /** @typedef {{}} Admin_Comments_ApproveInputs */
+/** @typedef {{}} Admin_Comments_All_PostsInputs */
+/** @typedef {{}} Admin_Comments_Auto_BlockInputs */
+/** @typedef {{}} Admin_Comments_Blocked_KeywordsInputs */
+/** @typedef {{}} Admin_Comments_Blocked_Keywords_HelpInputs */
 /** @typedef {{}} Admin_Comments_DeleteInputs */
 /** @typedef {{}} Admin_Comments_DescriptionInputs */
+/** @typedef {{}} Admin_Comments_EmptyInputs */
+/** @typedef {{}} Admin_Comments_Filter_PostInputs */
 /** @typedef {{}} Admin_Comments_Mark_SpamInputs */
+/** @typedef {{}} Admin_Comments_Require_ApprovalInputs */
 /** @typedef {{}} Admin_Comments_TitleInputs */
+/** @typedef {{}} Admin_Comment_SettingsInputs */
 /** @typedef {{}} Admin_Editor_Default_ExcerptInputs */
 /** @typedef {{}} Admin_Editor_Default_TitleInputs */
 /** @typedef {{}} Admin_Editor_Comments_EnabledInputs */
@@ -133,17 +141,26 @@
 /** @typedef {{}} Blog_TitleInputs */
 /** @typedef {{}} Comment_BodyInputs */
 /** @typedef {{}} Comment_CompanyInputs */
+/** @typedef {{}} Comment_Auth_ErrorInputs */
+/** @typedef {{}} Comment_Auth_LoadingInputs */
+/** @typedef {{}} Comment_Continue_GithubInputs */
 /** @typedef {{}} Comment_EmailInputs */
 /** @typedef {{}} Comment_ErrorInputs */
+/** @typedef {{}} Comment_Login_DescriptionInputs */
+/** @typedef {{}} Comment_Login_RequiredInputs */
 /** @typedef {{}} Comment_NameInputs */
 /** @typedef {{}} Comment_Cancel_ReplyInputs */
 /** @typedef {{}} Comment_ReplyInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Comment_Replying_ToInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Comment_Signed_In_AsInputs */
 /** @typedef {{}} Comment_SubmittingInputs */
 /** @typedef {{}} Comment_SuccessInputs */
+/** @typedef {{}} Comment_Switch_To_LoginInputs */
+/** @typedef {{}} Comment_Switch_To_SignupInputs */
 /** @typedef {{}} Comment_WebsiteInputs */
 /** @typedef {{}} CommentsInputs */
 /** @typedef {{}} Comments_DescriptionInputs */
+/** @typedef {{}} Comments_DisabledInputs */
 /** @typedef {{}} ContentsInputs */
 /** @typedef {{}} Feature_Api_TitleInputs */
 /** @typedef {{}} Feature_Api_BodyInputs */
@@ -296,6 +313,26 @@ export const admin_comments_approve =
     return /** @type {LocalizedString} */ `Approve`;
   };
 
+export const admin_comments_all_posts =
+  /** @type {(inputs: Admin_Comments_All_PostsInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `All posts`;
+  };
+
+export const admin_comments_auto_block =
+  /** @type {(inputs: Admin_Comments_Auto_BlockInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Auto-block comments with blocked keywords`;
+  };
+
+export const admin_comments_blocked_keywords =
+  /** @type {(inputs: Admin_Comments_Blocked_KeywordsInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Blocked keywords`;
+  };
+
+export const admin_comments_blocked_keywords_help =
+  /** @type {(inputs: Admin_Comments_Blocked_Keywords_HelpInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `One keyword per line, or separate with commas. Matching comments are marked as spam automatically.`;
+  };
+
 export const admin_comments_delete =
   /** @type {(inputs: Admin_Comments_DeleteInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `Delete`;
@@ -306,14 +343,34 @@ export const admin_comments_description =
     return /** @type {LocalizedString} */ `Review pending comments before they appear publicly.`;
   };
 
+export const admin_comments_empty =
+  /** @type {(inputs: Admin_Comments_EmptyInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `No comments match the current filters.`;
+  };
+
+export const admin_comments_filter_post =
+  /** @type {(inputs: Admin_Comments_Filter_PostInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Filter by post`;
+  };
+
 export const admin_comments_mark_spam =
   /** @type {(inputs: Admin_Comments_Mark_SpamInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `Mark spam`;
   };
 
+export const admin_comments_require_approval =
+  /** @type {(inputs: Admin_Comments_Require_ApprovalInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Require manual approval before publication`;
+  };
+
 export const admin_comments_title =
   /** @type {(inputs: Admin_Comments_TitleInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `Comments`;
+  };
+
+export const admin_comment_settings =
+  /** @type {(inputs: Admin_Comment_SettingsInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Comment settings`;
   };
 
 export const admin_editor_default_excerpt =
@@ -880,6 +937,21 @@ export const comment_company =
     return /** @type {LocalizedString} */ `Company`;
   };
 
+export const comment_auth_error =
+  /** @type {(inputs: Comment_Auth_ErrorInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Comment login failed.`;
+  };
+
+export const comment_auth_loading =
+  /** @type {(inputs: Comment_Auth_LoadingInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Checking comment login...`;
+  };
+
+export const comment_continue_github =
+  /** @type {(inputs: Comment_Continue_GithubInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Continue with GitHub`;
+  };
+
 export const comment_email = /** @type {(inputs: Comment_EmailInputs) => LocalizedString} */ () => {
   return /** @type {LocalizedString} */ `Email`;
 };
@@ -887,6 +959,16 @@ export const comment_email = /** @type {(inputs: Comment_EmailInputs) => Localiz
 export const comment_error = /** @type {(inputs: Comment_ErrorInputs) => LocalizedString} */ () => {
   return /** @type {LocalizedString} */ `Comment could not be submitted.`;
 };
+
+export const comment_login_description =
+  /** @type {(inputs: Comment_Login_DescriptionInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Sign in with GitHub or email before posting a comment.`;
+  };
+
+export const comment_login_required =
+  /** @type {(inputs: Comment_Login_RequiredInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Login required to comment`;
+  };
 
 export const comment_name = /** @type {(inputs: Comment_NameInputs) => LocalizedString} */ () => {
   return /** @type {LocalizedString} */ `Name`;
@@ -906,6 +988,11 @@ export const comment_replying_to =
     return /** @type {LocalizedString} */ `Replying to ${i?.name}`;
   };
 
+export const comment_signed_in_as =
+  /** @type {(inputs: Comment_Signed_In_AsInputs) => LocalizedString} */ (i) => {
+    return /** @type {LocalizedString} */ `Commenting as ${i?.name}`;
+  };
+
 export const comment_submitting =
   /** @type {(inputs: Comment_SubmittingInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `Submitting...`;
@@ -914,6 +1001,16 @@ export const comment_submitting =
 export const comment_success =
   /** @type {(inputs: Comment_SuccessInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `Comment submitted for review.`;
+  };
+
+export const comment_switch_to_login =
+  /** @type {(inputs: Comment_Switch_To_LoginInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Use existing account`;
+  };
+
+export const comment_switch_to_signup =
+  /** @type {(inputs: Comment_Switch_To_SignupInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Create email account`;
   };
 
 export const comment_website =
@@ -928,6 +1025,11 @@ export const comments = /** @type {(inputs: CommentsInputs) => LocalizedString} 
 export const comments_description =
   /** @type {(inputs: Comments_DescriptionInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `New comments are held for review before publication.`;
+  };
+
+export const comments_disabled =
+  /** @type {(inputs: Comments_DisabledInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Comments are closed for this post.`;
   };
 
 export const contents = /** @type {(inputs: ContentsInputs) => LocalizedString} */ () => {

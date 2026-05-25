@@ -54,6 +54,7 @@ The remote databases have applied:
 - `0001_cloud_blog_cms.sql`
 - `0002_admin_auth.sql`
 - `0003_pages_projects_management.sql`
+- `0004_comment_auth_moderation.sql`
 
 ## Build And Deploy
 
@@ -86,6 +87,23 @@ The Cloudflare Vite plugin writes the effective deploy config into `apps/web/dis
 Because custom domains are configured in Wrangler, workers.dev preview URLs can be disabled by Cloudflare for these deployments. Use the custom domains for verification.
 
 Wrangler uses `apps/web/src/server.ts` as the Worker entry. It delegates HTTP requests to TanStack Start and exposes a `scheduled` handler for automatic ZIP backups.
+
+## GitHub Comment Login
+
+Create a GitHub OAuth app and set callback URLs for each environment:
+
+```txt
+http://localhost:3000/api/comment-auth/github/callback
+https://your-domain.com/api/comment-auth/github/callback
+```
+
+Set `GITHUB_CLIENT_ID` in `apps/web/wrangler.jsonc` or the Cloudflare dashboard. Store the secret with Wrangler:
+
+```sh
+pnpm --filter @repo/web exec wrangler secret put GITHUB_CLIENT_SECRET --config wrangler.jsonc
+```
+
+For local development, set `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` in `apps/web/.env`. Email/password comment login works without GitHub, but GitHub is the preferred default for reader comments.
 
 ## Optional Email Sending
 

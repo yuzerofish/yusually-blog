@@ -34,6 +34,7 @@ Cloud Blog CMS is a TanStack Start monorepo built for Cloudflare Workers. The re
 - Public routes: home, blog list, post detail, tags, archive, projects, about, RSS, feed, sitemap, robots, API docs, and OpenAPI JSON.
 - Admin routes: overview, posts, pages, projects, assets, comments, settings, and scoped API tokens.
 - Admin auth uses D1-backed email/password users and D1 sessions.
+- Comment auth uses separate D1 reader identities and sessions. GitHub OAuth is the default social path, with email/password available for readers who do not use GitHub.
 - Automation tokens are stored hashed in D1 and checked by scope.
 
 ## Automation Flow

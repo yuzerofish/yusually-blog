@@ -6,7 +6,7 @@ import { SearchIcon } from "lucide-react";
 
 import { PostCard } from "#/components/post-card";
 import { SiteShell } from "#/components/site-shell";
-import { $getBlogIndexPage } from "#/lib/cms-server";
+import { $getBlogIndexPage, type BlogIndexPageData } from "#/lib/cms-server";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/blog/")({
     page: Math.max(1, Number(search.page) || 1),
   }),
   loaderDeps: ({ search }) => search,
-  loader: ({ deps }) =>
+  loader: ({ deps }): Promise<BlogIndexPageData> =>
     $getBlogIndexPage({
       data: {
         query: deps.q,
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/blog/")({
 function BlogIndexPage() {
   const locale = getCurrentLocale();
   const search = Route.useSearch();
-  const data = Route.useLoaderData();
+  const data: BlogIndexPageData = Route.useLoaderData();
   const pageSize = 6;
   const tags = data.tags.map((tag) => localizeTag(tag, locale));
   const matchedPosts = data.posts.map((post) => localizePost(post, locale));

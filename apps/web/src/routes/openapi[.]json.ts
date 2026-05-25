@@ -259,6 +259,12 @@ export const Route = createFileRoute("/openapi.json")({
                           primaryLanguage: { enum: ["en", "zh"] },
                           rssEnabled: { type: "boolean" },
                           commentsEnabled: { type: "boolean" },
+                          commentsRequireApproval: { type: "boolean" },
+                          commentAutoBlockEnabled: { type: "boolean" },
+                          commentBlockedKeywords: {
+                            type: "array",
+                            items: { type: "string" },
+                          },
                           indexingEnabled: { type: "boolean" },
                         },
                       },
@@ -317,6 +323,8 @@ export const Route = createFileRoute("/openapi.json")({
               },
               post: {
                 summary: "Submit comment",
+                description:
+                  "Requires a reader comment session. Author name and email are taken from the session.",
                 requestBody: {
                   content: {
                     "application/json": {
@@ -328,18 +336,69 @@ export const Route = createFileRoute("/openapi.json")({
                             type: "string",
                             description: "Optional approved parent comment id for replies.",
                           },
-                          authorName: { type: "string" },
-                          authorEmail: { type: "string" },
                           authorWebsite: { type: "string" },
                           body: { type: "string" },
                           turnstileToken: { type: "string" },
                         },
-                        required: ["postSlug", "authorName", "authorEmail", "body"],
+                        required: ["postSlug", "body"],
                       },
                     },
                   },
                 },
-                responses: { "201": { description: "Comment created as pending" } },
+                responses: {
+                  "201": { description: "Comment created through moderation settings" },
+                  "401": { description: "Comment login required" },
+                },
+              },
+            },
+            "/api/comment-auth/me": {
+              get: {
+                summary: "Read current comment user",
+                responses: { "200": { description: "Current reader comment user or null" } },
+              },
+            },
+            "/api/comment-auth/login": {
+              post: {
+                summary: "Email login for commenting",
+                requestBody: {
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/CommentEmailAuthRequest" },
+                    },
+                  },
+                },
+                responses: { "200": { description: "Comment session created" } },
+              },
+            },
+            "/api/comment-auth/signup": {
+              post: {
+                summary: "Email signup for commenting",
+                requestBody: {
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/CommentEmailSignupRequest" },
+                    },
+                  },
+                },
+                responses: { "200": { description: "Comment user and session created" } },
+              },
+            },
+            "/api/comment-auth/logout": {
+              post: {
+                summary: "Logout comment user",
+                responses: { "200": { description: "Comment session cleared" } },
+              },
+            },
+            "/api/comment-auth/github/start": {
+              get: {
+                summary: "Start GitHub comment login",
+                responses: { "302": { description: "Redirect to GitHub OAuth" } },
+              },
+            },
+            "/api/comment-auth/github/callback": {
+              get: {
+                summary: "Complete GitHub comment login",
+                responses: { "302": { description: "Redirect back to comment section" } },
               },
             },
             "/api/comments/{id}/approve": {
@@ -559,6 +618,23 @@ export const Route = createFileRoute("/openapi.json")({
                     required: ["token", "password"],
                   },
                 ],
+              },
+              CommentEmailAuthRequest: {
+                type: "object",
+                properties: {
+                  email: { type: "string" },
+                  password: { type: "string" },
+                },
+                required: ["email", "password"],
+              },
+              CommentEmailSignupRequest: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  email: { type: "string" },
+                  password: { type: "string" },
+                },
+                required: ["name", "email", "password"],
               },
             },
           },

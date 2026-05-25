@@ -3,17 +3,17 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { ProjectCard } from "#/components/post-card";
 import { SiteShell } from "#/components/site-shell";
-import { $getProjectsPageData } from "#/lib/cms-server";
+import { $getProjectsPageData, type ProjectsPageData } from "#/lib/cms-server";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/projects/")({
-  loader: () => $getProjectsPageData(),
+  loader: (): Promise<ProjectsPageData> => $getProjectsPageData(),
   component: ProjectsPage,
 });
 
 function ProjectsPage() {
-  const data = Route.useLoaderData();
+  const data: ProjectsPageData = Route.useLoaderData();
   const locale = getCurrentLocale();
   const projects = data.projects.map((project) => localizeProject(project, locale));
   const siteSettings = localizeSiteSettings(data.siteSettings, locale);

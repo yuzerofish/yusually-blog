@@ -39,6 +39,8 @@ BLOGCMS_SITE_URL=https://demo.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter 
 
 Docs 内容放在 `apps/web/content/docs`。英文页面使用 `*.md` 或 `*.mdx`，中文页面使用 `*.zh.md` 或 `*.zh.mdx`。
 
+`README.md` 指向英文文档首页。仓库里的 `docs/site` 是到同一份 Fumadocs 源文件的便捷入口，`docs/specs` 继续作为项目规格和实现记录区域。
+
 ## 选择内容系统
 
 ```txt

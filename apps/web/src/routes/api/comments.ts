@@ -5,6 +5,7 @@ import { getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { createD1Comment, getD1PostBySlug, listD1Comments } from "#/lib/cms-d1";
 import { notifyCommentCreated } from "#/lib/cms-email";
+import { getCommentUserFromRequest } from "#/lib/comment-auth";
 import { checkCommentRateLimit, getClientIp, verifyTurnstile } from "#/lib/comment-guard";
 
 export const Route = createFileRoute("/api/comments")({
@@ -33,8 +34,6 @@ export const Route = createFileRoute("/api/comments")({
       POST: async ({ request }: { request: Request }) => {
         const body = await readJsonBody<{
           postSlug: string;
-          authorName: string;
-          authorEmail: string;
           authorWebsite: string;
           body: string;
           parentId: string;
@@ -44,6 +43,12 @@ export const Route = createFileRoute("/api/comments")({
 
         if (body.honeypot) {
           return jsonResponse({ error: "Comment rejected" }, { status: 400 });
+        }
+
+        const user = await getCommentUserFromRequest(request);
+
+        if (!user) {
+          return jsonResponse({ error: "Login is required to comment" }, { status: 401 });
         }
 
         const turnstile = await verifyTurnstile({
@@ -66,8 +71,9 @@ export const Route = createFileRoute("/api/comments")({
 
         const commentInput = {
           postSlug: body.postSlug ?? "",
-          authorName: body.authorName,
-          authorEmail: body.authorEmail,
+          authorUserId: user.id,
+          authorName: user.name,
+          authorEmail: user.email,
           authorWebsite: body.authorWebsite,
           body: body.body,
           parentId: body.parentId || null,
@@ -85,11 +91,13 @@ export const Route = createFileRoute("/api/comments")({
           return jsonResponse({ error: result.error }, { status: 400 });
         }
 
-        await notifyCommentCreated({
-          comment: result.comment,
-          postTitle: persistedPost?.title ?? commentInput.postSlug,
-          siteUrl: new URL(request.url).origin,
-        });
+        if (result.comment.status !== "spam") {
+          await notifyCommentCreated({
+            comment: result.comment,
+            postTitle: persistedPost?.title ?? commentInput.postSlug,
+            siteUrl: new URL(request.url).origin,
+          });
+        }
 
         return jsonResponse(
           {

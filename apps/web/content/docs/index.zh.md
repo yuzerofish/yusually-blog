@@ -33,8 +33,23 @@ packages/core            内容类型、演示数据、Markdown 与 i18n helper
 packages/db              Drizzle schema 与 D1 migrations
 packages/ui              共享 UI primitives
 skills/cloud-blog-cms    AI 初始化 Skill
-docs/specs               项目规格与实现记录
+apps/web/content/docs    公开 Fumadocs 文档源，docs/site 指向这里
+docs/specs               项目规格、部署记录和实现记录
 ```
+
+## 文档来源
+
+公开文档的源文件放在 `apps/web/content/docs`。它会渲染到 `/docs` 和 `/zh/docs`，同时 `README.md` 指向英文首页，让仓库首页和文档首页保持一致。
+
+根目录下的 `docs/specs` 用于项目规格、部署记录、验收记录和实现证据，不作为公开 Fumadocs 内容整包发布。
+
+## 配置入口
+
+配置新站点时优先看这几页：
+
+- [部署](./deployment)：Cloudflare Workers、D1、R2、KV、migrations、环境变量和部署 target。
+- [评论](./comments)：读者登录、GitHub OAuth、邮箱登录、审核模式、关键词屏蔽和评论管理。
+- [API](./api)：自动化接口、OpenAPI 和评论登录接口。
 
 ## 本地开发
 

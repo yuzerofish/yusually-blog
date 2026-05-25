@@ -11,17 +11,17 @@ import {
 
 import { PostCard } from "#/components/post-card";
 import { SiteShell } from "#/components/site-shell";
-import { $getHomePageData } from "#/lib/cms-server";
+import { $getHomePageData, type HomePageData } from "#/lib/cms-server";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/")({
-  loader: () => $getHomePageData(),
+  loader: (): Promise<HomePageData> => $getHomePageData(),
   component: HomePage,
 });
 
 function HomePage() {
-  const data = Route.useLoaderData();
+  const data: HomePageData = Route.useLoaderData();
   const locale = getCurrentLocale();
   const posts = data.posts.map((post) => localizePost(post, locale));
   const featuredPosts = data.featuredPosts.map((post) => localizePost(post, locale));

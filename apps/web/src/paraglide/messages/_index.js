@@ -15,10 +15,18 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Admin_Assets_UploadingInputs */
 /** @typedef {{}} Admin_Assets_UrlInputs */
 /** @typedef {{}} Admin_Comments_ApproveInputs */
+/** @typedef {{}} Admin_Comments_All_PostsInputs */
+/** @typedef {{}} Admin_Comments_Auto_BlockInputs */
+/** @typedef {{}} Admin_Comments_Blocked_KeywordsInputs */
+/** @typedef {{}} Admin_Comments_Blocked_Keywords_HelpInputs */
 /** @typedef {{}} Admin_Comments_DeleteInputs */
 /** @typedef {{}} Admin_Comments_DescriptionInputs */
+/** @typedef {{}} Admin_Comments_EmptyInputs */
+/** @typedef {{}} Admin_Comments_Filter_PostInputs */
 /** @typedef {{}} Admin_Comments_Mark_SpamInputs */
+/** @typedef {{}} Admin_Comments_Require_ApprovalInputs */
 /** @typedef {{}} Admin_Comments_TitleInputs */
+/** @typedef {{}} Admin_Comment_SettingsInputs */
 /** @typedef {{}} Admin_Editor_Default_ExcerptInputs */
 /** @typedef {{}} Admin_Editor_Default_TitleInputs */
 /** @typedef {{}} Admin_Editor_Comments_EnabledInputs */
@@ -134,17 +142,26 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Blog_TitleInputs */
 /** @typedef {{}} Comment_BodyInputs */
 /** @typedef {{}} Comment_CompanyInputs */
+/** @typedef {{}} Comment_Auth_ErrorInputs */
+/** @typedef {{}} Comment_Auth_LoadingInputs */
+/** @typedef {{}} Comment_Continue_GithubInputs */
 /** @typedef {{}} Comment_EmailInputs */
 /** @typedef {{}} Comment_ErrorInputs */
+/** @typedef {{}} Comment_Login_DescriptionInputs */
+/** @typedef {{}} Comment_Login_RequiredInputs */
 /** @typedef {{}} Comment_NameInputs */
 /** @typedef {{}} Comment_Cancel_ReplyInputs */
 /** @typedef {{}} Comment_ReplyInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Comment_Replying_ToInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Comment_Signed_In_AsInputs */
 /** @typedef {{}} Comment_SubmittingInputs */
 /** @typedef {{}} Comment_SuccessInputs */
+/** @typedef {{}} Comment_Switch_To_LoginInputs */
+/** @typedef {{}} Comment_Switch_To_SignupInputs */
 /** @typedef {{}} Comment_WebsiteInputs */
 /** @typedef {{}} CommentsInputs */
 /** @typedef {{}} Comments_DescriptionInputs */
+/** @typedef {{}} Comments_DisabledInputs */
 /** @typedef {{}} ContentsInputs */
 /** @typedef {{}} Feature_Api_TitleInputs */
 /** @typedef {{}} Feature_Api_BodyInputs */
@@ -470,6 +487,74 @@ export const admin_comments_approve =
 /**
  * | output |
  * | --- |
+ * | "All posts" |
+ *
+ * @param {Admin_Comments_All_PostsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_comments_all_posts =
+  /** @type {((inputs?: Admin_Comments_All_PostsInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Comments_All_PostsInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_comments_all_posts(inputs);
+      return __zh.admin_comments_all_posts(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Auto-block comments with blocked keywords" |
+ *
+ * @param {Admin_Comments_Auto_BlockInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_comments_auto_block =
+  /** @type {((inputs?: Admin_Comments_Auto_BlockInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Comments_Auto_BlockInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_comments_auto_block(inputs);
+      return __zh.admin_comments_auto_block(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Blocked keywords" |
+ *
+ * @param {Admin_Comments_Blocked_KeywordsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_comments_blocked_keywords =
+  /** @type {((inputs?: Admin_Comments_Blocked_KeywordsInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Comments_Blocked_KeywordsInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_comments_blocked_keywords(inputs);
+      return __zh.admin_comments_blocked_keywords(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "One keyword per line, or separate with commas. Matching comments are marked as spam automatically." |
+ *
+ * @param {Admin_Comments_Blocked_Keywords_HelpInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_comments_blocked_keywords_help =
+  /** @type {((inputs?: Admin_Comments_Blocked_Keywords_HelpInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Comments_Blocked_Keywords_HelpInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_comments_blocked_keywords_help(inputs);
+      return __zh.admin_comments_blocked_keywords_help(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
  * | "Delete" |
  *
  * @param {Admin_Comments_DeleteInputs} inputs
@@ -504,6 +589,40 @@ export const admin_comments_description =
 /**
  * | output |
  * | --- |
+ * | "No comments match the current filters." |
+ *
+ * @param {Admin_Comments_EmptyInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_comments_empty =
+  /** @type {((inputs?: Admin_Comments_EmptyInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Comments_EmptyInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_comments_empty(inputs);
+      return __zh.admin_comments_empty(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Filter by post" |
+ *
+ * @param {Admin_Comments_Filter_PostInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_comments_filter_post =
+  /** @type {((inputs?: Admin_Comments_Filter_PostInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Comments_Filter_PostInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_comments_filter_post(inputs);
+      return __zh.admin_comments_filter_post(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
  * | "Mark spam" |
  *
  * @param {Admin_Comments_Mark_SpamInputs} inputs
@@ -521,6 +640,23 @@ export const admin_comments_mark_spam =
 /**
  * | output |
  * | --- |
+ * | "Require manual approval before publication" |
+ *
+ * @param {Admin_Comments_Require_ApprovalInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_comments_require_approval =
+  /** @type {((inputs?: Admin_Comments_Require_ApprovalInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Comments_Require_ApprovalInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_comments_require_approval(inputs);
+      return __zh.admin_comments_require_approval(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
  * | "Comments" |
  *
  * @param {Admin_Comments_TitleInputs} inputs
@@ -533,6 +669,23 @@ export const admin_comments_title =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.admin_comments_title(inputs);
       return __zh.admin_comments_title(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Comment settings" |
+ *
+ * @param {Admin_Comment_SettingsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_comment_settings =
+  /** @type {((inputs?: Admin_Comment_SettingsInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Comment_SettingsInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_comment_settings(inputs);
+      return __zh.admin_comment_settings(inputs);
     }
   );
 /**
@@ -2493,6 +2646,57 @@ export const comment_company =
 /**
  * | output |
  * | --- |
+ * | "Comment login failed." |
+ *
+ * @param {Comment_Auth_ErrorInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_auth_error =
+  /** @type {((inputs?: Comment_Auth_ErrorInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_Auth_ErrorInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_auth_error(inputs);
+      return __zh.comment_auth_error(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Checking comment login..." |
+ *
+ * @param {Comment_Auth_LoadingInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_auth_loading =
+  /** @type {((inputs?: Comment_Auth_LoadingInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_Auth_LoadingInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_auth_loading(inputs);
+      return __zh.comment_auth_loading(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Continue with GitHub" |
+ *
+ * @param {Comment_Continue_GithubInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_continue_github =
+  /** @type {((inputs?: Comment_Continue_GithubInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_Continue_GithubInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_continue_github(inputs);
+      return __zh.comment_continue_github(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
  * | "Email" |
  *
  * @param {Comment_EmailInputs} inputs
@@ -2522,6 +2726,40 @@ export const comment_error =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.comment_error(inputs);
       return __zh.comment_error(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Sign in with GitHub or email before posting a comment." |
+ *
+ * @param {Comment_Login_DescriptionInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_login_description =
+  /** @type {((inputs?: Comment_Login_DescriptionInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_Login_DescriptionInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_login_description(inputs);
+      return __zh.comment_login_description(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Login required to comment" |
+ *
+ * @param {Comment_Login_RequiredInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_login_required =
+  /** @type {((inputs?: Comment_Login_RequiredInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_Login_RequiredInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_login_required(inputs);
+      return __zh.comment_login_required(inputs);
     }
   );
 /**
@@ -2595,6 +2833,23 @@ export const comment_replying_to =
 /**
  * | output |
  * | --- |
+ * | "Commenting as {name}" |
+ *
+ * @param {Comment_Signed_In_AsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_signed_in_as =
+  /** @type {((inputs: Comment_Signed_In_AsInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_Signed_In_AsInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_signed_in_as(inputs);
+      return __zh.comment_signed_in_as(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
  * | "Submitting..." |
  *
  * @param {Comment_SubmittingInputs} inputs
@@ -2624,6 +2879,40 @@ export const comment_success =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.comment_success(inputs);
       return __zh.comment_success(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Use existing account" |
+ *
+ * @param {Comment_Switch_To_LoginInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_switch_to_login =
+  /** @type {((inputs?: Comment_Switch_To_LoginInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_Switch_To_LoginInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_switch_to_login(inputs);
+      return __zh.comment_switch_to_login(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Create email account" |
+ *
+ * @param {Comment_Switch_To_SignupInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_switch_to_signup =
+  /** @type {((inputs?: Comment_Switch_To_SignupInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_Switch_To_SignupInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_switch_to_signup(inputs);
+      return __zh.comment_switch_to_signup(inputs);
     }
   );
 /**
@@ -2675,6 +2964,23 @@ export const comments_description =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.comments_description(inputs);
       return __zh.comments_description(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Comments are closed for this post." |
+ *
+ * @param {Comments_DisabledInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comments_disabled =
+  /** @type {((inputs?: Comments_DisabledInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comments_DisabledInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comments_disabled(inputs);
+      return __zh.comments_disabled(inputs);
     }
   );
 /**

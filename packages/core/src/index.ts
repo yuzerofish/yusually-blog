@@ -35,6 +35,12 @@ export {
   updateSiteSettings,
 } from "./cms-store";
 export { assets, comments, dashboardMetrics, posts, projects, siteSettings, tags };
+export {
+  defaultCommentBlockedKeywords,
+  findBlockedCommentKeyword,
+  getCommentInitialStatus,
+  normalizeCommentBlockedKeywords,
+} from "./comment-moderation";
 export { htmlToText, markdownToText, renderMarkdownToHtml, sanitizeHtml } from "./markdown";
 export type {
   ApiToken,

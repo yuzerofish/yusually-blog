@@ -56,6 +56,14 @@ function AdminSettingsPage() {
   const saveSettings: FormSubmitHandler = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    const rawBlockedKeywords = formData.get("commentBlockedKeywords");
+    const blockedKeywords =
+      typeof rawBlockedKeywords === "string"
+        ? rawBlockedKeywords
+            .split(/[\n,，]/)
+            .map((item) => item.trim())
+            .filter(Boolean)
+        : [];
     const response = await fetch("/api/site", {
       method: "PUT",
       headers: { "content-type": "application/json" },
@@ -70,6 +78,9 @@ function AdminSettingsPage() {
         primaryLanguage: formData.get("primaryLanguage"),
         rssEnabled: formData.get("rssEnabled") === "on",
         commentsEnabled: formData.get("commentsEnabled") === "on",
+        commentsRequireApproval: formData.get("commentsRequireApproval") === "on",
+        commentAutoBlockEnabled: formData.get("commentAutoBlockEnabled") === "on",
+        commentBlockedKeywords: blockedKeywords,
         indexingEnabled: formData.get("indexingEnabled") === "on",
       }),
     });
@@ -199,7 +210,7 @@ function AdminSettingsPage() {
                 <option value="editorial">{m.theme_preset_editorial()}</option>
               </select>
             </div>
-            <div className="grid content-end gap-2 md:col-span-2">
+            <div className="grid content-end gap-2">
               <label className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
@@ -212,6 +223,18 @@ function AdminSettingsPage() {
               <label className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
+                  name="indexingEnabled"
+                  defaultChecked={siteSettings.indexingEnabled}
+                  className="size-4 rounded border-input"
+                />
+                {m.admin_settings_indexing()}
+              </label>
+            </div>
+            <fieldset className="grid gap-3 rounded-md border border-border bg-muted/35 p-4 md:col-span-2">
+              <legend className="px-1 text-sm font-medium">{m.admin_comment_settings()}</legend>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
                   name="commentsEnabled"
                   defaultChecked={siteSettings.commentsEnabled}
                   className="size-4 rounded border-input"
@@ -221,13 +244,37 @@ function AdminSettingsPage() {
               <label className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
-                  name="indexingEnabled"
-                  defaultChecked={siteSettings.indexingEnabled}
+                  name="commentsRequireApproval"
+                  defaultChecked={siteSettings.commentsRequireApproval}
                   className="size-4 rounded border-input"
                 />
-                {m.admin_settings_indexing()}
+                {m.admin_comments_require_approval()}
               </label>
-            </div>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  name="commentAutoBlockEnabled"
+                  defaultChecked={siteSettings.commentAutoBlockEnabled}
+                  className="size-4 rounded border-input"
+                />
+                {m.admin_comments_auto_block()}
+              </label>
+              <div className="grid gap-2">
+                <Label htmlFor="comment-blocked-keywords">
+                  {m.admin_comments_blocked_keywords()}
+                </Label>
+                <textarea
+                  id="comment-blocked-keywords"
+                  name="commentBlockedKeywords"
+                  defaultValue={siteSettings.commentBlockedKeywords.join("\n")}
+                  rows={5}
+                  className="min-h-28 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
+                />
+                <p className="text-xs text-muted-foreground">
+                  {m.admin_comments_blocked_keywords_help()}
+                </p>
+              </div>
+            </fieldset>
           </div>
         </form>
       </section>

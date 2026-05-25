@@ -1,6 +1,8 @@
 import {
+  getCommentInitialStatus,
   htmlToText,
   markdownToText,
+  normalizeCommentBlockedKeywords,
   renderMarkdownToHtml,
   sanitizeHtml,
   getProjectsForLocale,
@@ -48,6 +50,7 @@ type D1CommentRow = {
   id: string;
   post_id: string;
   parent_id: string | null;
+  author_user_id: string | null;
   author_name: string;
   author_email_hash: string;
   author_website: string | null;
@@ -176,6 +179,7 @@ type ProjectInput = Partial<{
 type CommentInput = {
   postSlug: string;
   parentId?: string | null;
+  authorUserId?: string | null;
   authorName?: string;
   authorEmail?: string;
   authorWebsite?: string | null;
@@ -211,6 +215,9 @@ type SiteSettingsInput = Partial<
     | "navigation"
     | "rssEnabled"
     | "commentsEnabled"
+    | "commentsRequireApproval"
+    | "commentAutoBlockEnabled"
+    | "commentBlockedKeywords"
     | "indexingEnabled"
     | "themePreset"
     | "primaryLanguage"
@@ -1089,11 +1096,12 @@ export async function createD1Comment(input: CommentInput): Promise<D1Result<Com
     id: `comment_${crypto.randomUUID()}`,
     postId: post.id,
     parentId,
+    authorUserId: input.authorUserId ?? null,
     authorName,
     authorEmailHash: await digestText(authorEmail),
     authorWebsite,
     body,
-    status: "pending",
+    status: getCommentInitialStatus({ body, settings: currentSettings }),
     createdAt: now,
   };
 
@@ -1105,14 +1113,15 @@ export async function createD1Comment(input: CommentInput): Promise<D1Result<Com
 
   await env.CMS_DB.prepare(
     `insert into comments (
-      id, post_id, parent_id, author_name, author_email_hash, author_website,
+      id, post_id, parent_id, author_user_id, author_name, author_email_hash, author_website,
       body, i18n, status, created_at, updated_at
-    ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   )
     .bind(
       comment.id,
       comment.postId,
       comment.parentId,
+      comment.authorUserId,
       comment.authorName,
       comment.authorEmailHash,
       comment.authorWebsite,
@@ -1519,6 +1528,7 @@ function rowToComment(row: D1CommentRow): Comment {
     id: row.id,
     postId: row.post_id,
     parentId: row.parent_id,
+    authorUserId: row.author_user_id,
     authorName: row.author_name,
     authorEmailHash: row.author_email_hash,
     authorWebsite: row.author_website,
@@ -1574,6 +1584,12 @@ function normalizeSiteSettings(
     navigation: Array.isArray(input.navigation) ? input.navigation : base.navigation,
     rssEnabled: input.rssEnabled ?? base.rssEnabled,
     commentsEnabled: input.commentsEnabled ?? base.commentsEnabled,
+    commentsRequireApproval: input.commentsRequireApproval ?? base.commentsRequireApproval,
+    commentAutoBlockEnabled: input.commentAutoBlockEnabled ?? base.commentAutoBlockEnabled,
+    commentBlockedKeywords:
+      input.commentBlockedKeywords !== undefined
+        ? normalizeCommentBlockedKeywords(input.commentBlockedKeywords)
+        : base.commentBlockedKeywords,
     indexingEnabled: input.indexingEnabled ?? base.indexingEnabled,
     themePreset: normalizeThemePreset(input.themePreset ?? input.theme, base.themePreset),
     locales: ["en", "zh"],

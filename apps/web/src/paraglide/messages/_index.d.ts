@@ -309,6 +309,94 @@ export const admin_comments_approve: ((
 /**
  * | output |
  * | --- |
+ * | "All posts" |
+ *
+ * @param {Admin_Comments_All_PostsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_comments_all_posts: ((
+  inputs?: Admin_Comments_All_PostsInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Comments_All_PostsInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Auto-block comments with blocked keywords" |
+ *
+ * @param {Admin_Comments_Auto_BlockInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_comments_auto_block: ((
+  inputs?: Admin_Comments_Auto_BlockInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Comments_Auto_BlockInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Blocked keywords" |
+ *
+ * @param {Admin_Comments_Blocked_KeywordsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_comments_blocked_keywords: ((
+  inputs?: Admin_Comments_Blocked_KeywordsInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Comments_Blocked_KeywordsInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "One keyword per line, or separate with commas. Matching comments are marked as spam automatically." |
+ *
+ * @param {Admin_Comments_Blocked_Keywords_HelpInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_comments_blocked_keywords_help: ((
+  inputs?: Admin_Comments_Blocked_Keywords_HelpInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Comments_Blocked_Keywords_HelpInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Delete" |
  *
  * @param {Admin_Comments_DeleteInputs} inputs
@@ -353,6 +441,50 @@ export const admin_comments_description: ((
 /**
  * | output |
  * | --- |
+ * | "No comments match the current filters." |
+ *
+ * @param {Admin_Comments_EmptyInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_comments_empty: ((
+  inputs?: Admin_Comments_EmptyInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Comments_EmptyInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Filter by post" |
+ *
+ * @param {Admin_Comments_Filter_PostInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_comments_filter_post: ((
+  inputs?: Admin_Comments_Filter_PostInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Comments_Filter_PostInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Mark spam" |
  *
  * @param {Admin_Comments_Mark_SpamInputs} inputs
@@ -375,6 +507,28 @@ export const admin_comments_mark_spam: ((
 /**
  * | output |
  * | --- |
+ * | "Require manual approval before publication" |
+ *
+ * @param {Admin_Comments_Require_ApprovalInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_comments_require_approval: ((
+  inputs?: Admin_Comments_Require_ApprovalInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Comments_Require_ApprovalInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Comments" |
  *
  * @param {Admin_Comments_TitleInputs} inputs
@@ -389,6 +543,28 @@ export const admin_comments_title: ((
 ) => LocalizedString) &
   import("../runtime.js").MessageMetadata<
     Admin_Comments_TitleInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Comment settings" |
+ *
+ * @param {Admin_Comment_SettingsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_comment_settings: ((
+  inputs?: Admin_Comment_SettingsInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Comment_SettingsInputs,
     {
       locale?: "en" | "zh";
     },
@@ -2927,6 +3103,72 @@ export const comment_company: ((
 /**
  * | output |
  * | --- |
+ * | "Comment login failed." |
+ *
+ * @param {Comment_Auth_ErrorInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_auth_error: ((
+  inputs?: Comment_Auth_ErrorInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_Auth_ErrorInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Checking comment login..." |
+ *
+ * @param {Comment_Auth_LoadingInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_auth_loading: ((
+  inputs?: Comment_Auth_LoadingInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_Auth_LoadingInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Continue with GitHub" |
+ *
+ * @param {Comment_Continue_GithubInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_continue_github: ((
+  inputs?: Comment_Continue_GithubInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_Continue_GithubInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Email" |
  *
  * @param {Comment_EmailInputs} inputs
@@ -2963,6 +3205,50 @@ export const comment_error: ((
 ) => LocalizedString) &
   import("../runtime.js").MessageMetadata<
     Comment_ErrorInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Sign in with GitHub or email before posting a comment." |
+ *
+ * @param {Comment_Login_DescriptionInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_login_description: ((
+  inputs?: Comment_Login_DescriptionInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_Login_DescriptionInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Login required to comment" |
+ *
+ * @param {Comment_Login_RequiredInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_login_required: ((
+  inputs?: Comment_Login_RequiredInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_Login_RequiredInputs,
     {
       locale?: "en" | "zh";
     },
@@ -3059,6 +3345,28 @@ export const comment_replying_to: ((
 /**
  * | output |
  * | --- |
+ * | "Commenting as {name}" |
+ *
+ * @param {Comment_Signed_In_AsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_signed_in_as: ((
+  inputs: Comment_Signed_In_AsInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_Signed_In_AsInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Submitting..." |
  *
  * @param {Comment_SubmittingInputs} inputs
@@ -3095,6 +3403,50 @@ export const comment_success: ((
 ) => LocalizedString) &
   import("../runtime.js").MessageMetadata<
     Comment_SuccessInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Use existing account" |
+ *
+ * @param {Comment_Switch_To_LoginInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_switch_to_login: ((
+  inputs?: Comment_Switch_To_LoginInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_Switch_To_LoginInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Create email account" |
+ *
+ * @param {Comment_Switch_To_SignupInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_switch_to_signup: ((
+  inputs?: Comment_Switch_To_SignupInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_Switch_To_SignupInputs,
     {
       locale?: "en" | "zh";
     },
@@ -3161,6 +3513,28 @@ export const comments_description: ((
 ) => LocalizedString) &
   import("../runtime.js").MessageMetadata<
     Comments_DescriptionInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Comments are closed for this post." |
+ *
+ * @param {Comments_DisabledInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comments_disabled: ((
+  inputs?: Comments_DisabledInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comments_DisabledInputs,
     {
       locale?: "en" | "zh";
     },
@@ -4985,10 +5359,18 @@ export type Admin_Assets_UploadedInputs = {};
 export type Admin_Assets_UploadingInputs = {};
 export type Admin_Assets_UrlInputs = {};
 export type Admin_Comments_ApproveInputs = {};
+export type Admin_Comments_All_PostsInputs = {};
+export type Admin_Comments_Auto_BlockInputs = {};
+export type Admin_Comments_Blocked_KeywordsInputs = {};
+export type Admin_Comments_Blocked_Keywords_HelpInputs = {};
 export type Admin_Comments_DeleteInputs = {};
 export type Admin_Comments_DescriptionInputs = {};
+export type Admin_Comments_EmptyInputs = {};
+export type Admin_Comments_Filter_PostInputs = {};
 export type Admin_Comments_Mark_SpamInputs = {};
+export type Admin_Comments_Require_ApprovalInputs = {};
 export type Admin_Comments_TitleInputs = {};
+export type Admin_Comment_SettingsInputs = {};
 export type Admin_Editor_Default_ExcerptInputs = {};
 export type Admin_Editor_Default_TitleInputs = {};
 export type Admin_Editor_Comments_EnabledInputs = {};
@@ -5112,19 +5494,30 @@ export type Blog_Search_SubmitInputs = {};
 export type Blog_TitleInputs = {};
 export type Comment_BodyInputs = {};
 export type Comment_CompanyInputs = {};
+export type Comment_Auth_ErrorInputs = {};
+export type Comment_Auth_LoadingInputs = {};
+export type Comment_Continue_GithubInputs = {};
 export type Comment_EmailInputs = {};
 export type Comment_ErrorInputs = {};
+export type Comment_Login_DescriptionInputs = {};
+export type Comment_Login_RequiredInputs = {};
 export type Comment_NameInputs = {};
 export type Comment_Cancel_ReplyInputs = {};
 export type Comment_ReplyInputs = {};
 export type Comment_Replying_ToInputs = {
   name: NonNullable<unknown>;
 };
+export type Comment_Signed_In_AsInputs = {
+  name: NonNullable<unknown>;
+};
 export type Comment_SubmittingInputs = {};
 export type Comment_SuccessInputs = {};
+export type Comment_Switch_To_LoginInputs = {};
+export type Comment_Switch_To_SignupInputs = {};
 export type Comment_WebsiteInputs = {};
 export type CommentsInputs = {};
 export type Comments_DescriptionInputs = {};
+export type Comments_DisabledInputs = {};
 export type ContentsInputs = {};
 export type Feature_Api_TitleInputs = {};
 export type Feature_Api_BodyInputs = {};

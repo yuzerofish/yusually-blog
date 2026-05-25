@@ -39,6 +39,8 @@ Use Fumadocs for content that should live with the repository:
 
 Docs live in `apps/web/content/docs`. English pages use `*.md` or `*.mdx`; Chinese pages use `*.zh.md` or `*.zh.mdx`.
 
+`README.md` points to the English docs index. The repository-level `docs/site` path is a convenience link to the same Fumadocs source, while `docs/specs` remains the project specification and evidence area.
+
 ## Choose A Content System
 
 ```txt

@@ -34,9 +34,24 @@ POST   /api/backups
 POST   /api/comments/:id/approve
 POST   /api/comments/:id/spam
 POST   /api/comments/:id/delete
+
+GET    /api/comment-auth/me
+POST   /api/comment-auth/login
+POST   /api/comment-auth/signup
+POST   /api/comment-auth/logout
+GET    /api/comment-auth/github/start
+GET    /api/comment-auth/github/callback
 ```
 
 API Token 有 scope。发布内容需要写权限，把文章切换到已发布或定时发布还需要 publish 权限。
+
+## 评论与读者登录
+
+`POST /api/comments` 需要读者会话。请求包含评论内容、文章 id，以及用于回复的可选 parent id。服务端会执行 honeypot 检查、可选 Turnstile 校验、频率限制、正文长度限制、链接数量限制和屏蔽关键词检查。
+
+读者登录和后台管理员登录是两套身份。`/api/comment-auth/*` 只管理评论用的邮箱/密码会话和 GitHub OAuth 会话。
+
+开启人工审核时，新评论进入 `pending`。关闭人工审核时，新评论可以直接进入 `approved`。命中屏蔽关键词且开启自动屏蔽时，评论进入 `spam`。
 
 ## OpenAPI
 

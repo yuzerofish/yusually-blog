@@ -13,10 +13,18 @@
 /** @typedef {{}} Admin_Assets_UploadingInputs */
 /** @typedef {{}} Admin_Assets_UrlInputs */
 /** @typedef {{}} Admin_Comments_ApproveInputs */
+/** @typedef {{}} Admin_Comments_All_PostsInputs */
+/** @typedef {{}} Admin_Comments_Auto_BlockInputs */
+/** @typedef {{}} Admin_Comments_Blocked_KeywordsInputs */
+/** @typedef {{}} Admin_Comments_Blocked_Keywords_HelpInputs */
 /** @typedef {{}} Admin_Comments_DeleteInputs */
 /** @typedef {{}} Admin_Comments_DescriptionInputs */
+/** @typedef {{}} Admin_Comments_EmptyInputs */
+/** @typedef {{}} Admin_Comments_Filter_PostInputs */
 /** @typedef {{}} Admin_Comments_Mark_SpamInputs */
+/** @typedef {{}} Admin_Comments_Require_ApprovalInputs */
 /** @typedef {{}} Admin_Comments_TitleInputs */
+/** @typedef {{}} Admin_Comment_SettingsInputs */
 /** @typedef {{}} Admin_Editor_Default_ExcerptInputs */
 /** @typedef {{}} Admin_Editor_Default_TitleInputs */
 /** @typedef {{}} Admin_Editor_Comments_EnabledInputs */
@@ -132,17 +140,26 @@
 /** @typedef {{}} Blog_TitleInputs */
 /** @typedef {{}} Comment_BodyInputs */
 /** @typedef {{}} Comment_CompanyInputs */
+/** @typedef {{}} Comment_Auth_ErrorInputs */
+/** @typedef {{}} Comment_Auth_LoadingInputs */
+/** @typedef {{}} Comment_Continue_GithubInputs */
 /** @typedef {{}} Comment_EmailInputs */
 /** @typedef {{}} Comment_ErrorInputs */
+/** @typedef {{}} Comment_Login_DescriptionInputs */
+/** @typedef {{}} Comment_Login_RequiredInputs */
 /** @typedef {{}} Comment_NameInputs */
 /** @typedef {{}} Comment_Cancel_ReplyInputs */
 /** @typedef {{}} Comment_ReplyInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Comment_Replying_ToInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Comment_Signed_In_AsInputs */
 /** @typedef {{}} Comment_SubmittingInputs */
 /** @typedef {{}} Comment_SuccessInputs */
+/** @typedef {{}} Comment_Switch_To_LoginInputs */
+/** @typedef {{}} Comment_Switch_To_SignupInputs */
 /** @typedef {{}} Comment_WebsiteInputs */
 /** @typedef {{}} CommentsInputs */
 /** @typedef {{}} Comments_DescriptionInputs */
+/** @typedef {{}} Comments_DisabledInputs */
 /** @typedef {{}} ContentsInputs */
 /** @typedef {{}} Feature_Api_TitleInputs */
 /** @typedef {{}} Feature_Api_BodyInputs */
@@ -239,12 +256,30 @@ export const admin_assets_uploaded: (inputs: Admin_Assets_UploadedInputs) => Loc
 export const admin_assets_uploading: (inputs: Admin_Assets_UploadingInputs) => LocalizedString;
 export const admin_assets_url: (inputs: Admin_Assets_UrlInputs) => LocalizedString;
 export const admin_comments_approve: (inputs: Admin_Comments_ApproveInputs) => LocalizedString;
+export const admin_comments_all_posts: (inputs: Admin_Comments_All_PostsInputs) => LocalizedString;
+export const admin_comments_auto_block: (
+  inputs: Admin_Comments_Auto_BlockInputs,
+) => LocalizedString;
+export const admin_comments_blocked_keywords: (
+  inputs: Admin_Comments_Blocked_KeywordsInputs,
+) => LocalizedString;
+export const admin_comments_blocked_keywords_help: (
+  inputs: Admin_Comments_Blocked_Keywords_HelpInputs,
+) => LocalizedString;
 export const admin_comments_delete: (inputs: Admin_Comments_DeleteInputs) => LocalizedString;
 export const admin_comments_description: (
   inputs: Admin_Comments_DescriptionInputs,
 ) => LocalizedString;
+export const admin_comments_empty: (inputs: Admin_Comments_EmptyInputs) => LocalizedString;
+export const admin_comments_filter_post: (
+  inputs: Admin_Comments_Filter_PostInputs,
+) => LocalizedString;
 export const admin_comments_mark_spam: (inputs: Admin_Comments_Mark_SpamInputs) => LocalizedString;
+export const admin_comments_require_approval: (
+  inputs: Admin_Comments_Require_ApprovalInputs,
+) => LocalizedString;
 export const admin_comments_title: (inputs: Admin_Comments_TitleInputs) => LocalizedString;
+export const admin_comment_settings: (inputs: Admin_Comment_SettingsInputs) => LocalizedString;
 export const admin_editor_default_excerpt: (
   inputs: Admin_Editor_Default_ExcerptInputs,
 ) => LocalizedString;
@@ -398,17 +433,28 @@ export const blog_search_submit: (inputs: Blog_Search_SubmitInputs) => Localized
 export const blog_title: (inputs: Blog_TitleInputs) => LocalizedString;
 export const comment_body: (inputs: Comment_BodyInputs) => LocalizedString;
 export const comment_company: (inputs: Comment_CompanyInputs) => LocalizedString;
+export const comment_auth_error: (inputs: Comment_Auth_ErrorInputs) => LocalizedString;
+export const comment_auth_loading: (inputs: Comment_Auth_LoadingInputs) => LocalizedString;
+export const comment_continue_github: (inputs: Comment_Continue_GithubInputs) => LocalizedString;
 export const comment_email: (inputs: Comment_EmailInputs) => LocalizedString;
 export const comment_error: (inputs: Comment_ErrorInputs) => LocalizedString;
+export const comment_login_description: (
+  inputs: Comment_Login_DescriptionInputs,
+) => LocalizedString;
+export const comment_login_required: (inputs: Comment_Login_RequiredInputs) => LocalizedString;
 export const comment_name: (inputs: Comment_NameInputs) => LocalizedString;
 export const comment_cancel_reply: (inputs: Comment_Cancel_ReplyInputs) => LocalizedString;
 export const comment_reply: (inputs: Comment_ReplyInputs) => LocalizedString;
 export const comment_replying_to: (inputs: Comment_Replying_ToInputs) => LocalizedString;
+export const comment_signed_in_as: (inputs: Comment_Signed_In_AsInputs) => LocalizedString;
 export const comment_submitting: (inputs: Comment_SubmittingInputs) => LocalizedString;
 export const comment_success: (inputs: Comment_SuccessInputs) => LocalizedString;
+export const comment_switch_to_login: (inputs: Comment_Switch_To_LoginInputs) => LocalizedString;
+export const comment_switch_to_signup: (inputs: Comment_Switch_To_SignupInputs) => LocalizedString;
 export const comment_website: (inputs: Comment_WebsiteInputs) => LocalizedString;
 export const comments: (inputs: CommentsInputs) => LocalizedString;
 export const comments_description: (inputs: Comments_DescriptionInputs) => LocalizedString;
+export const comments_disabled: (inputs: Comments_DisabledInputs) => LocalizedString;
 export const contents: (inputs: ContentsInputs) => LocalizedString;
 export const feature_api_title: (inputs: Feature_Api_TitleInputs) => LocalizedString;
 export const feature_api_body: (inputs: Feature_Api_BodyInputs) => LocalizedString;
@@ -522,10 +568,18 @@ export type Admin_Assets_UploadedInputs = {};
 export type Admin_Assets_UploadingInputs = {};
 export type Admin_Assets_UrlInputs = {};
 export type Admin_Comments_ApproveInputs = {};
+export type Admin_Comments_All_PostsInputs = {};
+export type Admin_Comments_Auto_BlockInputs = {};
+export type Admin_Comments_Blocked_KeywordsInputs = {};
+export type Admin_Comments_Blocked_Keywords_HelpInputs = {};
 export type Admin_Comments_DeleteInputs = {};
 export type Admin_Comments_DescriptionInputs = {};
+export type Admin_Comments_EmptyInputs = {};
+export type Admin_Comments_Filter_PostInputs = {};
 export type Admin_Comments_Mark_SpamInputs = {};
+export type Admin_Comments_Require_ApprovalInputs = {};
 export type Admin_Comments_TitleInputs = {};
+export type Admin_Comment_SettingsInputs = {};
 export type Admin_Editor_Default_ExcerptInputs = {};
 export type Admin_Editor_Default_TitleInputs = {};
 export type Admin_Editor_Comments_EnabledInputs = {};
@@ -649,19 +703,30 @@ export type Blog_Search_SubmitInputs = {};
 export type Blog_TitleInputs = {};
 export type Comment_BodyInputs = {};
 export type Comment_CompanyInputs = {};
+export type Comment_Auth_ErrorInputs = {};
+export type Comment_Auth_LoadingInputs = {};
+export type Comment_Continue_GithubInputs = {};
 export type Comment_EmailInputs = {};
 export type Comment_ErrorInputs = {};
+export type Comment_Login_DescriptionInputs = {};
+export type Comment_Login_RequiredInputs = {};
 export type Comment_NameInputs = {};
 export type Comment_Cancel_ReplyInputs = {};
 export type Comment_ReplyInputs = {};
 export type Comment_Replying_ToInputs = {
   name: NonNullable<unknown>;
 };
+export type Comment_Signed_In_AsInputs = {
+  name: NonNullable<unknown>;
+};
 export type Comment_SubmittingInputs = {};
 export type Comment_SuccessInputs = {};
+export type Comment_Switch_To_LoginInputs = {};
+export type Comment_Switch_To_SignupInputs = {};
 export type Comment_WebsiteInputs = {};
 export type CommentsInputs = {};
 export type Comments_DescriptionInputs = {};
+export type Comments_DisabledInputs = {};
 export type ContentsInputs = {};
 export type Feature_Api_TitleInputs = {};
 export type Feature_Api_BodyInputs = {};

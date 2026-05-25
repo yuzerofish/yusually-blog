@@ -3,7 +3,7 @@ import { defineConfig, defineDocs } from "fumadocs-mdx/config";
 export const docs = defineDocs({
   dir: "content/docs",
   docs: {
-    files: ["**/*.md", "**/*.mdx", "!**/AGENTS.md", "!**/.agents/**"],
+    files: ["**/*.md", "**/*.mdx"],
   },
   meta: {
     files: ["**/meta.json", "**/meta.*.json"],

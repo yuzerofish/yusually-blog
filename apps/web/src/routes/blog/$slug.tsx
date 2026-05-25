@@ -12,12 +12,12 @@ import { useState } from "react";
 
 import { CommentForm } from "#/components/comment-form";
 import { SiteShell } from "#/components/site-shell";
-import { $getBlogPostPage } from "#/lib/cms-server";
+import { $getBlogPostPage, type BlogPostPageData } from "#/lib/cms-server";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/blog/$slug")({
-  loader: async ({ params }) => {
+  loader: async ({ params }): Promise<BlogPostPageData> => {
     const data = await $getBlogPostPage({ data: { slug: params.slug } });
 
     if (!data) {
@@ -98,7 +98,7 @@ export const Route = createFileRoute("/blog/$slug")({
 });
 
 function BlogPostPage() {
-  const { comments, post, relatedPosts, siteSettings } = Route.useLoaderData();
+  const { comments, post, relatedPosts, siteSettings }: BlogPostPageData = Route.useLoaderData();
   const [replyTarget, setReplyTarget] = useState<Comment | null>(null);
   const locale = getCurrentLocale();
   const localizedPost = localizePost(post, locale);
@@ -107,6 +107,7 @@ function BlogPostPage() {
   const localizedRelatedPosts = relatedPosts.map((relatedPost) =>
     localizePost(relatedPost, locale),
   );
+  const commentsEnabled = localizedSiteSettings.commentsEnabled && localizedPost.commentsEnabled;
 
   return (
     <SiteShell siteSettings={localizedSiteSettings}>
@@ -149,13 +150,15 @@ function BlogPostPage() {
           <aside className="hidden lg:block">
             <div className="sticky top-24 rounded-lg border border-border/80 bg-card p-4 text-sm shadow-xs">
               <p className="font-semibold">{m.contents()}</p>
-              <a
-                href="#comments"
-                className="mt-3 flex items-center gap-2 text-muted-foreground hover:text-link"
-              >
-                <MessageSquareIcon className="size-4" />
-                {m.comments()}
-              </a>
+              {commentsEnabled || localizedComments.length ? (
+                <a
+                  href="#comments"
+                  className="mt-3 flex items-center gap-2 text-muted-foreground hover:text-link"
+                >
+                  <MessageSquareIcon className="size-4" />
+                  {m.comments()}
+                </a>
+              ) : null}
               <a
                 href="/rss.xml"
                 className="mt-2 flex items-center gap-2 text-muted-foreground hover:text-link"
@@ -172,26 +175,34 @@ function BlogPostPage() {
               dangerouslySetInnerHTML={{ __html: localizedPost.contentHtml }}
             />
 
-            <section
-              id="comments"
-              className="mt-8 rounded-lg border border-border/80 bg-card p-6 shadow-xs"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h2 className="text-2xl font-semibold">{m.comments()}</h2>
-                  <p className="mt-2 text-sm text-muted-foreground">{m.comments_description()}</p>
+            {commentsEnabled || localizedComments.length ? (
+              <section
+                id="comments"
+                className="mt-8 rounded-lg border border-border/80 bg-card p-6 shadow-xs"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl font-semibold">{m.comments()}</h2>
+                    <p className="mt-2 text-sm text-muted-foreground">{m.comments_description()}</p>
+                  </div>
                 </div>
-              </div>
-              <CommentForm
-                postSlug={localizedPost.slug}
-                parentId={replyTarget?.id ?? null}
-                replyingTo={replyTarget?.authorName ?? null}
-                onCancelReply={() => setReplyTarget(null)}
-              />
-              <div className="mt-6 grid gap-4">
-                <CommentList comments={localizedComments} onReply={setReplyTarget} />
-              </div>
-            </section>
+                {commentsEnabled ? (
+                  <CommentForm
+                    postSlug={localizedPost.slug}
+                    parentId={replyTarget?.id ?? null}
+                    replyingTo={replyTarget?.authorName ?? null}
+                    onCancelReply={() => setReplyTarget(null)}
+                  />
+                ) : (
+                  <p className="mt-6 rounded-md border border-border bg-muted/35 p-4 text-sm text-muted-foreground">
+                    {m.comments_disabled()}
+                  </p>
+                )}
+                <div className="mt-6 grid gap-4">
+                  <CommentList comments={localizedComments} onReply={setReplyTarget} />
+                </div>
+              </section>
+            ) : null}
           </div>
 
           <aside className="min-w-0">

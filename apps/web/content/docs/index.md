@@ -33,8 +33,23 @@ packages/core            content types, demo data, Markdown and i18n helpers
 packages/db              Drizzle schema and D1 migrations
 packages/ui              shared UI primitives
 skills/cloud-blog-cms    AI initialization Skill
-docs/specs               project specifications and implementation evidence
+apps/web/content/docs    public Fumadocs source, mirrored at docs/site
+docs/specs               project specifications and implementation records
 ```
+
+## Documentation Source
+
+The public documentation source is `apps/web/content/docs`. It is rendered at `/docs` and `/zh/docs`, and `README.md` points to the English docs index so the repository landing page and docs home stay aligned.
+
+The root `docs/specs` folder is for project specifications, deployment records, acceptance notes, and implementation evidence. It is intentionally separate from the public Fumadocs source.
+
+## Configuration
+
+Start with the deployment and comment guides when configuring a new site:
+
+- [Deployment](./deployment): Cloudflare Workers, D1, R2, KV, migrations, environment variables, and deploy targets.
+- [Comments](./comments): reader login, GitHub OAuth, email/password fallback, approval mode, keyword blocking, and moderation.
+- [API](./api): automation routes, OpenAPI, and comment-auth endpoints.
 
 ## Development
 

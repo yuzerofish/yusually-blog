@@ -96,6 +96,7 @@ export type Comment = {
   id: string;
   postId: string;
   parentId: string | null;
+  authorUserId?: string | null;
   authorName: string;
   authorEmailHash: string;
   authorWebsite: string | null;
@@ -134,6 +135,9 @@ export type SiteSettings = {
   }>;
   rssEnabled: boolean;
   commentsEnabled: boolean;
+  commentsRequireApproval: boolean;
+  commentAutoBlockEnabled: boolean;
+  commentBlockedKeywords: string[];
   indexingEnabled: boolean;
   themePreset: ThemePreset;
   locales: SupportedLocale[];

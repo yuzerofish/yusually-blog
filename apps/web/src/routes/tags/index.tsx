@@ -2,18 +2,18 @@ import { localizePost, localizeSiteSettings, localizeTag } from "@repo/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { SiteShell } from "#/components/site-shell";
-import { $getTagsPage } from "#/lib/cms-server";
+import { $getTagsPage, type TagsPageData } from "#/lib/cms-server";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/tags/")({
-  loader: () => $getTagsPage(),
+  loader: (): Promise<TagsPageData> => $getTagsPage(),
   component: TagsPage,
 });
 
 function TagsPage() {
   const locale = getCurrentLocale();
-  const data = Route.useLoaderData();
+  const data: TagsPageData = Route.useLoaderData();
   const posts = data.posts.map((post) => localizePost(post, locale));
   const siteSettings = localizeSiteSettings(data.siteSettings, locale);
   const tags = data.tags.map((tag) => localizeTag(tag, locale));

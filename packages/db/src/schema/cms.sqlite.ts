@@ -145,6 +145,47 @@ export const assets = sqliteTable(
   ],
 );
 
+export const commentUsers = sqliteTable(
+  "comment_users",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    emailHash: text("email_hash").notNull(),
+    avatarUrl: text("avatar_url"),
+    provider: text("provider", { enum: ["email", "github"] })
+      .notNull()
+      .default("email"),
+    providerAccountId: text("provider_account_id"),
+    passwordHash: text("password_hash"),
+    createdAt: text("created_at").notNull(),
+    updatedAt: text("updated_at").notNull(),
+    lastLoginAt: text("last_login_at"),
+  },
+  (table) => [
+    uniqueIndex("comment_users_email_idx").on(table.email),
+    uniqueIndex("comment_users_provider_idx").on(table.provider, table.providerAccountId),
+  ],
+);
+
+export const commentSessions = sqliteTable(
+  "comment_sessions",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => commentUsers.id, { onDelete: "cascade" }),
+    tokenHash: text("token_hash").notNull(),
+    expiresAt: text("expires_at").notNull(),
+    createdAt: text("created_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("comment_sessions_token_hash_idx").on(table.tokenHash),
+    index("comment_sessions_user_idx").on(table.userId),
+    index("comment_sessions_expires_idx").on(table.expiresAt),
+  ],
+);
+
 export const comments = sqliteTable(
   "comments",
   {
@@ -153,6 +194,9 @@ export const comments = sqliteTable(
       .notNull()
       .references(() => posts.id, { onDelete: "cascade" }),
     parentId: text("parent_id"),
+    authorUserId: text("author_user_id").references(() => commentUsers.id, {
+      onDelete: "set null",
+    }),
     authorName: text("author_name").notNull(),
     authorEmailHash: text("author_email_hash").notNull(),
     authorWebsite: text("author_website"),
@@ -169,6 +213,7 @@ export const comments = sqliteTable(
   (table) => [
     index("comments_post_status_idx").on(table.postId, table.status),
     index("comments_status_created_idx").on(table.status, table.createdAt),
+    index("comments_author_user_idx").on(table.authorUserId),
   ],
 );
 

@@ -3,12 +3,12 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 
 import { PostCard } from "#/components/post-card";
 import { SiteShell } from "#/components/site-shell";
-import { $getTagPage } from "#/lib/cms-server";
+import { $getTagPage, type TagPageData } from "#/lib/cms-server";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/tags/$slug")({
-  loader: async ({ params }) => {
+  loader: async ({ params }): Promise<TagPageData> => {
     const data = await $getTagPage({ data: { slug: params.slug } });
 
     if (!data) {
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/tags/$slug")({
 });
 
 function TagDetailPage() {
-  const { posts, siteSettings, tag } = Route.useLoaderData();
+  const { posts, siteSettings, tag }: TagPageData = Route.useLoaderData();
   const locale = getCurrentLocale();
   const localizedSiteSettings = localizeSiteSettings(siteSettings, locale);
   const localizedTag = localizeTag(tag, locale);

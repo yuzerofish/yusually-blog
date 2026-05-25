@@ -1,3 +1,4 @@
+import { getCommentInitialStatus } from "./comment-moderation";
 import {
   assets as seedAssets,
   comments as seedComments,
@@ -349,7 +350,7 @@ export async function createComment(input: CommentInput) {
     authorEmailHash: await digestText(authorEmail),
     authorWebsite,
     body,
-    status: "pending",
+    status: getCommentInitialStatus({ body, settings: state.siteSettings }),
     createdAt: now,
   };
 
