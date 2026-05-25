@@ -3,12 +3,26 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {import('../runtime.js').LocalizedString} LocalizedString */
 /** @typedef {{}} AdminInputs */
 /** @typedef {{}} Admin_Assets_DescriptionInputs */
+/** @typedef {{}} Admin_Assets_ErrorInputs */
+/** @typedef {{}} Admin_Assets_FilenameInputs */
 /** @typedef {{}} Admin_Assets_TitleInputs */
+/** @typedef {{}} Admin_Assets_UploadedInputs */
+/** @typedef {{}} Admin_Assets_UploadingInputs */
+/** @typedef {{}} Admin_Assets_UrlInputs */
 /** @typedef {{}} Admin_Comments_ApproveInputs */
 /** @typedef {{}} Admin_Comments_DeleteInputs */
 /** @typedef {{}} Admin_Comments_DescriptionInputs */
 /** @typedef {{}} Admin_Comments_Mark_SpamInputs */
 /** @typedef {{}} Admin_Comments_TitleInputs */
+/** @typedef {{}} Admin_Editor_Default_ExcerptInputs */
+/** @typedef {{}} Admin_Editor_Default_TitleInputs */
+/** @typedef {{}} Admin_Editor_DescriptionInputs */
+/** @typedef {{}} Admin_Editor_ErrorInputs */
+/** @typedef {{}} Admin_Editor_ExcerptInputs */
+/** @typedef {{}} Admin_Editor_Preview_ModeInputs */
+/** @typedef {{}} Admin_Editor_SavedInputs */
+/** @typedef {{}} Admin_Editor_Source_ModeInputs */
+/** @typedef {{}} Admin_Editor_TitleInputs */
 /** @typedef {{}} Admin_Latest_PostInputs */
 /** @typedef {{}} Admin_Manage_PostsInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Admin_Metric_Overview_DescriptionInputs */
@@ -25,11 +39,14 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Admin_Posts_Column_TitleInputs */
 /** @typedef {{}} Admin_Posts_DescriptionInputs */
 /** @typedef {{}} Admin_Posts_Public_UrlInputs */
+/** @typedef {{}} Admin_Posts_SearchInputs */
 /** @typedef {{}} Admin_Posts_SourceInputs */
 /** @typedef {{}} Admin_Posts_StatusInputs */
 /** @typedef {{}} Admin_Posts_TitleInputs */
 /** @typedef {{}} Admin_Posts_UpdatedInputs */
 /** @typedef {{}} Admin_Posts_ViewInputs */
+/** @typedef {{}} Admin_Publish_PostInputs */
+/** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
 /** @typedef {{}} Admin_Settings_Author_NameInputs */
 /** @typedef {{}} Admin_Settings_Default_OgInputs */
@@ -172,6 +189,40 @@ export const admin_assets_description =
 /**
  * | output |
  * | --- |
+ * | "Asset could not be uploaded." |
+ *
+ * @param {Admin_Assets_ErrorInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_assets_error =
+  /** @type {((inputs?: Admin_Assets_ErrorInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Assets_ErrorInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_assets_error(inputs);
+      return __zh.admin_assets_error(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Filename" |
+ *
+ * @param {Admin_Assets_FilenameInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_assets_filename =
+  /** @type {((inputs?: Admin_Assets_FilenameInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Assets_FilenameInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_assets_filename(inputs);
+      return __zh.admin_assets_filename(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
  * | "Assets" |
  *
  * @param {Admin_Assets_TitleInputs} inputs
@@ -184,6 +235,57 @@ export const admin_assets_title =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.admin_assets_title(inputs);
       return __zh.admin_assets_title(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Asset upload accepted." |
+ *
+ * @param {Admin_Assets_UploadedInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_assets_uploaded =
+  /** @type {((inputs?: Admin_Assets_UploadedInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Assets_UploadedInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_assets_uploaded(inputs);
+      return __zh.admin_assets_uploaded(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Uploading..." |
+ *
+ * @param {Admin_Assets_UploadingInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_assets_uploading =
+  /** @type {((inputs?: Admin_Assets_UploadingInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Assets_UploadingInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_assets_uploading(inputs);
+      return __zh.admin_assets_uploading(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Asset URL" |
+ *
+ * @param {Admin_Assets_UrlInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_assets_url =
+  /** @type {((inputs?: Admin_Assets_UrlInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Assets_UrlInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_assets_url(inputs);
+      return __zh.admin_assets_url(inputs);
     }
   );
 /**
@@ -269,6 +371,159 @@ export const admin_comments_title =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.admin_comments_title(inputs);
       return __zh.admin_comments_title(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "A short summary for the new post." |
+ *
+ * @param {Admin_Editor_Default_ExcerptInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_default_excerpt =
+  /** @type {((inputs?: Admin_Editor_Default_ExcerptInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Editor_Default_ExcerptInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_editor_default_excerpt(inputs);
+      return __zh.admin_editor_default_excerpt(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "New bilingual post" |
+ *
+ * @param {Admin_Editor_Default_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_default_title =
+  /** @type {((inputs?: Admin_Editor_Default_TitleInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Editor_Default_TitleInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_editor_default_title(inputs);
+      return __zh.admin_editor_default_title(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Write Markdown, preview the rendered shape, then save as draft or publish through the API." |
+ *
+ * @param {Admin_Editor_DescriptionInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_description =
+  /** @type {((inputs?: Admin_Editor_DescriptionInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Editor_DescriptionInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_editor_description(inputs);
+      return __zh.admin_editor_description(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Post could not be saved." |
+ *
+ * @param {Admin_Editor_ErrorInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_error =
+  /** @type {((inputs?: Admin_Editor_ErrorInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Editor_ErrorInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_editor_error(inputs);
+      return __zh.admin_editor_error(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Excerpt" |
+ *
+ * @param {Admin_Editor_ExcerptInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_excerpt =
+  /** @type {((inputs?: Admin_Editor_ExcerptInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Editor_ExcerptInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_editor_excerpt(inputs);
+      return __zh.admin_editor_excerpt(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Preview" |
+ *
+ * @param {Admin_Editor_Preview_ModeInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_preview_mode =
+  /** @type {((inputs?: Admin_Editor_Preview_ModeInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Editor_Preview_ModeInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_editor_preview_mode(inputs);
+      return __zh.admin_editor_preview_mode(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Post saved through the API." |
+ *
+ * @param {Admin_Editor_SavedInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_saved =
+  /** @type {((inputs?: Admin_Editor_SavedInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Editor_SavedInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_editor_saved(inputs);
+      return __zh.admin_editor_saved(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Source" |
+ *
+ * @param {Admin_Editor_Source_ModeInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_source_mode =
+  /** @type {((inputs?: Admin_Editor_Source_ModeInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Editor_Source_ModeInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_editor_source_mode(inputs);
+      return __zh.admin_editor_source_mode(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Markdown editor" |
+ *
+ * @param {Admin_Editor_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_title =
+  /** @type {((inputs?: Admin_Editor_TitleInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Editor_TitleInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_editor_title(inputs);
+      return __zh.admin_editor_title(inputs);
     }
   );
 /**
@@ -546,6 +801,23 @@ export const admin_posts_public_url =
 /**
  * | output |
  * | --- |
+ * | "Search posts" |
+ *
+ * @param {Admin_Posts_SearchInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_posts_search =
+  /** @type {((inputs?: Admin_Posts_SearchInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Posts_SearchInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_posts_search(inputs);
+      return __zh.admin_posts_search(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
  * | "Source" |
  *
  * @param {Admin_Posts_SourceInputs} inputs
@@ -626,6 +898,40 @@ export const admin_posts_view =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.admin_posts_view(inputs);
       return __zh.admin_posts_view(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Publish" |
+ *
+ * @param {Admin_Publish_PostInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_publish_post =
+  /** @type {((inputs?: Admin_Publish_PostInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Publish_PostInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_publish_post(inputs);
+      return __zh.admin_publish_post(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Save draft" |
+ *
+ * @param {Admin_Save_DraftInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_save_draft =
+  /** @type {((inputs?: Admin_Save_DraftInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Save_DraftInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_save_draft(inputs);
+      return __zh.admin_save_draft(inputs);
     }
   );
 /**

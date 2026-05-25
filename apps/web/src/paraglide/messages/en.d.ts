@@ -1,12 +1,26 @@
 /** @typedef {import('../runtime.js').LocalizedString} LocalizedString */
 /** @typedef {{}} AdminInputs */
 /** @typedef {{}} Admin_Assets_DescriptionInputs */
+/** @typedef {{}} Admin_Assets_ErrorInputs */
+/** @typedef {{}} Admin_Assets_FilenameInputs */
 /** @typedef {{}} Admin_Assets_TitleInputs */
+/** @typedef {{}} Admin_Assets_UploadedInputs */
+/** @typedef {{}} Admin_Assets_UploadingInputs */
+/** @typedef {{}} Admin_Assets_UrlInputs */
 /** @typedef {{}} Admin_Comments_ApproveInputs */
 /** @typedef {{}} Admin_Comments_DeleteInputs */
 /** @typedef {{}} Admin_Comments_DescriptionInputs */
 /** @typedef {{}} Admin_Comments_Mark_SpamInputs */
 /** @typedef {{}} Admin_Comments_TitleInputs */
+/** @typedef {{}} Admin_Editor_Default_ExcerptInputs */
+/** @typedef {{}} Admin_Editor_Default_TitleInputs */
+/** @typedef {{}} Admin_Editor_DescriptionInputs */
+/** @typedef {{}} Admin_Editor_ErrorInputs */
+/** @typedef {{}} Admin_Editor_ExcerptInputs */
+/** @typedef {{}} Admin_Editor_Preview_ModeInputs */
+/** @typedef {{}} Admin_Editor_SavedInputs */
+/** @typedef {{}} Admin_Editor_Source_ModeInputs */
+/** @typedef {{}} Admin_Editor_TitleInputs */
 /** @typedef {{}} Admin_Latest_PostInputs */
 /** @typedef {{}} Admin_Manage_PostsInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Admin_Metric_Overview_DescriptionInputs */
@@ -23,11 +37,14 @@
 /** @typedef {{}} Admin_Posts_Column_TitleInputs */
 /** @typedef {{}} Admin_Posts_DescriptionInputs */
 /** @typedef {{}} Admin_Posts_Public_UrlInputs */
+/** @typedef {{}} Admin_Posts_SearchInputs */
 /** @typedef {{}} Admin_Posts_SourceInputs */
 /** @typedef {{}} Admin_Posts_StatusInputs */
 /** @typedef {{}} Admin_Posts_TitleInputs */
 /** @typedef {{}} Admin_Posts_UpdatedInputs */
 /** @typedef {{}} Admin_Posts_ViewInputs */
+/** @typedef {{}} Admin_Publish_PostInputs */
+/** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
 /** @typedef {{}} Admin_Settings_Author_NameInputs */
 /** @typedef {{}} Admin_Settings_Default_OgInputs */
@@ -133,7 +150,12 @@
 /** @typedef {{}} View_All_PostsInputs */
 export const admin: (inputs: AdminInputs) => LocalizedString;
 export const admin_assets_description: (inputs: Admin_Assets_DescriptionInputs) => LocalizedString;
+export const admin_assets_error: (inputs: Admin_Assets_ErrorInputs) => LocalizedString;
+export const admin_assets_filename: (inputs: Admin_Assets_FilenameInputs) => LocalizedString;
 export const admin_assets_title: (inputs: Admin_Assets_TitleInputs) => LocalizedString;
+export const admin_assets_uploaded: (inputs: Admin_Assets_UploadedInputs) => LocalizedString;
+export const admin_assets_uploading: (inputs: Admin_Assets_UploadingInputs) => LocalizedString;
+export const admin_assets_url: (inputs: Admin_Assets_UrlInputs) => LocalizedString;
 export const admin_comments_approve: (inputs: Admin_Comments_ApproveInputs) => LocalizedString;
 export const admin_comments_delete: (inputs: Admin_Comments_DeleteInputs) => LocalizedString;
 export const admin_comments_description: (
@@ -141,6 +163,21 @@ export const admin_comments_description: (
 ) => LocalizedString;
 export const admin_comments_mark_spam: (inputs: Admin_Comments_Mark_SpamInputs) => LocalizedString;
 export const admin_comments_title: (inputs: Admin_Comments_TitleInputs) => LocalizedString;
+export const admin_editor_default_excerpt: (
+  inputs: Admin_Editor_Default_ExcerptInputs,
+) => LocalizedString;
+export const admin_editor_default_title: (
+  inputs: Admin_Editor_Default_TitleInputs,
+) => LocalizedString;
+export const admin_editor_description: (inputs: Admin_Editor_DescriptionInputs) => LocalizedString;
+export const admin_editor_error: (inputs: Admin_Editor_ErrorInputs) => LocalizedString;
+export const admin_editor_excerpt: (inputs: Admin_Editor_ExcerptInputs) => LocalizedString;
+export const admin_editor_preview_mode: (
+  inputs: Admin_Editor_Preview_ModeInputs,
+) => LocalizedString;
+export const admin_editor_saved: (inputs: Admin_Editor_SavedInputs) => LocalizedString;
+export const admin_editor_source_mode: (inputs: Admin_Editor_Source_ModeInputs) => LocalizedString;
+export const admin_editor_title: (inputs: Admin_Editor_TitleInputs) => LocalizedString;
 export const admin_latest_post: (inputs: Admin_Latest_PostInputs) => LocalizedString;
 export const admin_manage_posts: (inputs: Admin_Manage_PostsInputs) => LocalizedString;
 export const admin_metric_overview_description: (
@@ -161,11 +198,14 @@ export const admin_overview_title: (inputs: Admin_Overview_TitleInputs) => Local
 export const admin_posts_column_title: (inputs: Admin_Posts_Column_TitleInputs) => LocalizedString;
 export const admin_posts_description: (inputs: Admin_Posts_DescriptionInputs) => LocalizedString;
 export const admin_posts_public_url: (inputs: Admin_Posts_Public_UrlInputs) => LocalizedString;
+export const admin_posts_search: (inputs: Admin_Posts_SearchInputs) => LocalizedString;
 export const admin_posts_source: (inputs: Admin_Posts_SourceInputs) => LocalizedString;
 export const admin_posts_status: (inputs: Admin_Posts_StatusInputs) => LocalizedString;
 export const admin_posts_title: (inputs: Admin_Posts_TitleInputs) => LocalizedString;
 export const admin_posts_updated: (inputs: Admin_Posts_UpdatedInputs) => LocalizedString;
 export const admin_posts_view: (inputs: Admin_Posts_ViewInputs) => LocalizedString;
+export const admin_publish_post: (inputs: Admin_Publish_PostInputs) => LocalizedString;
+export const admin_save_draft: (inputs: Admin_Save_DraftInputs) => LocalizedString;
 export const admin_save_settings: (inputs: Admin_Save_SettingsInputs) => LocalizedString;
 export const admin_settings_author_name: (
   inputs: Admin_Settings_Author_NameInputs,
@@ -282,12 +322,26 @@ export const view_all_posts: (inputs: View_All_PostsInputs) => LocalizedString;
 export type LocalizedString = import("../runtime.js").LocalizedString;
 export type AdminInputs = {};
 export type Admin_Assets_DescriptionInputs = {};
+export type Admin_Assets_ErrorInputs = {};
+export type Admin_Assets_FilenameInputs = {};
 export type Admin_Assets_TitleInputs = {};
+export type Admin_Assets_UploadedInputs = {};
+export type Admin_Assets_UploadingInputs = {};
+export type Admin_Assets_UrlInputs = {};
 export type Admin_Comments_ApproveInputs = {};
 export type Admin_Comments_DeleteInputs = {};
 export type Admin_Comments_DescriptionInputs = {};
 export type Admin_Comments_Mark_SpamInputs = {};
 export type Admin_Comments_TitleInputs = {};
+export type Admin_Editor_Default_ExcerptInputs = {};
+export type Admin_Editor_Default_TitleInputs = {};
+export type Admin_Editor_DescriptionInputs = {};
+export type Admin_Editor_ErrorInputs = {};
+export type Admin_Editor_ExcerptInputs = {};
+export type Admin_Editor_Preview_ModeInputs = {};
+export type Admin_Editor_SavedInputs = {};
+export type Admin_Editor_Source_ModeInputs = {};
+export type Admin_Editor_TitleInputs = {};
 export type Admin_Latest_PostInputs = {};
 export type Admin_Manage_PostsInputs = {};
 export type Admin_Metric_Overview_DescriptionInputs = {
@@ -308,11 +362,14 @@ export type Admin_Overview_TitleInputs = {};
 export type Admin_Posts_Column_TitleInputs = {};
 export type Admin_Posts_DescriptionInputs = {};
 export type Admin_Posts_Public_UrlInputs = {};
+export type Admin_Posts_SearchInputs = {};
 export type Admin_Posts_SourceInputs = {};
 export type Admin_Posts_StatusInputs = {};
 export type Admin_Posts_TitleInputs = {};
 export type Admin_Posts_UpdatedInputs = {};
 export type Admin_Posts_ViewInputs = {};
+export type Admin_Publish_PostInputs = {};
+export type Admin_Save_DraftInputs = {};
 export type Admin_Save_SettingsInputs = {};
 export type Admin_Settings_Author_NameInputs = {};
 export type Admin_Settings_Default_OgInputs = {};
