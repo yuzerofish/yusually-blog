@@ -91,6 +91,7 @@ type PostInput = Partial<{
   contentHtml: string;
   status: ContentStatus;
   locale: SupportedLocale;
+  i18n: Post["i18n"];
 }>;
 
 type CommentInput = {
@@ -185,8 +186,9 @@ export async function listD1Posts({
   const result = await env.CMS_DB.prepare(sql)
     .bind(...params)
     .all<D1PostRow>();
+  const currentSettings = await getD1SiteSettings();
 
-  return result.results.map(rowToPost);
+  return result.results.map((row) => rowToPost(row, currentSettings));
 }
 
 export async function getD1PostBySlug(slug: string, includeUnpublished = false) {
@@ -196,7 +198,7 @@ export async function getD1PostBySlug(slug: string, includeUnpublished = false) 
     .bind(slug)
     .first<D1PostRow>();
 
-  return result ? rowToPost(result) : undefined;
+  return result ? rowToPost(result, await getD1SiteSettings()) : undefined;
 }
 
 export async function getD1PostByIdOrSlug(idOrSlug: string, includeUnpublished = true) {
@@ -206,7 +208,7 @@ export async function getD1PostByIdOrSlug(idOrSlug: string, includeUnpublished =
     .bind(idOrSlug, idOrSlug)
     .first<D1PostRow>();
 
-  return result ? rowToPost(result) : undefined;
+  return result ? rowToPost(result, await getD1SiteSettings()) : undefined;
 }
 
 export async function createD1Post(input: PostInput) {
@@ -240,17 +242,19 @@ export async function createD1Post(input: PostInput) {
     tags: [],
     seoTitle: title,
     seoDescription: input.excerpt?.trim() || contentText.slice(0, 160),
+    i18n: input.i18n,
   };
 
   if (input.locale === "zh") {
     post.i18n = {
-      title: { zh: title },
-      excerpt: { zh: post.excerpt },
-      contentMarkdown: { zh: post.contentMarkdown },
-      contentHtml: { zh: post.contentHtml },
-      contentText: { zh: post.contentText },
-      seoTitle: { zh: post.seoTitle },
-      seoDescription: { zh: post.seoDescription },
+      ...post.i18n,
+      title: { ...post.i18n?.title, zh: title },
+      excerpt: { ...post.i18n?.excerpt, zh: post.excerpt },
+      contentMarkdown: { ...post.i18n?.contentMarkdown, zh: post.contentMarkdown },
+      contentHtml: { ...post.i18n?.contentHtml, zh: post.contentHtml },
+      contentText: { ...post.i18n?.contentText, zh: post.contentText },
+      seoTitle: { ...post.i18n?.seoTitle, zh: post.seoTitle },
+      seoDescription: { ...post.i18n?.seoDescription, zh: post.seoDescription },
     };
   }
 
@@ -313,11 +317,12 @@ export async function updateD1Post(idOrSlug: string, input: PostInput) {
   const now = new Date().toISOString();
   const publishedAt =
     status === "published" && post.status !== "published" ? now : post.publishedAt;
+  const i18n = input.i18n ?? post.i18n ?? null;
 
   await env.CMS_DB.prepare(
     `update posts set
       title = ?, excerpt = ?, cover_image = ?, content_markdown = ?, content_html = ?,
-      content_text = ?, status = ?, seo_title = ?, seo_description = ?, published_at = ?,
+      content_text = ?, status = ?, seo_title = ?, seo_description = ?, i18n = ?, published_at = ?,
       updated_at = ?
     where id = ?`,
   )
@@ -333,6 +338,7 @@ export async function updateD1Post(idOrSlug: string, input: PostInput) {
       status,
       title,
       input.excerpt !== undefined ? input.excerpt.trim() : post.seoDescription,
+      i18n ? JSON.stringify(i18n) : null,
       publishedAt,
       now,
       post.id,
@@ -343,7 +349,23 @@ export async function updateD1Post(idOrSlug: string, input: PostInput) {
 }
 
 export async function deleteD1Post(idOrSlug: string) {
-  return updateD1Post(idOrSlug, { status: "deleted" });
+  const post = await getD1PostByIdOrSlug(idOrSlug);
+
+  if (!post) {
+    return undefined;
+  }
+
+  const now = new Date().toISOString();
+
+  await env.CMS_DB.prepare("update posts set status = ?, updated_at = ? where id = ?")
+    .bind("deleted", now, post.id)
+    .run();
+
+  return {
+    ...post,
+    status: "deleted" as const,
+    updatedAt: now,
+  };
 }
 
 export async function createD1Comment(input: CommentInput): Promise<D1Result<Comment>> {
@@ -587,9 +609,10 @@ export async function buildD1SiteExport(locale: SupportedLocale) {
   };
 }
 
-function rowToPost(row: D1PostRow): Post {
-  const currentSettings = runtimeDefaultSiteSettings();
-
+function rowToPost(
+  row: D1PostRow,
+  currentSettings: SiteSettings = runtimeDefaultSiteSettings(),
+): Post {
   return {
     id: row.id,
     title: row.title,

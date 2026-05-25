@@ -12,6 +12,7 @@ import {
   resolveLocale,
   siteSettings,
   type ContentStatus,
+  type Post,
   type SupportedLocale,
 } from "@repo/core";
 
@@ -40,6 +41,8 @@ export const apiEndpoints = [
   { method: "GET", path: "/api/site", scope: "site:read" },
   { method: "PUT", path: "/api/site", scope: "site:write" },
   { method: "GET", path: "/api/export", scope: "export:read" },
+  { method: "GET", path: "/api/comments", scope: "comments:moderate" },
+  { method: "POST", path: "/api/comments", scope: "public" },
   { method: "POST", path: "/api/comments/{id}/approve", scope: "comments:moderate" },
   { method: "POST", path: "/api/comments/{id}/spam", scope: "comments:moderate" },
   { method: "POST", path: "/api/comments/{id}/delete", scope: "comments:moderate" },
@@ -93,6 +96,7 @@ export function createPostPreview(
     contentMarkdown: string;
     status: ContentStatus;
     locale: SupportedLocale;
+    i18n: Post["i18n"];
   }>,
 ) {
   const post = createPost({

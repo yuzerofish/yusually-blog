@@ -4,7 +4,7 @@ export const siteSettings: SiteSettings = {
   name: "Cloud Blog CMS",
   description:
     "A Cloudflare-native personal blog CMS for visual writing, Markdown publishing, and AI automation.",
-  url: "https://blog-starter.01mvp.com",
+  url: "https://cms.01mvp.com",
   authorName: "01MVP",
   authorBio:
     "Builder notes, product essays, and durable personal knowledge on an edge-native publishing stack.",
@@ -281,7 +281,7 @@ export const projects: Project[] = [
       "Reusable TanStack Start template with Workers, D1, R2, RSS, sitemap, comments, and admin workflows.",
     coverImage:
       "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80",
-    projectUrl: "https://blog-starter.01mvp.com",
+    projectUrl: "https://cms.01mvp.com",
     githubUrl: "https://github.com/01mvp/blog-starter",
     tags: [cloudflare, cms],
     publishedAt: "2026-05-24T10:00:00.000Z",
@@ -300,7 +300,7 @@ export const projects: Project[] = [
       "Agent workflow for initializing a new blog, provisioning Cloudflare resources, deploying, and validating.",
     coverImage:
       "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1600&q=80",
-    projectUrl: "https://blog-demo.01mvp.com",
+    projectUrl: "https://demo.01mvp.com",
     githubUrl: "https://github.com/01mvp/blog-starter/tree/main/skills/cloud-blog-cms",
     tags: [ai, cloudflare],
     publishedAt: "2026-05-24T11:00:00.000Z",

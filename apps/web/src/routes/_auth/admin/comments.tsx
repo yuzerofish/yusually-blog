@@ -1,7 +1,14 @@
-import { comments, localizeComment, localizePost, posts } from "@repo/core";
+import {
+  comments,
+  localizeComment,
+  localizePost,
+  posts,
+  type Comment,
+  type Post,
+} from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
@@ -12,7 +19,38 @@ export const Route = createFileRoute("/_auth/admin/comments")({
 
 function AdminCommentsPage() {
   const locale = getCurrentLocale();
-  const [rows, setRows] = useState(comments);
+  const [rows, setRows] = useState<Comment[]>(
+    comments.map((comment) => localizeComment(comment, locale)),
+  );
+  const [postRows, setPostRows] = useState<Post[]>(posts.map((post) => localizePost(post, locale)));
+
+  useEffect(() => {
+    let ignore = false;
+
+    void Promise.all([
+      fetch(`/api/comments?lang=${locale}`).then((response) =>
+        response.ok ? response.json() : undefined,
+      ),
+      fetch(`/api/posts?status=all&lang=${locale}`).then((response) =>
+        response.ok ? response.json() : undefined,
+      ),
+    ]).then(([commentPayload, postPayload]) => {
+      const nextComments = (commentPayload as { data?: Comment[] } | undefined)?.data;
+      const nextPosts = (postPayload as { data?: Post[] } | undefined)?.data;
+
+      if (!ignore && nextComments) {
+        setRows(nextComments);
+      }
+
+      if (!ignore && nextPosts) {
+        setPostRows(nextPosts);
+      }
+    });
+
+    return () => {
+      ignore = true;
+    };
+  }, [locale]);
 
   const moderate = async (id: string, action: "approve" | "spam" | "delete") => {
     const response = await fetch(`/api/comments/${id}/${action}`, { method: "POST" });
@@ -22,7 +60,7 @@ function AdminCommentsPage() {
     }
 
     const payload = (await response.json()) as {
-      data: (typeof comments)[number];
+      data: Comment;
     };
 
     setRows((current) => current.map((comment) => (comment.id === id ? payload.data : comment)));
@@ -37,9 +75,8 @@ function AdminCommentsPage() {
 
       <div className="mt-6 grid gap-4">
         {rows.map((comment) => {
-          const post = posts.find((candidate) => candidate.id === comment.postId);
-          const localizedPost = post ? localizePost(post, locale) : undefined;
-          const localizedComment = localizeComment(comment, locale);
+          const localizedPost = postRows.find((candidate) => candidate.id === comment.postId);
+          const localizedComment = comment;
 
           return (
             <article

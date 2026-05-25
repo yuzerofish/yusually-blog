@@ -5,8 +5,11 @@
   "scripts": {
     "build": "vp run --recursive build",
     "build:web": "vp run web#build",
+    "build:web:demo": "CLOUDFLARE_VITE_WRANGLER_CONFIG_PATH=wrangler.demo.jsonc vp run web#build",
     "dev": "pnpm run --recursive --parallel dev",
     "dev:web": "vp run --filter=@repo/web dev",
+    "deploy:web": "pnpm build:web && pnpm --filter @repo/web exec wrangler deploy",
+    "deploy:web:demo": "pnpm build:web:demo && pnpm --filter @repo/web exec wrangler deploy",
     "lint": "vp lint --type-aware --type-check",
     "lint:fix": "vp lint --type-aware --type-check --fix",
     "format": "vp fmt",

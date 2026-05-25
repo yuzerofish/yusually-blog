@@ -1,13 +1,34 @@
-import { createComment, resolveLocale } from "@repo/core";
+import { comments, createComment, localizeComment, resolveLocale } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { jsonResponse, readJsonBody } from "#/lib/cms-api";
-import { createD1Comment, getD1PostBySlug } from "#/lib/cms-d1";
+import { getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
+import { requireCmsAccess } from "#/lib/cms-authz";
+import { createD1Comment, getD1PostBySlug, listD1Comments } from "#/lib/cms-d1";
 import { checkCommentRateLimit, getClientIp, verifyTurnstile } from "#/lib/comment-guard";
 
 export const Route = createFileRoute("/api/comments")({
   server: {
     handlers: {
+      GET: async ({ request }: { request: Request }) => {
+        const accessError = await requireCmsAccess(request, "comments:moderate");
+
+        if (accessError) {
+          return accessError;
+        }
+
+        const locale = getApiLocale(request);
+        const persistedComments = await listD1Comments();
+        const persistedIds = new Set(persistedComments.map((comment) => comment.id));
+
+        return jsonResponse({
+          data: [
+            ...persistedComments,
+            ...comments.filter((comment) => !persistedIds.has(comment.id)),
+          ].map((comment) => localizeComment(comment, locale)),
+          locale,
+          requiredScope: "comments:moderate",
+        });
+      },
       POST: async ({ request }: { request: Request }) => {
         const body = await readJsonBody<{
           postSlug: string;

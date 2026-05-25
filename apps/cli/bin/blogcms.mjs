@@ -18,7 +18,7 @@ Usage:
   blogcms init --primary-language <en|zh>
   blogcms login
   blogcms status
-  blogcms push <markdown-file-or-folder>
+  blogcms push <markdown-file-folder-or-json>
   blogcms import <zip-or-html>
   blogcms upload <images-folder>
   blogcms export
@@ -131,14 +131,14 @@ Environment:
   [
     "push",
     {
-      summary: "Publish Markdown through the API",
+      summary: "Publish Markdown or JSON through the API",
       run: async () => {
-        requireArg(args[0], "Provide a Markdown file or folder.");
-        const input = await readMarkdownInput(args[0]);
+        requireArg(args[0], "Provide a Markdown file, Markdown folder, or JSON post payload.");
+        const input = await readPostInput(args[0]);
         const api = getApiConfig();
 
         if (!api) {
-          print(`Prepared bilingual Markdown import for ${args[0]}. Configure API env to publish.`);
+          print(`Prepared post import for ${args[0]}. Configure API env to publish.`);
           return;
         }
 
@@ -147,8 +147,11 @@ Environment:
           body: {
             title: input.title,
             slug: input.slug,
+            excerpt: input.excerpt,
             contentMarkdown: input.contentMarkdown,
-            status: "published",
+            status: input.status ?? "published",
+            locale: input.locale,
+            i18n: input.i18n,
           },
         });
 
@@ -471,6 +474,14 @@ async function readMarkdownInput(inputPath) {
     slug: slugify(filename),
     contentMarkdown,
   };
+}
+
+async function readPostInput(inputPath) {
+  if (extname(inputPath).toLowerCase() === ".json") {
+    return readJsonFile(inputPath);
+  }
+
+  return readMarkdownInput(inputPath);
 }
 
 async function firstMarkdownPath(inputPath) {

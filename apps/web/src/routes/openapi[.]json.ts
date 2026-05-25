@@ -98,6 +98,12 @@ export const Route = createFileRoute("/openapi.json")({
               },
             },
             "/api/comments": {
+              get: {
+                summary: "List comments for moderation",
+                security: [{ apiToken: ["comments:moderate"] }],
+                parameters: [{ name: "lang", in: "query", schema: { enum: ["en", "zh"] } }],
+                responses: { "200": { description: "Localized moderation queue" } },
+              },
               post: {
                 summary: "Submit comment",
                 responses: { "201": { description: "Comment created as pending" } },

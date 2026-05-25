@@ -1,10 +1,10 @@
-import { localizePost, posts, renderMarkdownToHtml } from "@repo/core";
+import { localizePost, posts, renderMarkdownToHtml, type Post } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PlusIcon, SearchIcon } from "lucide-react";
-import { useMemo, useState, type ComponentProps } from "react";
+import { useEffect, useMemo, useState, type ComponentProps } from "react";
 
 import { MdxEditorSurface } from "#/components/mdx-editor-surface";
 import { getCurrentLocale } from "#/lib/i18n";
@@ -18,7 +18,7 @@ type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
 
 function AdminPostsPage() {
   const locale = getCurrentLocale();
-  const localizedPosts = posts.map((post) => localizePost(post, locale));
+  const [rows, setRows] = useState<Post[]>(posts.map((post) => localizePost(post, locale)));
   const [query, setQuery] = useState("");
   const [editorMode, setEditorMode] = useState<"editor" | "source" | "preview">("editor");
   const [editorState, setEditorState] = useState<"idle" | "saving" | "saved" | "error">("idle");
@@ -29,16 +29,34 @@ function AdminPostsPage() {
     const normalizedQuery = query.trim().toLowerCase();
 
     if (!normalizedQuery) {
-      return localizedPosts;
+      return rows;
     }
 
-    return localizedPosts.filter((post) =>
+    return rows.filter((post) =>
       [post.title, post.excerpt, post.status, post.source]
         .join(" ")
         .toLowerCase()
         .includes(normalizedQuery),
     );
-  }, [localizedPosts, query]);
+  }, [rows, query]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    void fetch(`/api/posts?status=all&lang=${locale}`)
+      .then((response) => (response.ok ? response.json() : undefined))
+      .then((payload) => {
+        const data = (payload as { data?: Post[] } | undefined)?.data;
+
+        if (!ignore && data) {
+          setRows(data);
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [locale]);
 
   const handleEditorSubmit: FormSubmitHandler = async (event) => {
     event.preventDefault();
@@ -60,7 +78,14 @@ function AdminPostsPage() {
       }),
     });
 
-    setEditorState(response.ok ? "saved" : "error");
+    if (!response.ok) {
+      setEditorState("error");
+      return;
+    }
+
+    const payload = (await response.json()) as { data: Post };
+    setRows((current) => [payload.data, ...current.filter((post) => post.id !== payload.data.id)]);
+    setEditorState("saved");
   };
 
   return (
