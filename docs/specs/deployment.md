@@ -59,18 +59,28 @@ The remote databases have applied:
 Main:
 
 ```sh
-pnpm build:web
-pnpm --filter @repo/web exec wrangler deploy
+blogcms deploy --target main
 ```
 
 Demo:
 
 ```sh
-pnpm build:web:demo
-pnpm --filter @repo/web exec wrangler deploy
+blogcms deploy --target demo
 ```
 
-The Cloudflare Vite plugin writes the effective deploy config into `apps/web/dist/server/wrangler.json`. After `pnpm build:web:demo`, the following `wrangler deploy` uses demo bindings and routes from the generated config.
+`blogcms deploy` runs the matching Vite+ build, applies remote D1 migrations, and deploys with the generated Cloudflare Vite config. The underlying commands remain available for targeted maintenance:
+
+```sh
+pnpm build:web
+pnpm --filter @repo/web exec wrangler d1 migrations apply blog-starter-cms --remote --config wrangler.jsonc
+pnpm --filter @repo/web exec wrangler deploy --config dist/server/wrangler.json
+
+pnpm build:web:demo
+pnpm --filter @repo/web exec wrangler d1 migrations apply blog-demo-cms --remote --config wrangler.demo.jsonc
+pnpm --filter @repo/web exec wrangler deploy --config dist/server/wrangler.json
+```
+
+The Cloudflare Vite plugin writes the effective deploy config into `apps/web/dist/server/wrangler.json`. After `pnpm build:web:demo`, Wrangler must use that generated config so the demo bindings, assets, and custom domains are deployed together.
 
 Because custom domains are configured in Wrangler, workers.dev preview URLs can be disabled by Cloudflare for these deployments. Use the custom domains for verification.
 

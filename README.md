@@ -56,15 +56,13 @@ The build compiles Paraglide output, builds TanStack Start, and writes the Cloud
 Template site:
 
 ```sh
-pnpm build:web
-pnpm --filter @repo/web exec wrangler deploy
+blogcms deploy --target main
 ```
 
 Skill demo site:
 
 ```sh
-pnpm build:web:demo
-pnpm --filter @repo/web exec wrangler deploy
+blogcms deploy --target demo
 ```
 
 ## CLI

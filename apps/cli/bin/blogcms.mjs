@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { spawn } from "node:child_process";
 import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
 import { basename, dirname, extname, join, relative } from "node:path";
 
@@ -25,7 +26,7 @@ Usage:
   blogcms backup
   blogcms site get
   blogcms site update --config <site.config.json>
-  blogcms deploy
+  blogcms deploy [--target main|demo] [--skip-build] [--skip-migrations] [--dry-run]
   blogcms admin create
   blogcms admin reset-password
   blogcms admin request-password-reset
@@ -35,6 +36,7 @@ Environment:
   BLOGCMS_SITE_URL
   BLOGCMS_API_TOKEN
   BLOGCMS_PRIMARY_LANGUAGE=en|zh
+  BLOGCMS_DEPLOY_TARGET=main|demo
 `);
       },
     },
@@ -319,8 +321,56 @@ Environment:
     "deploy",
     {
       summary: "Run the Cloudflare deploy sequence",
-      run: () => {
-        print("Run `pnpm build:web`, apply D1 migrations, then `wrangler deploy` from apps/web.");
+      run: async () => {
+        const plan = deployPlan();
+
+        if (hasFlag(["--dry-run"])) {
+          print(
+            JSON.stringify(
+              {
+                target: plan.target,
+                config: plan.config,
+                generatedConfig: plan.generatedConfig,
+                database: plan.database,
+                steps: plan.steps,
+              },
+              null,
+              2,
+            ),
+          );
+          return;
+        }
+
+        if (plan.steps.length === 0) {
+          print(
+            JSON.stringify(
+              {
+                target: plan.target,
+                skipped: true,
+              },
+              null,
+              2,
+            ),
+          );
+          return;
+        }
+
+        for (const step of plan.steps) {
+          await runDeployStep(step);
+        }
+
+        print(
+          JSON.stringify(
+            {
+              target: plan.target,
+              config: plan.config,
+              deployed: !hasFlag(["--skip-deploy"]),
+              migrated: !hasFlag(["--skip-migrations"]),
+            },
+            null,
+            2,
+          ),
+        );
       },
     },
   ],
@@ -463,6 +513,12 @@ function requireArg(value, message) {
 
 function readOption(names, fallback) {
   for (const name of names) {
+    const inline = args.find((arg) => arg.startsWith(`${name}=`));
+
+    if (inline) {
+      return inline.slice(name.length + 1) || fallback;
+    }
+
     const index = args.indexOf(name);
     if (index !== -1) {
       return args[index + 1] ?? fallback;
@@ -470,6 +526,10 @@ function readOption(names, fallback) {
   }
 
   return fallback;
+}
+
+function hasFlag(names) {
+  return names.some((name) => args.includes(name));
 }
 
 function validatePrimaryLanguage(value) {
@@ -491,6 +551,111 @@ function getApiConfig() {
 
 function getSiteUrl() {
   return process.env.BLOGCMS_SITE_URL?.replace(/\/$/, "") || null;
+}
+
+function deployPlan() {
+  const target = normalizedDeployTarget(
+    readOption(["--target"], process.env.BLOGCMS_DEPLOY_TARGET ?? "main"),
+  );
+  const generatedConfig = "dist/server/wrangler.json";
+  const steps = [];
+
+  if (!hasFlag(["--skip-build"])) {
+    steps.push({
+      name: "build",
+      command: ["pnpm", target.buildScript],
+    });
+  }
+
+  if (!hasFlag(["--skip-migrations"])) {
+    steps.push({
+      name: "migrate",
+      command: [
+        "pnpm",
+        "--filter",
+        "@repo/web",
+        "exec",
+        "wrangler",
+        "d1",
+        "migrations",
+        "apply",
+        target.database,
+        "--remote",
+        "--config",
+        target.config,
+      ],
+    });
+  }
+
+  if (!hasFlag(["--skip-deploy"])) {
+    steps.push({
+      name: "deploy",
+      command: [
+        "pnpm",
+        "--filter",
+        "@repo/web",
+        "exec",
+        "wrangler",
+        "deploy",
+        "--config",
+        generatedConfig,
+      ],
+    });
+  }
+
+  return {
+    target: target.name,
+    config: `apps/web/${target.config}`,
+    generatedConfig: `apps/web/${generatedConfig}`,
+    database: target.database,
+    steps,
+  };
+}
+
+function normalizedDeployTarget(value) {
+  if (value === "main" || value === "template" || value === "production") {
+    return {
+      name: "main",
+      buildScript: "build:web",
+      config: "wrangler.jsonc",
+      database: "blog-starter-cms",
+    };
+  }
+
+  if (value === "demo" || value === "skill") {
+    return {
+      name: "demo",
+      buildScript: "build:web:demo",
+      config: "wrangler.demo.jsonc",
+      database: "blog-demo-cms",
+    };
+  }
+
+  fail("Deploy target must be `main` or `demo`.");
+}
+
+async function runDeployStep(step) {
+  print(`$ ${step.command.join(" ")}`);
+
+  const exitCode = await new Promise((resolve) => {
+    const child = spawn(step.command[0], step.command.slice(1), {
+      cwd: process.cwd(),
+      env: process.env,
+      stdio: "inherit",
+    });
+
+    child.on("error", (error) => {
+      process.stderr.write(`${error.message}\n`);
+      resolve(1);
+    });
+    child.on("close", (code, signal) => {
+      resolve(code ?? (signal ? 1 : 0));
+    });
+  });
+
+  if (exitCode !== 0) {
+    fail(`Deploy step failed: ${step.name}`);
+  }
 }
 
 async function apiFetch(api, pathname, options) {

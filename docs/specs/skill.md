@@ -29,18 +29,17 @@ The theme preset is written to site settings and applied through shared UI token
 4. Verify Cloudflare login.
 5. Create D1, R2 assets, R2 backups, optional KV resources, and optional Email Sending resources.
 6. Write Wrangler bindings.
-7. Apply D1 migrations.
-8. Deploy the Worker.
-9. Create the first admin user.
-10. Log in and create a scoped API token.
-11. Push site settings through `blogcms site update`.
-12. Publish the first bilingual post through `blogcms push`.
-13. Upload a media asset through `blogcms upload`.
-14. Submit and approve a comment.
-15. If Email Sending is enabled, request a password reset email.
-16. Export JSON through `blogcms export` and create a ZIP backup through `blogcms backup`.
-17. Verify homepage, post page, admin, RSS, sitemap, robots, OpenAPI, OG metadata, localized API responses, JSON export, and ZIP backup.
-18. Save an execution log.
+7. Run `blogcms deploy --target main` or `blogcms deploy --target demo`, depending on the generated site target. This applies D1 migrations and deploys the Worker with the generated Cloudflare Vite config.
+8. Create the first admin user.
+9. Log in and create a scoped API token.
+10. Push site settings through `blogcms site update`.
+11. Publish the first bilingual post through `blogcms push`.
+12. Upload a media asset through `blogcms upload`.
+13. Submit and approve a comment.
+14. If Email Sending is enabled, request a password reset email.
+15. Export JSON through `blogcms export` and create a ZIP backup through `blogcms backup`.
+16. Verify homepage, post page, admin, RSS, sitemap, robots, OpenAPI, OG metadata, localized API responses, JSON export, and ZIP backup.
+17. Save an execution log.
 
 ## Demo Evidence
 
@@ -49,7 +48,7 @@ The Skill-generated demo uses:
 - Site: `https://demo.01mvp.com`
 - Alias: `https://blog-demo.01mvp.com`
 - Worker: `blog-demo`
-- Current verified demo version: `44d442a6-e851-46f0-8aea-c007755f5005`
+- Current verified demo version: `6b23e8c6-0105-4672-af3c-a6a20ca8573b`
 
 The demo run created site settings from `skills/cloud-blog-cms/templates/site.config.json`, published `hello-from-generated-cloud-blog-cms`, uploaded an R2 asset, submitted a pending comment, approved it, and generated an R2 export backup.
 

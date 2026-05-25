@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vp dev",
-    "deploy": "pnpm run build && wrangler deploy",
+    "deploy": "vp build && wrangler deploy --config dist/server/wrangler.json",
     "preview": "vp preview",
     "cf-typegen": "wrangler types",
     "ui": "vpx shadcn@latest"

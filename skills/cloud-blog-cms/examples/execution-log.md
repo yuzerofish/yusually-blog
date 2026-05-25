@@ -21,14 +21,12 @@ Run date: 2026-05-25
 - R2 assets: `blog-demo-assets`
 - R2 backups: `blog-demo-backups`
 - KV: `BLOG_DEMO_CMS_CACHE`
-- Current verified demo version: `44d442a6-e851-46f0-8aea-c007755f5005`
+- Current verified demo version: `6b23e8c6-0105-4672-af3c-a6a20ca8573b`
 
 ## Automated Steps
 
 ```sh
-pnpm --filter @repo/web exec wrangler d1 migrations apply blog-demo-cms --remote --config wrangler.demo.jsonc
-pnpm build:web:demo
-pnpm --filter @repo/web exec wrangler deploy
+blogcms deploy --target demo
 BLOGCMS_SITE_URL=https://demo.01mvp.com pnpm --filter @repo/cli exec node bin/blogcms.mjs admin create ...
 BLOGCMS_SITE_URL=https://demo.01mvp.com pnpm --filter @repo/cli exec node bin/blogcms.mjs login ...
 BLOGCMS_SITE_URL=https://demo.01mvp.com BLOGCMS_API_TOKEN=... pnpm --filter @repo/cli exec node bin/blogcms.mjs site update --config /absolute/path/to/site.config.json
