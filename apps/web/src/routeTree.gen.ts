@@ -36,6 +36,7 @@ import { Route as ApiCommentsRouteImport } from './routes/api/comments'
 import { Route as ApiBackupsRouteImport } from './routes/api/backups'
 import { Route as ApiAssetsRouteImport } from './routes/api/assets'
 import { Route as GuestSignupRouteImport } from './routes/_guest/signup'
+import { Route as GuestResetPasswordRouteImport } from './routes/_guest/reset-password'
 import { Route as GuestLoginRouteImport } from './routes/_guest/login'
 import { Route as AuthAppRouteRouteImport } from './routes/_auth/app/route'
 import { Route as AuthAdminRouteRouteImport } from './routes/_auth/admin/route'
@@ -47,6 +48,7 @@ import { Route as ApiImportMarkdownRouteImport } from './routes/api/import/markd
 import { Route as ApiImportHtmlRouteImport } from './routes/api/import/html'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiAdminUsersRouteImport } from './routes/api/admin/users'
+import { Route as ApiAdminPasswordResetRouteImport } from './routes/api/admin/password-reset'
 import { Route as ApiAdminPasswordRouteImport } from './routes/api/admin/password'
 import { Route as ApiAdminMeRouteImport } from './routes/api/admin/me'
 import { Route as ApiAdminLogoutRouteImport } from './routes/api/admin/logout'
@@ -193,6 +195,11 @@ const GuestSignupRoute = GuestSignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => GuestRouteRoute,
 } as any)
+const GuestResetPasswordRoute = GuestResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => GuestRouteRoute,
+} as any)
 const GuestLoginRoute = GuestLoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -246,6 +253,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 const ApiAdminUsersRoute = ApiAdminUsersRouteImport.update({
   id: '/api/admin/users',
   path: '/api/admin/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminPasswordResetRoute = ApiAdminPasswordResetRouteImport.update({
+  id: '/api/admin/password-reset',
+  path: '/api/admin/password-reset',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAdminPasswordRoute = ApiAdminPasswordRouteImport.update({
@@ -324,6 +336,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthAdminRouteRouteWithChildren
   '/app': typeof AuthAppRouteRouteWithChildren
   '/login': typeof GuestLoginRoute
+  '/reset-password': typeof GuestResetPasswordRoute
   '/signup': typeof GuestSignupRoute
   '/api/assets': typeof ApiAssetsRoute
   '/api/backups': typeof ApiBackupsRoute
@@ -346,6 +359,7 @@ export interface FileRoutesByFullPath {
   '/api/admin/logout': typeof ApiAdminLogoutRoute
   '/api/admin/me': typeof ApiAdminMeRoute
   '/api/admin/password': typeof ApiAdminPasswordRoute
+  '/api/admin/password-reset': typeof ApiAdminPasswordResetRoute
   '/api/admin/users': typeof ApiAdminUsersRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/import/html': typeof ApiImportHtmlRoute
@@ -372,6 +386,7 @@ export interface FileRoutesByTo {
   '/sitemap-posts.xml': typeof SitemapPostsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/login': typeof GuestLoginRoute
+  '/reset-password': typeof GuestResetPasswordRoute
   '/signup': typeof GuestSignupRoute
   '/api/assets': typeof ApiAssetsRoute
   '/api/backups': typeof ApiBackupsRoute
@@ -394,6 +409,7 @@ export interface FileRoutesByTo {
   '/api/admin/logout': typeof ApiAdminLogoutRoute
   '/api/admin/me': typeof ApiAdminMeRoute
   '/api/admin/password': typeof ApiAdminPasswordRoute
+  '/api/admin/password-reset': typeof ApiAdminPasswordResetRoute
   '/api/admin/users': typeof ApiAdminUsersRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/import/html': typeof ApiImportHtmlRoute
@@ -425,6 +441,7 @@ export interface FileRoutesById {
   '/_auth/admin': typeof AuthAdminRouteRouteWithChildren
   '/_auth/app': typeof AuthAppRouteRouteWithChildren
   '/_guest/login': typeof GuestLoginRoute
+  '/_guest/reset-password': typeof GuestResetPasswordRoute
   '/_guest/signup': typeof GuestSignupRoute
   '/api/assets': typeof ApiAssetsRoute
   '/api/backups': typeof ApiBackupsRoute
@@ -447,6 +464,7 @@ export interface FileRoutesById {
   '/api/admin/logout': typeof ApiAdminLogoutRoute
   '/api/admin/me': typeof ApiAdminMeRoute
   '/api/admin/password': typeof ApiAdminPasswordRoute
+  '/api/admin/password-reset': typeof ApiAdminPasswordResetRoute
   '/api/admin/users': typeof ApiAdminUsersRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/import/html': typeof ApiImportHtmlRoute
@@ -477,6 +495,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/app'
     | '/login'
+    | '/reset-password'
     | '/signup'
     | '/api/assets'
     | '/api/backups'
@@ -499,6 +518,7 @@ export interface FileRouteTypes {
     | '/api/admin/logout'
     | '/api/admin/me'
     | '/api/admin/password'
+    | '/api/admin/password-reset'
     | '/api/admin/users'
     | '/api/auth/$'
     | '/api/import/html'
@@ -525,6 +545,7 @@ export interface FileRouteTypes {
     | '/sitemap-posts.xml'
     | '/sitemap.xml'
     | '/login'
+    | '/reset-password'
     | '/signup'
     | '/api/assets'
     | '/api/backups'
@@ -547,6 +568,7 @@ export interface FileRouteTypes {
     | '/api/admin/logout'
     | '/api/admin/me'
     | '/api/admin/password'
+    | '/api/admin/password-reset'
     | '/api/admin/users'
     | '/api/auth/$'
     | '/api/import/html'
@@ -577,6 +599,7 @@ export interface FileRouteTypes {
     | '/_auth/admin'
     | '/_auth/app'
     | '/_guest/login'
+    | '/_guest/reset-password'
     | '/_guest/signup'
     | '/api/assets'
     | '/api/backups'
@@ -599,6 +622,7 @@ export interface FileRouteTypes {
     | '/api/admin/logout'
     | '/api/admin/me'
     | '/api/admin/password'
+    | '/api/admin/password-reset'
     | '/api/admin/users'
     | '/api/auth/$'
     | '/api/import/html'
@@ -644,6 +668,7 @@ export interface RootRouteChildren {
   ApiAdminLogoutRoute: typeof ApiAdminLogoutRoute
   ApiAdminMeRoute: typeof ApiAdminMeRoute
   ApiAdminPasswordRoute: typeof ApiAdminPasswordRoute
+  ApiAdminPasswordResetRoute: typeof ApiAdminPasswordResetRoute
   ApiAdminUsersRoute: typeof ApiAdminUsersRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiImportHtmlRoute: typeof ApiImportHtmlRoute
@@ -842,6 +867,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuestSignupRouteImport
       parentRoute: typeof GuestRouteRoute
     }
+    '/_guest/reset-password': {
+      id: '/_guest/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof GuestResetPasswordRouteImport
+      parentRoute: typeof GuestRouteRoute
+    }
     '/_guest/login': {
       id: '/_guest/login'
       path: '/login'
@@ -917,6 +949,13 @@ declare module '@tanstack/react-router' {
       path: '/api/admin/users'
       fullPath: '/api/admin/users'
       preLoaderRoute: typeof ApiAdminUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/password-reset': {
+      id: '/api/admin/password-reset'
+      path: '/api/admin/password-reset'
+      fullPath: '/api/admin/password-reset'
+      preLoaderRoute: typeof ApiAdminPasswordResetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/admin/password': {
@@ -1054,11 +1093,13 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 
 interface GuestRouteRouteChildren {
   GuestLoginRoute: typeof GuestLoginRoute
+  GuestResetPasswordRoute: typeof GuestResetPasswordRoute
   GuestSignupRoute: typeof GuestSignupRoute
 }
 
 const GuestRouteRouteChildren: GuestRouteRouteChildren = {
   GuestLoginRoute: GuestLoginRoute,
+  GuestResetPasswordRoute: GuestResetPasswordRoute,
   GuestSignupRoute: GuestSignupRoute,
 }
 
@@ -1137,6 +1178,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAdminLogoutRoute: ApiAdminLogoutRoute,
   ApiAdminMeRoute: ApiAdminMeRoute,
   ApiAdminPasswordRoute: ApiAdminPasswordRoute,
+  ApiAdminPasswordResetRoute: ApiAdminPasswordResetRoute,
   ApiAdminUsersRoute: ApiAdminUsersRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiImportHtmlRoute: ApiImportHtmlRoute,

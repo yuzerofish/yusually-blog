@@ -190,7 +190,9 @@ export function publicAdminUser(user: AdminUser) {
   };
 }
 
-async function getAdminUserByEmail(email: string) {
+export async function getAdminUserByEmail(emailInput: string | undefined) {
+  const email = normalizeEmail(emailInput);
+
   return env.CMS_DB.prepare("select * from admin_users where email = ? limit 1")
     .bind(email)
     .first<AdminUserRow>();

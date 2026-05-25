@@ -3323,6 +3323,248 @@ export const login_with_provider: ((
 /**
  * | output |
  * | --- |
+ * | "Update password" |
+ *
+ * @param {Password_Reset_ConfirmInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_confirm: ((
+  inputs?: Password_Reset_ConfirmInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Password_Reset_ConfirmInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Password could not be updated." |
+ *
+ * @param {Password_Reset_Confirm_ErrorInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_confirm_error: ((
+  inputs?: Password_Reset_Confirm_ErrorInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Password_Reset_Confirm_ErrorInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Updating..." |
+ *
+ * @param {Password_Reset_Confirm_PendingInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_confirm_pending: ((
+  inputs?: Password_Reset_Confirm_PendingInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Password_Reset_Confirm_PendingInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Password updated." |
+ *
+ * @param {Password_Reset_Confirm_SuccessInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_confirm_success: ((
+  inputs?: Password_Reset_Confirm_SuccessInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Password_Reset_Confirm_SuccessInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Forgot password?" |
+ *
+ * @param {Password_Reset_LinkInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_link: ((
+  inputs?: Password_Reset_LinkInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Password_Reset_LinkInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "New password" |
+ *
+ * @param {Password_Reset_New_PasswordInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_new_password: ((
+  inputs?: Password_Reset_New_PasswordInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Password_Reset_New_PasswordInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Send reset link" |
+ *
+ * @param {Password_Reset_RequestInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_request: ((
+  inputs?: Password_Reset_RequestInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Password_Reset_RequestInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Password reset email could not be sent." |
+ *
+ * @param {Password_Reset_Request_ErrorInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_request_error: ((
+  inputs?: Password_Reset_Request_ErrorInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Password_Reset_Request_ErrorInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Sending..." |
+ *
+ * @param {Password_Reset_Request_PendingInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_request_pending: ((
+  inputs?: Password_Reset_Request_PendingInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Password_Reset_Request_PendingInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "If the account exists and email is enabled, a reset link has been sent." |
+ *
+ * @param {Password_Reset_Request_SuccessInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_request_success: ((
+  inputs?: Password_Reset_Request_SuccessInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Password_Reset_Request_SuccessInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Reset password" |
+ *
+ * @param {Password_Reset_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_title: ((
+  inputs?: Password_Reset_TitleInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Password_Reset_TitleInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "About" |
  *
  * @param {Nav_AboutInputs} inputs
@@ -4364,6 +4606,17 @@ export type Login_Social_ErrorInputs = {
 export type Login_With_ProviderInputs = {
   provider: NonNullable<unknown>;
 };
+export type Password_Reset_ConfirmInputs = {};
+export type Password_Reset_Confirm_ErrorInputs = {};
+export type Password_Reset_Confirm_PendingInputs = {};
+export type Password_Reset_Confirm_SuccessInputs = {};
+export type Password_Reset_LinkInputs = {};
+export type Password_Reset_New_PasswordInputs = {};
+export type Password_Reset_RequestInputs = {};
+export type Password_Reset_Request_ErrorInputs = {};
+export type Password_Reset_Request_PendingInputs = {};
+export type Password_Reset_Request_SuccessInputs = {};
+export type Password_Reset_TitleInputs = {};
 export type Nav_AboutInputs = {};
 export type Nav_ArchiveInputs = {};
 export type Nav_BlogInputs = {};

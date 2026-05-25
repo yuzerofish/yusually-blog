@@ -151,6 +151,17 @@
 /** @typedef {{}} Login_PendingInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Login_Social_ErrorInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Login_With_ProviderInputs */
+/** @typedef {{}} Password_Reset_ConfirmInputs */
+/** @typedef {{}} Password_Reset_Confirm_ErrorInputs */
+/** @typedef {{}} Password_Reset_Confirm_PendingInputs */
+/** @typedef {{}} Password_Reset_Confirm_SuccessInputs */
+/** @typedef {{}} Password_Reset_LinkInputs */
+/** @typedef {{}} Password_Reset_New_PasswordInputs */
+/** @typedef {{}} Password_Reset_RequestInputs */
+/** @typedef {{}} Password_Reset_Request_ErrorInputs */
+/** @typedef {{}} Password_Reset_Request_PendingInputs */
+/** @typedef {{}} Password_Reset_Request_SuccessInputs */
+/** @typedef {{}} Password_Reset_TitleInputs */
 /** @typedef {{}} Nav_AboutInputs */
 /** @typedef {{}} Nav_ArchiveInputs */
 /** @typedef {{}} Nav_BlogInputs */
@@ -919,6 +930,61 @@ export const login_social_error =
 export const login_with_provider =
   /** @type {(inputs: Login_With_ProviderInputs) => LocalizedString} */ (i) => {
     return /** @type {LocalizedString} */ `使用 ${i?.provider} 登录`;
+  };
+
+export const password_reset_confirm =
+  /** @type {(inputs: Password_Reset_ConfirmInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `更新密码`;
+  };
+
+export const password_reset_confirm_error =
+  /** @type {(inputs: Password_Reset_Confirm_ErrorInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `密码更新失败。`;
+  };
+
+export const password_reset_confirm_pending =
+  /** @type {(inputs: Password_Reset_Confirm_PendingInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `正在更新...`;
+  };
+
+export const password_reset_confirm_success =
+  /** @type {(inputs: Password_Reset_Confirm_SuccessInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `密码已更新。`;
+  };
+
+export const password_reset_link =
+  /** @type {(inputs: Password_Reset_LinkInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `忘记密码？`;
+  };
+
+export const password_reset_new_password =
+  /** @type {(inputs: Password_Reset_New_PasswordInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `新密码`;
+  };
+
+export const password_reset_request =
+  /** @type {(inputs: Password_Reset_RequestInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `发送重置链接`;
+  };
+
+export const password_reset_request_error =
+  /** @type {(inputs: Password_Reset_Request_ErrorInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `密码重置邮件发送失败。`;
+  };
+
+export const password_reset_request_pending =
+  /** @type {(inputs: Password_Reset_Request_PendingInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `正在发送...`;
+  };
+
+export const password_reset_request_success =
+  /** @type {(inputs: Password_Reset_Request_SuccessInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `如果账号存在且邮件已启用，重置链接会发送到该邮箱。`;
+  };
+
+export const password_reset_title =
+  /** @type {(inputs: Password_Reset_TitleInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `重置密码`;
   };
 
 export const nav_about = /** @type {(inputs: Nav_AboutInputs) => LocalizedString} */ () => {

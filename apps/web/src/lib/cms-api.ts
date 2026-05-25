@@ -50,6 +50,7 @@ export const apiEndpoints = [
   { method: "GET", path: "/api/tokens", scope: "site:read" },
   { method: "POST", path: "/api/tokens", scope: "site:write" },
   { method: "POST", path: "/api/tokens/{id}/revoke", scope: "site:write" },
+  { method: "POST", path: "/api/admin/password-reset", scope: "public" },
 ] as const;
 
 export function jsonResponse(body: unknown, init?: ResponseInit) {

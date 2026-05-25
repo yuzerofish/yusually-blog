@@ -71,3 +71,26 @@ The Cloudflare Vite plugin writes the effective deploy config into `apps/web/dis
 Because custom domains are configured in Wrangler, workers.dev preview URLs can be disabled by Cloudflare for these deployments. Use the custom domains for verification.
 
 Wrangler uses `apps/web/src/server.ts` as the Worker entry. It delegates HTTP requests to TanStack Start and exposes a `scheduled` handler for automatic ZIP backups.
+
+## Optional Email Sending
+
+Email is disabled by default. To enable comment, import, export, backup, and password reset notifications, set:
+
+```jsonc
+{
+  "vars": {
+    "CMS_EMAIL_SENDING_ENABLED": "true",
+    "CMS_EMAIL_FROM": "noreply@example.com",
+    "CMS_EMAIL_TO": "admin@example.com",
+    "CMS_PASSWORD_RESET_TTL_MINUTES": "30",
+  },
+  "send_email": [
+    {
+      "name": "CMS_EMAIL",
+      "allowed_sender_addresses": ["noreply@example.com"],
+    },
+  ],
+}
+```
+
+The sender address and domain must be verified in Cloudflare Email Service before production mail is sent.

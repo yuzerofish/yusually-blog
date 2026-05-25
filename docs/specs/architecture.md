@@ -18,7 +18,7 @@ Cloud Blog CMS is a TanStack Start monorepo built for Cloudflare Workers. The re
 - R2 stores uploaded assets, import packages, JSON exports, and full ZIP backups.
 - KV is available as the `CMS_CACHE` binding for cache metadata.
 - Cron Triggers call the custom Worker entry once per day to generate a ZIP backup and prune old backup objects.
-- Turnstile and Cloudflare Email Sending are optional. Empty Turnstile and Email bindings do not block login, publishing, comment moderation, or exports.
+- Turnstile and Cloudflare Email Sending are optional. Empty Turnstile and Email bindings do not block login, publishing, comment moderation, imports, exports, or backups.
 
 ## Internationalization
 
@@ -47,3 +47,7 @@ Markdown imports parse simple frontmatter and preserve Markdown as the source of
 ## Export And Backup Flow
 
 JSON export remains the lightweight API response for automation. ZIP export packages Markdown, HTML, site settings, posts, comments, assets, tags, projects, and a manifest under `export/`, stores the archive in R2, and rewrites known local asset URLs to relative paths inside the archive. Manual backups use `POST /api/backups`; scheduled backups use the same ZIP builder from the Worker `scheduled` handler.
+
+## Email Flow
+
+Email Sending is a no-op unless `CMS_EMAIL_SENDING_ENABLED=true`, `CMS_EMAIL_FROM`, `CMS_EMAIL_TO`, and a `CMS_EMAIL` send-email binding are configured. When enabled, the same optional mailer sends comment moderation notices, import/export completion notices, backup completion notices, and password reset links. Password reset tokens are stored in KV with a short TTL.

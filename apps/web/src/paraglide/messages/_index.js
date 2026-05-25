@@ -152,6 +152,17 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Login_PendingInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Login_Social_ErrorInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Login_With_ProviderInputs */
+/** @typedef {{}} Password_Reset_ConfirmInputs */
+/** @typedef {{}} Password_Reset_Confirm_ErrorInputs */
+/** @typedef {{}} Password_Reset_Confirm_PendingInputs */
+/** @typedef {{}} Password_Reset_Confirm_SuccessInputs */
+/** @typedef {{}} Password_Reset_LinkInputs */
+/** @typedef {{}} Password_Reset_New_PasswordInputs */
+/** @typedef {{}} Password_Reset_RequestInputs */
+/** @typedef {{}} Password_Reset_Request_ErrorInputs */
+/** @typedef {{}} Password_Reset_Request_PendingInputs */
+/** @typedef {{}} Password_Reset_Request_SuccessInputs */
+/** @typedef {{}} Password_Reset_TitleInputs */
 /** @typedef {{}} Nav_AboutInputs */
 /** @typedef {{}} Nav_ArchiveInputs */
 /** @typedef {{}} Nav_BlogInputs */
@@ -2759,6 +2770,193 @@ export const login_with_provider =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.login_with_provider(inputs);
       return __zh.login_with_provider(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Update password" |
+ *
+ * @param {Password_Reset_ConfirmInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_confirm =
+  /** @type {((inputs?: Password_Reset_ConfirmInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Password_Reset_ConfirmInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.password_reset_confirm(inputs);
+      return __zh.password_reset_confirm(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Password could not be updated." |
+ *
+ * @param {Password_Reset_Confirm_ErrorInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_confirm_error =
+  /** @type {((inputs?: Password_Reset_Confirm_ErrorInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Password_Reset_Confirm_ErrorInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.password_reset_confirm_error(inputs);
+      return __zh.password_reset_confirm_error(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Updating..." |
+ *
+ * @param {Password_Reset_Confirm_PendingInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_confirm_pending =
+  /** @type {((inputs?: Password_Reset_Confirm_PendingInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Password_Reset_Confirm_PendingInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.password_reset_confirm_pending(inputs);
+      return __zh.password_reset_confirm_pending(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Password updated." |
+ *
+ * @param {Password_Reset_Confirm_SuccessInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_confirm_success =
+  /** @type {((inputs?: Password_Reset_Confirm_SuccessInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Password_Reset_Confirm_SuccessInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.password_reset_confirm_success(inputs);
+      return __zh.password_reset_confirm_success(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Forgot password?" |
+ *
+ * @param {Password_Reset_LinkInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_link =
+  /** @type {((inputs?: Password_Reset_LinkInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Password_Reset_LinkInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.password_reset_link(inputs);
+      return __zh.password_reset_link(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "New password" |
+ *
+ * @param {Password_Reset_New_PasswordInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_new_password =
+  /** @type {((inputs?: Password_Reset_New_PasswordInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Password_Reset_New_PasswordInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.password_reset_new_password(inputs);
+      return __zh.password_reset_new_password(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Send reset link" |
+ *
+ * @param {Password_Reset_RequestInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_request =
+  /** @type {((inputs?: Password_Reset_RequestInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Password_Reset_RequestInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.password_reset_request(inputs);
+      return __zh.password_reset_request(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Password reset email could not be sent." |
+ *
+ * @param {Password_Reset_Request_ErrorInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_request_error =
+  /** @type {((inputs?: Password_Reset_Request_ErrorInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Password_Reset_Request_ErrorInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.password_reset_request_error(inputs);
+      return __zh.password_reset_request_error(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Sending..." |
+ *
+ * @param {Password_Reset_Request_PendingInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_request_pending =
+  /** @type {((inputs?: Password_Reset_Request_PendingInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Password_Reset_Request_PendingInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.password_reset_request_pending(inputs);
+      return __zh.password_reset_request_pending(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "If the account exists and email is enabled, a reset link has been sent." |
+ *
+ * @param {Password_Reset_Request_SuccessInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_request_success =
+  /** @type {((inputs?: Password_Reset_Request_SuccessInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Password_Reset_Request_SuccessInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.password_reset_request_success(inputs);
+      return __zh.password_reset_request_success(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Reset password" |
+ *
+ * @param {Password_Reset_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const password_reset_title =
+  /** @type {((inputs?: Password_Reset_TitleInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Password_Reset_TitleInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.password_reset_title(inputs);
+      return __zh.password_reset_title(inputs);
     }
   );
 /**

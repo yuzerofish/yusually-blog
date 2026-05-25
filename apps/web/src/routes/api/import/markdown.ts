@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getApiLocale, importPreview, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { createD1Post } from "#/lib/cms-d1";
+import { notifyImportCompleted } from "#/lib/cms-email";
 import { parseMarkdownImport, type ImportPostInput } from "#/lib/cms-import";
 
 export const Route = createFileRoute("/api/import/markdown")({
@@ -34,6 +35,11 @@ export const Route = createFileRoute("/api/import/markdown")({
           ...parsed,
           source: "markdown_upload",
           locale,
+        });
+        await notifyImportCompleted({
+          kind: "markdown",
+          post,
+          siteUrl: new URL(request.url).origin,
         });
 
         return jsonResponse(

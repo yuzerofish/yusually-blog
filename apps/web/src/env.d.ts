@@ -57,15 +57,30 @@ type CmsKVNamespace = {
   delete(key: string): Promise<void>;
 };
 
+type CmsEmailBinding = {
+  send(message: {
+    to: string | string[];
+    from: string | { email: string; name: string };
+    subject: string;
+    html?: string;
+    text?: string;
+    replyTo?: string | { email: string; name: string };
+  }): Promise<{ messageId: string }>;
+};
+
 type CloudflareBindings = {
   CMS_DB: CmsD1Database;
   CMS_ASSETS: CmsR2Bucket;
   CMS_BACKUPS: CmsR2Bucket;
   CMS_CACHE: CmsKVNamespace;
+  CMS_EMAIL?: CmsEmailBinding;
   VITE_BASE_URL: string;
   CMS_PUBLIC_SITE_URL: string;
   CMS_BACKUP_RETENTION_DAYS: string;
   CMS_EMAIL_SENDING_ENABLED: string;
+  CMS_EMAIL_FROM: string;
+  CMS_EMAIL_TO: string;
+  CMS_PASSWORD_RESET_TTL_MINUTES: string;
   CMS_TURNSTILE_SECRET_KEY: string;
   VITE_TURNSTILE_SITE_KEY: string;
 };

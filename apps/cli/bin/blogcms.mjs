@@ -28,6 +28,8 @@ Usage:
   blogcms deploy
   blogcms admin create
   blogcms admin reset-password
+  blogcms admin request-password-reset
+  blogcms admin confirm-password-reset
 
 Environment:
   BLOGCMS_SITE_URL
@@ -381,7 +383,56 @@ Environment:
           return;
         }
 
-        fail("Use `blogcms admin create` or `blogcms admin reset-password`.");
+        if (subcommand === "request-password-reset") {
+          const siteUrl = getSiteUrl();
+
+          if (!siteUrl) {
+            fail("Set BLOGCMS_SITE_URL to request a password reset email.");
+          }
+
+          const email = readOption(["--email"], process.env.BLOGCMS_ADMIN_EMAIL);
+
+          if (!email) {
+            fail("Use `blogcms admin request-password-reset --email <email>`.");
+          }
+
+          const response = await siteFetch(siteUrl, "/api/admin/password-reset", {
+            method: "POST",
+            body: { email },
+          });
+          print(JSON.stringify(response, null, 2));
+          return;
+        }
+
+        if (subcommand === "confirm-password-reset") {
+          const siteUrl = getSiteUrl();
+
+          if (!siteUrl) {
+            fail("Set BLOGCMS_SITE_URL to confirm a password reset.");
+          }
+
+          const body = {
+            token: readOption(["--token"], process.env.BLOGCMS_PASSWORD_RESET_TOKEN),
+            password: readOption(["--password"], process.env.BLOGCMS_ADMIN_PASSWORD),
+          };
+
+          if (!body.token || !body.password) {
+            fail(
+              "Use `blogcms admin confirm-password-reset --token <token> --password <password>`.",
+            );
+          }
+
+          const response = await siteFetch(siteUrl, "/api/admin/password-reset", {
+            method: "POST",
+            body,
+          });
+          print(JSON.stringify(response, null, 2));
+          return;
+        }
+
+        fail(
+          "Use `blogcms admin create`, `blogcms admin reset-password`, `blogcms admin request-password-reset`, or `blogcms admin confirm-password-reset`.",
+        );
       },
     },
   ],

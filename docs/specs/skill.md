@@ -27,7 +27,7 @@ The theme preset is written to site settings and applied through shared UI token
 2. Create or clone the project.
 3. Write site config from `templates/site.config.json`.
 4. Verify Cloudflare login.
-5. Create D1, R2 assets, R2 backups, and optional KV resources.
+5. Create D1, R2 assets, R2 backups, optional KV resources, and optional Email Sending resources.
 6. Write Wrangler bindings.
 7. Apply D1 migrations.
 8. Deploy the Worker.
@@ -37,9 +37,10 @@ The theme preset is written to site settings and applied through shared UI token
 12. Publish the first bilingual post through `blogcms push`.
 13. Upload a media asset through `blogcms upload`.
 14. Submit and approve a comment.
-15. Export JSON through `blogcms export` and create a ZIP backup through `blogcms backup`.
-16. Verify homepage, post page, admin, RSS, sitemap, robots, OpenAPI, OG metadata, localized API responses, JSON export, and ZIP backup.
-17. Save an execution log.
+15. If Email Sending is enabled, request a password reset email.
+16. Export JSON through `blogcms export` and create a ZIP backup through `blogcms backup`.
+17. Verify homepage, post page, admin, RSS, sitemap, robots, OpenAPI, OG metadata, localized API responses, JSON export, and ZIP backup.
+18. Save an execution log.
 
 ## Demo Evidence
 

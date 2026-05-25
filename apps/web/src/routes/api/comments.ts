@@ -4,6 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { createD1Comment, getD1PostBySlug, listD1Comments } from "#/lib/cms-d1";
+import { notifyCommentCreated } from "#/lib/cms-email";
 import { checkCommentRateLimit, getClientIp, verifyTurnstile } from "#/lib/comment-guard";
 
 export const Route = createFileRoute("/api/comments")({
@@ -83,6 +84,12 @@ export const Route = createFileRoute("/api/comments")({
         if ("error" in result) {
           return jsonResponse({ error: result.error }, { status: 400 });
         }
+
+        await notifyCommentCreated({
+          comment: result.comment,
+          postTitle: persistedPost?.title ?? commentInput.postSlug,
+          siteUrl: new URL(request.url).origin,
+        });
 
         return jsonResponse(
           {

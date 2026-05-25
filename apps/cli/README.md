@@ -43,6 +43,8 @@ blogcms export --format zip --output ./cloud-blog-cms-export.zip
 blogcms backup
 blogcms admin create --email admin@example.com --password "..."
 blogcms admin reset-password --email admin@example.com --password "..."
+blogcms admin request-password-reset --email admin@example.com
+blogcms admin confirm-password-reset --token reset_... --password "..."
 ```
 
 `blogcms push` accepts Markdown files, Markdown folders, or JSON post payloads. JSON payloads can include bilingual `i18n` fields for title, excerpt, body, rendered HTML, text, and SEO metadata.
@@ -50,3 +52,5 @@ blogcms admin reset-password --email admin@example.com --password "..."
 `blogcms import` accepts Markdown, HTML, ZIP archives, or a local folder. Folder imports send a file manifest to the ZIP import API so Markdown/HTML and local images can be processed together.
 
 `blogcms export --format zip` downloads the full archive written by `/api/export?format=zip`. `blogcms backup` creates the same ZIP archive directly in the configured R2 backups bucket.
+
+`blogcms admin request-password-reset` uses the optional Email Sending path. When email is disabled, direct `blogcms admin reset-password` remains available with an API token.

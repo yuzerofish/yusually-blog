@@ -82,7 +82,12 @@ function LoginForm() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="password">{m.login_password()}</Label>
+              <div className="flex items-center justify-between gap-3">
+                <Label htmlFor="password">{m.login_password()}</Label>
+                <Link to="/reset-password" className="text-sm underline underline-offset-4">
+                  {m.password_reset_link()}
+                </Link>
+              </div>
               <Input
                 id="password"
                 name="password"

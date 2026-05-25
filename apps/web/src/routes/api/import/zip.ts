@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getApiLocale, importPreview, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { createD1Post } from "#/lib/cms-d1";
+import { notifyImportCompleted } from "#/lib/cms-email";
 import { parseZipImport, type ZipImportInput } from "#/lib/cms-import";
 import { storeImportPackage } from "#/lib/cms-r2";
 
@@ -53,6 +54,11 @@ export const Route = createFileRoute("/api/import/zip")({
               attachedPostId: post.id,
             })
           : null;
+        await notifyImportCompleted({
+          kind: "zip",
+          post,
+          siteUrl: new URL(request.url).origin,
+        });
 
         return jsonResponse(
           {

@@ -150,6 +150,17 @@
 /** @typedef {{}} Login_PendingInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Login_Social_ErrorInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Login_With_ProviderInputs */
+/** @typedef {{}} Password_Reset_ConfirmInputs */
+/** @typedef {{}} Password_Reset_Confirm_ErrorInputs */
+/** @typedef {{}} Password_Reset_Confirm_PendingInputs */
+/** @typedef {{}} Password_Reset_Confirm_SuccessInputs */
+/** @typedef {{}} Password_Reset_LinkInputs */
+/** @typedef {{}} Password_Reset_New_PasswordInputs */
+/** @typedef {{}} Password_Reset_RequestInputs */
+/** @typedef {{}} Password_Reset_Request_ErrorInputs */
+/** @typedef {{}} Password_Reset_Request_PendingInputs */
+/** @typedef {{}} Password_Reset_Request_SuccessInputs */
+/** @typedef {{}} Password_Reset_TitleInputs */
 /** @typedef {{}} Nav_AboutInputs */
 /** @typedef {{}} Nav_ArchiveInputs */
 /** @typedef {{}} Nav_BlogInputs */
@@ -377,6 +388,31 @@ export const login_password_placeholder: (
 export const login_pending: (inputs: Login_PendingInputs) => LocalizedString;
 export const login_social_error: (inputs: Login_Social_ErrorInputs) => LocalizedString;
 export const login_with_provider: (inputs: Login_With_ProviderInputs) => LocalizedString;
+export const password_reset_confirm: (inputs: Password_Reset_ConfirmInputs) => LocalizedString;
+export const password_reset_confirm_error: (
+  inputs: Password_Reset_Confirm_ErrorInputs,
+) => LocalizedString;
+export const password_reset_confirm_pending: (
+  inputs: Password_Reset_Confirm_PendingInputs,
+) => LocalizedString;
+export const password_reset_confirm_success: (
+  inputs: Password_Reset_Confirm_SuccessInputs,
+) => LocalizedString;
+export const password_reset_link: (inputs: Password_Reset_LinkInputs) => LocalizedString;
+export const password_reset_new_password: (
+  inputs: Password_Reset_New_PasswordInputs,
+) => LocalizedString;
+export const password_reset_request: (inputs: Password_Reset_RequestInputs) => LocalizedString;
+export const password_reset_request_error: (
+  inputs: Password_Reset_Request_ErrorInputs,
+) => LocalizedString;
+export const password_reset_request_pending: (
+  inputs: Password_Reset_Request_PendingInputs,
+) => LocalizedString;
+export const password_reset_request_success: (
+  inputs: Password_Reset_Request_SuccessInputs,
+) => LocalizedString;
+export const password_reset_title: (inputs: Password_Reset_TitleInputs) => LocalizedString;
 export const nav_about: (inputs: Nav_AboutInputs) => LocalizedString;
 export const nav_archive: (inputs: Nav_ArchiveInputs) => LocalizedString;
 export const nav_blog: (inputs: Nav_BlogInputs) => LocalizedString;
@@ -581,6 +617,17 @@ export type Login_Social_ErrorInputs = {
 export type Login_With_ProviderInputs = {
   provider: NonNullable<unknown>;
 };
+export type Password_Reset_ConfirmInputs = {};
+export type Password_Reset_Confirm_ErrorInputs = {};
+export type Password_Reset_Confirm_PendingInputs = {};
+export type Password_Reset_Confirm_SuccessInputs = {};
+export type Password_Reset_LinkInputs = {};
+export type Password_Reset_New_PasswordInputs = {};
+export type Password_Reset_RequestInputs = {};
+export type Password_Reset_Request_ErrorInputs = {};
+export type Password_Reset_Request_PendingInputs = {};
+export type Password_Reset_Request_SuccessInputs = {};
+export type Password_Reset_TitleInputs = {};
 export type Nav_AboutInputs = {};
 export type Nav_ArchiveInputs = {};
 export type Nav_BlogInputs = {};

@@ -257,6 +257,24 @@ export const Route = createFileRoute("/openapi.json")({
                 responses: { "200": { description: "API token revoked" } },
               },
             },
+            "/api/admin/password-reset": {
+              post: {
+                summary: "Request or confirm password reset",
+                description:
+                  "Requests an optional Email Sending password reset link when email is supplied, or confirms a reset when token and password are supplied.",
+                requestBody: {
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/PasswordResetRequest" },
+                    },
+                  },
+                },
+                responses: {
+                  "202": { description: "Password reset email accepted" },
+                  "200": { description: "Password updated" },
+                },
+              },
+            },
           },
           components: {
             securitySchemes: {
@@ -362,6 +380,25 @@ export const Route = createFileRoute("/openapi.json")({
                   missingAssetKeys: { type: "array", items: { type: "string" } },
                   exportedAt: { type: "string" },
                 },
+              },
+              PasswordResetRequest: {
+                oneOf: [
+                  {
+                    type: "object",
+                    properties: {
+                      email: { type: "string" },
+                    },
+                    required: ["email"],
+                  },
+                  {
+                    type: "object",
+                    properties: {
+                      token: { type: "string" },
+                      password: { type: "string" },
+                    },
+                    required: ["token", "password"],
+                  },
+                ],
               },
             },
           },

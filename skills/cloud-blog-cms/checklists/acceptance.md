@@ -17,6 +17,8 @@
 - JSON export writes a backup object to R2.
 - ZIP export includes Markdown, HTML, JSON manifests, comments, settings, and R2 assets.
 - Manual backup writes a ZIP archive to R2.
+- Email Sending can remain disabled without blocking login, comments, imports, exports, or backups.
+- If Email Sending is enabled, password reset and moderation notifications can be sent.
 - Comment submission creates a pending comment.
 - Comment approval publishes it on the post page.
 - Skill log records automated steps and user intervention steps.

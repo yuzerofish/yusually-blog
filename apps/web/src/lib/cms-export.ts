@@ -3,6 +3,7 @@ import { localizePost, resolveLocale } from "@repo/core";
 import { env } from "cloudflare:workers";
 
 import { buildD1SiteExport, getD1SiteSettings } from "#/lib/cms-d1";
+import { notifyBackupCompleted } from "#/lib/cms-email";
 import { pruneExportBackups, storeExportZipBackup } from "#/lib/cms-r2";
 import { createZip, type ZipEntryInput } from "#/lib/cms-zip";
 
@@ -65,6 +66,12 @@ export async function createScheduledBackup(input: { trigger: "manual" | "cron";
     deletedKeys: [],
     retentionDays,
   }));
+  await notifyBackupCompleted({
+    backupKey: backup.key,
+    sizeBytes: backup.sizeBytes,
+    trigger: input.trigger,
+    prunedCount: pruned.deletedKeys.length,
+  });
 
   return {
     trigger: input.trigger,

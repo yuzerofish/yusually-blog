@@ -30,7 +30,7 @@ Ask for missing values only when they are not already provided:
 3. Write site config from `templates/site.config.json`.
 4. Keep `locales: ["en", "zh"]`, `primaryLanguage`, and `i18nRuntime: "paraglide-js"` in generator config. Site settings use `i18n` for localized text fields.
 5. Check Cloudflare login with Wrangler.
-6. Create D1, R2 assets, R2 backups, and optional KV resources.
+6. Create D1, R2 assets, R2 backups, optional KV resources, and optional Email Sending resources.
 7. Write `apps/web/wrangler.jsonc` bindings.
 8. Apply D1 migrations from `packages/db/migrations`.
 9. Deploy the Worker.
@@ -40,9 +40,10 @@ Ask for missing values only when they are not already provided:
 13. Publish the first bilingual post with `blogcms push /absolute/path/to/first-post.json`.
 14. Upload a media asset with `blogcms upload`.
 15. Submit a public comment and approve it through the API.
-16. Export the site with `blogcms export` and create a ZIP backup with `blogcms backup`.
-17. Verify public page, post page, admin login, RSS, sitemap, robots, OpenAPI, OG metadata, localized post API response, R2 asset, JSON export, and ZIP backup.
-18. Save an execution log for the generated site.
+16. If Email Sending is enabled, request a password reset email.
+17. Export the site with `blogcms export` and create a ZIP backup with `blogcms backup`.
+18. Verify public page, post page, admin login, RSS, sitemap, robots, OpenAPI, OG metadata, localized post API response, R2 asset, JSON export, and ZIP backup.
+19. Save an execution log for the generated site.
 
 ## I18n Contract
 

@@ -41,6 +41,7 @@ Feeds and public metadata use current D1 site settings and localized content whe
 - `POST /api/tokens/:id/revoke`
 - `POST /api/admin/users`
 - `PATCH /api/admin/password`
+- `POST /api/admin/password-reset`
 - `POST /api/admin/login`
 - `POST /api/admin/logout`
 - `GET /api/admin/me`
@@ -62,6 +63,8 @@ Feeds and public metadata use current D1 site settings and localized content whe
 `GET /api/export` returns JSON data and writes a backup JSON object to R2. `GET /api/export?format=zip` returns a ZIP archive with Markdown posts, HTML posts, JSON manifests, comments, settings, projects, tags, and bundled R2 assets; the ZIP is also written to the backups bucket.
 
 `POST /api/backups` creates a ZIP export backup in R2 and applies the configured backup retention policy. It uses the same `export:read` scope as export.
+
+`POST /api/admin/password-reset` requests an optional Email Sending reset link when `email` is provided, or confirms a reset when `token` and `password` are provided. Direct token-authenticated `PATCH /api/admin/password` remains available when Email Sending is disabled.
 
 ## Token Scopes
 
