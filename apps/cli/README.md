@@ -1,8 +1,6 @@
 # blogcms CLI
 
-`blogcms` is the automation surface for Cloud Blog CMS.
-
-The current package defines the command contract used by the Skill and Phase 2 API work. Mutating commands are intentionally wired as command stubs until D1-backed API routes and token validation are implemented.
+`blogcms` is the automation surface for Cloud Blog CMS. It is used by admins, scripts, and the `cloud-blog-cms` Skill.
 
 ## Local Check
 
@@ -17,15 +15,29 @@ blogcms init --primary-language en
 blogcms init --primary-language zh
 ```
 
-The CLI keeps English and Chinese enabled for every generated site. The selected primary language controls initial settings, feed copy, and the first post defaults. Translation runtime remains Paraglide.js.
+English and Chinese stay enabled for every generated site. The selected primary language controls initial settings, feed copy, and first-run content defaults. UI translation remains Paraglide.js.
 
-## Remote Commands
-
-Set these values before running commands that call the site API:
+## Remote Environment
 
 ```sh
-export BLOGCMS_SITE_URL=https://blog-starter.01mvp.com
+export BLOGCMS_SITE_URL=https://demo.01mvp.com
 export BLOGCMS_API_TOKEN=...
 ```
 
-`blogcms push`, `blogcms import`, `blogcms upload`, and `blogcms export` call the matching `/api/*` endpoints when the API environment is configured.
+## Remote Commands
+
+```sh
+blogcms login --email admin@example.com --password "..."
+blogcms site get
+blogcms site update --config /absolute/path/to/site.config.json
+blogcms push ./post.md
+blogcms push ./post-folder
+blogcms push ./first-post.json
+blogcms import ./site.zip
+blogcms upload ./images
+blogcms export
+blogcms admin create --email admin@example.com --password "..."
+blogcms admin reset-password --email admin@example.com --password "..."
+```
+
+`blogcms push` accepts Markdown files, Markdown folders, or JSON post payloads. JSON payloads can include bilingual `i18n` fields for title, excerpt, body, rendered HTML, text, and SEO metadata.

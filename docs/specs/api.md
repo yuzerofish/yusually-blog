@@ -1,8 +1,8 @@
 # API
 
-Phase 2 will expose the full OpenAPI contract at `/openapi.json` and a rendered API guide at `/docs/api`.
+The API is exposed through TanStack Start server routes. Machine-readable OpenAPI is available at `/openapi.json`; the rendered guide is available at `/docs/api`.
 
-## Initial Routes
+## Public Routes
 
 - `GET /rss.xml`
 - `GET /feed.xml`
@@ -11,21 +11,24 @@ Phase 2 will expose the full OpenAPI contract at `/openapi.json` and a rendered 
 - `GET /openapi.json`
 - `GET /docs/api`
 
-Feed output uses the site's selected primary language. Content APIs should accept and return bilingual fields for `en` and `zh`.
+Feeds and public metadata use current D1 site settings and localized content where requested.
 
-## API Routes
+## Content And Automation Routes
 
 - `GET /api/posts`
 - `POST /api/posts`
-- `PATCH /api/posts/:id`
 - `GET /api/posts/:id`
+- `PATCH /api/posts/:id`
 - `DELETE /api/posts/:id`
 - `POST /api/import/markdown`
 - `POST /api/import/html`
 - `POST /api/import/zip`
 - `GET /api/assets`
 - `POST /api/assets`
+- `GET /api/site`
+- `PUT /api/site`
 - `GET /api/export`
+- `GET /api/comments`
 - `POST /api/comments`
 - `POST /api/comments/:id/approve`
 - `POST /api/comments/:id/spam`
@@ -33,9 +36,27 @@ Feed output uses the site's selected primary language. Content APIs should accep
 - `GET /api/tokens`
 - `POST /api/tokens`
 - `POST /api/tokens/:id/revoke`
+- `POST /api/admin/users`
+- `PATCH /api/admin/password`
+- `POST /api/admin/login`
+- `POST /api/admin/logout`
+- `GET /api/admin/me`
 
-`GET /api/posts` accepts `q`, `tag`, `status=all`, and `lang=en|zh` query parameters for search, filtering, admin lists, and localized response fields.
+`GET /api/posts` accepts `q`, `tag`, `status=all`, and `lang=en|zh`. `status=all` requires `posts:read`. Public post lists return only published posts.
+
+`POST /api/posts` accepts bilingual `i18n` fields for title, excerpt, Markdown, rendered HTML, text, SEO title, and SEO description. When `locale` is `zh`, the primary input is also stored into Chinese localized fields.
+
+`GET /api/comments` returns the moderation queue and requires `comments:moderate`. `POST /api/comments` is public, applies honeypot, Turnstile when configured, per-IP rate limits, body length limits, link limits, and creates comments as `pending`.
+
+`GET /api/export` returns JSON data and writes a backup JSON object to R2.
 
 ## Token Scopes
 
-`posts:read`, `posts:write`, `posts:publish`, `assets:write`, `comments:moderate`, `site:read`, `site:write`, and `export:read`.
+- `posts:read`
+- `posts:write`
+- `posts:publish`
+- `assets:write`
+- `comments:moderate`
+- `site:read`
+- `site:write`
+- `export:read`

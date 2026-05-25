@@ -1,11 +1,11 @@
 ---
 name: cloud-blog-cms
-description: Initialize, configure, deploy, and verify a new Cloud Blog CMS site on Cloudflare Workers, D1, and R2.
+description: Initialize, configure, deploy, and verify a new Cloud Blog CMS site on Cloudflare Workers, D1, R2, and KV.
 ---
 
 # Cloud Blog CMS Skill
 
-Use this Skill when creating a new personal blog from the `01mvp/blog-starter` template or when validating that a generated site matches the template contract.
+Use this Skill when creating a new personal blog from the Cloud Blog CMS template or when validating that a generated site matches the template contract.
 
 ## Inputs To Collect
 
@@ -27,16 +27,22 @@ Ask for missing values only when they are not already provided:
 
 1. Check local prerequisites with `scripts/check-prereqs.sh`.
 2. Create or clone the project from the template.
-3. Write site config from `templates/site.config.json`, preserving `locales: ["en", "zh"]`, `primaryLanguage`, and `i18n: "paraglide-js"`.
-4. Check Cloudflare login with Wrangler.
-5. Create D1, R2 assets, R2 backups, and optional KV resources.
-6. Write `apps/web/wrangler.jsonc` bindings.
-7. Apply D1 migrations from `packages/db/migrations`.
-8. Create the first admin user.
+3. Write site config from `templates/site.config.json`.
+4. Keep `locales: ["en", "zh"]`, `primaryLanguage`, and `i18nRuntime: "paraglide-js"` in generator config. Site settings use `i18n` for localized text fields.
+5. Check Cloudflare login with Wrangler.
+6. Create D1, R2 assets, R2 backups, and optional KV resources.
+7. Write `apps/web/wrangler.jsonc` bindings.
+8. Apply D1 migrations from `packages/db/migrations`.
 9. Deploy the Worker.
-10. Create the first example post with English and Chinese title, excerpt, Markdown body, SEO title, and SEO description.
-11. Verify public page, admin login, RSS, sitemap, robots, and OG metadata.
-12. Save an execution log for the generated site.
+10. Create the first admin user with `blogcms admin create`.
+11. Log in with `blogcms login` and store the generated API token securely outside the repository.
+12. Push settings with `blogcms site update --config /absolute/path/to/site.config.json`.
+13. Publish the first bilingual post with `blogcms push /absolute/path/to/first-post.json`.
+14. Upload a media asset with `blogcms upload`.
+15. Submit a public comment and approve it through the API.
+16. Export the site with `blogcms export`.
+17. Verify public page, post page, admin login, RSS, sitemap, robots, OpenAPI, OG metadata, localized post API response, R2 asset, and export backup.
+18. Save an execution log for the generated site.
 
 ## I18n Contract
 
@@ -50,6 +56,18 @@ Ask for missing values only when they are not already provided:
 
 Ask the user to act only for Cloudflare login, account registration, paid-plan confirmation, API token creation, DNS confirmation, domain verification, and email verification.
 
-## Verification
+## Demo Targets
 
-The generated demo target is `blog-demo.01mvp.com`. The Skill run must show that the site came from this workflow rather than manual setup.
+Canonical target:
+
+```txt
+demo.01mvp.com
+```
+
+Alias:
+
+```txt
+blog-demo.01mvp.com
+```
+
+The Skill run must show that the site came from this workflow rather than manual setup. Use `examples/execution-log.md` as the evidence format.

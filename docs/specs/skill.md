@@ -2,20 +2,55 @@
 
 The `cloud-blog-cms` Skill lives at `skills/cloud-blog-cms/SKILL.md`.
 
-Its job is to let an AI agent initialize a new blog from this template, configure Cloudflare resources, deploy the Worker, create a first post, and validate the generated site.
+Its job is to let an AI agent initialize a new blog from this template, configure Cloudflare resources, deploy the Worker, create the first admin, publish a bilingual first post, upload media, verify comments and feeds, and record an execution log.
 
 ## Required Inputs
 
-The Skill must collect a primary language of `en` or `zh`. English and Chinese stay enabled either way.
+The Skill collects:
 
-## Automation Preference
+- Project name
+- Blog name and description
+- Author name and email
+- Primary language: `en` or `zh`
+- Domain, or workers.dev fallback
+- Theme style
+- Comments preference
+- Email Sending preference
+- GitHub Actions preference
 
-The Skill should use local commands and Cloudflare APIs first. It should ask the user to intervene only for Cloudflare login, paid-plan confirmation, API token creation, DNS confirmation, domain verification, and email verification.
+English and Chinese remain enabled regardless of the primary language.
 
-## I18n Initialization
+## Automation Order
 
-The generated site must keep `i18n: "paraglide-js"`, `locales: ["en", "zh"]`, and the selected `primaryLanguage` in site config. First-run content should include bilingual site introduction copy and a first post with English and Chinese title, excerpt, Markdown body, SEO title, and SEO description.
+1. Check local prerequisites with `scripts/check-prereqs.sh`.
+2. Create or clone the project.
+3. Write site config from `templates/site.config.json`.
+4. Verify Cloudflare login.
+5. Create D1, R2 assets, R2 backups, and optional KV resources.
+6. Write Wrangler bindings.
+7. Apply D1 migrations.
+8. Deploy the Worker.
+9. Create the first admin user.
+10. Log in and create a scoped API token.
+11. Push site settings through `blogcms site update`.
+12. Publish the first bilingual post through `blogcms push`.
+13. Upload a media asset through `blogcms upload`.
+14. Submit and approve a comment.
+15. Export a backup through `blogcms export`.
+16. Verify homepage, post page, admin, RSS, sitemap, robots, OpenAPI, OG metadata, and localized API responses.
+17. Save an execution log.
 
-## Generated Site
+## Demo Evidence
 
-The acceptance demo target is `blog-demo.01mvp.com`. It must be generated through the Skill workflow, not manually assembled. The demo must show the selected primary language and still allow switching to the other language.
+The Skill-generated demo uses:
+
+- Site: `https://demo.01mvp.com`
+- Alias: `https://blog-demo.01mvp.com`
+- Worker: `blog-demo`
+- Current verified demo version: `44d442a6-e851-46f0-8aea-c007755f5005`
+
+The demo run created site settings from `skills/cloud-blog-cms/templates/site.config.json`, published `hello-from-generated-cloud-blog-cms`, uploaded an R2 asset, submitted a pending comment, approved it, and generated an R2 export backup.
+
+## User Intervention Points
+
+Ask the user to act only for Cloudflare login, account registration, paid-plan confirmation, API token creation, DNS confirmation, domain verification, and email verification.
