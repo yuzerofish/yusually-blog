@@ -57,6 +57,14 @@
 /** @typedef {{}} Admin_Settings_TitleInputs */
 /** @typedef {{}} Admin_Storage_ContractInputs */
 /** @typedef {{}} Admin_Storage_Contract_DetailInputs */
+/** @typedef {{}} Admin_Create_TokenInputs */
+/** @typedef {{}} Admin_Revoke_TokenInputs */
+/** @typedef {{}} Admin_Token_NameInputs */
+/** @typedef {{}} Admin_Token_RevokedInputs */
+/** @typedef {{}} Admin_Token_ScopesInputs */
+/** @typedef {{}} Admin_Token_Secret_OnceInputs */
+/** @typedef {{}} Admin_Tokens_DescriptionInputs */
+/** @typedef {{}} Admin_Tokens_TitleInputs */
 /** @typedef {{}} Account_Management_NoteInputs */
 /** @typedef {{}} Account_Signed_In_AsInputs */
 /** @typedef {{}} Account_TitleInputs */
@@ -73,6 +81,11 @@
 /** @typedef {{}} Back_HomeInputs */
 /** @typedef {{}} Blog_DescriptionInputs */
 /** @typedef {{}} Blog_EyebrowInputs */
+/** @typedef {{}} Blog_Filter_AllInputs */
+/** @typedef {{}} Blog_Filter_LabelInputs */
+/** @typedef {{}} Blog_No_ResultsInputs */
+/** @typedef {{}} Blog_Search_PlaceholderInputs */
+/** @typedef {{}} Blog_Search_SubmitInputs */
 /** @typedef {{}} Blog_TitleInputs */
 /** @typedef {{}} Comment_BodyInputs */
 /** @typedef {{}} Comment_CompanyInputs */
@@ -122,6 +135,9 @@
 /** @typedef {{}} Nav_TagsInputs */
 /** @typedef {{}} Open_CmsInputs */
 /** @typedef {{}} PinnedInputs */
+/** @typedef {{}} Pagination_NextInputs */
+/** @typedef {{ current: NonNullable<unknown>, total: NonNullable<unknown> }} Pagination_PageInputs */
+/** @typedef {{}} Pagination_PreviousInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Posts_CountInputs */
 /** @typedef {{}} Projects_EyebrowInputs */
 /** @typedef {{}} Projects_TitleInputs */
@@ -434,6 +450,46 @@ export const admin_storage_contract_detail =
     return /** @type {LocalizedString} */ `D1 owns structured records. R2 owns images, imports, exports, and backups.`;
   };
 
+export const admin_create_token =
+  /** @type {(inputs: Admin_Create_TokenInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Create token`;
+  };
+
+export const admin_revoke_token =
+  /** @type {(inputs: Admin_Revoke_TokenInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Revoke`;
+  };
+
+export const admin_token_name =
+  /** @type {(inputs: Admin_Token_NameInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Token name`;
+  };
+
+export const admin_token_revoked =
+  /** @type {(inputs: Admin_Token_RevokedInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Revoked`;
+  };
+
+export const admin_token_scopes =
+  /** @type {(inputs: Admin_Token_ScopesInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Token scopes`;
+  };
+
+export const admin_token_secret_once =
+  /** @type {(inputs: Admin_Token_Secret_OnceInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Token secret`;
+  };
+
+export const admin_tokens_description =
+  /** @type {(inputs: Admin_Tokens_DescriptionInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Create scoped automation tokens for CLI, OpenAPI, and AI publishing workflows.`;
+  };
+
+export const admin_tokens_title =
+  /** @type {(inputs: Admin_Tokens_TitleInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `API tokens`;
+  };
+
 export const account_management_note =
   /** @type {(inputs: Account_Management_NoteInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `Use the CMS admin area to manage publishing, settings, and exports.`;
@@ -504,6 +560,31 @@ export const blog_description =
 export const blog_eyebrow = /** @type {(inputs: Blog_EyebrowInputs) => LocalizedString} */ () => {
   return /** @type {LocalizedString} */ `Blog`;
 };
+
+export const blog_filter_all =
+  /** @type {(inputs: Blog_Filter_AllInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `All`;
+  };
+
+export const blog_filter_label =
+  /** @type {(inputs: Blog_Filter_LabelInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Filter posts by tag`;
+  };
+
+export const blog_no_results =
+  /** @type {(inputs: Blog_No_ResultsInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `No posts matched this search.`;
+  };
+
+export const blog_search_placeholder =
+  /** @type {(inputs: Blog_Search_PlaceholderInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Search posts`;
+  };
+
+export const blog_search_submit =
+  /** @type {(inputs: Blog_Search_SubmitInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Search`;
+  };
 
 export const blog_title = /** @type {(inputs: Blog_TitleInputs) => LocalizedString} */ () => {
   return /** @type {LocalizedString} */ `Durable publishing notes`;
@@ -727,6 +808,22 @@ export const open_cms = /** @type {(inputs: Open_CmsInputs) => LocalizedString} 
 export const pinned = /** @type {(inputs: PinnedInputs) => LocalizedString} */ () => {
   return /** @type {LocalizedString} */ `Pinned`;
 };
+
+export const pagination_next =
+  /** @type {(inputs: Pagination_NextInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Next`;
+  };
+
+export const pagination_page = /** @type {(inputs: Pagination_PageInputs) => LocalizedString} */ (
+  i,
+) => {
+  return /** @type {LocalizedString} */ `Page ${i?.current} of ${i?.total}`;
+};
+
+export const pagination_previous =
+  /** @type {(inputs: Pagination_PreviousInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Previous`;
+  };
 
 export const posts_count = /** @type {(inputs: Posts_CountInputs) => LocalizedString} */ (i) => {
   return /** @type {LocalizedString} */ `${i?.count} posts`;

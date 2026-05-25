@@ -1,3 +1,4 @@
+import { deletePost, updatePost } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { findPost, getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
@@ -25,14 +26,10 @@ export const Route = createFileRoute("/api/posts/$id")({
 
         const body = await readJsonBody<Record<string, unknown>>(request);
 
+        const updated = updatePost(post.id, body);
+
         return jsonResponse({
-          data: {
-            ...post,
-            ...body,
-            id: post.id,
-            slug: post.slug,
-            updatedAt: new Date().toISOString(),
-          },
+          data: updated ?? post,
           requiredScope: "posts:write",
         });
       },
@@ -43,10 +40,9 @@ export const Route = createFileRoute("/api/posts/$id")({
           return jsonResponse({ error: "Post not found" }, { status: 404 });
         }
 
-        return jsonResponse({
-          data: { id: post.id, status: "deleted" },
-          requiredScope: "posts:write",
-        });
+        const deleted = deletePost(post.id);
+
+        return jsonResponse({ data: deleted, requiredScope: "posts:write" });
       },
     },
   },

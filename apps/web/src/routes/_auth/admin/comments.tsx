@@ -1,6 +1,7 @@
 import { comments, localizeComment, localizePost, posts } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
@@ -11,6 +12,21 @@ export const Route = createFileRoute("/_auth/admin/comments")({
 
 function AdminCommentsPage() {
   const locale = getCurrentLocale();
+  const [rows, setRows] = useState(comments);
+
+  const moderate = async (id: string, action: "approve" | "spam" | "delete") => {
+    const response = await fetch(`/api/comments/${id}/${action}`, { method: "POST" });
+
+    if (!response.ok) {
+      return;
+    }
+
+    const payload = (await response.json()) as {
+      data: (typeof comments)[number];
+    };
+
+    setRows((current) => current.map((comment) => (comment.id === id ? payload.data : comment)));
+  };
 
   return (
     <section className="rounded-lg border border-[#26312c]/10 bg-white p-6 dark:border-white/10 dark:bg-[#171d1a]">
@@ -20,7 +36,7 @@ function AdminCommentsPage() {
       </p>
 
       <div className="mt-6 grid gap-4">
-        {comments.map((comment) => {
+        {rows.map((comment) => {
           const post = posts.find((candidate) => candidate.id === comment.postId);
           const localizedPost = post ? localizePost(post, locale) : undefined;
           const localizedComment = localizeComment(comment, locale);
@@ -45,11 +61,27 @@ function AdminCommentsPage() {
                 {localizedComment.body}
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
-                <Button size="sm">{m.admin_comments_approve()}</Button>
-                <Button size="sm" variant="outline">
+                <Button
+                  size="sm"
+                  onClick={() => void moderate(comment.id, "approve")}
+                  disabled={localizedComment.status === "approved"}
+                >
+                  {m.admin_comments_approve()}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => void moderate(comment.id, "spam")}
+                  disabled={localizedComment.status === "spam"}
+                >
                   {m.admin_comments_mark_spam()}
                 </Button>
-                <Button size="sm" variant="destructive">
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => void moderate(comment.id, "delete")}
+                  disabled={localizedComment.status === "deleted"}
+                >
                   {m.admin_comments_delete()}
                 </Button>
               </div>

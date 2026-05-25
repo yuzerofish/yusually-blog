@@ -30,6 +30,11 @@ Feed output uses the site's selected primary language. Content APIs should accep
 - `POST /api/comments/:id/approve`
 - `POST /api/comments/:id/spam`
 - `POST /api/comments/:id/delete`
+- `GET /api/tokens`
+- `POST /api/tokens`
+- `POST /api/tokens/:id/revoke`
+
+`GET /api/posts` accepts `q`, `tag`, `status=all`, and `lang=en|zh` query parameters for search, filtering, admin lists, and localized response fields.
 
 ## Token Scopes
 

@@ -58,6 +58,14 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Admin_Settings_TitleInputs */
 /** @typedef {{}} Admin_Storage_ContractInputs */
 /** @typedef {{}} Admin_Storage_Contract_DetailInputs */
+/** @typedef {{}} Admin_Create_TokenInputs */
+/** @typedef {{}} Admin_Revoke_TokenInputs */
+/** @typedef {{}} Admin_Token_NameInputs */
+/** @typedef {{}} Admin_Token_RevokedInputs */
+/** @typedef {{}} Admin_Token_ScopesInputs */
+/** @typedef {{}} Admin_Token_Secret_OnceInputs */
+/** @typedef {{}} Admin_Tokens_DescriptionInputs */
+/** @typedef {{}} Admin_Tokens_TitleInputs */
 /** @typedef {{}} Account_Management_NoteInputs */
 /** @typedef {{}} Account_Signed_In_AsInputs */
 /** @typedef {{}} Account_TitleInputs */
@@ -74,6 +82,11 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Back_HomeInputs */
 /** @typedef {{}} Blog_DescriptionInputs */
 /** @typedef {{}} Blog_EyebrowInputs */
+/** @typedef {{}} Blog_Filter_AllInputs */
+/** @typedef {{}} Blog_Filter_LabelInputs */
+/** @typedef {{}} Blog_No_ResultsInputs */
+/** @typedef {{}} Blog_Search_PlaceholderInputs */
+/** @typedef {{}} Blog_Search_SubmitInputs */
 /** @typedef {{}} Blog_TitleInputs */
 /** @typedef {{}} Comment_BodyInputs */
 /** @typedef {{}} Comment_CompanyInputs */
@@ -123,6 +136,9 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Nav_TagsInputs */
 /** @typedef {{}} Open_CmsInputs */
 /** @typedef {{}} PinnedInputs */
+/** @typedef {{}} Pagination_NextInputs */
+/** @typedef {{ current: NonNullable<unknown>, total: NonNullable<unknown> }} Pagination_PageInputs */
+/** @typedef {{}} Pagination_PreviousInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Posts_CountInputs */
 /** @typedef {{}} Projects_EyebrowInputs */
 /** @typedef {{}} Projects_TitleInputs */
@@ -1124,6 +1140,142 @@ export const admin_storage_contract_detail =
 /**
  * | output |
  * | --- |
+ * | "Create token" |
+ *
+ * @param {Admin_Create_TokenInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_create_token =
+  /** @type {((inputs?: Admin_Create_TokenInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Create_TokenInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_create_token(inputs);
+      return __zh.admin_create_token(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Revoke" |
+ *
+ * @param {Admin_Revoke_TokenInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_revoke_token =
+  /** @type {((inputs?: Admin_Revoke_TokenInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Revoke_TokenInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_revoke_token(inputs);
+      return __zh.admin_revoke_token(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Token name" |
+ *
+ * @param {Admin_Token_NameInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_token_name =
+  /** @type {((inputs?: Admin_Token_NameInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Token_NameInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_token_name(inputs);
+      return __zh.admin_token_name(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Revoked" |
+ *
+ * @param {Admin_Token_RevokedInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_token_revoked =
+  /** @type {((inputs?: Admin_Token_RevokedInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Token_RevokedInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_token_revoked(inputs);
+      return __zh.admin_token_revoked(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Token scopes" |
+ *
+ * @param {Admin_Token_ScopesInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_token_scopes =
+  /** @type {((inputs?: Admin_Token_ScopesInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Token_ScopesInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_token_scopes(inputs);
+      return __zh.admin_token_scopes(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Token secret" |
+ *
+ * @param {Admin_Token_Secret_OnceInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_token_secret_once =
+  /** @type {((inputs?: Admin_Token_Secret_OnceInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Token_Secret_OnceInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_token_secret_once(inputs);
+      return __zh.admin_token_secret_once(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Create scoped automation tokens for CLI, OpenAPI, and AI publishing workflows." |
+ *
+ * @param {Admin_Tokens_DescriptionInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_tokens_description =
+  /** @type {((inputs?: Admin_Tokens_DescriptionInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Tokens_DescriptionInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_tokens_description(inputs);
+      return __zh.admin_tokens_description(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "API tokens" |
+ *
+ * @param {Admin_Tokens_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_tokens_title =
+  /** @type {((inputs?: Admin_Tokens_TitleInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Tokens_TitleInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_tokens_title(inputs);
+      return __zh.admin_tokens_title(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
  * | "Use the CMS admin area to manage publishing, settings, and exports." |
  *
  * @param {Account_Management_NoteInputs} inputs
@@ -1391,6 +1543,91 @@ export const blog_eyebrow =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.blog_eyebrow(inputs);
       return __zh.blog_eyebrow(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "All" |
+ *
+ * @param {Blog_Filter_AllInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const blog_filter_all =
+  /** @type {((inputs?: Blog_Filter_AllInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Blog_Filter_AllInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.blog_filter_all(inputs);
+      return __zh.blog_filter_all(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Filter posts by tag" |
+ *
+ * @param {Blog_Filter_LabelInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const blog_filter_label =
+  /** @type {((inputs?: Blog_Filter_LabelInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Blog_Filter_LabelInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.blog_filter_label(inputs);
+      return __zh.blog_filter_label(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "No posts matched this search." |
+ *
+ * @param {Blog_No_ResultsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const blog_no_results =
+  /** @type {((inputs?: Blog_No_ResultsInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Blog_No_ResultsInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.blog_no_results(inputs);
+      return __zh.blog_no_results(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Search posts" |
+ *
+ * @param {Blog_Search_PlaceholderInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const blog_search_placeholder =
+  /** @type {((inputs?: Blog_Search_PlaceholderInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Blog_Search_PlaceholderInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.blog_search_placeholder(inputs);
+      return __zh.blog_search_placeholder(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Search" |
+ *
+ * @param {Blog_Search_SubmitInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const blog_search_submit =
+  /** @type {((inputs?: Blog_Search_SubmitInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Blog_Search_SubmitInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.blog_search_submit(inputs);
+      return __zh.blog_search_submit(inputs);
     }
   );
 /**
@@ -2224,6 +2461,57 @@ export const pinned =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.pinned(inputs);
       return __zh.pinned(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Next" |
+ *
+ * @param {Pagination_NextInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const pagination_next =
+  /** @type {((inputs?: Pagination_NextInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Pagination_NextInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.pagination_next(inputs);
+      return __zh.pagination_next(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Page {current} of {total}" |
+ *
+ * @param {Pagination_PageInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const pagination_page =
+  /** @type {((inputs: Pagination_PageInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Pagination_PageInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.pagination_page(inputs);
+      return __zh.pagination_page(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Previous" |
+ *
+ * @param {Pagination_PreviousInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const pagination_previous =
+  /** @type {((inputs?: Pagination_PreviousInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Pagination_PreviousInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.pagination_previous(inputs);
+      return __zh.pagination_previous(inputs);
     }
   );
 /**

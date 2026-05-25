@@ -25,6 +25,7 @@ import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as TagsSlugRouteImport } from './routes/tags/$slug'
 import { Route as DocsApiRouteImport } from './routes/docs/api'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
+import { Route as ApiTokensRouteImport } from './routes/api/tokens'
 import { Route as ApiPostsRouteImport } from './routes/api/posts'
 import { Route as ApiExportRouteImport } from './routes/api/export'
 import { Route as ApiCommentsRouteImport } from './routes/api/comments'
@@ -44,6 +45,7 @@ import { Route as AuthAdminSettingsRouteImport } from './routes/_auth/admin/sett
 import { Route as AuthAdminPostsRouteImport } from './routes/_auth/admin/posts'
 import { Route as AuthAdminCommentsRouteImport } from './routes/_auth/admin/comments'
 import { Route as AuthAdminAssetsRouteImport } from './routes/_auth/admin/assets'
+import { Route as ApiTokensIdRevokeRouteImport } from './routes/api/tokens/$id/revoke'
 import { Route as ApiCommentsIdSpamRouteImport } from './routes/api/comments/$id/spam'
 import { Route as ApiCommentsIdDeleteRouteImport } from './routes/api/comments/$id/delete'
 import { Route as ApiCommentsIdApproveRouteImport } from './routes/api/comments/$id/approve'
@@ -124,6 +126,11 @@ const DocsApiRoute = DocsApiRouteImport.update({
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/blog/$slug',
   path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTokensRoute = ApiTokensRouteImport.update({
+  id: '/api/tokens',
+  path: '/api/tokens',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPostsRoute = ApiPostsRouteImport.update({
@@ -221,6 +228,11 @@ const AuthAdminAssetsRoute = AuthAdminAssetsRouteImport.update({
   path: '/assets',
   getParentRoute: () => AuthAdminRouteRoute,
 } as any)
+const ApiTokensIdRevokeRoute = ApiTokensIdRevokeRouteImport.update({
+  id: '/$id/revoke',
+  path: '/$id/revoke',
+  getParentRoute: () => ApiTokensRoute,
+} as any)
 const ApiCommentsIdSpamRoute = ApiCommentsIdSpamRouteImport.update({
   id: '/$id/spam',
   path: '/$id/spam',
@@ -255,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
   '/api/posts': typeof ApiPostsRouteWithChildren
+  '/api/tokens': typeof ApiTokensRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/docs/api': typeof DocsApiRoute
   '/tags/$slug': typeof TagsSlugRoute
@@ -274,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
   '/api/comments/$id/delete': typeof ApiCommentsIdDeleteRoute
   '/api/comments/$id/spam': typeof ApiCommentsIdSpamRoute
+  '/api/tokens/$id/revoke': typeof ApiTokensIdRevokeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -291,6 +305,7 @@ export interface FileRoutesByTo {
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
   '/api/posts': typeof ApiPostsRouteWithChildren
+  '/api/tokens': typeof ApiTokensRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/docs/api': typeof DocsApiRoute
   '/tags/$slug': typeof TagsSlugRoute
@@ -310,6 +325,7 @@ export interface FileRoutesByTo {
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
   '/api/comments/$id/delete': typeof ApiCommentsIdDeleteRoute
   '/api/comments/$id/spam': typeof ApiCommentsIdSpamRoute
+  '/api/tokens/$id/revoke': typeof ApiTokensIdRevokeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -332,6 +348,7 @@ export interface FileRoutesById {
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
   '/api/posts': typeof ApiPostsRouteWithChildren
+  '/api/tokens': typeof ApiTokensRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/docs/api': typeof DocsApiRoute
   '/tags/$slug': typeof TagsSlugRoute
@@ -351,6 +368,7 @@ export interface FileRoutesById {
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
   '/api/comments/$id/delete': typeof ApiCommentsIdDeleteRoute
   '/api/comments/$id/spam': typeof ApiCommentsIdSpamRoute
+  '/api/tokens/$id/revoke': typeof ApiTokensIdRevokeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -372,6 +390,7 @@ export interface FileRouteTypes {
     | '/api/comments'
     | '/api/export'
     | '/api/posts'
+    | '/api/tokens'
     | '/blog/$slug'
     | '/docs/api'
     | '/tags/$slug'
@@ -391,6 +410,7 @@ export interface FileRouteTypes {
     | '/api/comments/$id/approve'
     | '/api/comments/$id/delete'
     | '/api/comments/$id/spam'
+    | '/api/tokens/$id/revoke'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -408,6 +428,7 @@ export interface FileRouteTypes {
     | '/api/comments'
     | '/api/export'
     | '/api/posts'
+    | '/api/tokens'
     | '/blog/$slug'
     | '/docs/api'
     | '/tags/$slug'
@@ -427,6 +448,7 @@ export interface FileRouteTypes {
     | '/api/comments/$id/approve'
     | '/api/comments/$id/delete'
     | '/api/comments/$id/spam'
+    | '/api/tokens/$id/revoke'
   id:
     | '__root__'
     | '/'
@@ -448,6 +470,7 @@ export interface FileRouteTypes {
     | '/api/comments'
     | '/api/export'
     | '/api/posts'
+    | '/api/tokens'
     | '/blog/$slug'
     | '/docs/api'
     | '/tags/$slug'
@@ -467,6 +490,7 @@ export interface FileRouteTypes {
     | '/api/comments/$id/approve'
     | '/api/comments/$id/delete'
     | '/api/comments/$id/spam'
+    | '/api/tokens/$id/revoke'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -485,6 +509,7 @@ export interface RootRouteChildren {
   ApiCommentsRoute: typeof ApiCommentsRouteWithChildren
   ApiExportRoute: typeof ApiExportRoute
   ApiPostsRoute: typeof ApiPostsRouteWithChildren
+  ApiTokensRoute: typeof ApiTokensRouteWithChildren
   BlogSlugRoute: typeof BlogSlugRoute
   DocsApiRoute: typeof DocsApiRoute
   TagsSlugRoute: typeof TagsSlugRoute
@@ -608,6 +633,13 @@ declare module '@tanstack/react-router' {
       path: '/blog/$slug'
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/tokens': {
+      id: '/api/tokens'
+      path: '/api/tokens'
+      fullPath: '/api/tokens'
+      preLoaderRoute: typeof ApiTokensRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/posts': {
@@ -743,6 +775,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAdminAssetsRouteImport
       parentRoute: typeof AuthAdminRouteRoute
     }
+    '/api/tokens/$id/revoke': {
+      id: '/api/tokens/$id/revoke'
+      path: '/$id/revoke'
+      fullPath: '/api/tokens/$id/revoke'
+      preLoaderRoute: typeof ApiTokensIdRevokeRouteImport
+      parentRoute: typeof ApiTokensRoute
+    }
     '/api/comments/$id/spam': {
       id: '/api/comments/$id/spam'
       path: '/$id/spam'
@@ -855,6 +894,18 @@ const ApiPostsRouteWithChildren = ApiPostsRoute._addFileChildren(
   ApiPostsRouteChildren,
 )
 
+interface ApiTokensRouteChildren {
+  ApiTokensIdRevokeRoute: typeof ApiTokensIdRevokeRoute
+}
+
+const ApiTokensRouteChildren: ApiTokensRouteChildren = {
+  ApiTokensIdRevokeRoute: ApiTokensIdRevokeRoute,
+}
+
+const ApiTokensRouteWithChildren = ApiTokensRoute._addFileChildren(
+  ApiTokensRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
@@ -871,6 +922,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCommentsRoute: ApiCommentsRouteWithChildren,
   ApiExportRoute: ApiExportRoute,
   ApiPostsRoute: ApiPostsRouteWithChildren,
+  ApiTokensRoute: ApiTokensRouteWithChildren,
   BlogSlugRoute: BlogSlugRoute,
   DocsApiRoute: DocsApiRoute,
   TagsSlugRoute: TagsSlugRoute,

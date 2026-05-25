@@ -112,6 +112,25 @@ export const Route = createFileRoute("/openapi.json")({
                 responses: { "200": { description: "Comment deleted" } },
               },
             },
+            "/api/tokens": {
+              get: {
+                summary: "List API tokens",
+                security: [{ apiToken: ["site:read"] }],
+                responses: { "200": { description: "API token list" } },
+              },
+              post: {
+                summary: "Create API token",
+                security: [{ apiToken: ["site:write"] }],
+                responses: { "201": { description: "API token created" } },
+              },
+            },
+            "/api/tokens/{id}/revoke": {
+              post: {
+                summary: "Revoke API token",
+                security: [{ apiToken: ["site:write"] }],
+                responses: { "200": { description: "API token revoked" } },
+              },
+            },
           },
           components: {
             securitySchemes: {

@@ -1255,6 +1255,182 @@ export const admin_storage_contract_detail: ((
 /**
  * | output |
  * | --- |
+ * | "Create token" |
+ *
+ * @param {Admin_Create_TokenInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_create_token: ((
+  inputs?: Admin_Create_TokenInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Create_TokenInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Revoke" |
+ *
+ * @param {Admin_Revoke_TokenInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_revoke_token: ((
+  inputs?: Admin_Revoke_TokenInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Revoke_TokenInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Token name" |
+ *
+ * @param {Admin_Token_NameInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_token_name: ((
+  inputs?: Admin_Token_NameInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Token_NameInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Revoked" |
+ *
+ * @param {Admin_Token_RevokedInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_token_revoked: ((
+  inputs?: Admin_Token_RevokedInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Token_RevokedInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Token scopes" |
+ *
+ * @param {Admin_Token_ScopesInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_token_scopes: ((
+  inputs?: Admin_Token_ScopesInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Token_ScopesInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Token secret" |
+ *
+ * @param {Admin_Token_Secret_OnceInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_token_secret_once: ((
+  inputs?: Admin_Token_Secret_OnceInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Token_Secret_OnceInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Create scoped automation tokens for CLI, OpenAPI, and AI publishing workflows." |
+ *
+ * @param {Admin_Tokens_DescriptionInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_tokens_description: ((
+  inputs?: Admin_Tokens_DescriptionInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Tokens_DescriptionInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "API tokens" |
+ *
+ * @param {Admin_Tokens_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_tokens_title: ((
+  inputs?: Admin_Tokens_TitleInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Tokens_TitleInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Use the CMS admin area to manage publishing, settings, and exports." |
  *
  * @param {Account_Management_NoteInputs} inputs
@@ -1599,6 +1775,116 @@ export const blog_eyebrow: ((
 ) => LocalizedString) &
   import("../runtime.js").MessageMetadata<
     Blog_EyebrowInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "All" |
+ *
+ * @param {Blog_Filter_AllInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const blog_filter_all: ((
+  inputs?: Blog_Filter_AllInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Blog_Filter_AllInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Filter posts by tag" |
+ *
+ * @param {Blog_Filter_LabelInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const blog_filter_label: ((
+  inputs?: Blog_Filter_LabelInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Blog_Filter_LabelInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "No posts matched this search." |
+ *
+ * @param {Blog_No_ResultsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const blog_no_results: ((
+  inputs?: Blog_No_ResultsInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Blog_No_ResultsInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Search posts" |
+ *
+ * @param {Blog_Search_PlaceholderInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const blog_search_placeholder: ((
+  inputs?: Blog_Search_PlaceholderInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Blog_Search_PlaceholderInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Search" |
+ *
+ * @param {Blog_Search_SubmitInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const blog_search_submit: ((
+  inputs?: Blog_Search_SubmitInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Blog_Search_SubmitInputs,
     {
       locale?: "en" | "zh";
     },
@@ -2685,6 +2971,72 @@ export const pinned: ((
 /**
  * | output |
  * | --- |
+ * | "Next" |
+ *
+ * @param {Pagination_NextInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const pagination_next: ((
+  inputs?: Pagination_NextInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Pagination_NextInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Page {current} of {total}" |
+ *
+ * @param {Pagination_PageInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const pagination_page: ((
+  inputs: Pagination_PageInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Pagination_PageInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Previous" |
+ *
+ * @param {Pagination_PreviousInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const pagination_previous: ((
+  inputs?: Pagination_PreviousInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Pagination_PreviousInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "{count} posts" |
  *
  * @param {Posts_CountInputs} inputs
@@ -3338,6 +3690,14 @@ export type Admin_Settings_Site_UrlInputs = {};
 export type Admin_Settings_TitleInputs = {};
 export type Admin_Storage_ContractInputs = {};
 export type Admin_Storage_Contract_DetailInputs = {};
+export type Admin_Create_TokenInputs = {};
+export type Admin_Revoke_TokenInputs = {};
+export type Admin_Token_NameInputs = {};
+export type Admin_Token_RevokedInputs = {};
+export type Admin_Token_ScopesInputs = {};
+export type Admin_Token_Secret_OnceInputs = {};
+export type Admin_Tokens_DescriptionInputs = {};
+export type Admin_Tokens_TitleInputs = {};
 export type Account_Management_NoteInputs = {};
 export type Account_Signed_In_AsInputs = {};
 export type Account_TitleInputs = {};
@@ -3354,6 +3714,11 @@ export type Api_Token_ScopesInputs = {};
 export type Back_HomeInputs = {};
 export type Blog_DescriptionInputs = {};
 export type Blog_EyebrowInputs = {};
+export type Blog_Filter_AllInputs = {};
+export type Blog_Filter_LabelInputs = {};
+export type Blog_No_ResultsInputs = {};
+export type Blog_Search_PlaceholderInputs = {};
+export type Blog_Search_SubmitInputs = {};
 export type Blog_TitleInputs = {};
 export type Comment_BodyInputs = {};
 export type Comment_CompanyInputs = {};
@@ -3409,6 +3774,12 @@ export type Nav_ProjectsInputs = {};
 export type Nav_TagsInputs = {};
 export type Open_CmsInputs = {};
 export type PinnedInputs = {};
+export type Pagination_NextInputs = {};
+export type Pagination_PageInputs = {
+  current: NonNullable<unknown>;
+  total: NonNullable<unknown>;
+};
+export type Pagination_PreviousInputs = {};
 export type Posts_CountInputs = {
   count: NonNullable<unknown>;
 };

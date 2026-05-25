@@ -1,4 +1,4 @@
-import { assets } from "@repo/core";
+import { assets, createAsset } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { jsonResponse, readJsonBody } from "#/lib/cms-api";
@@ -14,22 +14,13 @@ export const Route = createFileRoute("/api/assets")({
         const filename = body.filename?.trim() || "upload.jpg";
         const contentType = body.contentType?.trim() || "image/jpeg";
 
-        return jsonResponse(
-          {
-            data: {
-              id: `asset_${crypto.randomUUID()}`,
-              key: `uploads/${filename}`,
-              url: body.url?.trim() || `/uploads/${filename}`,
-              filename,
-              contentType,
-              sizeBytes: 0,
-              createdAt: new Date().toISOString(),
-              attachedPostId: null,
-            },
-            requiredScope: "assets:write",
-          },
-          { status: 201 },
-        );
+        const asset = createAsset({
+          filename,
+          contentType,
+          url: body.url,
+        });
+
+        return jsonResponse({ data: asset, requiredScope: "assets:write" }, { status: 201 });
       },
     },
   },

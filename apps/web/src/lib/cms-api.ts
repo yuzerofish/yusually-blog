@@ -1,9 +1,9 @@
 import {
   assets,
+  createPost,
+  findPost as findStoredPost,
   comments,
   getApprovedCommentsForPostForLocale,
-  getPostBySlug,
-  getPublishedPostsForLocale,
   getProjectsForLocale,
   getSiteSettingsForLocale,
   getTagsForLocale,
@@ -41,6 +41,9 @@ export const apiEndpoints = [
   { method: "POST", path: "/api/comments/{id}/approve", scope: "comments:moderate" },
   { method: "POST", path: "/api/comments/{id}/spam", scope: "comments:moderate" },
   { method: "POST", path: "/api/comments/{id}/delete", scope: "comments:moderate" },
+  { method: "GET", path: "/api/tokens", scope: "site:read" },
+  { method: "POST", path: "/api/tokens", scope: "site:write" },
+  { method: "POST", path: "/api/tokens/{id}/revoke", scope: "site:write" },
 ] as const;
 
 export function jsonResponse(body: unknown, init?: ResponseInit) {
@@ -76,8 +79,7 @@ export async function readJsonBody<TBody extends object>(
 }
 
 export function findPost(idOrSlug: string, locale: SupportedLocale) {
-  const bySlug = getPostBySlug(idOrSlug);
-  const post = bySlug ?? posts.find((candidate) => candidate.id === idOrSlug);
+  const post = findStoredPost(idOrSlug, { includeUnpublished: true });
   return post ? localizePost(post, locale) : undefined;
 }
 
@@ -91,31 +93,24 @@ export function createPostPreview(
     locale: SupportedLocale;
   }>,
 ) {
-  const title = body.title?.trim() || "Untitled post";
-  const slug = body.slug?.trim() || slugify(title);
-  const now = new Date().toISOString();
-  const status = body.status ?? "draft";
+  const post = createPost({
+    ...body,
+    locale: resolveLocale(body.locale),
+  });
 
   return {
-    id: `post_${crypto.randomUUID()}`,
-    title,
-    slug,
-    excerpt: body.excerpt?.trim() || "",
-    contentMarkdown: body.contentMarkdown?.trim() || `# ${title}\n`,
-    status,
-    source: "api",
-    publishedAt: status === "published" ? now : null,
-    updatedAt: now,
-    locale: resolveLocale(body.locale),
-    url: `${siteSettings.url}/blog/${slug}`,
+    ...post,
+    url: `${siteSettings.url}/blog/${post.slug}`,
   };
 }
 
 export function buildSiteExport(locale: SupportedLocale) {
-  const exportedPosts = getPublishedPostsForLocale(locale).map((post) => ({
-    ...post,
-    comments: getApprovedCommentsForPostForLocale(post.id, locale),
-  }));
+  const exportedPosts = posts
+    .filter((post) => post.status === "published")
+    .map((post) => ({
+      ...localizePost(post, locale),
+      comments: getApprovedCommentsForPostForLocale(post.id, locale),
+    }));
 
   return {
     exportedAt: new Date().toISOString(),
@@ -139,13 +134,4 @@ export function importPreview(kind: "markdown" | "html" | "zip", filename: strin
     createdAt: now,
     createdPostStatus: "draft",
   };
-}
-
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 96);
 }

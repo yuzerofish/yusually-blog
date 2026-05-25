@@ -49,7 +49,11 @@ function HomePage() {
               <p>{m.home_bilingual_intro_zh()}</p>
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button render={<Link to="/blog" />} size="lg" nativeButton={false}>
+              <Button
+                render={<Link to="/blog" search={{ q: "", tag: "", page: 1 }} />}
+                size="lg"
+                nativeButton={false}
+              >
                 {m.read_latest_posts()}
                 <ArrowRightIcon />
               </Button>
@@ -99,7 +103,11 @@ function HomePage() {
               {m.home_featured_title()}
             </h2>
           </div>
-          <Button render={<Link to="/blog" />} variant="outline" nativeButton={false}>
+          <Button
+            render={<Link to="/blog" search={{ q: "", tag: "", page: 1 }} />}
+            variant="outline"
+            nativeButton={false}
+          >
             {m.view_all_posts()}
             <ArrowRightIcon />
           </Button>

@@ -1,4 +1,12 @@
-import { comments, dashboardMetrics, posts, projects, siteSettings, tags } from "./demo-data";
+import {
+  assets,
+  comments,
+  dashboardMetrics,
+  posts,
+  projects,
+  siteSettings,
+  tags,
+} from "./cms-store";
 import type {
   Comment,
   DashboardMetric,
@@ -10,15 +18,25 @@ import type {
 } from "./types";
 
 export {
-  assets,
-  comments,
-  dashboardMetrics,
-  posts,
-  projects,
-  siteSettings,
-  tags,
-} from "./demo-data";
+  apiTokens,
+  createApiToken,
+  createAsset,
+  createComment,
+  createPost,
+  deletePost,
+  findPost,
+  listPosts,
+  moderateComment,
+  revokeApiToken,
+  searchPosts,
+  updatePost,
+  updateSiteSettings,
+} from "./cms-store";
+export { assets, comments, dashboardMetrics, posts, projects, siteSettings, tags };
+export { htmlToText, markdownToText, renderMarkdownToHtml, sanitizeHtml } from "./markdown";
 export type {
+  ApiToken,
+  ApiTokenScope,
   Asset,
   Comment,
   CommentStatus,
@@ -108,7 +126,13 @@ export function localizeDashboardMetric(
 export function getPublishedPosts() {
   return posts
     .filter((post) => post.status === "published")
-    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+    .sort((a, b) => {
+      if (a.pinned !== b.pinned) {
+        return a.pinned ? -1 : 1;
+      }
+
+      return b.publishedAt.localeCompare(a.publishedAt);
+    });
 }
 
 export function getPublishedPostsForLocale(locale: SupportedLocale) {

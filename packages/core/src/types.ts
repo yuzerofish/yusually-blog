@@ -123,3 +123,24 @@ export type DashboardMetric = {
   detail: string;
   i18n?: LocalizedFields<"label" | "detail">;
 };
+
+export type ApiTokenScope =
+  | "posts:read"
+  | "posts:write"
+  | "posts:publish"
+  | "assets:write"
+  | "comments:moderate"
+  | "site:read"
+  | "site:write"
+  | "export:read";
+
+export type ApiToken = {
+  id: string;
+  name: string;
+  tokenPrefix: string;
+  scopes: ApiTokenScope[];
+  expiresAt: string | null;
+  lastUsedAt: string | null;
+  revokedAt: string | null;
+  createdAt: string;
+};

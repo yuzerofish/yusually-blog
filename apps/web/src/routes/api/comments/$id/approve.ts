@@ -1,4 +1,4 @@
-import { comments } from "@repo/core";
+import { moderateComment } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { jsonResponse } from "#/lib/cms-api";
@@ -7,14 +7,14 @@ export const Route = createFileRoute("/api/comments/$id/approve")({
   server: {
     handlers: {
       POST: ({ params }: { params: { id: string } }) => {
-        const comment = comments.find((candidate) => candidate.id === params.id);
+        const comment = moderateComment(params.id, "approved");
 
         if (!comment) {
           return jsonResponse({ error: "Comment not found" }, { status: 404 });
         }
 
         return jsonResponse({
-          data: { ...comment, status: "approved", updatedAt: new Date().toISOString() },
+          data: { ...comment, updatedAt: new Date().toISOString() },
           requiredScope: "comments:moderate",
         });
       },

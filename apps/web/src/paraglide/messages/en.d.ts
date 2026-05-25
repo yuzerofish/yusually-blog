@@ -56,6 +56,14 @@
 /** @typedef {{}} Admin_Settings_TitleInputs */
 /** @typedef {{}} Admin_Storage_ContractInputs */
 /** @typedef {{}} Admin_Storage_Contract_DetailInputs */
+/** @typedef {{}} Admin_Create_TokenInputs */
+/** @typedef {{}} Admin_Revoke_TokenInputs */
+/** @typedef {{}} Admin_Token_NameInputs */
+/** @typedef {{}} Admin_Token_RevokedInputs */
+/** @typedef {{}} Admin_Token_ScopesInputs */
+/** @typedef {{}} Admin_Token_Secret_OnceInputs */
+/** @typedef {{}} Admin_Tokens_DescriptionInputs */
+/** @typedef {{}} Admin_Tokens_TitleInputs */
 /** @typedef {{}} Account_Management_NoteInputs */
 /** @typedef {{}} Account_Signed_In_AsInputs */
 /** @typedef {{}} Account_TitleInputs */
@@ -72,6 +80,11 @@
 /** @typedef {{}} Back_HomeInputs */
 /** @typedef {{}} Blog_DescriptionInputs */
 /** @typedef {{}} Blog_EyebrowInputs */
+/** @typedef {{}} Blog_Filter_AllInputs */
+/** @typedef {{}} Blog_Filter_LabelInputs */
+/** @typedef {{}} Blog_No_ResultsInputs */
+/** @typedef {{}} Blog_Search_PlaceholderInputs */
+/** @typedef {{}} Blog_Search_SubmitInputs */
 /** @typedef {{}} Blog_TitleInputs */
 /** @typedef {{}} Comment_BodyInputs */
 /** @typedef {{}} Comment_CompanyInputs */
@@ -121,6 +134,9 @@
 /** @typedef {{}} Nav_TagsInputs */
 /** @typedef {{}} Open_CmsInputs */
 /** @typedef {{}} PinnedInputs */
+/** @typedef {{}} Pagination_NextInputs */
+/** @typedef {{ current: NonNullable<unknown>, total: NonNullable<unknown> }} Pagination_PageInputs */
+/** @typedef {{}} Pagination_PreviousInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Posts_CountInputs */
 /** @typedef {{}} Projects_EyebrowInputs */
 /** @typedef {{}} Projects_TitleInputs */
@@ -225,6 +241,14 @@ export const admin_storage_contract: (inputs: Admin_Storage_ContractInputs) => L
 export const admin_storage_contract_detail: (
   inputs: Admin_Storage_Contract_DetailInputs,
 ) => LocalizedString;
+export const admin_create_token: (inputs: Admin_Create_TokenInputs) => LocalizedString;
+export const admin_revoke_token: (inputs: Admin_Revoke_TokenInputs) => LocalizedString;
+export const admin_token_name: (inputs: Admin_Token_NameInputs) => LocalizedString;
+export const admin_token_revoked: (inputs: Admin_Token_RevokedInputs) => LocalizedString;
+export const admin_token_scopes: (inputs: Admin_Token_ScopesInputs) => LocalizedString;
+export const admin_token_secret_once: (inputs: Admin_Token_Secret_OnceInputs) => LocalizedString;
+export const admin_tokens_description: (inputs: Admin_Tokens_DescriptionInputs) => LocalizedString;
+export const admin_tokens_title: (inputs: Admin_Tokens_TitleInputs) => LocalizedString;
 export const account_management_note: (inputs: Account_Management_NoteInputs) => LocalizedString;
 export const account_signed_in_as: (inputs: Account_Signed_In_AsInputs) => LocalizedString;
 export const account_title: (inputs: Account_TitleInputs) => LocalizedString;
@@ -241,6 +265,11 @@ export const api_token_scopes: (inputs: Api_Token_ScopesInputs) => LocalizedStri
 export const back_home: (inputs: Back_HomeInputs) => LocalizedString;
 export const blog_description: (inputs: Blog_DescriptionInputs) => LocalizedString;
 export const blog_eyebrow: (inputs: Blog_EyebrowInputs) => LocalizedString;
+export const blog_filter_all: (inputs: Blog_Filter_AllInputs) => LocalizedString;
+export const blog_filter_label: (inputs: Blog_Filter_LabelInputs) => LocalizedString;
+export const blog_no_results: (inputs: Blog_No_ResultsInputs) => LocalizedString;
+export const blog_search_placeholder: (inputs: Blog_Search_PlaceholderInputs) => LocalizedString;
+export const blog_search_submit: (inputs: Blog_Search_SubmitInputs) => LocalizedString;
 export const blog_title: (inputs: Blog_TitleInputs) => LocalizedString;
 export const comment_body: (inputs: Comment_BodyInputs) => LocalizedString;
 export const comment_company: (inputs: Comment_CompanyInputs) => LocalizedString;
@@ -292,6 +321,9 @@ export const nav_projects: (inputs: Nav_ProjectsInputs) => LocalizedString;
 export const nav_tags: (inputs: Nav_TagsInputs) => LocalizedString;
 export const open_cms: (inputs: Open_CmsInputs) => LocalizedString;
 export const pinned: (inputs: PinnedInputs) => LocalizedString;
+export const pagination_next: (inputs: Pagination_NextInputs) => LocalizedString;
+export const pagination_page: (inputs: Pagination_PageInputs) => LocalizedString;
+export const pagination_previous: (inputs: Pagination_PreviousInputs) => LocalizedString;
 export const posts_count: (inputs: Posts_CountInputs) => LocalizedString;
 export const projects_eyebrow: (inputs: Projects_EyebrowInputs) => LocalizedString;
 export const projects_title: (inputs: Projects_TitleInputs) => LocalizedString;
@@ -381,6 +413,14 @@ export type Admin_Settings_Site_UrlInputs = {};
 export type Admin_Settings_TitleInputs = {};
 export type Admin_Storage_ContractInputs = {};
 export type Admin_Storage_Contract_DetailInputs = {};
+export type Admin_Create_TokenInputs = {};
+export type Admin_Revoke_TokenInputs = {};
+export type Admin_Token_NameInputs = {};
+export type Admin_Token_RevokedInputs = {};
+export type Admin_Token_ScopesInputs = {};
+export type Admin_Token_Secret_OnceInputs = {};
+export type Admin_Tokens_DescriptionInputs = {};
+export type Admin_Tokens_TitleInputs = {};
 export type Account_Management_NoteInputs = {};
 export type Account_Signed_In_AsInputs = {};
 export type Account_TitleInputs = {};
@@ -397,6 +437,11 @@ export type Api_Token_ScopesInputs = {};
 export type Back_HomeInputs = {};
 export type Blog_DescriptionInputs = {};
 export type Blog_EyebrowInputs = {};
+export type Blog_Filter_AllInputs = {};
+export type Blog_Filter_LabelInputs = {};
+export type Blog_No_ResultsInputs = {};
+export type Blog_Search_PlaceholderInputs = {};
+export type Blog_Search_SubmitInputs = {};
 export type Blog_TitleInputs = {};
 export type Comment_BodyInputs = {};
 export type Comment_CompanyInputs = {};
@@ -452,6 +497,12 @@ export type Nav_ProjectsInputs = {};
 export type Nav_TagsInputs = {};
 export type Open_CmsInputs = {};
 export type PinnedInputs = {};
+export type Pagination_NextInputs = {};
+export type Pagination_PageInputs = {
+  current: NonNullable<unknown>;
+  total: NonNullable<unknown>;
+};
+export type Pagination_PreviousInputs = {};
 export type Posts_CountInputs = {
   count: NonNullable<unknown>;
 };
