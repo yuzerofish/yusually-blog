@@ -135,6 +135,7 @@ Environment:
         requireArg(args[0], "Provide an import file.");
         const api = getApiConfig();
         const endpoint = importEndpointFor(args[0]);
+        const payload = await importPayloadFor(args[0]);
 
         if (!api) {
           print(`Prepared import for ${args[0]}. Configure API env to send it to ${endpoint}.`);
@@ -143,7 +144,7 @@ Environment:
 
         const response = await apiFetch(api, endpoint, {
           method: "POST",
-          body: { filename: basename(args[0]) },
+          body: payload,
         });
 
         print(JSON.stringify(response, null, 2));
@@ -163,10 +164,16 @@ Environment:
           return;
         }
 
-        const filename = await firstFilename(args[0]);
+        const filePath = await firstUploadPath(args[0]);
+        const filename = basename(filePath);
+        const content = await readFile(filePath);
         const response = await apiFetch(api, "/api/assets", {
           method: "POST",
-          body: { filename },
+          body: {
+            filename,
+            contentType: contentTypeFor(filename),
+            contentBase64: content.toString("base64"),
+          },
         });
 
         print(JSON.stringify(response, null, 2));
@@ -324,15 +331,23 @@ async function firstMarkdownPath(inputPath) {
   return join(inputPath, markdown);
 }
 
-async function firstFilename(inputPath) {
+async function firstUploadPath(inputPath) {
   const stats = await stat(inputPath);
 
   if (stats.isFile()) {
-    return basename(inputPath);
+    return inputPath;
   }
 
   const entries = await readdir(inputPath);
-  return entries[0] ?? "upload.jpg";
+  const upload = entries.find((entry) =>
+    [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"].includes(extname(entry).toLowerCase()),
+  );
+
+  if (!upload) {
+    fail("Folder must contain at least one image file.");
+  }
+
+  return join(inputPath, upload);
 }
 
 function firstHeading(markdown) {
@@ -355,6 +370,43 @@ function importEndpointFor(inputPath) {
   }
 
   return "/api/import/markdown";
+}
+
+async function importPayloadFor(inputPath) {
+  const filename = basename(inputPath);
+  const extension = extname(inputPath).toLowerCase();
+  const content = await readFile(inputPath);
+
+  if (extension === ".zip") {
+    return {
+      filename,
+      contentBase64: content.toString("base64"),
+    };
+  }
+
+  if (extension === ".html" || extension === ".htm") {
+    return {
+      filename,
+      contentHtml: content.toString("utf8"),
+    };
+  }
+
+  return {
+    filename,
+    contentMarkdown: content.toString("utf8"),
+  };
+}
+
+function contentTypeFor(filename) {
+  const extension = extname(filename).toLowerCase();
+
+  if (extension === ".jpg" || extension === ".jpeg") return "image/jpeg";
+  if (extension === ".png") return "image/png";
+  if (extension === ".gif") return "image/gif";
+  if (extension === ".webp") return "image/webp";
+  if (extension === ".svg") return "image/svg+xml";
+
+  return "application/octet-stream";
 }
 
 function slugify(value) {

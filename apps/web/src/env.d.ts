@@ -1,14 +1,59 @@
 /// <reference types="vite/client" />
 
-type D1Database = unknown;
-type R2Bucket = unknown;
-type KVNamespace = unknown;
+type CmsD1Result<TValue> = {
+  results: TValue[];
+  success: boolean;
+  meta: unknown;
+};
+
+type CmsD1Statement = {
+  bind(...values: unknown[]): CmsD1Statement;
+  all<TValue = unknown>(): Promise<CmsD1Result<TValue>>;
+  first<TValue = unknown>(): Promise<TValue | null>;
+  run(): Promise<unknown>;
+};
+
+type CmsD1Database = {
+  prepare(query: string): CmsD1Statement;
+};
+
+type CmsR2Object = {
+  body: ReadableStream<Uint8Array> | null;
+  httpMetadata?: {
+    contentType?: string;
+    cacheControl?: string;
+  };
+  size: number;
+  uploaded: Date;
+};
+
+type CmsR2Bucket = {
+  get(key: string): Promise<CmsR2Object | null>;
+  put(
+    key: string,
+    value: ReadableStream<Uint8Array> | ArrayBuffer | ArrayBufferView | string | Blob | null,
+    options?: {
+      httpMetadata?: {
+        contentType?: string;
+        cacheControl?: string;
+      };
+      customMetadata?: Record<string, string>;
+    },
+  ): Promise<unknown>;
+  delete(key: string): Promise<void>;
+};
+
+type CmsKVNamespace = {
+  get(key: string): Promise<string | null>;
+  put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
+  delete(key: string): Promise<void>;
+};
 
 type CloudflareBindings = {
-  CMS_DB: D1Database;
-  CMS_ASSETS: R2Bucket;
-  CMS_BACKUPS: R2Bucket;
-  CMS_CACHE: KVNamespace;
+  CMS_DB: CmsD1Database;
+  CMS_ASSETS: CmsR2Bucket;
+  CMS_BACKUPS: CmsR2Bucket;
+  CMS_CACHE: CmsKVNamespace;
   CMS_PUBLIC_SITE_URL: string;
   CMS_EMAIL_SENDING_ENABLED: string;
   CMS_TURNSTILE_SECRET_KEY: string;

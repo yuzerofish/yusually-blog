@@ -22,6 +22,7 @@ import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TagsIndexRouteImport } from './routes/tags/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
+import { Route as UploadsSplatRouteImport } from './routes/uploads/$'
 import { Route as TagsSlugRouteImport } from './routes/tags/$slug'
 import { Route as DocsApiRouteImport } from './routes/docs/api'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
@@ -111,6 +112,11 @@ const TagsIndexRoute = TagsIndexRouteImport.update({
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UploadsSplatRoute = UploadsSplatRouteImport.update({
+  id: '/uploads/$',
+  path: '/uploads/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TagsSlugRoute = TagsSlugRouteImport.update({
@@ -271,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/blog/$slug': typeof BlogSlugRoute
   '/docs/api': typeof DocsApiRoute
   '/tags/$slug': typeof TagsSlugRoute
+  '/uploads/$': typeof UploadsSplatRoute
   '/blog/': typeof BlogIndexRoute
   '/tags/': typeof TagsIndexRoute
   '/admin/assets': typeof AuthAdminAssetsRoute
@@ -309,6 +316,7 @@ export interface FileRoutesByTo {
   '/blog/$slug': typeof BlogSlugRoute
   '/docs/api': typeof DocsApiRoute
   '/tags/$slug': typeof TagsSlugRoute
+  '/uploads/$': typeof UploadsSplatRoute
   '/blog': typeof BlogIndexRoute
   '/tags': typeof TagsIndexRoute
   '/admin/assets': typeof AuthAdminAssetsRoute
@@ -352,6 +360,7 @@ export interface FileRoutesById {
   '/blog/$slug': typeof BlogSlugRoute
   '/docs/api': typeof DocsApiRoute
   '/tags/$slug': typeof TagsSlugRoute
+  '/uploads/$': typeof UploadsSplatRoute
   '/blog/': typeof BlogIndexRoute
   '/tags/': typeof TagsIndexRoute
   '/_auth/admin/assets': typeof AuthAdminAssetsRoute
@@ -394,6 +403,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/docs/api'
     | '/tags/$slug'
+    | '/uploads/$'
     | '/blog/'
     | '/tags/'
     | '/admin/assets'
@@ -432,6 +442,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/docs/api'
     | '/tags/$slug'
+    | '/uploads/$'
     | '/blog'
     | '/tags'
     | '/admin/assets'
@@ -474,6 +485,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/docs/api'
     | '/tags/$slug'
+    | '/uploads/$'
     | '/blog/'
     | '/tags/'
     | '/_auth/admin/assets'
@@ -513,6 +525,7 @@ export interface RootRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
   DocsApiRoute: typeof DocsApiRoute
   TagsSlugRoute: typeof TagsSlugRoute
+  UploadsSplatRoute: typeof UploadsSplatRoute
   BlogIndexRoute: typeof BlogIndexRoute
   TagsIndexRoute: typeof TagsIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -612,6 +625,13 @@ declare module '@tanstack/react-router' {
       path: '/blog'
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/uploads/$': {
+      id: '/uploads/$'
+      path: '/uploads/$'
+      fullPath: '/uploads/$'
+      preLoaderRoute: typeof UploadsSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tags/$slug': {
@@ -926,6 +946,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogSlugRoute: BlogSlugRoute,
   DocsApiRoute: DocsApiRoute,
   TagsSlugRoute: TagsSlugRoute,
+  UploadsSplatRoute: UploadsSplatRoute,
   BlogIndexRoute: BlogIndexRoute,
   TagsIndexRoute: TagsIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

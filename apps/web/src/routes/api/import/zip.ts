@@ -1,14 +1,18 @@
-import { createAsset } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { getApiLocale, importPreview, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { createD1Post } from "#/lib/cms-d1";
+import { storeImportPackage } from "#/lib/cms-r2";
 
 export const Route = createFileRoute("/api/import/zip")({
   server: {
     handlers: {
       POST: async ({ request }: { request: Request }) => {
-        const body = await readJsonBody<{ filename: string; contentMarkdown: string }>(request);
+        const body = await readJsonBody<{
+          filename: string;
+          contentMarkdown: string;
+          contentBase64: string;
+        }>(request);
         const locale = getApiLocale(request);
         const post = await createD1Post({
           title: body.filename?.replace(/\.zip$/i, "") || "Imported ZIP gallery",
@@ -18,9 +22,10 @@ export const Route = createFileRoute("/api/import/zip")({
           status: "draft",
           locale,
         });
-        const asset = createAsset({
+        const asset = await storeImportPackage({
           filename: body.filename || "import.zip",
           contentType: "application/zip",
+          contentBase64: body.contentBase64,
           attachedPostId: post.id,
         });
 

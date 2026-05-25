@@ -1,10 +1,10 @@
-import { assets } from "@repo/core";
+import { assets, type Asset } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { createFileRoute } from "@tanstack/react-router";
 import { UploadIcon } from "lucide-react";
-import { useState, type ComponentProps } from "react";
+import { useEffect, useState, type ComponentProps } from "react";
 
 import { m } from "#/paraglide/messages.js";
 
@@ -16,6 +16,25 @@ type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
 
 function AdminAssetsPage() {
   const [state, setState] = useState<"idle" | "uploading" | "uploaded" | "error">("idle");
+  const [rows, setRows] = useState<Asset[]>(assets);
+
+  useEffect(() => {
+    let ignore = false;
+
+    void fetch("/api/assets")
+      .then((response) => (response.ok ? response.json() : undefined))
+      .then((payload) => {
+        const data = (payload as { data?: Asset[] } | undefined)?.data;
+
+        if (!ignore && data) {
+          setRows(data);
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const handleSubmit: FormSubmitHandler = async (event) => {
     event.preventDefault();
@@ -24,14 +43,18 @@ function AdminAssetsPage() {
     const formData = new FormData(event.currentTarget);
     const response = await fetch("/api/assets", {
       method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        filename: formData.get("filename"),
-        url: formData.get("url"),
-      }),
+      body: formData,
     });
 
-    setState(response.ok ? "uploaded" : "error");
+    if (!response.ok) {
+      setState("error");
+      return;
+    }
+
+    const payload = (await response.json()) as { data: Asset };
+    setRows((current) => [payload.data, ...current]);
+    setState("uploaded");
+    event.currentTarget.reset();
   };
 
   return (
@@ -56,11 +79,7 @@ function AdminAssetsPage() {
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <div className="grid gap-2">
             <Label htmlFor="asset-filename">{m.admin_assets_filename()}</Label>
-            <Input id="asset-filename" name="filename" defaultValue="cover.jpg" required />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="asset-url">{m.admin_assets_url()}</Label>
-            <Input id="asset-url" name="url" defaultValue="/uploads/cover.jpg" required />
+            <Input id="asset-filename" name="file" type="file" accept="image/*" required />
           </div>
         </div>
         {state === "uploaded" ? (
@@ -75,7 +94,7 @@ function AdminAssetsPage() {
 
       <div className="rounded-lg border border-[#26312c]/10 bg-white p-6 dark:border-white/10 dark:bg-[#171d1a]">
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {assets.map((asset) => (
+          {rows.map((asset) => (
             <article
               key={asset.id}
               className="rounded-lg border border-[#26312c]/10 bg-[#f8f5ef] p-4 dark:border-white/10 dark:bg-white/5"

@@ -2,12 +2,19 @@ import { apiTokens, createApiToken, type ApiTokenScope } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { jsonResponse, readJsonBody } from "#/lib/cms-api";
-import { createD1ApiToken } from "#/lib/cms-d1";
+import { createD1ApiToken, listD1ApiTokens } from "#/lib/cms-d1";
 
 export const Route = createFileRoute("/api/tokens")({
   server: {
     handlers: {
-      GET: () => jsonResponse({ data: apiTokens }),
+      GET: async () => {
+        const persistedTokens = await listD1ApiTokens().catch(() => []);
+        const persistedIds = new Set(persistedTokens.map((token) => token.id));
+
+        return jsonResponse({
+          data: [...persistedTokens, ...apiTokens.filter((token) => !persistedIds.has(token.id))],
+        });
+      },
       POST: async ({ request }: { request: Request }) => {
         const body = await readJsonBody<{
           name: string;

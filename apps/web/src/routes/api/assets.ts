@@ -1,24 +1,31 @@
 import { assets, createAsset } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { jsonResponse, readJsonBody } from "#/lib/cms-api";
+import { jsonResponse } from "#/lib/cms-api";
+import { listD1Assets } from "#/lib/cms-d1";
+import { readAssetUpload, uploadAssetToR2 } from "#/lib/cms-r2";
 
 export const Route = createFileRoute("/api/assets")({
   server: {
     handlers: {
-      GET: () => jsonResponse({ data: assets }),
-      POST: async ({ request }: { request: Request }) => {
-        const body = await readJsonBody<{ filename: string; contentType: string; url: string }>(
-          request,
-        );
-        const filename = body.filename?.trim() || "upload.jpg";
-        const contentType = body.contentType?.trim() || "image/jpeg";
+      GET: async () => {
+        const persistedAssets = await listD1Assets().catch(() => []);
+        const persistedKeys = new Set(persistedAssets.map((asset) => asset.key));
 
-        const asset = createAsset({
-          filename,
-          contentType,
-          url: body.url,
+        return jsonResponse({
+          data: [...persistedAssets, ...assets.filter((asset) => !persistedKeys.has(asset.key))],
         });
+      },
+      POST: async ({ request }: { request: Request }) => {
+        const upload = await readAssetUpload(request);
+        const asset = await uploadAssetToR2(upload).catch(() =>
+          createAsset({
+            filename: upload.filename,
+            contentType: upload.contentType,
+            sizeBytes: upload.data instanceof Blob ? upload.data.size : upload.data.byteLength,
+            attachedPostId: upload.attachedPostId,
+          }),
+        );
 
         return jsonResponse({ data: asset, requiredScope: "assets:write" }, { status: 201 });
       },

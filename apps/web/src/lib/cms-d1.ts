@@ -3,8 +3,13 @@ import {
   markdownToText,
   renderMarkdownToHtml,
   sanitizeHtml,
+  getProjectsForLocale,
+  getSiteSettingsForLocale,
+  getTagsForLocale,
   siteSettings,
+  type ApiToken,
   type ApiTokenScope,
+  type Asset,
   type Comment,
   type CommentStatus,
   type ContentStatus,
@@ -48,6 +53,28 @@ type D1CommentRow = {
   created_at: string;
 };
 
+type D1AssetRow = {
+  id: string;
+  key: string;
+  url: string;
+  filename: string;
+  content_type: string;
+  size_bytes: number;
+  attached_post_id: string | null;
+  created_at: string;
+};
+
+type D1ApiTokenRow = {
+  id: string;
+  name: string;
+  token_hash: string;
+  scopes: string;
+  expires_at: string | null;
+  last_used_at: string | null;
+  revoked_at: string | null;
+  created_at: string;
+};
+
 type PostInput = Partial<{
   title: string;
   slug: string;
@@ -72,6 +99,15 @@ type CommentInput = {
 type ListPostsOptions = {
   includeUnpublished?: boolean;
   query?: string;
+};
+
+type AssetInput = {
+  key: string;
+  url: string;
+  filename: string;
+  contentType: string;
+  sizeBytes: number;
+  attachedPostId?: string | null;
 };
 
 type D1Result<TValue> = { data: TValue } | { error: string };
@@ -345,6 +381,54 @@ export async function moderateD1Comment(id: string, status: Exclude<CommentStatu
   return row ? rowToComment(row) : undefined;
 }
 
+export async function listD1Comments() {
+  const result = await env.CMS_DB.prepare(
+    "select * from comments order by created_at desc",
+  ).all<D1CommentRow>();
+
+  return result.results.map(rowToComment);
+}
+
+export async function listD1Assets() {
+  const result = await env.CMS_DB.prepare(
+    "select * from assets order by created_at desc",
+  ).all<D1AssetRow>();
+
+  return result.results.map(rowToAsset);
+}
+
+export async function createD1Asset(input: AssetInput) {
+  const asset: Asset = {
+    id: `asset_${crypto.randomUUID()}`,
+    key: input.key,
+    url: input.url,
+    filename: input.filename,
+    contentType: input.contentType,
+    sizeBytes: input.sizeBytes,
+    attachedPostId: input.attachedPostId ?? null,
+    createdAt: new Date().toISOString(),
+  };
+
+  await env.CMS_DB.prepare(
+    `insert into assets (
+      id, key, url, filename, content_type, size_bytes, attached_post_id, created_at
+    ) values (?, ?, ?, ?, ?, ?, ?, ?)`,
+  )
+    .bind(
+      asset.id,
+      asset.key,
+      asset.url,
+      asset.filename,
+      asset.contentType,
+      asset.sizeBytes,
+      asset.attachedPostId,
+      asset.createdAt,
+    )
+    .run();
+
+  return asset;
+}
+
 export async function createD1ApiToken(input: {
   name?: string;
   scopes?: ApiTokenScope[];
@@ -378,6 +462,50 @@ export async function createD1ApiToken(input: {
     .run();
 
   return { token, secret };
+}
+
+export async function listD1ApiTokens() {
+  const result = await env.CMS_DB.prepare(
+    "select * from api_tokens order by created_at desc",
+  ).all<D1ApiTokenRow>();
+
+  return result.results.map(rowToApiToken);
+}
+
+export async function revokeD1ApiToken(id: string) {
+  await env.CMS_DB.prepare(
+    "update api_tokens set revoked_at = ? where id = ? and revoked_at is null",
+  )
+    .bind(new Date().toISOString(), id)
+    .run();
+
+  const row = await env.CMS_DB.prepare("select * from api_tokens where id = ? limit 1")
+    .bind(id)
+    .first<D1ApiTokenRow>();
+
+  return row ? rowToApiToken(row) : undefined;
+}
+
+export async function buildD1SiteExport(locale: SupportedLocale) {
+  const [persistedPosts, persistedComments, persistedAssets] = await Promise.all([
+    listD1Posts({ includeUnpublished: true }),
+    listD1Comments(),
+    listD1Assets(),
+  ]);
+
+  return {
+    exportedAt: new Date().toISOString(),
+    locale,
+    site: getSiteSettingsForLocale(locale),
+    posts: persistedPosts.map((post) => ({
+      ...post,
+      comments: persistedComments.filter((comment) => comment.postId === post.id),
+    })),
+    tags: getTagsForLocale(locale),
+    projects: getProjectsForLocale(locale),
+    assets: persistedAssets,
+    comments: persistedComments,
+  };
 }
 
 function rowToPost(row: D1PostRow): Post {
@@ -417,6 +545,32 @@ function rowToComment(row: D1CommentRow): Comment {
     status: row.status,
     createdAt: row.created_at,
     i18n: parseJson(row.i18n),
+  };
+}
+
+function rowToAsset(row: D1AssetRow): Asset {
+  return {
+    id: row.id,
+    key: row.key,
+    url: row.url,
+    filename: row.filename,
+    contentType: row.content_type,
+    sizeBytes: row.size_bytes,
+    attachedPostId: row.attached_post_id,
+    createdAt: row.created_at,
+  };
+}
+
+function rowToApiToken(row: D1ApiTokenRow): ApiToken {
+  return {
+    id: row.id,
+    name: row.name,
+    tokenPrefix: row.token_hash.slice(0, 16),
+    scopes: parseJson<ApiTokenScope[]>(row.scopes) ?? [],
+    expiresAt: row.expires_at,
+    lastUsedAt: row.last_used_at,
+    revokedAt: row.revoked_at,
+    createdAt: row.created_at,
   };
 }
 
