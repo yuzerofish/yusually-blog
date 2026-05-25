@@ -24,7 +24,7 @@ Canonical production targets:
 - Cron Trigger: `0 3 * * *`
 - Backup retention: 30 days
 - Wrangler config: `apps/web/wrangler.jsonc`
-- Current verified version: `da0d5114-590b-489a-9df9-4405141136aa`
+- Current verified version: `9c36cdbd-ecca-4277-a1a1-77b60931520e`
 - Email Sending: disabled by default
 - Password reset TTL: 30 minutes
 
@@ -38,7 +38,7 @@ Canonical production targets:
 - Cron Trigger: `0 3 * * *`
 - Backup retention: 30 days
 - Wrangler config: `apps/web/wrangler.demo.jsonc`
-- Current verified version: `6379f252-7a68-4fd2-b109-9fbf97b8a1e0`
+- Current verified version: `c4aaa1f3-a759-40c5-9830-f130830245be`
 - Email Sending: disabled by default
 - Password reset TTL: 30 minutes
 
