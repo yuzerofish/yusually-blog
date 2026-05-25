@@ -31,16 +31,66 @@ export const Route = createFileRoute("/blog/$slug")({
       return { meta: [] };
     }
 
-    const post = localizePost(loaderData.post, getCurrentLocale());
+    const locale = getCurrentLocale();
+    const post = localizePost(loaderData.post, locale);
+    const siteSettings = localizeSiteSettings(loaderData.siteSettings, locale);
+    const siteUrl = siteSettings.url.replace(/\/$/, "");
+    const canonicalUrl = `${siteUrl}/blog/${post.slug}`;
+    const imageUrl = absoluteUrl(post.coverImage, siteUrl);
+    const avatarUrl = absoluteUrl(siteSettings.avatarUrl, siteUrl);
+    const robots = siteSettings.indexingEnabled ? "index,follow" : "noindex,nofollow";
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: post.title,
+      description: post.seoDescription,
+      image: imageUrl ? [imageUrl] : undefined,
+      datePublished: post.publishedAt,
+      dateModified: post.updatedAt,
+      author: {
+        "@type": "Person",
+        name: post.authorName || siteSettings.authorName,
+      },
+      publisher: {
+        "@type": "Organization",
+        name: siteSettings.name,
+        logo: avatarUrl
+          ? {
+              "@type": "ImageObject",
+              url: avatarUrl,
+            }
+          : undefined,
+      },
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": canonicalUrl,
+      },
+      inLanguage: locale === "zh" ? "zh-CN" : "en",
+    };
 
     return {
       meta: [
         { title: post.seoTitle },
         { name: "description", content: post.seoDescription },
+        { name: "robots", content: robots },
         { property: "og:title", content: post.title },
         { property: "og:description", content: post.excerpt },
-        { property: "og:image", content: post.coverImage },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: canonicalUrl },
+        { property: "og:image", content: imageUrl },
         { property: "article:published_time", content: post.publishedAt },
+        { property: "article:modified_time", content: post.updatedAt },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: post.title },
+        { name: "twitter:description", content: post.seoDescription },
+        { name: "twitter:image", content: imageUrl },
+      ],
+      links: [{ rel: "canonical", href: canonicalUrl }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(jsonLd),
+        },
       ],
     };
   },
@@ -214,4 +264,12 @@ function CommentList({ comments, depth = 0, onReply, parentId = null }: CommentL
       ))}
     </>
   );
+}
+
+function absoluteUrl(value: string, siteUrl: string) {
+  if (!value) {
+    return "";
+  }
+
+  return new URL(value, siteUrl).toString();
 }
