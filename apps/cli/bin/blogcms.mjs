@@ -12,6 +12,7 @@ const commands = new Map([
         print(`blogcms
 
 Usage:
+  blogcms init --primary-language <en|zh>
   blogcms login
   blogcms status
   blogcms push <markdown-file-or-folder>
@@ -25,7 +26,35 @@ Usage:
 Environment:
   BLOGCMS_SITE_URL
   BLOGCMS_API_TOKEN
+  BLOGCMS_PRIMARY_LANGUAGE=en|zh
 `);
+      },
+    },
+  ],
+  [
+    "init",
+    {
+      summary: "Prepare site initialization settings",
+      run: () => {
+        const primaryLanguage = readOption(
+          ["--primary-language", "--primaryLanguage"],
+          process.env.BLOGCMS_PRIMARY_LANGUAGE ?? "en",
+        );
+
+        validatePrimaryLanguage(primaryLanguage);
+
+        print(
+          JSON.stringify(
+            {
+              primaryLanguage,
+              locales: ["en", "zh"],
+              i18n: "paraglide-js",
+              nextStep: "Write these values into the generated site config before provisioning.",
+            },
+            null,
+            2,
+          ),
+        );
       },
     },
   ],
@@ -47,9 +76,22 @@ Environment:
       run: () => {
         const siteUrl = process.env.BLOGCMS_SITE_URL;
         const token = process.env.BLOGCMS_API_TOKEN;
+        const primaryLanguage = process.env.BLOGCMS_PRIMARY_LANGUAGE ?? "en";
+
+        validatePrimaryLanguage(primaryLanguage);
 
         print(
-          JSON.stringify({ siteUrl: siteUrl ?? null, apiTokenConfigured: Boolean(token) }, null, 2),
+          JSON.stringify(
+            {
+              siteUrl: siteUrl ?? null,
+              apiTokenConfigured: Boolean(token),
+              primaryLanguage,
+              locales: ["en", "zh"],
+              i18n: "paraglide-js",
+            },
+            null,
+            2,
+          ),
         );
       },
     },
@@ -60,7 +102,7 @@ Environment:
       summary: "Publish Markdown through the API",
       run: () => {
         requireArg(args[0], "Provide a Markdown file or folder.");
-        print(`Prepared Markdown import for ${args[0]}. API mutation lands in Phase 2.`);
+        print(`Prepared bilingual Markdown import for ${args[0]}. API mutation lands in Phase 2.`);
       },
     },
   ],
@@ -151,5 +193,22 @@ function fail(message) {
 function requireArg(value, message) {
   if (!value) {
     fail(message);
+  }
+}
+
+function readOption(names, fallback) {
+  for (const name of names) {
+    const index = args.indexOf(name);
+    if (index !== -1) {
+      return args[index + 1] ?? fallback;
+    }
+  }
+
+  return fallback;
+}
+
+function validatePrimaryLanguage(value) {
+  if (value !== "en" && value !== "zh") {
+    fail("Primary language must be `en` or `zh`.");
   }
 }

@@ -10,6 +10,8 @@ Phase 2 will expose the full OpenAPI contract at `/openapi.json` and a rendered 
 - `GET /robots.txt`
 - `GET /openapi.json`
 
+Feed output uses the site's selected primary language. Content APIs should accept and return bilingual fields for `en` and `zh`.
+
 ## Planned Mutations
 
 - `POST /api/posts`

@@ -31,4 +31,6 @@ wrangler d1 migrations apply blog-starter-cms --remote
 wrangler deploy
 ```
 
+`pnpm build:web` compiles Paraglide messages before the TanStack Start build, so deploys must include `apps/web/messages` and `apps/web/project.inlang`.
+
 Real domain binding and DNS changes require Cloudflare account authorization.
