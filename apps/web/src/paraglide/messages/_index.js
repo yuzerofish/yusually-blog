@@ -20,6 +20,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Admin_Editor_ErrorInputs */
 /** @typedef {{}} Admin_Editor_ExcerptInputs */
 /** @typedef {{}} Admin_Editor_Preview_ModeInputs */
+/** @typedef {{}} Admin_Editor_Rich_ModeInputs */
 /** @typedef {{}} Admin_Editor_SavedInputs */
 /** @typedef {{}} Admin_Editor_Source_ModeInputs */
 /** @typedef {{}} Admin_Editor_TitleInputs */
@@ -489,6 +490,23 @@ export const admin_editor_preview_mode =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.admin_editor_preview_mode(inputs);
       return __zh.admin_editor_preview_mode(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Editor" |
+ *
+ * @param {Admin_Editor_Rich_ModeInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_rich_mode =
+  /** @type {((inputs?: Admin_Editor_Rich_ModeInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Editor_Rich_ModeInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_editor_rich_mode(inputs);
+      return __zh.admin_editor_rich_mode(inputs);
     }
   );
 /**

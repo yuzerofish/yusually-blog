@@ -18,6 +18,7 @@
   "admin_editor_error": "Post could not be saved.",
   "admin_editor_excerpt": "Excerpt",
   "admin_editor_preview_mode": "Preview",
+  "admin_editor_rich_mode": "Editor",
   "admin_editor_saved": "Post saved through the API.",
   "admin_editor_source_mode": "Source",
   "admin_editor_title": "Markdown editor",

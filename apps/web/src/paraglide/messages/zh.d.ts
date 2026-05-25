@@ -18,6 +18,7 @@
 /** @typedef {{}} Admin_Editor_ErrorInputs */
 /** @typedef {{}} Admin_Editor_ExcerptInputs */
 /** @typedef {{}} Admin_Editor_Preview_ModeInputs */
+/** @typedef {{}} Admin_Editor_Rich_ModeInputs */
 /** @typedef {{}} Admin_Editor_SavedInputs */
 /** @typedef {{}} Admin_Editor_Source_ModeInputs */
 /** @typedef {{}} Admin_Editor_TitleInputs */
@@ -191,6 +192,7 @@ export const admin_editor_excerpt: (inputs: Admin_Editor_ExcerptInputs) => Local
 export const admin_editor_preview_mode: (
   inputs: Admin_Editor_Preview_ModeInputs,
 ) => LocalizedString;
+export const admin_editor_rich_mode: (inputs: Admin_Editor_Rich_ModeInputs) => LocalizedString;
 export const admin_editor_saved: (inputs: Admin_Editor_SavedInputs) => LocalizedString;
 export const admin_editor_source_mode: (inputs: Admin_Editor_Source_ModeInputs) => LocalizedString;
 export const admin_editor_title: (inputs: Admin_Editor_TitleInputs) => LocalizedString;
@@ -371,6 +373,7 @@ export type Admin_Editor_DescriptionInputs = {};
 export type Admin_Editor_ErrorInputs = {};
 export type Admin_Editor_ExcerptInputs = {};
 export type Admin_Editor_Preview_ModeInputs = {};
+export type Admin_Editor_Rich_ModeInputs = {};
 export type Admin_Editor_SavedInputs = {};
 export type Admin_Editor_Source_ModeInputs = {};
 export type Admin_Editor_TitleInputs = {};

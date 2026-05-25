@@ -419,6 +419,28 @@ export const admin_editor_preview_mode: ((
 /**
  * | output |
  * | --- |
+ * | "Editor" |
+ *
+ * @param {Admin_Editor_Rich_ModeInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_rich_mode: ((
+  inputs?: Admin_Editor_Rich_ModeInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Editor_Rich_ModeInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Post saved through the API." |
  *
  * @param {Admin_Editor_SavedInputs} inputs
@@ -3648,6 +3670,7 @@ export type Admin_Editor_DescriptionInputs = {};
 export type Admin_Editor_ErrorInputs = {};
 export type Admin_Editor_ExcerptInputs = {};
 export type Admin_Editor_Preview_ModeInputs = {};
+export type Admin_Editor_Rich_ModeInputs = {};
 export type Admin_Editor_SavedInputs = {};
 export type Admin_Editor_Source_ModeInputs = {};
 export type Admin_Editor_TitleInputs = {};

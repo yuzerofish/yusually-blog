@@ -18,6 +18,7 @@
   "admin_editor_error": "文章保存失败。",
   "admin_editor_excerpt": "摘要",
   "admin_editor_preview_mode": "预览",
+  "admin_editor_rich_mode": "编辑器",
   "admin_editor_saved": "文章已通过 API 保存。",
   "admin_editor_source_mode": "源码",
   "admin_editor_title": "Markdown 编辑器",

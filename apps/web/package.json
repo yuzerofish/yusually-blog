@@ -11,6 +11,7 @@
   "dependencies": {
     "@fontsource-variable/inter": "catalog:",
     "@icons-pack/react-simple-icons": "catalog:",
+    "@mdxeditor/editor": "catalog:",
     "@repo/auth": "workspace:*",
     "@repo/core": "workspace:*",
     "@repo/db": "workspace:*",

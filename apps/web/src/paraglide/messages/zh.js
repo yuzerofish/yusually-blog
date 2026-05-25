@@ -19,6 +19,7 @@
 /** @typedef {{}} Admin_Editor_ErrorInputs */
 /** @typedef {{}} Admin_Editor_ExcerptInputs */
 /** @typedef {{}} Admin_Editor_Preview_ModeInputs */
+/** @typedef {{}} Admin_Editor_Rich_ModeInputs */
 /** @typedef {{}} Admin_Editor_SavedInputs */
 /** @typedef {{}} Admin_Editor_Source_ModeInputs */
 /** @typedef {{}} Admin_Editor_TitleInputs */
@@ -258,6 +259,11 @@ export const admin_editor_excerpt =
 export const admin_editor_preview_mode =
   /** @type {(inputs: Admin_Editor_Preview_ModeInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `预览`;
+  };
+
+export const admin_editor_rich_mode =
+  /** @type {(inputs: Admin_Editor_Rich_ModeInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `编辑器`;
   };
 
 export const admin_editor_saved =

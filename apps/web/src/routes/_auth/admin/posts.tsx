@@ -1,4 +1,4 @@
-import { localizePost, posts } from "@repo/core";
+import { localizePost, posts, renderMarkdownToHtml } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
@@ -6,6 +6,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PlusIcon, SearchIcon } from "lucide-react";
 import { useMemo, useState, type ComponentProps } from "react";
 
+import { MdxEditorSurface } from "#/components/mdx-editor-surface";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
@@ -19,9 +20,10 @@ function AdminPostsPage() {
   const locale = getCurrentLocale();
   const localizedPosts = posts.map((post) => localizePost(post, locale));
   const [query, setQuery] = useState("");
-  const [editorMode, setEditorMode] = useState<"source" | "preview">("source");
+  const [editorMode, setEditorMode] = useState<"editor" | "source" | "preview">("editor");
   const [editorState, setEditorState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [markdown, setMarkdown] = useState("# New post\n\nStart writing in Markdown.");
+  const previewHtml = useMemo(() => renderMarkdownToHtml(markdown), [markdown]);
 
   const visiblePosts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -174,6 +176,13 @@ function AdminPostsPage() {
             <div className="flex flex-wrap gap-2">
               <Button
                 type="button"
+                variant={editorMode === "editor" ? "default" : "outline"}
+                onClick={() => setEditorMode("editor")}
+              >
+                {m.admin_editor_rich_mode()}
+              </Button>
+              <Button
+                type="button"
                 variant={editorMode === "source" ? "default" : "outline"}
                 onClick={() => setEditorMode("source")}
               >
@@ -195,25 +204,24 @@ function AdminPostsPage() {
             ) : null}
           </div>
 
+          {editorMode === "editor" ? (
+            <MdxEditorSurface value={markdown} onChange={setMarkdown} />
+          ) : null}
+
           {editorMode === "source" ? (
             <textarea
               value={markdown}
               onChange={(event) => setMarkdown(event.target.value)}
               className="min-h-96 rounded-md border border-input bg-background px-3 py-3 font-mono text-sm leading-6 shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
             />
-          ) : (
-            <div className="prose prose-neutral dark:prose-invert min-h-96 max-w-none rounded-md border border-[#26312c]/10 bg-[#f8f5ef] p-5 dark:border-white/10 dark:bg-white/5">
-              {markdown
-                .split("\n")
-                .map((line, index) =>
-                  line.startsWith("# ") ? (
-                    <h1 key={`${line}-${index}`}>{line.replace(/^#\s+/, "")}</h1>
-                  ) : (
-                    <p key={`${line}-${index}`}>{line || "\u00a0"}</p>
-                  ),
-                )}
-            </div>
-          )}
+          ) : null}
+
+          {editorMode === "preview" ? (
+            <div
+              className="prose prose-neutral dark:prose-invert min-h-96 max-w-none rounded-md border border-[#26312c]/10 bg-[#f8f5ef] p-5 dark:border-white/10 dark:bg-white/5"
+              dangerouslySetInnerHTML={{ __html: previewHtml }}
+            />
+          ) : null}
         </div>
       </form>
     </section>
