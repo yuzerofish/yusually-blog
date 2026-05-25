@@ -24,7 +24,7 @@ Canonical production targets:
 - Cron Trigger: `0 3 * * *`
 - Backup retention: 30 days
 - Wrangler config: `apps/web/wrangler.jsonc`
-- Current verified version: `62f7be28-c5b6-4f11-baef-b8bd04d4fc7a`
+- Current verified version: `9f74e0ad-1cd6-4550-b28e-5a62edb8f4c9`
 
 ## Demo Cloudflare Resources
 
@@ -36,7 +36,7 @@ Canonical production targets:
 - Cron Trigger: `0 3 * * *`
 - Backup retention: 30 days
 - Wrangler config: `apps/web/wrangler.demo.jsonc`
-- Current verified version: `44d442a6-e851-46f0-8aea-c007755f5005`
+- Current verified version: `cd7ace94-d515-4e70-b98c-b51fdd780e9a`
 
 ## Migrations
 
