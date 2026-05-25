@@ -45,6 +45,116 @@ export const admin_assets_description: ((
 /**
  * | output |
  * | --- |
+ * | "Copied" |
+ *
+ * @param {Admin_Assets_CopiedInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_assets_copied: ((
+  inputs?: Admin_Assets_CopiedInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Assets_CopiedInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Copy URL" |
+ *
+ * @param {Admin_Assets_Copy_UrlInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_assets_copy_url: ((
+  inputs?: Admin_Assets_Copy_UrlInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Assets_Copy_UrlInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Delete" |
+ *
+ * @param {Admin_Assets_DeleteInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_assets_delete: ((
+  inputs?: Admin_Assets_DeleteInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Assets_DeleteInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Choose multiple images or drop them here." |
+ *
+ * @param {Admin_Assets_Drop_HintInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_assets_drop_hint: ((
+  inputs?: Admin_Assets_Drop_HintInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Assets_Drop_HintInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "No assets yet." |
+ *
+ * @param {Admin_Assets_EmptyInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_assets_empty: ((
+  inputs?: Admin_Assets_EmptyInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Assets_EmptyInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Asset could not be uploaded." |
  *
  * @param {Admin_Assets_ErrorInputs} inputs
@@ -4445,6 +4555,11 @@ export const view_all_posts: ((
 export type LocalizedString = import("../runtime.js").LocalizedString;
 export type AdminInputs = {};
 export type Admin_Assets_DescriptionInputs = {};
+export type Admin_Assets_CopiedInputs = {};
+export type Admin_Assets_Copy_UrlInputs = {};
+export type Admin_Assets_DeleteInputs = {};
+export type Admin_Assets_Drop_HintInputs = {};
+export type Admin_Assets_EmptyInputs = {};
 export type Admin_Assets_ErrorInputs = {};
 export type Admin_Assets_FilenameInputs = {};
 export type Admin_Assets_TitleInputs = {};

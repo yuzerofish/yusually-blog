@@ -23,6 +23,7 @@ export {
   createAsset,
   createComment,
   createPost,
+  deleteAsset,
   deletePost,
   findPost,
   listPosts,

@@ -80,6 +80,10 @@ export async function getR2Asset(key: string) {
   return env.CMS_ASSETS.get(key);
 }
 
+export async function deleteR2Asset(key: string) {
+  await env.CMS_ASSETS.delete(key);
+}
+
 export async function storeImportPackage(input: {
   filename: string;
   contentType: string;

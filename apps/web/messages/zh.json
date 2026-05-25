@@ -1,6 +1,11 @@
 {
   "admin": "管理后台",
   "admin_assets_description": "基于 R2 的图片和附件。",
+  "admin_assets_copied": "已复制",
+  "admin_assets_copy_url": "复制 URL",
+  "admin_assets_delete": "删除",
+  "admin_assets_drop_hint": "可以选择多张图片，也可以拖拽到这里。",
+  "admin_assets_empty": "暂无资源。",
   "admin_assets_error": "资源上传失败。",
   "admin_assets_filename": "文件名",
   "admin_assets_title": "资源",

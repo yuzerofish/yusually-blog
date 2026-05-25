@@ -53,6 +53,8 @@ blogcms admin confirm-password-reset --token reset_... --password "..."
 
 `blogcms import` accepts Markdown, HTML, ZIP archives, or a local folder. Folder imports send a file manifest to the ZIP import API so Markdown/HTML and local images can be processed together.
 
+`blogcms upload` accepts one image file or a folder of images. Folder uploads are processed recursively and return all uploaded asset records.
+
 `blogcms export --format zip` downloads the full archive written by `/api/export?format=zip`. `blogcms backup` creates the same ZIP archive directly in the configured R2 backups bucket.
 
 `blogcms deploy` runs the production sequence for `main` or `demo`: Vite+ build, remote D1 migrations, then Wrangler deploy with the generated Cloudflare Vite config. Use `--dry-run` to print the command plan, or `--skip-build`, `--skip-migrations`, and `--skip-deploy` for targeted maintenance.

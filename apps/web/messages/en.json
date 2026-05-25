@@ -1,6 +1,11 @@
 {
   "admin": "Admin",
   "admin_assets_description": "R2-backed images and attachments.",
+  "admin_assets_copied": "Copied",
+  "admin_assets_copy_url": "Copy URL",
+  "admin_assets_delete": "Delete",
+  "admin_assets_drop_hint": "Choose multiple images or drop them here.",
+  "admin_assets_empty": "No assets yet.",
   "admin_assets_error": "Asset could not be uploaded.",
   "admin_assets_filename": "Filename",
   "admin_assets_title": "Assets",

@@ -605,6 +605,14 @@ export async function listD1Assets() {
   return result.results.map(rowToAsset);
 }
 
+export async function getD1AssetById(idOrKey: string) {
+  const row = await env.CMS_DB.prepare("select * from assets where id = ? or key = ? limit 1")
+    .bind(idOrKey, idOrKey)
+    .first<D1AssetRow>();
+
+  return row ? rowToAsset(row) : undefined;
+}
+
 export async function createD1Asset(input: AssetInput) {
   const asset: Asset = {
     id: `asset_${crypto.randomUUID()}`,
@@ -633,6 +641,18 @@ export async function createD1Asset(input: AssetInput) {
       asset.createdAt,
     )
     .run();
+
+  return asset;
+}
+
+export async function deleteD1Asset(idOrKey: string) {
+  const asset = await getD1AssetById(idOrKey);
+
+  if (!asset) {
+    return undefined;
+  }
+
+  await env.CMS_DB.prepare("delete from assets where id = ?").bind(asset.id).run();
 
   return asset;
 }

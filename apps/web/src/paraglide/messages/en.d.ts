@@ -1,6 +1,11 @@
 /** @typedef {import('../runtime.js').LocalizedString} LocalizedString */
 /** @typedef {{}} AdminInputs */
 /** @typedef {{}} Admin_Assets_DescriptionInputs */
+/** @typedef {{}} Admin_Assets_CopiedInputs */
+/** @typedef {{}} Admin_Assets_Copy_UrlInputs */
+/** @typedef {{}} Admin_Assets_DeleteInputs */
+/** @typedef {{}} Admin_Assets_Drop_HintInputs */
+/** @typedef {{}} Admin_Assets_EmptyInputs */
 /** @typedef {{}} Admin_Assets_ErrorInputs */
 /** @typedef {{}} Admin_Assets_FilenameInputs */
 /** @typedef {{}} Admin_Assets_TitleInputs */
@@ -203,6 +208,11 @@
 /** @typedef {{}} View_All_PostsInputs */
 export const admin: (inputs: AdminInputs) => LocalizedString;
 export const admin_assets_description: (inputs: Admin_Assets_DescriptionInputs) => LocalizedString;
+export const admin_assets_copied: (inputs: Admin_Assets_CopiedInputs) => LocalizedString;
+export const admin_assets_copy_url: (inputs: Admin_Assets_Copy_UrlInputs) => LocalizedString;
+export const admin_assets_delete: (inputs: Admin_Assets_DeleteInputs) => LocalizedString;
+export const admin_assets_drop_hint: (inputs: Admin_Assets_Drop_HintInputs) => LocalizedString;
+export const admin_assets_empty: (inputs: Admin_Assets_EmptyInputs) => LocalizedString;
 export const admin_assets_error: (inputs: Admin_Assets_ErrorInputs) => LocalizedString;
 export const admin_assets_filename: (inputs: Admin_Assets_FilenameInputs) => LocalizedString;
 export const admin_assets_title: (inputs: Admin_Assets_TitleInputs) => LocalizedString;
@@ -456,6 +466,11 @@ export const view_all_posts: (inputs: View_All_PostsInputs) => LocalizedString;
 export type LocalizedString = import("../runtime.js").LocalizedString;
 export type AdminInputs = {};
 export type Admin_Assets_DescriptionInputs = {};
+export type Admin_Assets_CopiedInputs = {};
+export type Admin_Assets_Copy_UrlInputs = {};
+export type Admin_Assets_DeleteInputs = {};
+export type Admin_Assets_Drop_HintInputs = {};
+export type Admin_Assets_EmptyInputs = {};
 export type Admin_Assets_ErrorInputs = {};
 export type Admin_Assets_FilenameInputs = {};
 export type Admin_Assets_TitleInputs = {};

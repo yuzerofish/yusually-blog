@@ -47,6 +47,7 @@ import { Route as ApiImportZipRouteImport } from './routes/api/import/zip'
 import { Route as ApiImportMarkdownRouteImport } from './routes/api/import/markdown'
 import { Route as ApiImportHtmlRouteImport } from './routes/api/import/html'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiAssetsIdRouteImport } from './routes/api/assets/$id'
 import { Route as ApiAdminUsersRouteImport } from './routes/api/admin/users'
 import { Route as ApiAdminPasswordResetRouteImport } from './routes/api/admin/password-reset'
 import { Route as ApiAdminPasswordRouteImport } from './routes/api/admin/password'
@@ -250,6 +251,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAssetsIdRoute = ApiAssetsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiAssetsRoute,
+} as any)
 const ApiAdminUsersRoute = ApiAdminUsersRouteImport.update({
   id: '/api/admin/users',
   path: '/api/admin/users',
@@ -338,7 +344,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof GuestLoginRoute
   '/reset-password': typeof GuestResetPasswordRoute
   '/signup': typeof GuestSignupRoute
-  '/api/assets': typeof ApiAssetsRoute
+  '/api/assets': typeof ApiAssetsRouteWithChildren
   '/api/backups': typeof ApiBackupsRoute
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
@@ -361,6 +367,7 @@ export interface FileRoutesByFullPath {
   '/api/admin/password': typeof ApiAdminPasswordRoute
   '/api/admin/password-reset': typeof ApiAdminPasswordResetRoute
   '/api/admin/users': typeof ApiAdminUsersRoute
+  '/api/assets/$id': typeof ApiAssetsIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
@@ -388,7 +395,7 @@ export interface FileRoutesByTo {
   '/login': typeof GuestLoginRoute
   '/reset-password': typeof GuestResetPasswordRoute
   '/signup': typeof GuestSignupRoute
-  '/api/assets': typeof ApiAssetsRoute
+  '/api/assets': typeof ApiAssetsRouteWithChildren
   '/api/backups': typeof ApiBackupsRoute
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
@@ -411,6 +418,7 @@ export interface FileRoutesByTo {
   '/api/admin/password': typeof ApiAdminPasswordRoute
   '/api/admin/password-reset': typeof ApiAdminPasswordResetRoute
   '/api/admin/users': typeof ApiAdminUsersRoute
+  '/api/assets/$id': typeof ApiAssetsIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
@@ -443,7 +451,7 @@ export interface FileRoutesById {
   '/_guest/login': typeof GuestLoginRoute
   '/_guest/reset-password': typeof GuestResetPasswordRoute
   '/_guest/signup': typeof GuestSignupRoute
-  '/api/assets': typeof ApiAssetsRoute
+  '/api/assets': typeof ApiAssetsRouteWithChildren
   '/api/backups': typeof ApiBackupsRoute
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
@@ -466,6 +474,7 @@ export interface FileRoutesById {
   '/api/admin/password': typeof ApiAdminPasswordRoute
   '/api/admin/password-reset': typeof ApiAdminPasswordResetRoute
   '/api/admin/users': typeof ApiAdminUsersRoute
+  '/api/assets/$id': typeof ApiAssetsIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
@@ -520,6 +529,7 @@ export interface FileRouteTypes {
     | '/api/admin/password'
     | '/api/admin/password-reset'
     | '/api/admin/users'
+    | '/api/assets/$id'
     | '/api/auth/$'
     | '/api/import/html'
     | '/api/import/markdown'
@@ -570,6 +580,7 @@ export interface FileRouteTypes {
     | '/api/admin/password'
     | '/api/admin/password-reset'
     | '/api/admin/users'
+    | '/api/assets/$id'
     | '/api/auth/$'
     | '/api/import/html'
     | '/api/import/markdown'
@@ -624,6 +635,7 @@ export interface FileRouteTypes {
     | '/api/admin/password'
     | '/api/admin/password-reset'
     | '/api/admin/users'
+    | '/api/assets/$id'
     | '/api/auth/$'
     | '/api/import/html'
     | '/api/import/markdown'
@@ -651,7 +663,7 @@ export interface RootRouteChildren {
   SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
   SitemapPostsDotxmlRoute: typeof SitemapPostsDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  ApiAssetsRoute: typeof ApiAssetsRoute
+  ApiAssetsRoute: typeof ApiAssetsRouteWithChildren
   ApiBackupsRoute: typeof ApiBackupsRoute
   ApiCommentsRoute: typeof ApiCommentsRouteWithChildren
   ApiExportRoute: typeof ApiExportRoute
@@ -944,6 +956,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/assets/$id': {
+      id: '/api/assets/$id'
+      path: '/$id'
+      fullPath: '/api/assets/$id'
+      preLoaderRoute: typeof ApiAssetsIdRouteImport
+      parentRoute: typeof ApiAssetsRoute
+    }
     '/api/admin/users': {
       id: '/api/admin/users'
       path: '/api/admin/users'
@@ -1107,6 +1126,18 @@ const GuestRouteRouteWithChildren = GuestRouteRoute._addFileChildren(
   GuestRouteRouteChildren,
 )
 
+interface ApiAssetsRouteChildren {
+  ApiAssetsIdRoute: typeof ApiAssetsIdRoute
+}
+
+const ApiAssetsRouteChildren: ApiAssetsRouteChildren = {
+  ApiAssetsIdRoute: ApiAssetsIdRoute,
+}
+
+const ApiAssetsRouteWithChildren = ApiAssetsRoute._addFileChildren(
+  ApiAssetsRouteChildren,
+)
+
 interface ApiCommentsRouteChildren {
   ApiCommentsIdApproveRoute: typeof ApiCommentsIdApproveRoute
   ApiCommentsIdDeleteRoute: typeof ApiCommentsIdDeleteRoute
@@ -1161,7 +1192,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
   SitemapPostsDotxmlRoute: SitemapPostsDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  ApiAssetsRoute: ApiAssetsRoute,
+  ApiAssetsRoute: ApiAssetsRouteWithChildren,
   ApiBackupsRoute: ApiBackupsRoute,
   ApiCommentsRoute: ApiCommentsRouteWithChildren,
   ApiExportRoute: ApiExportRoute,

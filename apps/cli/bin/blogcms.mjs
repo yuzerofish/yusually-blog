@@ -194,25 +194,33 @@ Environment:
       run: async () => {
         requireArg(args[0], "Provide an images folder.");
         const api = getApiConfig();
+        const filePaths = await uploadPaths(args[0]);
 
         if (!api) {
-          print(`Prepared asset upload for ${args[0]}. Configure API env to upload assets.`);
+          print(
+            `Prepared ${filePaths.length} asset upload${filePaths.length === 1 ? "" : "s"} for ${args[0]}. Configure API env to upload assets.`,
+          );
           return;
         }
 
-        const filePath = await firstUploadPath(args[0]);
-        const filename = basename(filePath);
-        const content = await readFile(filePath);
-        const response = await apiFetch(api, "/api/assets", {
-          method: "POST",
-          body: {
-            filename,
-            contentType: contentTypeFor(filename),
-            contentBase64: content.toString("base64"),
-          },
-        });
+        const responses = [];
 
-        print(JSON.stringify(response, null, 2));
+        for (const filePath of filePaths) {
+          const filename = basename(filePath);
+          const content = await readFile(filePath);
+          const response = await apiFetch(api, "/api/assets", {
+            method: "POST",
+            body: {
+              filename,
+              contentType: contentTypeFor(filename),
+              contentBase64: content.toString("base64"),
+            },
+          });
+
+          responses.push(response.data);
+        }
+
+        print(JSON.stringify({ data: responses }, null, 2));
       },
     },
   ],
@@ -787,23 +795,49 @@ async function firstMarkdownPath(inputPath) {
   return join(inputPath, markdown);
 }
 
-async function firstUploadPath(inputPath) {
+async function uploadPaths(inputPath) {
   const stats = await stat(inputPath);
 
   if (stats.isFile()) {
-    return inputPath;
+    return [inputPath];
   }
 
-  const entries = await readdir(inputPath);
-  const upload = entries.find((entry) =>
-    [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"].includes(extname(entry).toLowerCase()),
+  const files = [];
+
+  await collectUploadPaths(inputPath, files);
+
+  if (!files.length) {
+    fail("Folder must contain at least one supported image file.");
+  }
+
+  return files;
+}
+
+async function collectUploadPaths(currentPath, files) {
+  const entries = await readdir(currentPath, { withFileTypes: true });
+
+  for (const entry of entries) {
+    if (entry.name.startsWith(".")) {
+      continue;
+    }
+
+    const fullPath = join(currentPath, entry.name);
+
+    if (entry.isDirectory()) {
+      await collectUploadPaths(fullPath, files);
+      continue;
+    }
+
+    if (entry.isFile() && isUploadFilename(entry.name)) {
+      files.push(fullPath);
+    }
+  }
+}
+
+function isUploadFilename(filename) {
+  return [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"].includes(
+    extname(filename).toLowerCase(),
   );
-
-  if (!upload) {
-    fail("Folder must contain at least one image file.");
-  }
-
-  return join(inputPath, upload);
 }
 
 function firstHeading(markdown) {

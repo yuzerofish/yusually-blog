@@ -3,6 +3,11 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {import('../runtime.js').LocalizedString} LocalizedString */
 /** @typedef {{}} AdminInputs */
 /** @typedef {{}} Admin_Assets_DescriptionInputs */
+/** @typedef {{}} Admin_Assets_CopiedInputs */
+/** @typedef {{}} Admin_Assets_Copy_UrlInputs */
+/** @typedef {{}} Admin_Assets_DeleteInputs */
+/** @typedef {{}} Admin_Assets_Drop_HintInputs */
+/** @typedef {{}} Admin_Assets_EmptyInputs */
 /** @typedef {{}} Admin_Assets_ErrorInputs */
 /** @typedef {{}} Admin_Assets_FilenameInputs */
 /** @typedef {{}} Admin_Assets_TitleInputs */
@@ -237,6 +242,91 @@ export const admin_assets_description =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.admin_assets_description(inputs);
       return __zh.admin_assets_description(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Copied" |
+ *
+ * @param {Admin_Assets_CopiedInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_assets_copied =
+  /** @type {((inputs?: Admin_Assets_CopiedInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Assets_CopiedInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_assets_copied(inputs);
+      return __zh.admin_assets_copied(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Copy URL" |
+ *
+ * @param {Admin_Assets_Copy_UrlInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_assets_copy_url =
+  /** @type {((inputs?: Admin_Assets_Copy_UrlInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Assets_Copy_UrlInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_assets_copy_url(inputs);
+      return __zh.admin_assets_copy_url(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Delete" |
+ *
+ * @param {Admin_Assets_DeleteInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_assets_delete =
+  /** @type {((inputs?: Admin_Assets_DeleteInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Assets_DeleteInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_assets_delete(inputs);
+      return __zh.admin_assets_delete(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Choose multiple images or drop them here." |
+ *
+ * @param {Admin_Assets_Drop_HintInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_assets_drop_hint =
+  /** @type {((inputs?: Admin_Assets_Drop_HintInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Assets_Drop_HintInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_assets_drop_hint(inputs);
+      return __zh.admin_assets_drop_hint(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "No assets yet." |
+ *
+ * @param {Admin_Assets_EmptyInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_assets_empty =
+  /** @type {((inputs?: Admin_Assets_EmptyInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Assets_EmptyInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_assets_empty(inputs);
+      return __zh.admin_assets_empty(inputs);
     }
   );
 /**

@@ -109,6 +109,17 @@ export const Route = createFileRoute("/openapi.json")({
                 responses: { "201": { description: "Asset uploaded" } },
               },
             },
+            "/api/assets/{id}": {
+              delete: {
+                summary: "Delete asset",
+                description: "Deletes the D1 asset record and the matching R2 object when present.",
+                security: [{ apiToken: ["assets:write"] }],
+                responses: {
+                  "200": { description: "Asset deleted" },
+                  "404": { description: "Asset not found" },
+                },
+              },
+            },
             "/api/site": {
               get: {
                 summary: "Read site settings",

@@ -2,6 +2,11 @@
 /** @typedef {import('../runtime.js').LocalizedString} LocalizedString */
 /** @typedef {{}} AdminInputs */
 /** @typedef {{}} Admin_Assets_DescriptionInputs */
+/** @typedef {{}} Admin_Assets_CopiedInputs */
+/** @typedef {{}} Admin_Assets_Copy_UrlInputs */
+/** @typedef {{}} Admin_Assets_DeleteInputs */
+/** @typedef {{}} Admin_Assets_Drop_HintInputs */
+/** @typedef {{}} Admin_Assets_EmptyInputs */
 /** @typedef {{}} Admin_Assets_ErrorInputs */
 /** @typedef {{}} Admin_Assets_FilenameInputs */
 /** @typedef {{}} Admin_Assets_TitleInputs */
@@ -210,6 +215,31 @@ export const admin = /** @type {(inputs: AdminInputs) => LocalizedString} */ () 
 export const admin_assets_description =
   /** @type {(inputs: Admin_Assets_DescriptionInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `基于 R2 的图片和附件。`;
+  };
+
+export const admin_assets_copied =
+  /** @type {(inputs: Admin_Assets_CopiedInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `已复制`;
+  };
+
+export const admin_assets_copy_url =
+  /** @type {(inputs: Admin_Assets_Copy_UrlInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `复制 URL`;
+  };
+
+export const admin_assets_delete =
+  /** @type {(inputs: Admin_Assets_DeleteInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `删除`;
+  };
+
+export const admin_assets_drop_hint =
+  /** @type {(inputs: Admin_Assets_Drop_HintInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `可以选择多张图片，也可以拖拽到这里。`;
+  };
+
+export const admin_assets_empty =
+  /** @type {(inputs: Admin_Assets_EmptyInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `暂无资源。`;
   };
 
 export const admin_assets_error =

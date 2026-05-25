@@ -279,6 +279,18 @@ export function createAsset(input: AssetInput) {
   return asset;
 }
 
+export function deleteAsset(idOrKey: string) {
+  const index = state.assets.findIndex((asset) => asset.id === idOrKey || asset.key === idOrKey);
+
+  if (index === -1) {
+    return undefined;
+  }
+
+  const [asset] = state.assets.splice(index, 1);
+
+  return asset;
+}
+
 export async function createComment(input: CommentInput) {
   const post = findPost(input.postSlug);
 
