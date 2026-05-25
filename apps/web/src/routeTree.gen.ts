@@ -33,6 +33,7 @@ import { Route as ApiSiteRouteImport } from './routes/api/site'
 import { Route as ApiPostsRouteImport } from './routes/api/posts'
 import { Route as ApiExportRouteImport } from './routes/api/export'
 import { Route as ApiCommentsRouteImport } from './routes/api/comments'
+import { Route as ApiBackupsRouteImport } from './routes/api/backups'
 import { Route as ApiAssetsRouteImport } from './routes/api/assets'
 import { Route as GuestSignupRouteImport } from './routes/_guest/signup'
 import { Route as GuestLoginRouteImport } from './routes/_guest/login'
@@ -175,6 +176,11 @@ const ApiExportRoute = ApiExportRouteImport.update({
 const ApiCommentsRoute = ApiCommentsRouteImport.update({
   id: '/api/comments',
   path: '/api/comments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBackupsRoute = ApiBackupsRouteImport.update({
+  id: '/api/backups',
+  path: '/api/backups',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAssetsRoute = ApiAssetsRouteImport.update({
@@ -320,6 +326,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof GuestLoginRoute
   '/signup': typeof GuestSignupRoute
   '/api/assets': typeof ApiAssetsRoute
+  '/api/backups': typeof ApiBackupsRoute
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
   '/api/posts': typeof ApiPostsRouteWithChildren
@@ -367,6 +374,7 @@ export interface FileRoutesByTo {
   '/login': typeof GuestLoginRoute
   '/signup': typeof GuestSignupRoute
   '/api/assets': typeof ApiAssetsRoute
+  '/api/backups': typeof ApiBackupsRoute
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
   '/api/posts': typeof ApiPostsRouteWithChildren
@@ -419,6 +427,7 @@ export interface FileRoutesById {
   '/_guest/login': typeof GuestLoginRoute
   '/_guest/signup': typeof GuestSignupRoute
   '/api/assets': typeof ApiAssetsRoute
+  '/api/backups': typeof ApiBackupsRoute
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
   '/api/posts': typeof ApiPostsRouteWithChildren
@@ -470,6 +479,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/api/assets'
+    | '/api/backups'
     | '/api/comments'
     | '/api/export'
     | '/api/posts'
@@ -517,6 +527,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/api/assets'
+    | '/api/backups'
     | '/api/comments'
     | '/api/export'
     | '/api/posts'
@@ -568,6 +579,7 @@ export interface FileRouteTypes {
     | '/_guest/login'
     | '/_guest/signup'
     | '/api/assets'
+    | '/api/backups'
     | '/api/comments'
     | '/api/export'
     | '/api/posts'
@@ -616,6 +628,7 @@ export interface RootRouteChildren {
   SitemapPostsDotxmlRoute: typeof SitemapPostsDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiAssetsRoute: typeof ApiAssetsRoute
+  ApiBackupsRoute: typeof ApiBackupsRoute
   ApiCommentsRoute: typeof ApiCommentsRouteWithChildren
   ApiExportRoute: typeof ApiExportRoute
   ApiPostsRoute: typeof ApiPostsRouteWithChildren
@@ -806,6 +819,13 @@ declare module '@tanstack/react-router' {
       path: '/api/comments'
       fullPath: '/api/comments'
       preLoaderRoute: typeof ApiCommentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/backups': {
+      id: '/api/backups'
+      path: '/api/backups'
+      fullPath: '/api/backups'
+      preLoaderRoute: typeof ApiBackupsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/assets': {
@@ -1101,6 +1121,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapPostsDotxmlRoute: SitemapPostsDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiAssetsRoute: ApiAssetsRoute,
+  ApiBackupsRoute: ApiBackupsRoute,
   ApiCommentsRoute: ApiCommentsRouteWithChildren,
   ApiExportRoute: ApiExportRoute,
   ApiPostsRoute: ApiPostsRouteWithChildren,

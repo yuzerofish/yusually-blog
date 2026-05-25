@@ -15,8 +15,9 @@ Cloud Blog CMS is a TanStack Start monorepo built for Cloudflare Workers. The re
 
 - Workers run the public site, admin UI, API routes, feeds, sitemap, and robots output.
 - D1 stores posts, comments, site settings, admin users, admin sessions, API tokens, pages, projects, tags, and asset metadata.
-- R2 stores uploaded assets, import packages, exports, and backup JSON files.
+- R2 stores uploaded assets, import packages, JSON exports, and full ZIP backups.
 - KV is available as the `CMS_CACHE` binding for cache metadata.
+- Cron Triggers call the custom Worker entry once per day to generate a ZIP backup and prune old backup objects.
 - Turnstile and Cloudflare Email Sending are optional. Empty Turnstile and Email bindings do not block login, publishing, comment moderation, or exports.
 
 ## Internationalization
@@ -42,3 +43,7 @@ The Skill and CLI use the same HTTP API as the admin UI. A generated site can be
 ## Import Flow
 
 Markdown imports parse simple frontmatter and preserve Markdown as the source of truth. HTML imports sanitize markup before persistence. ZIP and folder imports select Markdown first, then HTML, and fall back to an image gallery; image files are uploaded to R2 and local image references are rewritten to public asset URLs.
+
+## Export And Backup Flow
+
+JSON export remains the lightweight API response for automation. ZIP export packages Markdown, HTML, site settings, posts, comments, assets, tags, projects, and a manifest under `export/`, stores the archive in R2, and rewrites known local asset URLs to relative paths inside the archive. Manual backups use `POST /api/backups`; scheduled backups use the same ZIP builder from the Worker `scheduled` handler.

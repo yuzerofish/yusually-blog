@@ -1,11 +1,14 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "blog-demo",
-  "main": "@tanstack/react-start/server-entry",
+  "main": "./src/server.ts",
   "compatibility_date": "2026-05-24",
   "compatibility_flags": ["nodejs_compat"],
   "observability": {
     "enabled": true,
+  },
+  "triggers": {
+    "crons": ["0 3 * * *"],
   },
   "routes": [
     { "pattern": "demo.01mvp.com", "custom_domain": true },
@@ -14,6 +17,7 @@
   "vars": {
     "VITE_BASE_URL": "https://demo.01mvp.com",
     "CMS_PUBLIC_SITE_URL": "https://demo.01mvp.com",
+    "CMS_BACKUP_RETENTION_DAYS": "30",
     "CMS_EMAIL_SENDING_ENABLED": "false",
     "CMS_TURNSTILE_SECRET_KEY": "",
     "VITE_TURNSTILE_SITE_KEY": "",

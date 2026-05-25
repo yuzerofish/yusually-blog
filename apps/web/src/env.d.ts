@@ -18,6 +18,7 @@ type CmsD1Database = {
 };
 
 type CmsR2Object = {
+  key: string;
   body: ReadableStream<Uint8Array> | null;
   httpMetadata?: {
     contentType?: string;
@@ -27,8 +28,15 @@ type CmsR2Object = {
   uploaded: Date;
 };
 
+type CmsR2ListResult = {
+  objects: CmsR2Object[];
+  truncated: boolean;
+  cursor?: string;
+};
+
 type CmsR2Bucket = {
   get(key: string): Promise<CmsR2Object | null>;
+  list(options?: { prefix?: string; cursor?: string; limit?: number }): Promise<CmsR2ListResult>;
   put(
     key: string,
     value: ReadableStream<Uint8Array> | ArrayBuffer | ArrayBufferView | string | Blob | null,
@@ -56,6 +64,7 @@ type CloudflareBindings = {
   CMS_CACHE: CmsKVNamespace;
   VITE_BASE_URL: string;
   CMS_PUBLIC_SITE_URL: string;
+  CMS_BACKUP_RETENTION_DAYS: string;
   CMS_EMAIL_SENDING_ENABLED: string;
   CMS_TURNSTILE_SECRET_KEY: string;
   VITE_TURNSTILE_SITE_KEY: string;

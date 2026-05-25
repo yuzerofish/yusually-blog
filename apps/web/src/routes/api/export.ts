@@ -3,7 +3,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { buildSiteExport, getApiLocale, jsonResponse } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { buildD1SiteExport } from "#/lib/cms-d1";
-import { storeExportBackup } from "#/lib/cms-r2";
+import { buildExportZipBundle } from "#/lib/cms-export";
+import { storeExportBackup, storeExportZipBackup } from "#/lib/cms-r2";
 
 export const Route = createFileRoute("/api/export")({
   server: {
@@ -16,6 +17,25 @@ export const Route = createFileRoute("/api/export")({
         }
 
         const locale = getApiLocale(request);
+
+        if (new URL(request.url).searchParams.get("format") === "zip") {
+          const bundle = await buildExportZipBundle(locale);
+          const backup = await storeExportZipBackup(bundle.bytes, bundle.filename).catch(
+            () => null,
+          );
+
+          return new Response(toArrayBuffer(bundle.bytes), {
+            headers: {
+              "content-type": "application/zip",
+              "content-disposition": `attachment; filename="${bundle.filename}"`,
+              "x-blogcms-backup-key": backup?.key ?? "",
+              "x-blogcms-exported-at": bundle.data.exportedAt,
+              "x-blogcms-assets-bundled": String(bundle.assetCount),
+              "x-blogcms-assets-missing": String(bundle.missingAssetKeys.length),
+            },
+          });
+        }
+
         const data = await buildD1SiteExport(locale).catch(() => buildSiteExport(locale));
         const backup = await storeExportBackup(data).catch(() => null);
 
@@ -28,3 +48,9 @@ export const Route = createFileRoute("/api/export")({
     },
   },
 });
+
+function toArrayBuffer(bytes: Uint8Array) {
+  const buffer = new ArrayBuffer(bytes.byteLength);
+  new Uint8Array(buffer).set(bytes);
+  return buffer;
+}

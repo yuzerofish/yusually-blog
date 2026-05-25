@@ -146,8 +146,41 @@ export const Route = createFileRoute("/openapi.json")({
             "/api/export": {
               get: {
                 summary: "Export site archive",
+                description:
+                  "Returns JSON by default. Use format=zip to download a full ZIP archive with Markdown, HTML, JSON manifests, comments, settings, and bundled R2 assets.",
                 security: [{ apiToken: ["export:read"] }],
-                responses: { "200": { description: "Export archive" } },
+                parameters: [{ name: "format", in: "query", schema: { enum: ["json", "zip"] } }],
+                responses: {
+                  "200": {
+                    description: "Export archive",
+                    content: {
+                      "application/json": {
+                        schema: { type: "object" },
+                      },
+                      "application/zip": {
+                        schema: { type: "string", format: "binary" },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            "/api/backups": {
+              post: {
+                summary: "Create backup",
+                description:
+                  "Creates a ZIP export backup in R2 and applies the configured backup retention policy.",
+                security: [{ apiToken: ["export:read"] }],
+                responses: {
+                  "201": {
+                    description: "Backup created",
+                    content: {
+                      "application/json": {
+                        schema: { $ref: "#/components/schemas/BackupResult" },
+                      },
+                    },
+                  },
+                },
               },
             },
             "/api/comments": {
@@ -308,6 +341,27 @@ export const Route = createFileRoute("/openapi.json")({
                     },
                   },
                 ],
+              },
+              BackupResult: {
+                type: "object",
+                properties: {
+                  trigger: { enum: ["manual", "cron"] },
+                  backup: {
+                    type: "object",
+                    properties: {
+                      key: { type: "string" },
+                      url: { type: "string" },
+                      contentType: { type: "string" },
+                      sizeBytes: { type: "number" },
+                      createdAt: { type: "string" },
+                    },
+                  },
+                  retentionDays: { type: "number" },
+                  prunedKeys: { type: "array", items: { type: "string" } },
+                  assetCount: { type: "number" },
+                  missingAssetKeys: { type: "array", items: { type: "string" } },
+                  exportedAt: { type: "string" },
+                },
               },
             },
           },

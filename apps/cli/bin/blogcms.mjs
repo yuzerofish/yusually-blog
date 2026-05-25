@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { readdir, readFile, stat } from "node:fs/promises";
-import { basename, extname, join, relative } from "node:path";
+import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
+import { basename, dirname, extname, join, relative } from "node:path";
 
 const command = process.argv[2] ?? "help";
 const args = process.argv.slice(3);
@@ -21,7 +21,8 @@ Usage:
   blogcms push <markdown-file-folder-or-json>
   blogcms import <zip-or-html>
   blogcms upload <images-folder>
-  blogcms export
+  blogcms export [--format json|zip] [--output backup.zip]
+  blogcms backup
   blogcms site get
   blogcms site update --config <site.config.json>
   blogcms deploy
@@ -217,13 +218,60 @@ Environment:
       summary: "Export posts, pages, projects, assets, comments, and settings",
       run: async () => {
         const api = getApiConfig();
+        const format = readOption(["--format"], "json");
 
         if (!api) {
-          print("Prepared site export. Configure API env to fetch the export payload.");
+          print(
+            `Prepared site export as ${format}. Configure API env to fetch the export payload.`,
+          );
           return;
         }
 
+        if (format === "zip") {
+          const response = await apiFetchRaw(api, "/api/export?format=zip", { method: "GET" });
+          const arrayBuffer = await response.arrayBuffer();
+          const outputPath =
+            readOption(["--output", "-o"], undefined) ?? filenameFromResponse(response);
+
+          await mkdir(dirname(outputPath), { recursive: true });
+          await writeFile(outputPath, Buffer.from(arrayBuffer));
+          print(
+            JSON.stringify(
+              {
+                output: outputPath,
+                sizeBytes: arrayBuffer.byteLength,
+                backupKey: response.headers.get("x-blogcms-backup-key") || null,
+                exportedAt: response.headers.get("x-blogcms-exported-at") || null,
+              },
+              null,
+              2,
+            ),
+          );
+          return;
+        }
+
+        if (format !== "json") {
+          fail("Export format must be `json` or `zip`.");
+        }
+
         const response = await apiFetch(api, "/api/export", { method: "GET" });
+        print(JSON.stringify(response, null, 2));
+      },
+    },
+  ],
+  [
+    "backup",
+    {
+      summary: "Create an R2 ZIP backup through the API",
+      run: async () => {
+        const api = getApiConfig();
+
+        if (!api) {
+          print("Prepared R2 backup. Configure API env to create it.");
+          return;
+        }
+
+        const response = await apiFetch(api, "/api/backups", { method: "POST" });
         print(JSON.stringify(response, null, 2));
       },
     },
@@ -401,6 +449,22 @@ async function apiFetch(api, pathname, options) {
   });
 }
 
+async function apiFetchRaw(api, pathname, options) {
+  const response = await fetch(`${api.siteUrl}${pathname}`, {
+    method: options.method,
+    headers: {
+      authorization: `Bearer ${api.token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const payload = await response.text();
+    fail(payload || `Request failed with ${response.status}`);
+  }
+
+  return response;
+}
+
 async function siteFetch(siteUrl, pathname, options) {
   const headers = {
     "content-type": "application/json",
@@ -461,6 +525,13 @@ async function apiFetchWithCookie(siteUrl, cookie, pathname, options) {
   }
 
   return payload;
+}
+
+function filenameFromResponse(response) {
+  const disposition = response.headers.get("content-disposition") ?? "";
+  const match = /filename="([^"]+)"/i.exec(disposition);
+
+  return match?.[1] ?? "cloud-blog-cms-export.zip";
 }
 
 async function readMarkdownInput(inputPath) {

@@ -37,8 +37,8 @@ The theme preset is written to site settings and applied through shared UI token
 12. Publish the first bilingual post through `blogcms push`.
 13. Upload a media asset through `blogcms upload`.
 14. Submit and approve a comment.
-15. Export a backup through `blogcms export`.
-16. Verify homepage, post page, admin, RSS, sitemap, robots, OpenAPI, OG metadata, and localized API responses.
+15. Export JSON through `blogcms export` and create a ZIP backup through `blogcms backup`.
+16. Verify homepage, post page, admin, RSS, sitemap, robots, OpenAPI, OG metadata, localized API responses, JSON export, and ZIP backup.
 17. Save an execution log.
 
 ## Demo Evidence

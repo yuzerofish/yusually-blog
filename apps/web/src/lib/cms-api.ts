@@ -41,6 +41,7 @@ export const apiEndpoints = [
   { method: "GET", path: "/api/site", scope: "site:read" },
   { method: "PUT", path: "/api/site", scope: "site:write" },
   { method: "GET", path: "/api/export", scope: "export:read" },
+  { method: "POST", path: "/api/backups", scope: "export:read" },
   { method: "GET", path: "/api/comments", scope: "comments:moderate" },
   { method: "POST", path: "/api/comments", scope: "public" },
   { method: "POST", path: "/api/comments/{id}/approve", scope: "comments:moderate" },

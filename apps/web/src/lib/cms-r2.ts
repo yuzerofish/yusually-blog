@@ -128,6 +128,52 @@ export async function storeExportBackup(payload: unknown) {
   };
 }
 
+export async function storeExportZipBackup(data: Uint8Array, filename: string) {
+  const createdAt = new Date().toISOString();
+  const key = objectKey("exports", filename);
+
+  await env.CMS_BACKUPS.put(key, data, {
+    httpMetadata: {
+      contentType: "application/zip",
+    },
+  });
+
+  return {
+    key,
+    url: `r2://CMS_BACKUPS/${key}`,
+    contentType: "application/zip",
+    sizeBytes: data.byteLength,
+    createdAt,
+  };
+}
+
+export async function pruneExportBackups(retentionDays: number) {
+  const cutoff = Date.now() - retentionDays * 24 * 60 * 60 * 1000;
+  const deletedKeys: string[] = [];
+  let cursor: string | undefined;
+
+  do {
+    const result = await env.CMS_BACKUPS.list({
+      prefix: "exports/",
+      cursor,
+      limit: 100,
+    });
+
+    for (const object of result.objects) {
+      if (object.uploaded.getTime() >= cutoff) {
+        continue;
+      }
+
+      await env.CMS_BACKUPS.delete(object.key);
+      deletedKeys.push(object.key);
+    }
+
+    cursor = result.truncated ? result.cursor : undefined;
+  } while (cursor);
+
+  return { deletedKeys, retentionDays };
+}
+
 function objectKey(prefix: "uploads" | "imports" | "exports", filename: string) {
   const now = new Date();
   const yyyy = String(now.getUTCFullYear());

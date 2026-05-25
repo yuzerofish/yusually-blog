@@ -21,6 +21,8 @@ Canonical production targets:
 - R2 assets: `blog-starter-assets`
 - R2 backups: `blog-starter-backups`
 - KV: `CMS_CACHE`, id `c1150cc286374ba9919f48f48a985f36`
+- Cron Trigger: `0 3 * * *`
+- Backup retention: 30 days
 - Wrangler config: `apps/web/wrangler.jsonc`
 - Current verified version: `62f7be28-c5b6-4f11-baef-b8bd04d4fc7a`
 
@@ -31,6 +33,8 @@ Canonical production targets:
 - R2 assets: `blog-demo-assets`
 - R2 backups: `blog-demo-backups`
 - KV: `BLOG_DEMO_CMS_CACHE`, id `ae38b550b4604ddeb49078745b58e945`
+- Cron Trigger: `0 3 * * *`
+- Backup retention: 30 days
 - Wrangler config: `apps/web/wrangler.demo.jsonc`
 - Current verified version: `44d442a6-e851-46f0-8aea-c007755f5005`
 
@@ -65,3 +69,5 @@ pnpm --filter @repo/web exec wrangler deploy
 The Cloudflare Vite plugin writes the effective deploy config into `apps/web/dist/server/wrangler.json`. After `pnpm build:web:demo`, the following `wrangler deploy` uses demo bindings and routes from the generated config.
 
 Because custom domains are configured in Wrangler, workers.dev preview URLs can be disabled by Cloudflare for these deployments. Use the custom domains for verification.
+
+Wrangler uses `apps/web/src/server.ts` as the Worker entry. It delegates HTTP requests to TanStack Start and exposes a `scheduled` handler for automatic ZIP backups.

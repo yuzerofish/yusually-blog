@@ -14,7 +14,9 @@
 - Admin login page loads.
 - First admin user can sign in.
 - Image upload writes to R2.
-- Export writes a backup object to R2.
+- JSON export writes a backup object to R2.
+- ZIP export includes Markdown, HTML, JSON manifests, comments, settings, and R2 assets.
+- Manual backup writes a ZIP archive to R2.
 - Comment submission creates a pending comment.
 - Comment approval publishes it on the post page.
 - Skill log records automated steps and user intervention steps.

@@ -30,6 +30,7 @@ Feeds and public metadata use current D1 site settings and localized content whe
 - `GET /api/site`
 - `PUT /api/site`
 - `GET /api/export`
+- `POST /api/backups`
 - `GET /api/comments`
 - `POST /api/comments`
 - `POST /api/comments/:id/approve`
@@ -58,7 +59,9 @@ Feeds and public metadata use current D1 site settings and localized content whe
 
 `GET /api/comments` returns the moderation queue and requires `comments:moderate`. `POST /api/comments` is public, accepts optional `parentId` for replies, applies honeypot, Turnstile when configured, per-IP rate limits, body length limits, link limits, and creates comments as `pending`.
 
-`GET /api/export` returns JSON data and writes a backup JSON object to R2.
+`GET /api/export` returns JSON data and writes a backup JSON object to R2. `GET /api/export?format=zip` returns a ZIP archive with Markdown posts, HTML posts, JSON manifests, comments, settings, projects, tags, and bundled R2 assets; the ZIP is also written to the backups bucket.
+
+`POST /api/backups` creates a ZIP export backup in R2 and applies the configured backup retention policy. It uses the same `export:read` scope as export.
 
 ## Token Scopes
 

@@ -40,8 +40,8 @@ Ask for missing values only when they are not already provided:
 13. Publish the first bilingual post with `blogcms push /absolute/path/to/first-post.json`.
 14. Upload a media asset with `blogcms upload`.
 15. Submit a public comment and approve it through the API.
-16. Export the site with `blogcms export`.
-17. Verify public page, post page, admin login, RSS, sitemap, robots, OpenAPI, OG metadata, localized post API response, R2 asset, and export backup.
+16. Export the site with `blogcms export` and create a ZIP backup with `blogcms backup`.
+17. Verify public page, post page, admin login, RSS, sitemap, robots, OpenAPI, OG metadata, localized post API response, R2 asset, JSON export, and ZIP backup.
 18. Save an execution log for the generated site.
 
 ## I18n Contract
