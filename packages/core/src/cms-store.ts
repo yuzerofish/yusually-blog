@@ -18,6 +18,7 @@ import type {
   Post,
   SiteSettings,
   SupportedLocale,
+  Tag,
 } from "./types";
 
 type PostInput = Partial<{
@@ -28,6 +29,10 @@ type PostInput = Partial<{
   contentMarkdown: string;
   contentHtml: string;
   status: ContentStatus;
+  commentsEnabled: boolean;
+  seoTitle: string;
+  seoDescription: string;
+  tags: string[];
   locale: SupportedLocale;
 }>;
 
@@ -161,13 +166,14 @@ export function createPost(input: PostInput) {
     source: "api",
     featured: false,
     pinned: false,
-    commentsEnabled: true,
+    commentsEnabled: input.commentsEnabled ?? true,
     publishedAt: status === "published" ? now : now,
     updatedAt: now,
     authorName: state.siteSettings.authorName,
-    tags: [],
-    seoTitle: title,
-    seoDescription: input.excerpt?.trim() || contentText.slice(0, 160),
+    tags: resolveInputTags(input.tags),
+    seoTitle: input.seoTitle?.trim() || title,
+    seoDescription:
+      input.seoDescription?.trim() || input.excerpt?.trim() || contentText.slice(0, 160),
   };
 
   if (input.locale === "zh") {
@@ -207,6 +213,22 @@ export function updatePost(idOrSlug: string, input: PostInput) {
     post.excerpt = input.excerpt.trim();
   }
 
+  if (input.seoTitle !== undefined) {
+    post.seoTitle = input.seoTitle.trim() || post.title;
+  }
+
+  if (input.seoDescription !== undefined) {
+    post.seoDescription = input.seoDescription.trim() || post.excerpt;
+  }
+
+  if (input.commentsEnabled !== undefined) {
+    post.commentsEnabled = input.commentsEnabled;
+  }
+
+  if (input.tags !== undefined) {
+    post.tags = resolveInputTags(input.tags);
+  }
+
   if (input.coverImage !== undefined) {
     post.coverImage = input.coverImage.trim() || state.siteSettings.defaultOgImage;
   }
@@ -229,7 +251,7 @@ export function updatePost(idOrSlug: string, input: PostInput) {
     }
   }
 
-  post.seoDescription = post.excerpt || post.contentText.slice(0, 160);
+  post.seoDescription = post.seoDescription || post.excerpt || post.contentText.slice(0, 160);
   post.updatedAt = new Date().toISOString();
 
   return post;
@@ -389,6 +411,36 @@ function uniqueSlug(base: string) {
   }
 
   return candidate;
+}
+
+function resolveInputTags(input: string[] | undefined): Tag[] {
+  if (!input) {
+    return [];
+  }
+
+  const names = Array.from(new Set(input.map((name) => name.trim()).filter(Boolean)));
+
+  return names.map((name) => upsertTag(name));
+}
+
+function upsertTag(name: string): Tag {
+  const slug = slugify(name);
+  const existing = state.tags.find((tag) => tag.slug === slug);
+
+  if (existing) {
+    return existing;
+  }
+
+  const tag: Tag = {
+    id: `tag_${crypto.randomUUID()}`,
+    name,
+    slug,
+    description: "",
+  };
+
+  state.tags.push(tag);
+
+  return tag;
 }
 
 function slugify(value: string) {

@@ -7,7 +7,7 @@ import {
   getTagBySlug,
   localizePost,
   resolveLocale,
-  tags,
+  tags as seedTags,
   type Comment,
   type Post,
   type SiteSettings,
@@ -47,6 +47,11 @@ export type ArchivePageData = {
 
 export type TagPageData = {
   tag: Tag;
+  posts: Post[];
+};
+
+export type TagsPageData = {
+  tags: Tag[];
   posts: Post[];
 };
 
@@ -96,7 +101,7 @@ export const $getHomePageData = createServerFn({ method: "GET" }).handler(
       posts,
       featuredPosts,
       siteSettings,
-      tags,
+      tags: await getMergedTags(posts),
     };
   },
 );
@@ -104,14 +109,15 @@ export const $getHomePageData = createServerFn({ method: "GET" }).handler(
 export const $getBlogIndexPage = createServerFn({ method: "GET" })
   .inputValidator((data: { query?: string; tagSlug?: string }) => data)
   .handler(async ({ data }): Promise<BlogIndexPageData> => {
-    const posts = filterPosts(await getMergedPublishedPosts(), {
+    const allPosts = await getMergedPublishedPosts();
+    const posts = filterPosts(allPosts, {
       query: data.query,
       tagSlug: data.tagSlug,
     });
 
     return {
       posts,
-      tags,
+      tags: await getMergedTags(allPosts),
     };
   });
 
@@ -129,7 +135,9 @@ export const $getArchivePage = createServerFn({ method: "GET" })
 export const $getTagPage = createServerFn({ method: "GET" })
   .inputValidator((data: { slug: string }) => data)
   .handler(async ({ data }): Promise<TagPageData | null> => {
-    const tag = getTagBySlug(data.slug);
+    const allPosts = await getMergedPublishedPosts();
+    const tags = await getMergedTags(allPosts);
+    const tag = tags.find((candidate) => candidate.slug === data.slug) ?? getTagBySlug(data.slug);
 
     if (!tag) {
       return null;
@@ -137,9 +145,20 @@ export const $getTagPage = createServerFn({ method: "GET" })
 
     return {
       tag,
-      posts: filterPosts(await getMergedPublishedPosts(), { tagSlug: tag.slug }),
+      posts: filterPosts(allPosts, { tagSlug: tag.slug }),
     };
   });
+
+export const $getTagsPage = createServerFn({ method: "GET" }).handler(
+  async (): Promise<TagsPageData> => {
+    const posts = await getMergedPublishedPosts();
+
+    return {
+      posts,
+      tags: await getMergedTags(posts),
+    };
+  },
+);
 
 async function getMergedPublishedPosts() {
   const { listD1Posts } = await import("./cms-d1");
@@ -150,6 +169,20 @@ async function getMergedPublishedPosts() {
     ...persistedPosts,
     ...getPublishedPosts().filter((post) => !persistedSlugs.has(post.slug)),
   ];
+}
+
+async function getMergedTags(posts: Post[]) {
+  const { listD1Tags } = await import("./cms-d1");
+  const persistedTags = await listD1Tags().catch(() => []);
+  const tagsBySlug = new Map<string, Tag>();
+
+  for (const tag of [...persistedTags, ...posts.flatMap((post) => post.tags), ...seedTags]) {
+    if (!tagsBySlug.has(tag.slug)) {
+      tagsBySlug.set(tag.slug, tag);
+    }
+  }
+
+  return Array.from(tagsBySlug.values()).sort((a, b) => a.name.localeCompare(b.name));
 }
 
 function filterPosts(posts: Post[], { query = "", tagSlug }: { query?: string; tagSlug?: string }) {

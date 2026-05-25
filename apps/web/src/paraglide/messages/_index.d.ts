@@ -331,6 +331,28 @@ export const admin_editor_default_title: ((
 /**
  * | output |
  * | --- |
+ * | "Allow comments on this post" |
+ *
+ * @param {Admin_Editor_Comments_EnabledInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_comments_enabled: ((
+  inputs?: Admin_Editor_Comments_EnabledInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Editor_Comments_EnabledInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Write Markdown, preview the rendered shape, then save as draft or publish through the API." |
  *
  * @param {Admin_Editor_DescriptionInputs} inputs
@@ -345,6 +367,28 @@ export const admin_editor_description: ((
 ) => LocalizedString) &
   import("../runtime.js").MessageMetadata<
     Admin_Editor_DescriptionInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Edit post" |
+ *
+ * @param {Admin_Editor_Edit_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_edit_title: ((
+  inputs?: Admin_Editor_Edit_TitleInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Editor_Edit_TitleInputs,
     {
       locale?: "en" | "zh";
     },
@@ -463,6 +507,50 @@ export const admin_editor_saved: ((
 /**
  * | output |
  * | --- |
+ * | "SEO description" |
+ *
+ * @param {Admin_Editor_Seo_DescriptionInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_seo_description: ((
+  inputs?: Admin_Editor_Seo_DescriptionInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Editor_Seo_DescriptionInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "SEO title" |
+ *
+ * @param {Admin_Editor_Seo_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_seo_title: ((
+  inputs?: Admin_Editor_Seo_TitleInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Editor_Seo_TitleInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Source" |
  *
  * @param {Admin_Editor_Source_ModeInputs} inputs
@@ -477,6 +565,28 @@ export const admin_editor_source_mode: ((
 ) => LocalizedString) &
   import("../runtime.js").MessageMetadata<
     Admin_Editor_Source_ModeInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Tags" |
+ *
+ * @param {Admin_Editor_TagsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_tags: ((
+  inputs?: Admin_Editor_TagsInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Editor_TagsInputs,
     {
       locale?: "en" | "zh";
     },
@@ -793,6 +903,50 @@ export const admin_overview_title: ((
 /**
  * | output |
  * | --- |
+ * | "Actions" |
+ *
+ * @param {Admin_Posts_ActionsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_posts_actions: ((
+  inputs?: Admin_Posts_ActionsInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Posts_ActionsInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Archive" |
+ *
+ * @param {Admin_Posts_ArchiveInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_posts_archive: ((
+  inputs?: Admin_Posts_ArchiveInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Posts_ArchiveInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Title" |
  *
  * @param {Admin_Posts_Column_TitleInputs} inputs
@@ -815,6 +969,28 @@ export const admin_posts_column_title: ((
 /**
  * | output |
  * | --- |
+ * | "Delete" |
+ *
+ * @param {Admin_Posts_DeleteInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_posts_delete: ((
+  inputs?: Admin_Posts_DeleteInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Posts_DeleteInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Create bilingual drafts, publish Markdown, and manage status." |
  *
  * @param {Admin_Posts_DescriptionInputs} inputs
@@ -829,6 +1005,116 @@ export const admin_posts_description: ((
 ) => LocalizedString) &
   import("../runtime.js").MessageMetadata<
     Admin_Posts_DescriptionInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Edit" |
+ *
+ * @param {Admin_Posts_EditInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_posts_edit: ((
+  inputs?: Admin_Posts_EditInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Posts_EditInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "All statuses" |
+ *
+ * @param {Admin_Posts_Filter_All_StatusInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_posts_filter_all_status: ((
+  inputs?: Admin_Posts_Filter_All_StatusInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Posts_Filter_All_StatusInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "All tags" |
+ *
+ * @param {Admin_Posts_Filter_All_TagsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_posts_filter_all_tags: ((
+  inputs?: Admin_Posts_Filter_All_TagsInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Posts_Filter_All_TagsInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Filter by status" |
+ *
+ * @param {Admin_Posts_Filter_StatusInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_posts_filter_status: ((
+  inputs?: Admin_Posts_Filter_StatusInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Posts_Filter_StatusInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Filter by tag" |
+ *
+ * @param {Admin_Posts_Filter_TagInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_posts_filter_tag: ((
+  inputs?: Admin_Posts_Filter_TagInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Posts_Filter_TagInputs,
     {
       locale?: "en" | "zh";
     },
@@ -3842,13 +4128,18 @@ export type Admin_Comments_Mark_SpamInputs = {};
 export type Admin_Comments_TitleInputs = {};
 export type Admin_Editor_Default_ExcerptInputs = {};
 export type Admin_Editor_Default_TitleInputs = {};
+export type Admin_Editor_Comments_EnabledInputs = {};
 export type Admin_Editor_DescriptionInputs = {};
+export type Admin_Editor_Edit_TitleInputs = {};
 export type Admin_Editor_ErrorInputs = {};
 export type Admin_Editor_ExcerptInputs = {};
 export type Admin_Editor_Preview_ModeInputs = {};
 export type Admin_Editor_Rich_ModeInputs = {};
 export type Admin_Editor_SavedInputs = {};
+export type Admin_Editor_Seo_DescriptionInputs = {};
+export type Admin_Editor_Seo_TitleInputs = {};
 export type Admin_Editor_Source_ModeInputs = {};
+export type Admin_Editor_TagsInputs = {};
 export type Admin_Editor_TitleInputs = {};
 export type Admin_Latest_PostInputs = {};
 export type Admin_Manage_PostsInputs = {};
@@ -3867,8 +4158,16 @@ export type Admin_Nav_SettingsInputs = {};
 export type Admin_New_PostInputs = {};
 export type Admin_Overview_EyebrowInputs = {};
 export type Admin_Overview_TitleInputs = {};
+export type Admin_Posts_ActionsInputs = {};
+export type Admin_Posts_ArchiveInputs = {};
 export type Admin_Posts_Column_TitleInputs = {};
+export type Admin_Posts_DeleteInputs = {};
 export type Admin_Posts_DescriptionInputs = {};
+export type Admin_Posts_EditInputs = {};
+export type Admin_Posts_Filter_All_StatusInputs = {};
+export type Admin_Posts_Filter_All_TagsInputs = {};
+export type Admin_Posts_Filter_StatusInputs = {};
+export type Admin_Posts_Filter_TagInputs = {};
 export type Admin_Posts_Public_UrlInputs = {};
 export type Admin_Posts_SearchInputs = {};
 export type Admin_Posts_SourceInputs = {};

@@ -23,7 +23,9 @@ export const Route = createFileRoute("/api/posts")({
 
         const query = url.searchParams.get("q") ?? "";
         const tagSlug = url.searchParams.get("tag") ?? undefined;
-        const persistedPosts = await listD1Posts({ includeUnpublished, query });
+        const persistedPosts = (await listD1Posts({ includeUnpublished, query })).filter((post) =>
+          tagSlug ? post.tags.some((tag) => tag.slug === tagSlug) : true,
+        );
         const seededPosts = searchPosts({ includeUnpublished, query, tagSlug });
         const persistedSlugs = new Set(persistedPosts.map((post) => post.slug));
         const posts = [

@@ -16,6 +16,7 @@ import {
   type Post,
   type SiteSettings,
   type SupportedLocale,
+  type Tag,
 } from "@repo/core";
 import { env } from "cloudflare:workers";
 
@@ -65,6 +66,15 @@ type D1AssetRow = {
   created_at: string;
 };
 
+type D1TagRow = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  i18n: string | null;
+  created_at: string;
+};
+
 type D1SiteSettingsRow = {
   key: string;
   value: string;
@@ -93,6 +103,7 @@ type PostInput = Partial<{
   commentsEnabled: boolean;
   seoTitle: string;
   seoDescription: string;
+  tags: string[];
   locale: SupportedLocale;
   i18n: Post["i18n"];
 }>;
@@ -191,7 +202,7 @@ export async function listD1Posts({
     .all<D1PostRow>();
   const currentSettings = await getD1SiteSettings();
 
-  return result.results.map((row) => rowToPost(row, currentSettings));
+  return attachD1Tags(result.results.map((row) => rowToPost(row, currentSettings)));
 }
 
 export async function getD1PostBySlug(slug: string, includeUnpublished = false) {
@@ -201,7 +212,13 @@ export async function getD1PostBySlug(slug: string, includeUnpublished = false) 
     .bind(slug)
     .first<D1PostRow>();
 
-  return result ? rowToPost(result, await getD1SiteSettings()) : undefined;
+  if (!result) {
+    return undefined;
+  }
+
+  const [post] = await attachD1Tags([rowToPost(result, await getD1SiteSettings())]);
+
+  return post;
 }
 
 export async function getD1PostByIdOrSlug(idOrSlug: string, includeUnpublished = true) {
@@ -211,7 +228,19 @@ export async function getD1PostByIdOrSlug(idOrSlug: string, includeUnpublished =
     .bind(idOrSlug, idOrSlug)
     .first<D1PostRow>();
 
-  return result ? rowToPost(result, await getD1SiteSettings()) : undefined;
+  if (!result) {
+    return undefined;
+  }
+
+  const [post] = await attachD1Tags([rowToPost(result, await getD1SiteSettings())]);
+
+  return post;
+}
+
+export async function listD1Tags() {
+  const result = await env.CMS_DB.prepare("select * from tags order by name").all<D1TagRow>();
+
+  return result.results.map(rowToTag);
 }
 
 export async function createD1Post(input: PostInput) {
@@ -292,7 +321,9 @@ export async function createD1Post(input: PostInput) {
     )
     .run();
 
-  return post;
+  await replaceD1PostTags(post.id, input.tags ?? [], input.locale);
+
+  return (await getD1PostByIdOrSlug(post.id)) ?? post;
 }
 
 export async function updateD1Post(idOrSlug: string, input: PostInput) {
@@ -303,29 +334,48 @@ export async function updateD1Post(idOrSlug: string, input: PostInput) {
     return undefined;
   }
 
-  const title = input.title?.trim() || post.title;
-  const contentMarkdown = input.contentMarkdown?.trim() ?? post.contentMarkdown;
-  const contentHtml =
-    input.contentHtml !== undefined
-      ? sanitizeHtml(input.contentHtml)
-      : input.contentMarkdown !== undefined
+  const localizedUpdate = input.locale === "zh";
+  const inputTitle = input.title?.trim();
+  const inputExcerpt = input.excerpt?.trim();
+  const inputMarkdown = input.contentMarkdown?.trim();
+  const inputHtml = input.contentHtml !== undefined ? sanitizeHtml(input.contentHtml) : undefined;
+  const title = localizedUpdate ? post.title : inputTitle || post.title;
+  const contentMarkdown = localizedUpdate
+    ? post.contentMarkdown
+    : (inputMarkdown ?? post.contentMarkdown);
+  const contentHtml = localizedUpdate
+    ? post.contentHtml
+    : inputHtml !== undefined
+      ? inputHtml
+      : inputMarkdown !== undefined
         ? renderMarkdownToHtml(contentMarkdown)
         : post.contentHtml;
-  const contentText =
-    input.contentHtml !== undefined
+  const contentText = localizedUpdate
+    ? post.contentText
+    : inputHtml !== undefined
       ? htmlToText(contentHtml)
-      : input.contentMarkdown !== undefined
+      : inputMarkdown !== undefined
         ? markdownToText(contentMarkdown)
         : post.contentText;
   const status = input.status ?? post.status;
   const now = new Date().toISOString();
   const publishedAt =
     status === "published" && post.status !== "published" ? now : post.publishedAt;
-  const i18n = input.i18n ?? post.i18n ?? null;
-  const excerpt = input.excerpt !== undefined ? input.excerpt.trim() : post.excerpt;
-  const seoTitle = input.seoTitle?.trim() || title;
-  const seoDescription =
-    input.seoDescription !== undefined
+  const i18n = buildPostI18n(post, input, {
+    contentHtml: inputHtml,
+    contentMarkdown: inputMarkdown,
+    excerpt: inputExcerpt,
+    title: inputTitle,
+  });
+  const excerpt = localizedUpdate
+    ? post.excerpt
+    : inputExcerpt !== undefined
+      ? inputExcerpt
+      : post.excerpt;
+  const seoTitle = localizedUpdate ? post.seoTitle : input.seoTitle?.trim() || title;
+  const seoDescription = localizedUpdate
+    ? post.seoDescription
+    : input.seoDescription !== undefined
       ? input.seoDescription.trim()
       : input.excerpt !== undefined
         ? excerpt
@@ -359,7 +409,64 @@ export async function updateD1Post(idOrSlug: string, input: PostInput) {
     )
     .run();
 
+  if (input.tags !== undefined) {
+    await replaceD1PostTags(post.id, input.tags, input.locale);
+  }
+
   return getD1PostByIdOrSlug(post.id);
+}
+
+function buildPostI18n(
+  post: Post,
+  input: PostInput,
+  normalized: {
+    contentHtml?: string;
+    contentMarkdown?: string;
+    excerpt?: string;
+    title?: string;
+  },
+) {
+  if (input.i18n) {
+    return input.i18n;
+  }
+
+  if (input.locale !== "zh") {
+    return post.i18n ?? null;
+  }
+
+  const next = { ...post.i18n };
+  const setZh = <TField extends keyof NonNullable<Post["i18n"]>>(field: TField, value?: string) => {
+    if (value === undefined) {
+      return;
+    }
+
+    next[field] = {
+      ...next[field],
+      zh: value,
+    };
+  };
+
+  const localizedHtml =
+    normalized.contentHtml ??
+    (normalized.contentMarkdown !== undefined
+      ? renderMarkdownToHtml(normalized.contentMarkdown)
+      : undefined);
+  const localizedText =
+    normalized.contentHtml !== undefined
+      ? htmlToText(normalized.contentHtml)
+      : normalized.contentMarkdown !== undefined
+        ? markdownToText(normalized.contentMarkdown)
+        : undefined;
+
+  setZh("title", normalized.title);
+  setZh("excerpt", normalized.excerpt);
+  setZh("contentMarkdown", normalized.contentMarkdown);
+  setZh("contentHtml", localizedHtml);
+  setZh("contentText", localizedText);
+  setZh("seoTitle", input.seoTitle?.trim() || normalized.title);
+  setZh("seoDescription", input.seoDescription?.trim() || normalized.excerpt || localizedText);
+
+  return next;
 }
 
 export async function deleteD1Post(idOrSlug: string) {
@@ -623,6 +730,118 @@ export async function buildD1SiteExport(locale: SupportedLocale) {
   };
 }
 
+async function attachD1Tags(posts: Post[]) {
+  if (!posts.length) {
+    return posts;
+  }
+
+  const placeholders = posts.map(() => "?").join(", ");
+  const result = await env.CMS_DB.prepare(
+    `select t.*, pt.post_id
+      from tags t
+      inner join post_tags pt on pt.tag_id = t.id
+      where pt.post_id in (${placeholders})
+      order by t.name`,
+  )
+    .bind(...posts.map((post) => post.id))
+    .all<D1TagRow & { post_id: string }>();
+  const tagsByPostId = new Map<string, Tag[]>();
+
+  for (const row of result.results) {
+    const current = tagsByPostId.get(row.post_id) ?? [];
+    current.push(rowToTag(row));
+    tagsByPostId.set(row.post_id, current);
+  }
+
+  return posts.map((post) => ({
+    ...post,
+    tags: tagsByPostId.get(post.id) ?? [],
+  }));
+}
+
+async function replaceD1PostTags(
+  postId: string,
+  input: string[] | undefined,
+  locale?: SupportedLocale,
+) {
+  await env.CMS_DB.prepare("delete from post_tags where post_id = ?").bind(postId).run();
+
+  const names = Array.from(new Set((input ?? []).map((name) => name.trim()).filter(Boolean)));
+
+  for (const name of names) {
+    const tag = await upsertD1Tag(name, locale);
+
+    if (!tag) {
+      continue;
+    }
+
+    await env.CMS_DB.prepare("insert or ignore into post_tags (post_id, tag_id) values (?, ?)")
+      .bind(postId, tag.id)
+      .run();
+  }
+}
+
+async function upsertD1Tag(name: string, locale?: SupportedLocale) {
+  const slug = slugify(name);
+
+  if (!slug) {
+    return undefined;
+  }
+
+  const existing = await env.CMS_DB.prepare("select * from tags where slug = ? limit 1")
+    .bind(slug)
+    .first<D1TagRow>();
+
+  if (existing) {
+    if (locale === "zh") {
+      const i18n = {
+        ...parseJson<Tag["i18n"]>(existing.i18n),
+        name: {
+          ...parseJson<Tag["i18n"]>(existing.i18n)?.name,
+          zh: name,
+        },
+      };
+
+      await env.CMS_DB.prepare("update tags set i18n = ? where id = ?")
+        .bind(JSON.stringify(i18n), existing.id)
+        .run();
+
+      return rowToTag({ ...existing, i18n: JSON.stringify(i18n) });
+    }
+
+    return rowToTag(existing);
+  }
+
+  const now = new Date().toISOString();
+  const tag: Tag = {
+    id: `tag_${crypto.randomUUID()}`,
+    name,
+    slug,
+    description: "",
+    i18n:
+      locale === "zh"
+        ? {
+            name: { zh: name },
+          }
+        : undefined,
+  };
+
+  await env.CMS_DB.prepare(
+    "insert into tags (id, name, slug, description, i18n, created_at) values (?, ?, ?, ?, ?, ?)",
+  )
+    .bind(
+      tag.id,
+      tag.name,
+      tag.slug,
+      tag.description,
+      tag.i18n ? JSON.stringify(tag.i18n) : null,
+      now,
+    )
+    .run();
+
+  return tag;
+}
+
 function rowToPost(
   row: D1PostRow,
   currentSettings: SiteSettings = runtimeDefaultSiteSettings(),
@@ -647,6 +866,16 @@ function rowToPost(
     tags: [],
     seoTitle: row.seo_title ?? row.title,
     seoDescription: row.seo_description ?? row.excerpt,
+    i18n: parseJson(row.i18n),
+  };
+}
+
+function rowToTag(row: D1TagRow): Tag {
+  return {
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    description: row.description,
     i18n: parseJson(row.i18n),
   };
 }

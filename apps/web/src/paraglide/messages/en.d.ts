@@ -14,13 +14,18 @@
 /** @typedef {{}} Admin_Comments_TitleInputs */
 /** @typedef {{}} Admin_Editor_Default_ExcerptInputs */
 /** @typedef {{}} Admin_Editor_Default_TitleInputs */
+/** @typedef {{}} Admin_Editor_Comments_EnabledInputs */
 /** @typedef {{}} Admin_Editor_DescriptionInputs */
+/** @typedef {{}} Admin_Editor_Edit_TitleInputs */
 /** @typedef {{}} Admin_Editor_ErrorInputs */
 /** @typedef {{}} Admin_Editor_ExcerptInputs */
 /** @typedef {{}} Admin_Editor_Preview_ModeInputs */
 /** @typedef {{}} Admin_Editor_Rich_ModeInputs */
 /** @typedef {{}} Admin_Editor_SavedInputs */
+/** @typedef {{}} Admin_Editor_Seo_DescriptionInputs */
+/** @typedef {{}} Admin_Editor_Seo_TitleInputs */
 /** @typedef {{}} Admin_Editor_Source_ModeInputs */
+/** @typedef {{}} Admin_Editor_TagsInputs */
 /** @typedef {{}} Admin_Editor_TitleInputs */
 /** @typedef {{}} Admin_Latest_PostInputs */
 /** @typedef {{}} Admin_Manage_PostsInputs */
@@ -35,8 +40,16 @@
 /** @typedef {{}} Admin_New_PostInputs */
 /** @typedef {{}} Admin_Overview_EyebrowInputs */
 /** @typedef {{}} Admin_Overview_TitleInputs */
+/** @typedef {{}} Admin_Posts_ActionsInputs */
+/** @typedef {{}} Admin_Posts_ArchiveInputs */
 /** @typedef {{}} Admin_Posts_Column_TitleInputs */
+/** @typedef {{}} Admin_Posts_DeleteInputs */
 /** @typedef {{}} Admin_Posts_DescriptionInputs */
+/** @typedef {{}} Admin_Posts_EditInputs */
+/** @typedef {{}} Admin_Posts_Filter_All_StatusInputs */
+/** @typedef {{}} Admin_Posts_Filter_All_TagsInputs */
+/** @typedef {{}} Admin_Posts_Filter_StatusInputs */
+/** @typedef {{}} Admin_Posts_Filter_TagInputs */
 /** @typedef {{}} Admin_Posts_Public_UrlInputs */
 /** @typedef {{}} Admin_Posts_SearchInputs */
 /** @typedef {{}} Admin_Posts_SourceInputs */
@@ -194,7 +207,11 @@ export const admin_editor_default_excerpt: (
 export const admin_editor_default_title: (
   inputs: Admin_Editor_Default_TitleInputs,
 ) => LocalizedString;
+export const admin_editor_comments_enabled: (
+  inputs: Admin_Editor_Comments_EnabledInputs,
+) => LocalizedString;
 export const admin_editor_description: (inputs: Admin_Editor_DescriptionInputs) => LocalizedString;
+export const admin_editor_edit_title: (inputs: Admin_Editor_Edit_TitleInputs) => LocalizedString;
 export const admin_editor_error: (inputs: Admin_Editor_ErrorInputs) => LocalizedString;
 export const admin_editor_excerpt: (inputs: Admin_Editor_ExcerptInputs) => LocalizedString;
 export const admin_editor_preview_mode: (
@@ -202,7 +219,12 @@ export const admin_editor_preview_mode: (
 ) => LocalizedString;
 export const admin_editor_rich_mode: (inputs: Admin_Editor_Rich_ModeInputs) => LocalizedString;
 export const admin_editor_saved: (inputs: Admin_Editor_SavedInputs) => LocalizedString;
+export const admin_editor_seo_description: (
+  inputs: Admin_Editor_Seo_DescriptionInputs,
+) => LocalizedString;
+export const admin_editor_seo_title: (inputs: Admin_Editor_Seo_TitleInputs) => LocalizedString;
 export const admin_editor_source_mode: (inputs: Admin_Editor_Source_ModeInputs) => LocalizedString;
+export const admin_editor_tags: (inputs: Admin_Editor_TagsInputs) => LocalizedString;
 export const admin_editor_title: (inputs: Admin_Editor_TitleInputs) => LocalizedString;
 export const admin_latest_post: (inputs: Admin_Latest_PostInputs) => LocalizedString;
 export const admin_manage_posts: (inputs: Admin_Manage_PostsInputs) => LocalizedString;
@@ -221,8 +243,22 @@ export const admin_nav_settings: (inputs: Admin_Nav_SettingsInputs) => Localized
 export const admin_new_post: (inputs: Admin_New_PostInputs) => LocalizedString;
 export const admin_overview_eyebrow: (inputs: Admin_Overview_EyebrowInputs) => LocalizedString;
 export const admin_overview_title: (inputs: Admin_Overview_TitleInputs) => LocalizedString;
+export const admin_posts_actions: (inputs: Admin_Posts_ActionsInputs) => LocalizedString;
+export const admin_posts_archive: (inputs: Admin_Posts_ArchiveInputs) => LocalizedString;
 export const admin_posts_column_title: (inputs: Admin_Posts_Column_TitleInputs) => LocalizedString;
+export const admin_posts_delete: (inputs: Admin_Posts_DeleteInputs) => LocalizedString;
 export const admin_posts_description: (inputs: Admin_Posts_DescriptionInputs) => LocalizedString;
+export const admin_posts_edit: (inputs: Admin_Posts_EditInputs) => LocalizedString;
+export const admin_posts_filter_all_status: (
+  inputs: Admin_Posts_Filter_All_StatusInputs,
+) => LocalizedString;
+export const admin_posts_filter_all_tags: (
+  inputs: Admin_Posts_Filter_All_TagsInputs,
+) => LocalizedString;
+export const admin_posts_filter_status: (
+  inputs: Admin_Posts_Filter_StatusInputs,
+) => LocalizedString;
+export const admin_posts_filter_tag: (inputs: Admin_Posts_Filter_TagInputs) => LocalizedString;
 export const admin_posts_public_url: (inputs: Admin_Posts_Public_UrlInputs) => LocalizedString;
 export const admin_posts_search: (inputs: Admin_Posts_SearchInputs) => LocalizedString;
 export const admin_posts_source: (inputs: Admin_Posts_SourceInputs) => LocalizedString;
@@ -387,13 +423,18 @@ export type Admin_Comments_Mark_SpamInputs = {};
 export type Admin_Comments_TitleInputs = {};
 export type Admin_Editor_Default_ExcerptInputs = {};
 export type Admin_Editor_Default_TitleInputs = {};
+export type Admin_Editor_Comments_EnabledInputs = {};
 export type Admin_Editor_DescriptionInputs = {};
+export type Admin_Editor_Edit_TitleInputs = {};
 export type Admin_Editor_ErrorInputs = {};
 export type Admin_Editor_ExcerptInputs = {};
 export type Admin_Editor_Preview_ModeInputs = {};
 export type Admin_Editor_Rich_ModeInputs = {};
 export type Admin_Editor_SavedInputs = {};
+export type Admin_Editor_Seo_DescriptionInputs = {};
+export type Admin_Editor_Seo_TitleInputs = {};
 export type Admin_Editor_Source_ModeInputs = {};
+export type Admin_Editor_TagsInputs = {};
 export type Admin_Editor_TitleInputs = {};
 export type Admin_Latest_PostInputs = {};
 export type Admin_Manage_PostsInputs = {};
@@ -412,8 +453,16 @@ export type Admin_Nav_SettingsInputs = {};
 export type Admin_New_PostInputs = {};
 export type Admin_Overview_EyebrowInputs = {};
 export type Admin_Overview_TitleInputs = {};
+export type Admin_Posts_ActionsInputs = {};
+export type Admin_Posts_ArchiveInputs = {};
 export type Admin_Posts_Column_TitleInputs = {};
+export type Admin_Posts_DeleteInputs = {};
 export type Admin_Posts_DescriptionInputs = {};
+export type Admin_Posts_EditInputs = {};
+export type Admin_Posts_Filter_All_StatusInputs = {};
+export type Admin_Posts_Filter_All_TagsInputs = {};
+export type Admin_Posts_Filter_StatusInputs = {};
+export type Admin_Posts_Filter_TagInputs = {};
 export type Admin_Posts_Public_UrlInputs = {};
 export type Admin_Posts_SearchInputs = {};
 export type Admin_Posts_SourceInputs = {};

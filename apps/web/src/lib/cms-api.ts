@@ -95,6 +95,10 @@ export function createPostPreview(
     excerpt: string;
     contentMarkdown: string;
     status: ContentStatus;
+    commentsEnabled: boolean;
+    seoTitle: string;
+    seoDescription: string;
+    tags: string[];
     locale: SupportedLocale;
     i18n: Post["i18n"];
   }>,

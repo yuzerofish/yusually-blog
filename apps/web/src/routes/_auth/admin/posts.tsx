@@ -1,4 +1,10 @@
-import { localizePost, posts, renderMarkdownToHtml, type Post } from "@repo/core";
+import {
+  localizePost,
+  posts,
+  renderMarkdownToHtml,
+  type ContentStatus,
+  type Post,
+} from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
@@ -15,30 +21,53 @@ export const Route = createFileRoute("/_auth/admin/posts")({
 });
 
 type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
+const defaultMarkdown = "# New post\n\nStart writing in Markdown.";
+const statusOptions: Array<"all" | ContentStatus> = [
+  "all",
+  "draft",
+  "published",
+  "scheduled",
+  "archived",
+];
 
 function AdminPostsPage() {
   const locale = getCurrentLocale();
   const [rows, setRows] = useState<Post[]>(posts.map((post) => localizePost(post, locale)));
   const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | ContentStatus>("all");
+  const [tagFilter, setTagFilter] = useState("all");
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [editorMode, setEditorMode] = useState<"editor" | "source" | "preview">("editor");
   const [editorState, setEditorState] = useState<"idle" | "saving" | "saved" | "error">("idle");
-  const [markdown, setMarkdown] = useState("# New post\n\nStart writing in Markdown.");
+  const [markdown, setMarkdown] = useState(defaultMarkdown);
   const previewHtml = useMemo(() => renderMarkdownToHtml(markdown), [markdown]);
 
   const visiblePosts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
-    if (!normalizedQuery) {
-      return rows;
+    return rows.filter(
+      (post) =>
+        (statusFilter === "all" || post.status === statusFilter) &&
+        (tagFilter === "all" || post.tags.some((tag) => tag.slug === tagFilter)) &&
+        (!normalizedQuery ||
+          [post.title, post.excerpt, post.status, post.source, ...post.tags.map((tag) => tag.name)]
+            .join(" ")
+            .toLowerCase()
+            .includes(normalizedQuery)),
+    );
+  }, [rows, query, statusFilter, tagFilter]);
+
+  const tagOptions = useMemo(() => {
+    const tagsBySlug = new Map<string, Post["tags"][number]>();
+
+    for (const post of rows) {
+      for (const tag of post.tags) {
+        tagsBySlug.set(tag.slug, tag);
+      }
     }
 
-    return rows.filter((post) =>
-      [post.title, post.excerpt, post.status, post.source]
-        .join(" ")
-        .toLowerCase()
-        .includes(normalizedQuery),
-    );
-  }, [rows, query]);
+    return Array.from(tagsBySlug.values()).sort((a, b) => a.name.localeCompare(b.name));
+  }, [rows]);
 
   useEffect(() => {
     let ignore = false;
@@ -65,15 +94,23 @@ function AdminPostsPage() {
     const formData = new FormData(event.currentTarget);
     const submitter = (event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
     const status = submitter?.value === "published" ? "published" : "draft";
+    const endpoint = editingPost
+      ? `/api/posts/${editingPost.id}?lang=${locale}`
+      : `/api/posts?lang=${locale}`;
+    const tagsValue = formData.get("tags");
 
-    const response = await fetch("/api/posts", {
-      method: "POST",
+    const response = await fetch(endpoint, {
+      method: editingPost ? "PATCH" : "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         title: formData.get("title"),
         excerpt: formData.get("excerpt"),
+        seoTitle: formData.get("seoTitle"),
+        seoDescription: formData.get("seoDescription"),
         contentMarkdown: markdown,
         status,
+        commentsEnabled: formData.get("commentsEnabled") === "on",
+        tags: parseTagNames(typeof tagsValue === "string" ? tagsValue : ""),
         locale,
       }),
     });
@@ -84,8 +121,60 @@ function AdminPostsPage() {
     }
 
     const payload = (await response.json()) as { data: Post };
-    setRows((current) => [payload.data, ...current.filter((post) => post.id !== payload.data.id)]);
+    upsertPost(payload.data);
+    setEditingPost(payload.data);
+    setMarkdown(payload.data.contentMarkdown);
     setEditorState("saved");
+  };
+
+  const upsertPost = (post: Post) => {
+    setRows((current) => {
+      if (current.some((row) => row.id === post.id)) {
+        return current.map((row) => (row.id === post.id ? post : row));
+      }
+
+      return [post, ...current];
+    });
+  };
+
+  const startNewPost = () => {
+    setEditingPost(null);
+    setMarkdown(defaultMarkdown);
+    setEditorState("idle");
+    document.getElementById("post-editor")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const editPost = (post: Post) => {
+    setEditingPost(post);
+    setMarkdown(post.contentMarkdown);
+    setEditorState("idle");
+    document.getElementById("post-editor")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const changePostStatus = async (post: Post, status: ContentStatus) => {
+    const response = await fetch(`/api/posts/${post.id}?lang=${locale}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+
+    if (!response.ok) {
+      return;
+    }
+
+    const payload = (await response.json()) as { data: Post };
+    upsertPost(payload.data);
+  };
+
+  const deletePost = async (post: Post) => {
+    const response = await fetch(`/api/posts/${post.id}?lang=${locale}`, { method: "DELETE" });
+
+    if (!response.ok) {
+      return;
+    }
+
+    const payload = (await response.json()) as { data: Post };
+    upsertPost(payload.data);
   };
 
   return (
@@ -98,10 +187,7 @@ function AdminPostsPage() {
               {m.admin_posts_description()}
             </p>
           </div>
-          <Button
-            render={<a href="#post-editor" aria-label={m.admin_new_post()} />}
-            nativeButton={false}
-          >
+          <Button type="button" onClick={startNewPost}>
             <PlusIcon />
             {m.admin_new_post()}
           </Button>
@@ -116,9 +202,40 @@ function AdminPostsPage() {
             className="border-0 bg-transparent shadow-none focus-visible:ring-0"
           />
         </div>
+        <div className="mt-4 max-w-xs">
+          <Label htmlFor="post-status-filter">{m.admin_posts_filter_status()}</Label>
+          <select
+            id="post-status-filter"
+            value={statusFilter}
+            onChange={(event) => setStatusFilter(event.currentTarget.value as typeof statusFilter)}
+            className="mt-2 h-10 w-full rounded-md border border-[#26312c]/15 bg-white px-3 text-sm dark:border-white/10 dark:bg-[#111614]"
+          >
+            {statusOptions.map((status) => (
+              <option key={status} value={status}>
+                {status === "all" ? m.admin_posts_filter_all_status() : status}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="mt-4 max-w-xs">
+          <Label htmlFor="post-tag-filter">{m.admin_posts_filter_tag()}</Label>
+          <select
+            id="post-tag-filter"
+            value={tagFilter}
+            onChange={(event) => setTagFilter(event.currentTarget.value)}
+            className="mt-2 h-10 w-full rounded-md border border-[#26312c]/15 bg-white px-3 text-sm dark:border-white/10 dark:bg-[#111614]"
+          >
+            <option value="all">{m.admin_posts_filter_all_tags()}</option>
+            {tagOptions.map((tag) => (
+              <option key={tag.slug} value={tag.slug}>
+                {tag.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <div className="mt-6 overflow-hidden rounded-lg border border-[#26312c]/10 dark:border-white/10">
-          <table className="w-full min-w-[720px] text-left text-sm">
+          <table className="w-full min-w-[880px] text-left text-sm">
             <thead className="bg-[#f8f5ef] text-xs tracking-[0.12em] text-[#64716a] uppercase dark:bg-white/5 dark:text-[#aeb8b1]">
               <tr>
                 <th className="px-4 py-3">{m.admin_posts_column_title()}</th>
@@ -126,6 +243,7 @@ function AdminPostsPage() {
                 <th className="px-4 py-3">{m.admin_posts_source()}</th>
                 <th className="px-4 py-3">{m.admin_posts_updated()}</th>
                 <th className="px-4 py-3">{m.admin_posts_public_url()}</th>
+                <th className="px-4 py-3">{m.admin_posts_actions()}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#26312c]/10 dark:divide-white/10">
@@ -150,6 +268,36 @@ function AdminPostsPage() {
                       {m.admin_posts_view()}
                     </Link>
                   </td>
+                  <td className="px-4 py-4">
+                    <div className="flex flex-wrap gap-2">
+                      <Button size="sm" variant="outline" onClick={() => editPost(post)}>
+                        {m.admin_posts_edit()}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={post.status === "deleted"}
+                        onClick={() =>
+                          void changePostStatus(
+                            post,
+                            post.status === "published" ? "archived" : "published",
+                          )
+                        }
+                      >
+                        {post.status === "published"
+                          ? m.admin_posts_archive()
+                          : m.admin_publish_post()}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        disabled={post.status === "deleted"}
+                        onClick={() => void deletePost(post)}
+                      >
+                        {m.admin_posts_delete()}
+                      </Button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -158,13 +306,16 @@ function AdminPostsPage() {
       </div>
 
       <form
+        key={editingPost?.id ?? "new-post"}
         id="post-editor"
         onSubmit={handleEditorSubmit}
         className="rounded-lg border border-[#26312c]/10 bg-white p-6 dark:border-white/10 dark:bg-[#171d1a]"
       >
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
-            <h2 className="text-2xl font-semibold tracking-normal">{m.admin_editor_title()}</h2>
+            <h2 className="text-2xl font-semibold tracking-normal">
+              {editingPost ? m.admin_editor_edit_title() : m.admin_editor_title()}
+            </h2>
             <p className="mt-2 text-sm text-[#64716a] dark:text-[#aeb8b1]">
               {m.admin_editor_description()}
             </p>
@@ -187,7 +338,7 @@ function AdminPostsPage() {
                 id="editor-title"
                 name="title"
                 required
-                defaultValue={m.admin_editor_default_title()}
+                defaultValue={editingPost?.title ?? m.admin_editor_default_title()}
               />
             </div>
             <div className="grid gap-2">
@@ -195,9 +346,38 @@ function AdminPostsPage() {
               <Input
                 id="editor-excerpt"
                 name="excerpt"
-                defaultValue={m.admin_editor_default_excerpt()}
+                defaultValue={editingPost?.excerpt ?? m.admin_editor_default_excerpt()}
               />
             </div>
+            <div className="grid gap-2">
+              <Label htmlFor="editor-seo-title">{m.admin_editor_seo_title()}</Label>
+              <Input id="editor-seo-title" name="seoTitle" defaultValue={editingPost?.seoTitle} />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="editor-seo-description">{m.admin_editor_seo_description()}</Label>
+              <Input
+                id="editor-seo-description"
+                name="seoDescription"
+                defaultValue={editingPost?.seoDescription}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="editor-tags">{m.admin_editor_tags()}</Label>
+              <Input
+                id="editor-tags"
+                name="tags"
+                defaultValue={editingPost?.tags.map((tag) => tag.name).join(", ")}
+              />
+            </div>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                name="commentsEnabled"
+                defaultChecked={editingPost?.commentsEnabled ?? true}
+                className="size-4 rounded border-[#26312c]/20"
+              />
+              {m.admin_editor_comments_enabled()}
+            </label>
             <div className="flex flex-wrap gap-2">
               <Button
                 type="button"
@@ -251,4 +431,11 @@ function AdminPostsPage() {
       </form>
     </section>
   );
+}
+
+function parseTagNames(value: string) {
+  return value
+    .split(/[,\n]/)
+    .map((name) => name.trim())
+    .filter(Boolean);
 }
