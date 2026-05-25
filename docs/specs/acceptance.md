@@ -6,7 +6,7 @@ This document records the current evidence for the PRD acceptance scope. Dates a
 
 - `https://cms.01mvp.com` returned HTTP 200.
 - `https://blog-starter.01mvp.com` returned HTTP 200.
-- Latest verified template Worker version: `5c99b7b8-8e65-41a2-a4e8-e70c9f82a025`.
+- Latest verified template Worker version: `2cda7e80-f0ac-40f8-8e45-42669a8ad807`.
 - The template homepage rendered `data-theme-preset="claude"` after the minimalist theme preset rollout.
 - `/rss.xml` on `cms.01mvp.com` returned XML with canonical `https://cms.01mvp.com` links.
 - Main Cloudflare resources are bound in `apps/web/wrangler.jsonc`.
@@ -15,6 +15,7 @@ This document records the current evidence for the PRD acceptance scope. Dates a
 - `/openapi.json` on `cms.01mvp.com` includes the Markdown, HTML, and ZIP import request schemas.
 - `/openapi.json` on `cms.01mvp.com` includes `POST /api/posts/batch`.
 - `/openapi.json` on `cms.01mvp.com` includes the page and project management endpoints.
+- `/openapi.json` on `cms.01mvp.com` includes `publishedAt` on import payloads and documents scheduled publishing permissions.
 - The Worker deploy published the daily backup Cron Trigger `0 3 * * *`.
 - `blogcms deploy --target main` completed the build, remote D1 migration, and Wrangler deploy sequence.
 - `/openapi.json` on `cms.01mvp.com` includes `GET /api/export?format=zip` and `POST /api/backups`.
@@ -31,7 +32,7 @@ This document records the current evidence for the PRD acceptance scope. Dates a
 
 - `https://demo.01mvp.com` returned HTTP 200.
 - `https://blog-demo.01mvp.com` returned HTTP 200.
-- Latest verified demo Worker version: `bb3f2bb8-ef90-4449-bbe5-11920de1f624`.
+- Latest verified demo Worker version: `48ab394e-a302-4a8a-85dc-b85d85f3a083`.
 - Site settings were written through `blogcms site update` from `skills/cloud-blog-cms/templates/site.config.json` and now include `themePreset: "claude"`.
 - First bilingual post URL: `https://demo.01mvp.com/blog/hello-from-generated-cloud-blog-cms`.
 - `GET /api/posts?status=all` with `Accept-Language: zh` returned the Chinese title, excerpt, body, and SEO fields.
@@ -46,6 +47,7 @@ This document records the current evidence for the PRD acceptance scope. Dates a
 - `/openapi.json` on `demo.01mvp.com` includes the ZIP import request schema with image rewrite documentation.
 - `/openapi.json` on `demo.01mvp.com` includes the post batch endpoint.
 - `/openapi.json` on `demo.01mvp.com` includes the page and project management endpoints.
+- `/openapi.json` on `demo.01mvp.com` includes `publishedAt` on import payloads and documents scheduled publishing permissions.
 - `/openapi.json` on `demo.01mvp.com` includes the backup endpoint and `BackupResult` schema.
 - `/openapi.json` on `demo.01mvp.com` includes the password reset endpoint and request schema.
 - `/openapi.json` on `demo.01mvp.com` includes the asset deletion endpoint.
@@ -66,3 +68,4 @@ This document records the current evidence for the PRD acceptance scope. Dates a
 - `git diff --check` passed.
 - Live smoke returned HTTP 200 for `/`, `/blog`, `/tags`, `/archive`, `/projects`, `/about`, `/docs/api`, `/rss.xml`, `/sitemap.xml`, `/sitemap-pages.xml`, `/robots.txt`, `/openapi.json`, and `/reset-password` on `cms.01mvp.com`, `blog-starter.01mvp.com`, `demo.01mvp.com`, and `blog-demo.01mvp.com`.
 - Headless Playwright rendered `/about`, `/projects`, and `/docs/api` on `cms.01mvp.com` and `demo.01mvp.com` at 1440px and 390px widths with no console errors and no horizontal overflow.
+- A temporary demo D1 scheduled-post check confirmed future scheduled posts stay hidden from the public API and past scheduled posts are publicly returned, then removed the test rows.

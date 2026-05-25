@@ -21,7 +21,7 @@ Run date: 2026-05-25
 - R2 assets: `blog-demo-assets`
 - R2 backups: `blog-demo-backups`
 - KV: `BLOG_DEMO_CMS_CACHE`
-- Current verified demo version: `bb3f2bb8-ef90-4449-bbe5-11920de1f624`
+- Current verified demo version: `48ab394e-a302-4a8a-85dc-b85d85f3a083`
 
 ## Automated Steps
 
@@ -57,6 +57,7 @@ Secrets were stored outside the repository under `/tmp` during the run and are n
 - `POST /api/comments/:id/approve` approved that comment.
 - `blogcms push` accepted a JSON bilingual payload and `DELETE /api/posts/:id` returned `deleted` for a temporary verification post.
 - `blogcms export` returned posts, comments, assets, and a backup key.
+- A temporary scheduled-post check confirmed future scheduled posts remain hidden from the public API and past scheduled posts are returned, then removed the test rows.
 
 ## User Intervention
 
