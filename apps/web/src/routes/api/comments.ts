@@ -2,6 +2,7 @@ import { createComment, resolveLocale } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { jsonResponse, readJsonBody } from "#/lib/cms-api";
+import { checkCommentRateLimit, getClientIp, verifyTurnstile } from "#/lib/comment-guard";
 
 export const Route = createFileRoute("/api/comments")({
   server: {
@@ -14,10 +15,29 @@ export const Route = createFileRoute("/api/comments")({
           authorWebsite: string;
           body: string;
           honeypot: string;
+          turnstileToken: string;
         }>(request);
 
         if (body.honeypot) {
           return jsonResponse({ error: "Comment rejected" }, { status: 400 });
+        }
+
+        const turnstile = await verifyTurnstile({
+          token: body.turnstileToken,
+          request,
+        });
+
+        if (!turnstile.ok) {
+          return jsonResponse({ error: turnstile.error }, { status: 400 });
+        }
+
+        const rateLimit = checkCommentRateLimit({
+          ip: getClientIp(request),
+          postSlug: body.postSlug ?? "",
+        });
+
+        if (!rateLimit.ok) {
+          return jsonResponse({ error: rateLimit.error }, { status: 429 });
         }
 
         const result = await createComment({

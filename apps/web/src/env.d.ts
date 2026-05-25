@@ -11,4 +11,6 @@ type CloudflareBindings = {
   CMS_CACHE: KVNamespace;
   CMS_PUBLIC_SITE_URL: string;
   CMS_EMAIL_SENDING_ENABLED: string;
+  CMS_TURNSTILE_SECRET_KEY: string;
+  VITE_TURNSTILE_SITE_KEY: string;
 };

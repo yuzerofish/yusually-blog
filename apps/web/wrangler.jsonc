@@ -12,6 +12,8 @@
     "VITE_BASE_URL": "https://blog-starter.01mvp.com",
     "CMS_PUBLIC_SITE_URL": "https://blog-starter.01mvp.com",
     "CMS_EMAIL_SENDING_ENABLED": "false",
+    "CMS_TURNSTILE_SECRET_KEY": "",
+    "VITE_TURNSTILE_SITE_KEY": "",
   },
   "d1_databases": [
     {

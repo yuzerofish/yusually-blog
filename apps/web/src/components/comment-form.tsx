@@ -11,6 +11,7 @@ type CommentFormProps = {
 
 type SubmitState = "idle" | "submitting" | "success" | "error";
 type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
+const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
 export function CommentForm({ postSlug }: CommentFormProps) {
   const [state, setState] = useState<SubmitState>("idle");
@@ -32,6 +33,7 @@ export function CommentForm({ postSlug }: CommentFormProps) {
         authorWebsite: formData.get("authorWebsite"),
         body: formData.get("body"),
         honeypot: formData.get("company"),
+        turnstileToken: formData.get("cf-turnstile-response"),
       }),
     });
 
@@ -72,6 +74,12 @@ export function CommentForm({ postSlug }: CommentFormProps) {
           className="min-h-32 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         />
       </div>
+      {turnstileSiteKey ? (
+        <div>
+          <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
+          <div className="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="auto" />
+        </div>
+      ) : null}
       <div className="flex flex-wrap items-center gap-3">
         <Button type="submit" disabled={state === "submitting"}>
           {state === "submitting" ? m.comment_submitting() : m.submit_comment()}
