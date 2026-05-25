@@ -24,7 +24,9 @@ Canonical production targets:
 - Cron Trigger: `0 3 * * *`
 - Backup retention: 30 days
 - Wrangler config: `apps/web/wrangler.jsonc`
-- Current verified version: `9f74e0ad-1cd6-4550-b28e-5a62edb8f4c9`
+- Current verified version: `cec621dc-06d5-4780-9b34-0db2ef073afc`
+- Email Sending: disabled by default
+- Password reset TTL: 30 minutes
 
 ## Demo Cloudflare Resources
 
@@ -36,7 +38,9 @@ Canonical production targets:
 - Cron Trigger: `0 3 * * *`
 - Backup retention: 30 days
 - Wrangler config: `apps/web/wrangler.demo.jsonc`
-- Current verified version: `cd7ace94-d515-4e70-b98c-b51fdd780e9a`
+- Current verified version: `6b23e8c6-0105-4672-af3c-a6a20ca8573b`
+- Email Sending: disabled by default
+- Password reset TTL: 30 minutes
 
 ## Migrations
 
@@ -94,3 +98,5 @@ Email is disabled by default. To enable comment, import, export, backup, and pas
 ```
 
 The sender address and domain must be verified in Cloudflare Email Service before production mail is sent.
+
+The latest main and demo deployments include the Email Sending variables, but `CMS_EMAIL_SENDING_ENABLED` remains `false` until a verified sender and `CMS_EMAIL` binding are configured.
