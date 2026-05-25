@@ -24,7 +24,7 @@ Canonical production targets:
 - Cron Trigger: `0 3 * * *`
 - Backup retention: 30 days
 - Wrangler config: `apps/web/wrangler.jsonc`
-- Current verified version: `9c36cdbd-ecca-4277-a1a1-77b60931520e`
+- Current verified version: `5c99b7b8-8e65-41a2-a4e8-e70c9f82a025`
 - Email Sending: disabled by default
 - Password reset TTL: 30 minutes
 
@@ -38,7 +38,7 @@ Canonical production targets:
 - Cron Trigger: `0 3 * * *`
 - Backup retention: 30 days
 - Wrangler config: `apps/web/wrangler.demo.jsonc`
-- Current verified version: `c4aaa1f3-a759-40c5-9830-f130830245be`
+- Current verified version: `bb3f2bb8-ef90-4449-bbe5-11920de1f624`
 - Email Sending: disabled by default
 - Password reset TTL: 30 minutes
 
@@ -53,6 +53,7 @@ The remote databases have applied:
 
 - `0001_cloud_blog_cms.sql`
 - `0002_admin_auth.sql`
+- `0003_pages_projects_management.sql`
 
 ## Build And Deploy
 
