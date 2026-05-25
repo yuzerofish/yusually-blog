@@ -194,18 +194,22 @@ function CommentList({ comments, depth = 0, onReply, parentId = null }: CommentL
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="font-medium">{comment.authorName}</p>
-              <Button type="button" size="sm" variant="outline" onClick={() => onReply(comment)}>
-                {m.comment_reply()}
-              </Button>
+              {depth < 1 ? (
+                <Button type="button" size="sm" variant="outline" onClick={() => onReply(comment)}>
+                  {m.comment_reply()}
+                </Button>
+              ) : null}
             </div>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">{comment.body}</p>
           </div>
-          <CommentList
-            comments={comments}
-            depth={depth + 1}
-            onReply={onReply}
-            parentId={comment.id}
-          />
+          {depth < 1 ? (
+            <CommentList
+              comments={comments}
+              depth={depth + 1}
+              onReply={onReply}
+              parentId={comment.id}
+            />
+          ) : null}
         </div>
       ))}
     </>

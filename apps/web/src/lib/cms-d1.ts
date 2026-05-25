@@ -1067,11 +1067,28 @@ export async function createD1Comment(input: CommentInput): Promise<D1Result<Com
     return { error: "Comment contains too many links" };
   }
 
+  const parentId = input.parentId ?? null;
+  const parentComment = parentId
+    ? await env.CMS_DB.prepare(
+        "select parent_id from comments where id = ? and post_id = ? and status != 'deleted' limit 1",
+      )
+        .bind(parentId, post.id)
+        .first<{ parent_id: string | null }>()
+    : null;
+
+  if (parentId && !parentComment) {
+    return { error: "Reply target not found" };
+  }
+
+  if (parentComment?.parent_id) {
+    return { error: "Comment replies are limited to two levels" };
+  }
+
   const now = new Date().toISOString();
   const comment: Comment = {
     id: `comment_${crypto.randomUUID()}`,
     postId: post.id,
-    parentId: input.parentId ?? null,
+    parentId,
     authorName,
     authorEmailHash: await digestText(authorEmail),
     authorWebsite,

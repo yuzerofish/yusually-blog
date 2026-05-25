@@ -324,11 +324,27 @@ export async function createComment(input: CommentInput) {
     return { error: "Comment contains too many links" as const };
   }
 
+  const parentId = input.parentId ?? null;
+  const parentComment = parentId
+    ? state.comments.find(
+        (comment) =>
+          comment.id === parentId && comment.postId === post.id && comment.status !== "deleted",
+      )
+    : null;
+
+  if (parentId && !parentComment) {
+    return { error: "Reply target not found" as const };
+  }
+
+  if (parentComment?.parentId) {
+    return { error: "Comment replies are limited to two levels" as const };
+  }
+
   const now = new Date().toISOString();
   const comment: Comment = {
     id: `comment_${crypto.randomUUID()}`,
     postId: post.id,
-    parentId: input.parentId ?? null,
+    parentId,
     authorName,
     authorEmailHash: await digestText(authorEmail),
     authorWebsite,
