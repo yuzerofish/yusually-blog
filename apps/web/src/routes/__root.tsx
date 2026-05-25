@@ -9,6 +9,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { RootProvider as FumadocsRootProvider } from "fumadocs-ui/provider/tanstack";
 
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
@@ -87,8 +88,10 @@ function RootDocument({ children }: { readonly children: React.ReactNode }) {
       </head>
       <body>
         <ThemeProvider>
-          {children}
-          <Toaster richColors />
+          <FumadocsRootProvider theme={{ enabled: false }}>
+            {children}
+            <Toaster richColors />
+          </FumadocsRootProvider>
         </ThemeProvider>
 
         <TanStackDevtools

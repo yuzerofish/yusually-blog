@@ -1,4 +1,7 @@
 @import "@repo/ui/styles/base.css";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
 @source "./";
 
 @import "@fontsource-variable/inter";

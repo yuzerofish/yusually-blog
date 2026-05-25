@@ -5,6 +5,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
+import mdx from "fumadocs-mdx/vite";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -43,6 +44,7 @@ export default defineConfig({
   },
   plugins: [
     devtools(),
+    mdx(),
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     paraglideVitePlugin({
       project: "./project.inlang",

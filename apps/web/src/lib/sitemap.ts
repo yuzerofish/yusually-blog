@@ -1,6 +1,7 @@
 import { getPublishedPosts, projects as seedProjects, tags as seedTags } from "@repo/core";
 
 import { getD1SiteSettings, listD1Posts, listD1Projects, listD1Tags } from "#/lib/cms-d1";
+import { source } from "#/lib/source";
 
 export async function getSitemapPaths() {
   const siteSettings = await getD1SiteSettings();
@@ -26,15 +27,18 @@ export async function getSitemapPaths() {
     ...posts.flatMap((post) => post.tags.map((tag) => tag.slug)),
     ...seedTags.map((tag) => tag.slug),
   ]);
-  const pagePaths = ["", "/blog", "/tags", "/archive", "/about", "/projects"];
+  const docsPaths = source.getPages().map((page) => page.url);
+  const pagePaths = ["", "/blog", "/docs", "/tags", "/archive", "/about", "/projects"];
   const postPaths = posts.map((post) => `/blog/${post.slug}`);
   const projectPaths = projects.map((project) => `/projects/${project.slug}`);
   const taxonomyPaths = Array.from(tagSlugs).map((slug) => `/tags/${slug}`);
 
+  const pageAndDocsPaths = Array.from(new Set([...pagePaths, ...docsPaths]));
+
   return {
     siteUrl: siteSettings.url,
-    allPaths: [...pagePaths, ...postPaths, ...projectPaths, ...taxonomyPaths],
-    pagePaths,
+    allPaths: [...pageAndDocsPaths, ...postPaths, ...projectPaths, ...taxonomyPaths],
+    pagePaths: pageAndDocsPaths,
     postPaths,
   };
 }

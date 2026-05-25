@@ -20,6 +20,7 @@ export function SiteShell({
   const siteSettings = providedSiteSettings ?? getSiteSettingsForLocale(locale);
   const navigation = [
     { label: m.nav_blog(), href: "/blog" },
+    { label: "Docs", href: "/docs" },
     { label: m.nav_tags(), href: "/tags" },
     { label: m.nav_archive(), href: "/archive" },
     { label: m.nav_projects(), href: "/projects" },
