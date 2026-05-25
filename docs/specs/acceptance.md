@@ -6,7 +6,7 @@ This document records the current evidence for the PRD acceptance scope. Dates a
 
 - `https://cms.01mvp.com` returned HTTP 200.
 - `https://blog-starter.01mvp.com` returned HTTP 200.
-- Latest verified template Worker version: `2cda7e80-f0ac-40f8-8e45-42669a8ad807`.
+- Latest verified template Worker version: `bd7113d3-4755-4c3c-82fb-c78e2531af58`.
 - The template homepage rendered `data-theme-preset="claude"` after the minimalist theme preset rollout.
 - `/rss.xml` on `cms.01mvp.com` returned XML with canonical `https://cms.01mvp.com` links.
 - Main Cloudflare resources are bound in `apps/web/wrangler.jsonc`.
@@ -16,6 +16,10 @@ This document records the current evidence for the PRD acceptance scope. Dates a
 - `/openapi.json` on `cms.01mvp.com` includes `POST /api/posts/batch`.
 - `/openapi.json` on `cms.01mvp.com` includes the page and project management endpoints.
 - `/openapi.json` on `cms.01mvp.com` includes `publishedAt` on import payloads and documents scheduled publishing permissions.
+- `/projects/cloud-blog-cms-template` and `/projects/cloud-blog-cms-skill` on `cms.01mvp.com` returned HTTP 200.
+- `/sitemap.xml` on `cms.01mvp.com` includes project detail URLs and merged tag paths.
+- Blog post pages render canonical, Open Graph, Twitter Card, and JSON-LD `BlogPosting` metadata.
+- Project detail pages render canonical, Open Graph, and Twitter Card metadata.
 - The Worker deploy published the daily backup Cron Trigger `0 3 * * *`.
 - `blogcms deploy --target main` completed the build, remote D1 migration, and Wrangler deploy sequence.
 - `/openapi.json` on `cms.01mvp.com` includes `GET /api/export?format=zip` and `POST /api/backups`.
@@ -32,7 +36,7 @@ This document records the current evidence for the PRD acceptance scope. Dates a
 
 - `https://demo.01mvp.com` returned HTTP 200.
 - `https://blog-demo.01mvp.com` returned HTTP 200.
-- Latest verified demo Worker version: `48ab394e-a302-4a8a-85dc-b85d85f3a083`.
+- Latest verified demo Worker version: `dda4a2a8-d554-47d8-bcb3-ef942c2484fc`.
 - Site settings were written through `blogcms site update` from `skills/cloud-blog-cms/templates/site.config.json` and now include `themePreset: "claude"`.
 - First bilingual post URL: `https://demo.01mvp.com/blog/hello-from-generated-cloud-blog-cms`.
 - `GET /api/posts?status=all` with `Accept-Language: zh` returned the Chinese title, excerpt, body, and SEO fields.
@@ -48,6 +52,8 @@ This document records the current evidence for the PRD acceptance scope. Dates a
 - `/openapi.json` on `demo.01mvp.com` includes the post batch endpoint.
 - `/openapi.json` on `demo.01mvp.com` includes the page and project management endpoints.
 - `/openapi.json` on `demo.01mvp.com` includes `publishedAt` on import payloads and documents scheduled publishing permissions.
+- `/projects/cloud-blog-cms-template` and `/projects/cloud-blog-cms-skill` on `demo.01mvp.com` returned HTTP 200.
+- `/sitemap.xml` on `demo.01mvp.com` includes project detail URLs and merged tag paths.
 - `/openapi.json` on `demo.01mvp.com` includes the backup endpoint and `BackupResult` schema.
 - `/openapi.json` on `demo.01mvp.com` includes the password reset endpoint and request schema.
 - `/openapi.json` on `demo.01mvp.com` includes the asset deletion endpoint.
@@ -55,7 +61,8 @@ This document records the current evidence for the PRD acceptance scope. Dates a
 - The Worker deploy published the daily backup Cron Trigger `0 3 * * *`.
 - `blogcms deploy --target demo` completed the build, remote D1 migration, and Wrangler deploy sequence.
 - `/rss.xml`, `/sitemap.xml`, and `/robots.txt` returned expected public responses.
-- The post page rendered Open Graph title, description, image, and article publish metadata.
+- The post page rendered canonical, Open Graph, Twitter Card, JSON-LD, and article publish metadata.
+- Public comments allow a top-level comment and one reply level; replies to replies return HTTP 400.
 - The demo homepage rendered `data-theme-preset="claude"` after the minimalist theme preset rollout.
 
 ## Local Verification
@@ -66,6 +73,8 @@ This document records the current evidence for the PRD acceptance scope. Dates a
 - `node apps/cli/bin/blogcms.mjs deploy --target main` and `node apps/cli/bin/blogcms.mjs deploy --target demo` completed successfully.
 - Wrangler dry-run accepted the custom Worker entry, backup bindings, and Cron Trigger before deployment.
 - `git diff --check` passed.
-- Live smoke returned HTTP 200 for `/`, `/blog`, `/tags`, `/archive`, `/projects`, `/about`, `/docs/api`, `/rss.xml`, `/sitemap.xml`, `/sitemap-pages.xml`, `/robots.txt`, `/openapi.json`, and `/reset-password` on `cms.01mvp.com`, `blog-starter.01mvp.com`, `demo.01mvp.com`, and `blog-demo.01mvp.com`.
-- Headless Playwright rendered `/about`, `/projects`, and `/docs/api` on `cms.01mvp.com` and `demo.01mvp.com` at 1440px and 390px widths with no console errors and no horizontal overflow.
+- Live smoke returned HTTP 200 for `/`, `/blog`, `/tags`, `/archive`, `/projects`, `/projects/cloud-blog-cms-template`, `/projects/cloud-blog-cms-skill`, `/about`, `/docs/api`, `/rss.xml`, `/feed.xml`, `/sitemap.xml`, `/sitemap-pages.xml`, `/sitemap-posts.xml`, `/robots.txt`, `/openapi.json`, and `/reset-password` on `cms.01mvp.com`, `blog-starter.01mvp.com`, `demo.01mvp.com`, and `blog-demo.01mvp.com`.
+- Headless Playwright rendered project detail and blog post pages on `cms.01mvp.com` and `demo.01mvp.com` at 1440px and 390px widths with no console errors and no horizontal overflow.
 - A temporary demo D1 scheduled-post check confirmed future scheduled posts stay hidden from the public API and past scheduled posts are publicly returned, then removed the test rows.
+- A temporary demo comment-depth check confirmed top-level comments and one reply level return HTTP 201, while a reply to a reply returns HTTP 400, then removed the test rows.
+- MDX editor image uploads now send multipart file data to `/api/assets`; the affected code path is covered by `pnpm lint` and `pnpm build:web`.

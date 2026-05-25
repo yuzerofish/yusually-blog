@@ -48,9 +48,9 @@ The Skill-generated demo uses:
 - Site: `https://demo.01mvp.com`
 - Alias: `https://blog-demo.01mvp.com`
 - Worker: `blog-demo`
-- Current verified demo version: `48ab394e-a302-4a8a-85dc-b85d85f3a083`
+- Current verified demo version: `dda4a2a8-d554-47d8-bcb3-ef942c2484fc`
 
-The demo run created site settings from `skills/cloud-blog-cms/templates/site.config.json`, published `hello-from-generated-cloud-blog-cms`, uploaded an R2 asset, submitted a pending comment, approved it, generated an R2 export backup, and verified scheduled post visibility on the public API.
+The demo run created site settings from `skills/cloud-blog-cms/templates/site.config.json`, published `hello-from-generated-cloud-blog-cms`, uploaded an R2 asset, submitted a pending comment, approved it, generated an R2 export backup, verified scheduled post visibility on the public API, verified comment reply depth, and verified project detail pages in the sitemap.
 
 ## User Intervention Points
 
