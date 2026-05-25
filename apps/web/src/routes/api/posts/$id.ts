@@ -25,10 +25,19 @@ export const Route = createFileRoute("/api/posts/$id")({
         return jsonResponse({ data: post, locale });
       },
       PATCH: async ({ params, request }: { params: { id: string }; request: Request }) => {
+        const body = await readJsonBody<Record<string, unknown>>(request);
         const accessError = await requireCmsAccess(request, "posts:write");
 
         if (accessError) {
           return accessError;
+        }
+
+        if (body.status === "published") {
+          const publishError = await requireCmsAccess(request, "posts:publish");
+
+          if (publishError) {
+            return publishError;
+          }
         }
 
         const locale = getApiLocale(request);
@@ -38,8 +47,6 @@ export const Route = createFileRoute("/api/posts/$id")({
         if (!post) {
           return jsonResponse({ error: "Post not found" }, { status: 404 });
         }
-
-        const body = await readJsonBody<Record<string, unknown>>(request);
 
         const updated = persistedPost
           ? await updateD1Post(post.id, body)

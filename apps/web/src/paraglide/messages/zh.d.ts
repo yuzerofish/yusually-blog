@@ -55,6 +55,7 @@
 /** @typedef {{}} Admin_Settings_HelpInputs */
 /** @typedef {{}} Admin_Settings_IndexingInputs */
 /** @typedef {{}} Admin_Settings_LanguageInputs */
+/** @typedef {{}} Admin_Settings_RssInputs */
 /** @typedef {{}} Admin_Settings_SavedInputs */
 /** @typedef {{}} Admin_Settings_Site_NameInputs */
 /** @typedef {{}} Admin_Settings_Site_UrlInputs */
@@ -96,6 +97,9 @@
 /** @typedef {{}} Comment_EmailInputs */
 /** @typedef {{}} Comment_ErrorInputs */
 /** @typedef {{}} Comment_NameInputs */
+/** @typedef {{}} Comment_Cancel_ReplyInputs */
+/** @typedef {{}} Comment_ReplyInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Comment_Replying_ToInputs */
 /** @typedef {{}} Comment_SubmittingInputs */
 /** @typedef {{}} Comment_SuccessInputs */
 /** @typedef {{}} Comment_WebsiteInputs */
@@ -245,6 +249,7 @@ export const admin_settings_error: (inputs: Admin_Settings_ErrorInputs) => Local
 export const admin_settings_help: (inputs: Admin_Settings_HelpInputs) => LocalizedString;
 export const admin_settings_indexing: (inputs: Admin_Settings_IndexingInputs) => LocalizedString;
 export const admin_settings_language: (inputs: Admin_Settings_LanguageInputs) => LocalizedString;
+export const admin_settings_rss: (inputs: Admin_Settings_RssInputs) => LocalizedString;
 export const admin_settings_saved: (inputs: Admin_Settings_SavedInputs) => LocalizedString;
 export const admin_settings_site_name: (inputs: Admin_Settings_Site_NameInputs) => LocalizedString;
 export const admin_settings_site_url: (inputs: Admin_Settings_Site_UrlInputs) => LocalizedString;
@@ -288,6 +293,9 @@ export const comment_company: (inputs: Comment_CompanyInputs) => LocalizedString
 export const comment_email: (inputs: Comment_EmailInputs) => LocalizedString;
 export const comment_error: (inputs: Comment_ErrorInputs) => LocalizedString;
 export const comment_name: (inputs: Comment_NameInputs) => LocalizedString;
+export const comment_cancel_reply: (inputs: Comment_Cancel_ReplyInputs) => LocalizedString;
+export const comment_reply: (inputs: Comment_ReplyInputs) => LocalizedString;
+export const comment_replying_to: (inputs: Comment_Replying_ToInputs) => LocalizedString;
 export const comment_submitting: (inputs: Comment_SubmittingInputs) => LocalizedString;
 export const comment_success: (inputs: Comment_SuccessInputs) => LocalizedString;
 export const comment_website: (inputs: Comment_WebsiteInputs) => LocalizedString;
@@ -424,6 +432,7 @@ export type Admin_Settings_ErrorInputs = {};
 export type Admin_Settings_HelpInputs = {};
 export type Admin_Settings_IndexingInputs = {};
 export type Admin_Settings_LanguageInputs = {};
+export type Admin_Settings_RssInputs = {};
 export type Admin_Settings_SavedInputs = {};
 export type Admin_Settings_Site_NameInputs = {};
 export type Admin_Settings_Site_UrlInputs = {};
@@ -465,6 +474,11 @@ export type Comment_CompanyInputs = {};
 export type Comment_EmailInputs = {};
 export type Comment_ErrorInputs = {};
 export type Comment_NameInputs = {};
+export type Comment_Cancel_ReplyInputs = {};
+export type Comment_ReplyInputs = {};
+export type Comment_Replying_ToInputs = {
+  name: NonNullable<unknown>;
+};
 export type Comment_SubmittingInputs = {};
 export type Comment_SuccessInputs = {};
 export type Comment_WebsiteInputs = {};

@@ -57,6 +57,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Admin_Settings_HelpInputs */
 /** @typedef {{}} Admin_Settings_IndexingInputs */
 /** @typedef {{}} Admin_Settings_LanguageInputs */
+/** @typedef {{}} Admin_Settings_RssInputs */
 /** @typedef {{}} Admin_Settings_SavedInputs */
 /** @typedef {{}} Admin_Settings_Site_NameInputs */
 /** @typedef {{}} Admin_Settings_Site_UrlInputs */
@@ -98,6 +99,9 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Comment_EmailInputs */
 /** @typedef {{}} Comment_ErrorInputs */
 /** @typedef {{}} Comment_NameInputs */
+/** @typedef {{}} Comment_Cancel_ReplyInputs */
+/** @typedef {{}} Comment_ReplyInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Comment_Replying_ToInputs */
 /** @typedef {{}} Comment_SubmittingInputs */
 /** @typedef {{}} Comment_SuccessInputs */
 /** @typedef {{}} Comment_WebsiteInputs */
@@ -1128,6 +1132,23 @@ export const admin_settings_language =
 /**
  * | output |
  * | --- |
+ * | "Enable RSS feed" |
+ *
+ * @param {Admin_Settings_RssInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_settings_rss =
+  /** @type {((inputs?: Admin_Settings_RssInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Settings_RssInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_settings_rss(inputs);
+      return __zh.admin_settings_rss(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
  * | "Settings saved." |
  *
  * @param {Admin_Settings_SavedInputs} inputs
@@ -1820,6 +1841,57 @@ export const comment_name =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.comment_name(inputs);
       return __zh.comment_name(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Cancel reply" |
+ *
+ * @param {Comment_Cancel_ReplyInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_cancel_reply =
+  /** @type {((inputs?: Comment_Cancel_ReplyInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_Cancel_ReplyInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_cancel_reply(inputs);
+      return __zh.comment_cancel_reply(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Reply" |
+ *
+ * @param {Comment_ReplyInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_reply =
+  /** @type {((inputs?: Comment_ReplyInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_ReplyInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_reply(inputs);
+      return __zh.comment_reply(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Replying to {name}" |
+ *
+ * @param {Comment_Replying_ToInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_replying_to =
+  /** @type {((inputs: Comment_Replying_ToInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_Replying_ToInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_replying_to(inputs);
+      return __zh.comment_replying_to(inputs);
     }
   );
 /**

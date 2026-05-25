@@ -1233,6 +1233,28 @@ export const admin_settings_language: ((
 /**
  * | output |
  * | --- |
+ * | "Enable RSS feed" |
+ *
+ * @param {Admin_Settings_RssInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_settings_rss: ((
+  inputs?: Admin_Settings_RssInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Settings_RssInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Settings saved." |
  *
  * @param {Admin_Settings_SavedInputs} inputs
@@ -2127,6 +2149,72 @@ export const comment_name: ((
 ) => LocalizedString) &
   import("../runtime.js").MessageMetadata<
     Comment_NameInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Cancel reply" |
+ *
+ * @param {Comment_Cancel_ReplyInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_cancel_reply: ((
+  inputs?: Comment_Cancel_ReplyInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_Cancel_ReplyInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Reply" |
+ *
+ * @param {Comment_ReplyInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_reply: ((
+  inputs?: Comment_ReplyInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_ReplyInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Replying to {name}" |
+ *
+ * @param {Comment_Replying_ToInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_replying_to: ((
+  inputs: Comment_Replying_ToInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_Replying_ToInputs,
     {
       locale?: "en" | "zh";
     },
@@ -3799,6 +3887,7 @@ export type Admin_Settings_ErrorInputs = {};
 export type Admin_Settings_HelpInputs = {};
 export type Admin_Settings_IndexingInputs = {};
 export type Admin_Settings_LanguageInputs = {};
+export type Admin_Settings_RssInputs = {};
 export type Admin_Settings_SavedInputs = {};
 export type Admin_Settings_Site_NameInputs = {};
 export type Admin_Settings_Site_UrlInputs = {};
@@ -3840,6 +3929,11 @@ export type Comment_CompanyInputs = {};
 export type Comment_EmailInputs = {};
 export type Comment_ErrorInputs = {};
 export type Comment_NameInputs = {};
+export type Comment_Cancel_ReplyInputs = {};
+export type Comment_ReplyInputs = {};
+export type Comment_Replying_ToInputs = {
+  name: NonNullable<unknown>;
+};
 export type Comment_SubmittingInputs = {};
 export type Comment_SuccessInputs = {};
 export type Comment_WebsiteInputs = {};

@@ -7,13 +7,16 @@ import { m } from "#/paraglide/messages.js";
 
 type CommentFormProps = {
   readonly postSlug: string;
+  readonly parentId?: string | null;
+  readonly replyingTo?: string | null;
+  readonly onCancelReply?: () => void;
 };
 
 type SubmitState = "idle" | "submitting" | "success" | "error";
 type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
 const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
-export function CommentForm({ postSlug }: CommentFormProps) {
+export function CommentForm({ onCancelReply, parentId, postSlug, replyingTo }: CommentFormProps) {
   const [state, setState] = useState<SubmitState>("idle");
 
   const handleSubmit: FormSubmitHandler = async (event) => {
@@ -32,6 +35,7 @@ export function CommentForm({ postSlug }: CommentFormProps) {
         authorEmail: formData.get("authorEmail"),
         authorWebsite: formData.get("authorWebsite"),
         body: formData.get("body"),
+        parentId,
         honeypot: formData.get("company"),
         turnstileToken: formData.get("cf-turnstile-response"),
       }),
@@ -40,11 +44,24 @@ export function CommentForm({ postSlug }: CommentFormProps) {
     setState(response.ok ? "success" : "error");
     if (response.ok) {
       event.currentTarget.reset();
+      onCancelReply?.();
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
+      {replyingTo ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-[#f8f5ef] px-3 py-2 text-sm text-[#56625c] dark:bg-white/10 dark:text-[#cbd3cd]">
+          <span>{m.comment_replying_to({ name: replyingTo })}</span>
+          <button
+            type="button"
+            onClick={onCancelReply}
+            className="font-medium text-[#1f6f5b] hover:underline dark:text-[#75c5ad]"
+          >
+            {m.comment_cancel_reply()}
+          </button>
+        </div>
+      ) : null}
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="grid gap-2">
           <Label htmlFor="comment-author-name">{m.comment_name()}</Label>

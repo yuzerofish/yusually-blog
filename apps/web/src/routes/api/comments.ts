@@ -36,6 +36,7 @@ export const Route = createFileRoute("/api/comments")({
           authorEmail: string;
           authorWebsite: string;
           body: string;
+          parentId: string;
           honeypot: string;
           turnstileToken: string;
         }>(request);
@@ -68,6 +69,7 @@ export const Route = createFileRoute("/api/comments")({
           authorEmail: body.authorEmail,
           authorWebsite: body.authorWebsite,
           body: body.body,
+          parentId: body.parentId || null,
           locale: resolveLocale(new URL(request.url).searchParams.get("lang") ?? undefined),
         };
         const persistedPost = await getD1PostBySlug(commentInput.postSlug);

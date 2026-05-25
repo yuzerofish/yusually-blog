@@ -37,13 +37,21 @@ export const Route = createFileRoute("/api/posts")({
         });
       },
       POST: async ({ request }: { request: Request }) => {
+        const body = await readJsonBody<Parameters<typeof createPostPreview>[0]>(request);
         const accessError = await requireCmsAccess(request, "posts:write");
 
         if (accessError) {
           return accessError;
         }
 
-        const body = await readJsonBody<Parameters<typeof createPostPreview>[0]>(request);
+        if (body.status === "published") {
+          const publishError = await requireCmsAccess(request, "posts:publish");
+
+          if (publishError) {
+            return publishError;
+          }
+        }
+
         const post = await createD1Post({
           ...body,
           locale: resolveLocale(body.locale),

@@ -8,6 +8,17 @@ export const Route = createFileRoute("/feed.xml")({
     handlers: {
       GET: async () => {
         const siteSettings = await getD1SiteSettings();
+
+        if (!siteSettings.rssEnabled) {
+          return new Response("RSS feed is disabled.", {
+            status: 404,
+            headers: {
+              "content-type": "text/plain; charset=utf-8",
+              "cache-control": "public, max-age=300",
+            },
+          });
+        }
+
         const locale = siteSettings.primaryLanguage;
         const persistedPosts = await listD1Posts().catch(() => []);
         const persistedSlugs = new Set(persistedPosts.map((post) => post.slug));

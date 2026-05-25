@@ -7,11 +7,13 @@ The API is exposed through TanStack Start server routes. Machine-readable OpenAP
 - `GET /rss.xml`
 - `GET /feed.xml`
 - `GET /sitemap.xml`
+- `GET /sitemap-posts.xml`
+- `GET /sitemap-pages.xml`
 - `GET /robots.txt`
 - `GET /openapi.json`
 - `GET /docs/api`
 
-Feeds and public metadata use current D1 site settings and localized content where requested.
+Feeds and public metadata use current D1 site settings and localized content where requested. `/rss.xml` returns 404 when RSS is disabled in site settings.
 
 ## Content And Automation Routes
 
@@ -44,9 +46,9 @@ Feeds and public metadata use current D1 site settings and localized content whe
 
 `GET /api/posts` accepts `q`, `tag`, `status=all`, and `lang=en|zh`. `status=all` requires `posts:read`. Public post lists return only published posts.
 
-`POST /api/posts` accepts bilingual `i18n` fields for title, excerpt, Markdown, rendered HTML, text, SEO title, and SEO description. When `locale` is `zh`, the primary input is also stored into Chinese localized fields.
+`POST /api/posts` accepts bilingual `i18n` fields for title, excerpt, Markdown, rendered HTML, text, SEO title, and SEO description. When `locale` is `zh`, the primary input is also stored into Chinese localized fields. Creating or updating a `published` post requires both `posts:write` and `posts:publish`.
 
-`GET /api/comments` returns the moderation queue and requires `comments:moderate`. `POST /api/comments` is public, applies honeypot, Turnstile when configured, per-IP rate limits, body length limits, link limits, and creates comments as `pending`.
+`GET /api/comments` returns the moderation queue and requires `comments:moderate`. `POST /api/comments` is public, accepts optional `parentId` for replies, applies honeypot, Turnstile when configured, per-IP rate limits, body length limits, link limits, and creates comments as `pending`.
 
 `GET /api/export` returns JSON data and writes a backup JSON object to R2.
 

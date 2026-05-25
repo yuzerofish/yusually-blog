@@ -24,6 +24,8 @@ export const Route = createFileRoute("/openapi.json")({
               },
               post: {
                 summary: "Create post",
+                description:
+                  "Creating a published post requires both posts:write and posts:publish scopes.",
                 security: [{ apiToken: ["posts:write"] }],
                 responses: { "201": { description: "Post created" } },
               },
@@ -36,6 +38,8 @@ export const Route = createFileRoute("/openapi.json")({
               },
               patch: {
                 summary: "Update post",
+                description:
+                  "Changing a post to published requires both posts:write and posts:publish scopes.",
                 security: [{ apiToken: ["posts:write"] }],
                 responses: { "200": { description: "Post updated" } },
               },
@@ -106,6 +110,28 @@ export const Route = createFileRoute("/openapi.json")({
               },
               post: {
                 summary: "Submit comment",
+                requestBody: {
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          postSlug: { type: "string" },
+                          parentId: {
+                            type: "string",
+                            description: "Optional approved parent comment id for replies.",
+                          },
+                          authorName: { type: "string" },
+                          authorEmail: { type: "string" },
+                          authorWebsite: { type: "string" },
+                          body: { type: "string" },
+                          turnstileToken: { type: "string" },
+                        },
+                        required: ["postSlug", "authorName", "authorEmail", "body"],
+                      },
+                    },
+                  },
+                },
                 responses: { "201": { description: "Comment created as pending" } },
               },
             },

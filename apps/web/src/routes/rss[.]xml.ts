@@ -7,7 +7,19 @@ export const Route = createFileRoute("/rss.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const xml = await renderRss();
+        const siteSettings = await getD1SiteSettings();
+
+        if (!siteSettings.rssEnabled) {
+          return new Response("RSS feed is disabled.", {
+            status: 404,
+            headers: {
+              "content-type": "text/plain; charset=utf-8",
+              "cache-control": "public, max-age=300",
+            },
+          });
+        }
+
+        const xml = await renderRss(siteSettings);
 
         return new Response(xml, {
           headers: {
@@ -20,8 +32,7 @@ export const Route = createFileRoute("/rss.xml")({
   },
 });
 
-async function renderRss() {
-  const siteSettings = await getD1SiteSettings();
+async function renderRss(siteSettings: Awaited<ReturnType<typeof getD1SiteSettings>>) {
   const locale = siteSettings.primaryLanguage;
   const persistedPosts = await listD1Posts().catch(() => []);
   const persistedSlugs = new Set(persistedPosts.map((post) => post.slug));

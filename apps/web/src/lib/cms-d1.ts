@@ -90,6 +90,9 @@ type PostInput = Partial<{
   contentMarkdown: string;
   contentHtml: string;
   status: ContentStatus;
+  commentsEnabled: boolean;
+  seoTitle: string;
+  seoDescription: string;
   locale: SupportedLocale;
   i18n: Post["i18n"];
 }>;
@@ -235,13 +238,14 @@ export async function createD1Post(input: PostInput) {
     source: "api",
     featured: false,
     pinned: false,
-    commentsEnabled: true,
+    commentsEnabled: input.commentsEnabled ?? true,
     publishedAt: now,
     updatedAt: now,
     authorName: currentSettings.authorName,
     tags: [],
-    seoTitle: title,
-    seoDescription: input.excerpt?.trim() || contentText.slice(0, 160),
+    seoTitle: input.seoTitle?.trim() || title,
+    seoDescription:
+      input.seoDescription?.trim() || input.excerpt?.trim() || contentText.slice(0, 160),
     i18n: input.i18n,
   };
 
@@ -318,17 +322,26 @@ export async function updateD1Post(idOrSlug: string, input: PostInput) {
   const publishedAt =
     status === "published" && post.status !== "published" ? now : post.publishedAt;
   const i18n = input.i18n ?? post.i18n ?? null;
+  const excerpt = input.excerpt !== undefined ? input.excerpt.trim() : post.excerpt;
+  const seoTitle = input.seoTitle?.trim() || title;
+  const seoDescription =
+    input.seoDescription !== undefined
+      ? input.seoDescription.trim()
+      : input.excerpt !== undefined
+        ? excerpt
+        : post.seoDescription;
+  const commentsEnabled = input.commentsEnabled ?? post.commentsEnabled;
 
   await env.CMS_DB.prepare(
     `update posts set
       title = ?, excerpt = ?, cover_image = ?, content_markdown = ?, content_html = ?,
-      content_text = ?, status = ?, seo_title = ?, seo_description = ?, i18n = ?, published_at = ?,
-      updated_at = ?
+      content_text = ?, status = ?, comments_enabled = ?, seo_title = ?, seo_description = ?,
+      i18n = ?, published_at = ?, updated_at = ?
     where id = ?`,
   )
     .bind(
       title,
-      input.excerpt !== undefined ? input.excerpt.trim() : post.excerpt,
+      excerpt,
       input.coverImage !== undefined
         ? input.coverImage.trim() || currentSettings.defaultOgImage
         : post.coverImage,
@@ -336,8 +349,9 @@ export async function updateD1Post(idOrSlug: string, input: PostInput) {
       contentHtml,
       contentText,
       status,
-      title,
-      input.excerpt !== undefined ? input.excerpt.trim() : post.seoDescription,
+      commentsEnabled ? 1 : 0,
+      seoTitle,
+      seoDescription,
       i18n ? JSON.stringify(i18n) : null,
       publishedAt,
       now,

@@ -1,6 +1,14 @@
-import { formatDate, localizeComment, localizePost, localizeSiteSettings } from "@repo/core";
+import {
+  formatDate,
+  localizeComment,
+  localizePost,
+  localizeSiteSettings,
+  type Comment,
+} from "@repo/core";
+import { Button } from "@repo/ui/components/button";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { MessageSquareIcon, RssIcon } from "lucide-react";
+import { useState } from "react";
 
 import { CommentForm } from "#/components/comment-form";
 import { SiteShell } from "#/components/site-shell";
@@ -41,6 +49,7 @@ export const Route = createFileRoute("/blog/$slug")({
 
 function BlogPostPage() {
   const { comments, post, relatedPosts, siteSettings } = Route.useLoaderData();
+  const [replyTarget, setReplyTarget] = useState<Comment | null>(null);
   const locale = getCurrentLocale();
   const localizedPost = localizePost(post, locale);
   const localizedSiteSettings = localizeSiteSettings(siteSettings, locale);
@@ -125,19 +134,14 @@ function BlogPostPage() {
                   </p>
                 </div>
               </div>
-              <CommentForm postSlug={localizedPost.slug} />
+              <CommentForm
+                postSlug={localizedPost.slug}
+                parentId={replyTarget?.id ?? null}
+                replyingTo={replyTarget?.authorName ?? null}
+                onCancelReply={() => setReplyTarget(null)}
+              />
               <div className="mt-6 grid gap-4">
-                {localizedComments.map((comment) => (
-                  <div
-                    key={comment.id}
-                    className="rounded-md border border-[#26312c]/10 bg-[#f8f5ef] p-4 dark:border-white/10 dark:bg-white/5"
-                  >
-                    <p className="font-medium">{comment.authorName}</p>
-                    <p className="mt-2 text-sm leading-6 text-[#56625c] dark:text-[#cbd3cd]">
-                      {comment.body}
-                    </p>
-                  </div>
-                ))}
+                <CommentList comments={localizedComments} onReply={setReplyTarget} />
               </div>
             </section>
           </div>
@@ -162,5 +166,52 @@ function BlogPostPage() {
         </div>
       </article>
     </SiteShell>
+  );
+}
+
+type CommentListProps = {
+  readonly comments: Comment[];
+  readonly depth?: number;
+  readonly onReply: (comment: Comment) => void;
+  readonly parentId?: string | null;
+};
+
+function CommentList({ comments, depth = 0, onReply, parentId = null }: CommentListProps) {
+  const visibleIds = new Set(comments.map((comment) => comment.id));
+  const children = comments.filter((comment) => {
+    if (parentId) {
+      return comment.parentId === parentId;
+    }
+
+    return !comment.parentId || !visibleIds.has(comment.parentId);
+  });
+
+  return (
+    <>
+      {children.map((comment) => (
+        <div key={comment.id} className="grid gap-3">
+          <div
+            className="rounded-md border border-[#26312c]/10 bg-[#f8f5ef] p-4 dark:border-white/10 dark:bg-white/5"
+            style={{ marginLeft: depth ? Math.min(depth, 3) * 16 : 0 }}
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="font-medium">{comment.authorName}</p>
+              <Button type="button" size="sm" variant="outline" onClick={() => onReply(comment)}>
+                {m.comment_reply()}
+              </Button>
+            </div>
+            <p className="mt-2 text-sm leading-6 text-[#56625c] dark:text-[#cbd3cd]">
+              {comment.body}
+            </p>
+          </div>
+          <CommentList
+            comments={comments}
+            depth={depth + 1}
+            onReply={onReply}
+            parentId={comment.id}
+          />
+        </div>
+      ))}
+    </>
   );
 }

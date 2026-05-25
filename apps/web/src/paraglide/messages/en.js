@@ -56,6 +56,7 @@
 /** @typedef {{}} Admin_Settings_HelpInputs */
 /** @typedef {{}} Admin_Settings_IndexingInputs */
 /** @typedef {{}} Admin_Settings_LanguageInputs */
+/** @typedef {{}} Admin_Settings_RssInputs */
 /** @typedef {{}} Admin_Settings_SavedInputs */
 /** @typedef {{}} Admin_Settings_Site_NameInputs */
 /** @typedef {{}} Admin_Settings_Site_UrlInputs */
@@ -97,6 +98,9 @@
 /** @typedef {{}} Comment_EmailInputs */
 /** @typedef {{}} Comment_ErrorInputs */
 /** @typedef {{}} Comment_NameInputs */
+/** @typedef {{}} Comment_Cancel_ReplyInputs */
+/** @typedef {{}} Comment_ReplyInputs */
+/** @typedef {{ name: NonNullable<unknown> }} Comment_Replying_ToInputs */
 /** @typedef {{}} Comment_SubmittingInputs */
 /** @typedef {{}} Comment_SuccessInputs */
 /** @typedef {{}} Comment_WebsiteInputs */
@@ -450,6 +454,11 @@ export const admin_settings_language =
     return /** @type {LocalizedString} */ `Primary language`;
   };
 
+export const admin_settings_rss =
+  /** @type {(inputs: Admin_Settings_RssInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Enable RSS feed`;
+  };
+
 export const admin_settings_saved =
   /** @type {(inputs: Admin_Settings_SavedInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `Settings saved.`;
@@ -640,6 +649,20 @@ export const comment_error = /** @type {(inputs: Comment_ErrorInputs) => Localiz
 export const comment_name = /** @type {(inputs: Comment_NameInputs) => LocalizedString} */ () => {
   return /** @type {LocalizedString} */ `Name`;
 };
+
+export const comment_cancel_reply =
+  /** @type {(inputs: Comment_Cancel_ReplyInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Cancel reply`;
+  };
+
+export const comment_reply = /** @type {(inputs: Comment_ReplyInputs) => LocalizedString} */ () => {
+  return /** @type {LocalizedString} */ `Reply`;
+};
+
+export const comment_replying_to =
+  /** @type {(inputs: Comment_Replying_ToInputs) => LocalizedString} */ (i) => {
+    return /** @type {LocalizedString} */ `Replying to ${i?.name}`;
+  };
 
 export const comment_submitting =
   /** @type {(inputs: Comment_SubmittingInputs) => LocalizedString} */ () => {

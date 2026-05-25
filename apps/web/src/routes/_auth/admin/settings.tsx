@@ -67,6 +67,7 @@ function AdminSettingsPage() {
         authorBio: formData.get("authorBio"),
         defaultOgImage: formData.get("defaultOgImage"),
         primaryLanguage: formData.get("primaryLanguage"),
+        rssEnabled: formData.get("rssEnabled") === "on",
         commentsEnabled: formData.get("commentsEnabled") === "on",
         indexingEnabled: formData.get("indexingEnabled") === "on",
       }),
@@ -187,6 +188,15 @@ function AdminSettingsPage() {
               <label className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
+                  name="rssEnabled"
+                  defaultChecked={siteSettings.rssEnabled}
+                  className="size-4 rounded border-[#26312c]/20"
+                />
+                {m.admin_settings_rss()}
+              </label>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
                   name="commentsEnabled"
                   defaultChecked={siteSettings.commentsEnabled}
                   className="size-4 rounded border-[#26312c]/20"
@@ -232,7 +242,7 @@ function AdminSettingsPage() {
                     type="checkbox"
                     name="scopes"
                     value={scope}
-                    defaultChecked={["posts:read", "posts:write"].includes(scope)}
+                    defaultChecked={["posts:read", "posts:write", "posts:publish"].includes(scope)}
                     className="size-4 rounded border-[#26312c]/20"
                   />
                   {scope}
