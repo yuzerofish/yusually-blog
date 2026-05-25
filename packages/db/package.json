@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./cms": "./src/cms.ts",
     "./schema": "./src/schema/index.ts",
     "./schema/cms": "./src/schema/cms.sqlite.ts"
   },

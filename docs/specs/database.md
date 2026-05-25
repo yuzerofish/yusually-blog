@@ -21,6 +21,8 @@ Posts keep three content forms:
 - `content_html`: rendered and sanitized output cache.
 - `content_text`: plain text for simple D1 search.
 
+Localized content is stored in JSON `i18n` columns on `posts`, `tags`, `projects`, and `comments`. Site-level bilingual settings live inside the `site_settings.value` JSON payload.
+
 ## Migration Command
 
 After creating the D1 database in Cloudflare:

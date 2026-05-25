@@ -35,6 +35,7 @@ export const posts = sqliteTable(
     canonicalUrl: text("canonical_url"),
     robots: text("robots").notNull().default("index,follow"),
     structuredData: text("structured_data", { mode: "json" }),
+    i18n: text("i18n", { mode: "json" }),
     publishedAt: text("published_at"),
     createdAt: text("created_at").notNull(),
     updatedAt: text("updated_at").notNull(),
@@ -76,6 +77,7 @@ export const tags = sqliteTable(
     name: text("name").notNull(),
     slug: text("slug").notNull(),
     description: text("description").notNull().default(""),
+    i18n: text("i18n", { mode: "json" }),
     createdAt: text("created_at").notNull(),
   },
   (table) => [uniqueIndex("tags_slug_idx").on(table.slug)],
@@ -106,6 +108,7 @@ export const projects = sqliteTable(
     coverImage: text("cover_image"),
     contentMarkdown: text("content_markdown").notNull().default(""),
     contentHtml: text("content_html").notNull().default(""),
+    i18n: text("i18n", { mode: "json" }),
     status: text("status", { enum: ["draft", "published", "archived", "deleted"] })
       .notNull()
       .default("draft"),
@@ -151,6 +154,7 @@ export const comments = sqliteTable(
     authorEmailHash: text("author_email_hash").notNull(),
     authorWebsite: text("author_website"),
     body: text("body").notNull(),
+    i18n: text("i18n", { mode: "json" }),
     status: text("status", { enum: ["pending", "approved", "spam", "deleted"] })
       .notNull()
       .default("pending"),

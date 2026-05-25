@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS posts (
   canonical_url TEXT,
   robots TEXT NOT NULL DEFAULT 'index,follow',
   structured_data TEXT,
+  i18n TEXT,
   published_at TEXT,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
@@ -56,6 +57,7 @@ CREATE TABLE IF NOT EXISTS tags (
   name TEXT NOT NULL,
   slug TEXT NOT NULL,
   description TEXT NOT NULL DEFAULT '',
+  i18n TEXT,
   created_at TEXT NOT NULL
 );
 
@@ -78,6 +80,7 @@ CREATE TABLE IF NOT EXISTS projects (
   cover_image TEXT,
   content_markdown TEXT NOT NULL DEFAULT '',
   content_html TEXT NOT NULL DEFAULT '',
+  i18n TEXT,
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'archived', 'deleted')),
   published_at TEXT,
   created_at TEXT NOT NULL,
@@ -111,6 +114,7 @@ CREATE TABLE IF NOT EXISTS comments (
   author_email_hash TEXT NOT NULL,
   author_website TEXT,
   body TEXT NOT NULL,
+  i18n TEXT,
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'spam', 'deleted')),
   ip_hash TEXT,
   user_agent TEXT,
