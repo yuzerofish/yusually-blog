@@ -1,12 +1,25 @@
 import { SiGithub } from "@icons-pack/react-simple-icons";
-import { siteSettings } from "@repo/core";
+import { getSiteSettingsForLocale } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Link } from "@tanstack/react-router";
 import { BookOpenIcon, RssIcon, SettingsIcon } from "lucide-react";
 
+import { LanguageToggle } from "#/components/language-toggle";
 import { ThemeToggle } from "#/components/theme-toggle";
+import { getCurrentLocale } from "#/lib/i18n";
+import { m } from "#/paraglide/messages.js";
 
 export function SiteShell({ children }: { readonly children: React.ReactNode }) {
+  const locale = getCurrentLocale();
+  const siteSettings = getSiteSettingsForLocale(locale);
+  const navigation = [
+    { label: m.nav_blog(), href: "/blog" },
+    { label: m.nav_tags(), href: "/tags" },
+    { label: m.nav_archive(), href: "/archive" },
+    { label: m.nav_projects(), href: "/projects" },
+    { label: m.nav_about(), href: "/about" },
+  ];
+
   return (
     <div className="min-h-svh bg-[#f8f5ef] text-[#26312c] dark:bg-[#111614] dark:text-[#f5f1e8]">
       <header className="sticky top-0 z-40 border-b border-[#26312c]/10 bg-[#f8f5ef]/92 backdrop-blur dark:border-white/10 dark:bg-[#111614]/90">
@@ -20,13 +33,13 @@ export function SiteShell({ children }: { readonly children: React.ReactNode }) 
                 {siteSettings.name}
               </span>
               <span className="hidden text-xs text-[#64716a] sm:block dark:text-[#aeb8b1]">
-                Cloudflare-native publishing
+                {m.site_subtitle()}
               </span>
             </span>
           </Link>
 
           <nav className="hidden items-center gap-1 md:flex">
-            {siteSettings.navigation.map((item) => (
+            {navigation.map((item) => (
               <Link
                 key={item.href}
                 to={item.href}
@@ -43,25 +56,29 @@ export function SiteShell({ children }: { readonly children: React.ReactNode }) 
               variant="ghost"
               size="icon-sm"
               nativeButton={false}
-              aria-label="RSS feed"
+              aria-label={m.rss_feed()}
             >
               <RssIcon />
             </Button>
             <Button
               render={
-                <a href="https://github.com/01mvp/blog-starter" aria-label="GitHub repository" />
+                <a
+                  href="https://github.com/01mvp/blog-starter"
+                  aria-label={m.github_repository()}
+                />
               }
               variant="ghost"
               size="icon-sm"
               nativeButton={false}
-              aria-label="GitHub repository"
+              aria-label={m.github_repository()}
             >
               <SiGithub className="size-4" />
             </Button>
             <Button render={<Link to="/admin" />} variant="outline" size="sm" nativeButton={false}>
               <SettingsIcon />
-              Admin
+              {m.admin()}
             </Button>
+            <LanguageToggle />
             <ThemeToggle />
           </div>
         </div>

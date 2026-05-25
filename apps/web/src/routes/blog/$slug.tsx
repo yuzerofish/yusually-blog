@@ -1,9 +1,18 @@
-import { formatDate, getApprovedCommentsForPost, getPostBySlug, getRelatedPosts } from "@repo/core";
+import {
+  formatDate,
+  getApprovedCommentsForPost,
+  getPostBySlug,
+  getRelatedPosts,
+  localizeComment,
+  localizePost,
+} from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { MessageSquareIcon, RssIcon } from "lucide-react";
 
 import { SiteShell } from "#/components/site-shell";
+import { getCurrentLocale } from "#/lib/i18n";
+import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: ({ params }) => {
@@ -19,23 +28,35 @@ export const Route = createFileRoute("/blog/$slug")({
       relatedPosts: getRelatedPosts(post.id),
     };
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: loaderData.post.seoTitle },
-          { name: "description", content: loaderData.post.seoDescription },
-          { property: "og:title", content: loaderData.post.title },
-          { property: "og:description", content: loaderData.post.excerpt },
-          { property: "og:image", content: loaderData.post.coverImage },
-          { property: "article:published_time", content: loaderData.post.publishedAt },
-        ]
-      : [],
-  }),
+  head: ({ loaderData }) => {
+    if (!loaderData) {
+      return { meta: [] };
+    }
+
+    const post = localizePost(loaderData.post, getCurrentLocale());
+
+    return {
+      meta: [
+        { title: post.seoTitle },
+        { name: "description", content: post.seoDescription },
+        { property: "og:title", content: post.title },
+        { property: "og:description", content: post.excerpt },
+        { property: "og:image", content: post.coverImage },
+        { property: "article:published_time", content: post.publishedAt },
+      ],
+    };
+  },
   component: BlogPostPage,
 });
 
 function BlogPostPage() {
   const { comments, post, relatedPosts } = Route.useLoaderData();
+  const locale = getCurrentLocale();
+  const localizedPost = localizePost(post, locale);
+  const localizedComments = comments.map((comment) => localizeComment(comment, locale));
+  const localizedRelatedPosts = relatedPosts.map((relatedPost) =>
+    localizePost(relatedPost, locale),
+  );
 
   return (
     <SiteShell>
@@ -44,7 +65,7 @@ function BlogPostPage() {
           <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
             <div className="flex flex-col justify-center">
               <div className="flex flex-wrap gap-2">
-                {post.tags.map((tag) => (
+                {localizedPost.tags.map((tag) => (
                   <Link
                     key={tag.slug}
                     to="/tags/$slug"
@@ -56,18 +77,18 @@ function BlogPostPage() {
                 ))}
               </div>
               <h1 className="mt-5 text-4xl leading-tight font-semibold tracking-normal text-balance text-[#1e2b25] sm:text-5xl dark:text-white">
-                {post.title}
+                {localizedPost.title}
               </h1>
               <p className="mt-5 text-lg leading-8 text-[#56625c] dark:text-[#cbd3cd]">
-                {post.excerpt}
+                {localizedPost.excerpt}
               </p>
               <p className="mt-5 text-sm text-[#64716a] dark:text-[#aeb8b1]">
-                {formatDate(post.publishedAt)} · Updated {formatDate(post.updatedAt)} ·{" "}
-                {post.authorName}
+                {formatDate(localizedPost.publishedAt, locale)} · {m.updated()}{" "}
+                {formatDate(localizedPost.updatedAt, locale)} · {localizedPost.authorName}
               </p>
             </div>
             <img
-              src={post.coverImage}
+              src={localizedPost.coverImage}
               alt=""
               className="h-full min-h-80 rounded-lg object-cover shadow-sm"
             />
@@ -77,20 +98,20 @@ function BlogPostPage() {
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[220px_minmax(0,760px)_1fr] lg:px-8">
           <aside className="hidden lg:block">
             <div className="sticky top-24 rounded-lg border border-[#26312c]/10 bg-white p-4 text-sm dark:border-white/10 dark:bg-[#171d1a]">
-              <p className="font-semibold">Contents</p>
+              <p className="font-semibold">{m.contents()}</p>
               <a
                 href="#comments"
                 className="mt-3 flex items-center gap-2 text-[#64716a] hover:text-[#1f6f5b] dark:text-[#aeb8b1]"
               >
                 <MessageSquareIcon className="size-4" />
-                Comments
+                {m.comments()}
               </a>
               <a
                 href="/rss.xml"
                 className="mt-2 flex items-center gap-2 text-[#64716a] hover:text-[#1f6f5b] dark:text-[#aeb8b1]"
               >
                 <RssIcon className="size-4" />
-                RSS
+                {m.rss_feed()}
               </a>
             </div>
           </aside>
@@ -98,7 +119,7 @@ function BlogPostPage() {
           <div className="min-w-0">
             <div
               className="prose prose-neutral prose-headings:tracking-normal dark:prose-invert max-w-none rounded-lg border border-[#26312c]/10 bg-white p-6 leading-8 shadow-sm dark:border-white/10 dark:bg-[#171d1a]"
-              dangerouslySetInnerHTML={{ __html: post.contentHtml }}
+              dangerouslySetInnerHTML={{ __html: localizedPost.contentHtml }}
             />
 
             <section
@@ -107,17 +128,17 @@ function BlogPostPage() {
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h2 className="text-2xl font-semibold tracking-normal">Comments</h2>
+                  <h2 className="text-2xl font-semibold tracking-normal">{m.comments()}</h2>
                   <p className="mt-2 text-sm text-[#64716a] dark:text-[#aeb8b1]">
-                    New comments are held for review before publication.
+                    {m.comments_description()}
                   </p>
                 </div>
                 <Button variant="outline" size="sm">
-                  Submit comment
+                  {m.submit_comment()}
                 </Button>
               </div>
               <div className="mt-6 grid gap-4">
-                {comments.map((comment) => (
+                {localizedComments.map((comment) => (
                   <div
                     key={comment.id}
                     className="rounded-md border border-[#26312c]/10 bg-[#f8f5ef] p-4 dark:border-white/10 dark:bg-white/5"
@@ -134,9 +155,9 @@ function BlogPostPage() {
 
           <aside className="min-w-0">
             <div className="rounded-lg border border-[#26312c]/10 bg-white p-4 dark:border-white/10 dark:bg-[#171d1a]">
-              <p className="text-sm font-semibold">Related</p>
+              <p className="text-sm font-semibold">{m.related()}</p>
               <div className="mt-3 grid gap-3">
-                {relatedPosts.map((relatedPost) => (
+                {localizedRelatedPosts.map((relatedPost) => (
                   <Link
                     key={relatedPost.id}
                     to="/blog/$slug"

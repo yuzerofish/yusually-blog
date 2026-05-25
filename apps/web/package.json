@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@babel/core": "catalog:",
+    "@inlang/paraglide-js": "catalog:",
     "@repo/tsconfig": "workspace:*",
     "@rolldown/plugin-babel": "catalog:",
     "@tailwindcss/vite": "catalog:",

@@ -4,6 +4,8 @@ import { Button } from "@repo/ui/components/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 
+import { m } from "#/paraglide/messages.js";
+
 export function SignOutButton() {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -25,7 +27,7 @@ export function SignOutButton() {
       variant="destructive"
       size="lg"
     >
-      Sign out
+      {m.sign_out()}
     </Button>
   );
 }

@@ -1,5 +1,11 @@
 export type ContentStatus = "draft" | "published" | "scheduled" | "archived" | "deleted";
 
+export type SupportedLocale = "en" | "zh";
+
+export type LocalizedString = Partial<Record<SupportedLocale, string>>;
+
+export type LocalizedFields<TField extends string> = Partial<Record<TField, LocalizedString>>;
+
 export type ContentSource =
   | "editor"
   | "markdown_upload"
@@ -29,6 +35,15 @@ export type Post = {
   tags: Tag[];
   seoTitle: string;
   seoDescription: string;
+  i18n?: LocalizedFields<
+    | "title"
+    | "excerpt"
+    | "contentMarkdown"
+    | "contentHtml"
+    | "contentText"
+    | "seoTitle"
+    | "seoDescription"
+  >;
 };
 
 export type Tag = {
@@ -36,6 +51,7 @@ export type Tag = {
   name: string;
   slug: string;
   description: string;
+  i18n?: LocalizedFields<"name" | "description">;
 };
 
 export type Project = {
@@ -48,6 +64,7 @@ export type Project = {
   githubUrl: string;
   tags: Tag[];
   publishedAt: string;
+  i18n?: LocalizedFields<"title" | "excerpt">;
 };
 
 export type CommentStatus = "pending" | "approved" | "spam" | "deleted";
@@ -62,6 +79,7 @@ export type Comment = {
   body: string;
   status: CommentStatus;
   createdAt: string;
+  i18n?: LocalizedFields<"body">;
 };
 
 export type Asset = {
@@ -94,10 +112,14 @@ export type SiteSettings = {
   rssEnabled: boolean;
   commentsEnabled: boolean;
   indexingEnabled: boolean;
+  locales: SupportedLocale[];
+  primaryLanguage: SupportedLocale;
+  i18n?: LocalizedFields<"name" | "description" | "authorBio">;
 };
 
 export type DashboardMetric = {
   label: string;
   value: string;
   detail: string;
+  i18n?: LocalizedFields<"label" | "detail">;
 };

@@ -3,6 +3,8 @@ import { Button } from "@repo/ui/components/button";
 import { createFileRoute } from "@tanstack/react-router";
 import { UploadIcon } from "lucide-react";
 
+import { m } from "#/paraglide/messages.js";
+
 export const Route = createFileRoute("/_auth/admin/assets")({
   component: AdminAssetsPage,
 });
@@ -12,14 +14,14 @@ function AdminAssetsPage() {
     <section className="rounded-lg border border-[#26312c]/10 bg-white p-6 dark:border-white/10 dark:bg-[#171d1a]">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-semibold tracking-normal">Assets</h1>
+          <h1 className="text-2xl font-semibold tracking-normal">{m.admin_assets_title()}</h1>
           <p className="mt-2 text-sm text-[#64716a] dark:text-[#aeb8b1]">
-            R2-backed images and attachments.
+            {m.admin_assets_description()}
           </p>
         </div>
         <Button>
           <UploadIcon />
-          Upload
+          {m.upload()}
         </Button>
       </div>
 

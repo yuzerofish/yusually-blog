@@ -1,20 +1,24 @@
-import { getPublishedPosts, tags } from "@repo/core";
+import { getPublishedPostsForLocale, getTagsForLocale } from "@repo/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { SiteShell } from "#/components/site-shell";
+import { getCurrentLocale } from "#/lib/i18n";
+import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/tags/")({
   component: TagsPage,
 });
 
 function TagsPage() {
-  const posts = getPublishedPosts();
+  const locale = getCurrentLocale();
+  const posts = getPublishedPostsForLocale(locale);
+  const tags = getTagsForLocale(locale);
 
   return (
     <SiteShell>
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-semibold tracking-normal text-[#1e2b25] dark:text-white">
-          Tags
+          {m.tags_title()}
         </h1>
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {tags.map((tag) => {
@@ -32,7 +36,7 @@ function TagsPage() {
                 <div className="flex items-start justify-between gap-4">
                   <h2 className="text-2xl font-semibold">{tag.name}</h2>
                   <span className="rounded-sm bg-[#e7d36a] px-2 py-1 text-xs text-[#26312c]">
-                    {count} posts
+                    {m.posts_count({ count })}
                   </span>
                 </div>
                 <p className="mt-3 text-sm leading-6 text-[#64716a] dark:text-[#aeb8b1]">

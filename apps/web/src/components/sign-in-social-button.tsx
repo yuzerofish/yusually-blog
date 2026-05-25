@@ -3,6 +3,8 @@ import { Button } from "@repo/ui/components/button";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import { m } from "#/paraglide/messages.js";
+
 interface SocialLoginButtonProps {
   provider: string;
   icon: React.ReactNode;
@@ -25,7 +27,7 @@ export function SignInSocialButton(props: SocialLoginButtonProps) {
         },
         {
           onError: ({ error }) => {
-            toast.error(error.message || `An error occurred during ${providerLabel} sign-in.`);
+            toast.error(error.message || m.login_social_error({ provider: providerLabel }));
           },
         },
       ),
@@ -40,7 +42,7 @@ export function SignInSocialButton(props: SocialLoginButtonProps) {
       onClick={() => mutation.mutate()}
     >
       {props.icon}
-      Login with {providerLabel}
+      {m.login_with_provider({ provider: providerLabel })}
     </Button>
   );
 }

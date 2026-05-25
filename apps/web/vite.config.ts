@@ -1,3 +1,4 @@
+import { paraglideVitePlugin } from "@inlang/paraglide-js";
 import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
@@ -42,6 +43,15 @@ export default defineConfig({
   },
   plugins: [
     devtools(),
+    paraglideVitePlugin({
+      project: "./project.inlang",
+      outdir: "./src/paraglide",
+      emitGitIgnore: false,
+      emitTsDeclarations: true,
+      isServer: "import.meta.env.SSR",
+      outputStructure: "locale-modules",
+      strategy: ["cookie", "globalVariable", "baseLocale"],
+    }),
     tanstackStart(),
     // https://tanstack.com/start/latest/docs/framework/react/guide/hosting
     nitro({

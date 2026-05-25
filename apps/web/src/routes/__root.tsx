@@ -1,4 +1,5 @@
 import type { AuthQueryResult } from "@repo/auth/tanstack/queries";
+import { getSiteSettingsForLocale } from "@repo/core";
 import { Toaster } from "@repo/ui/components/sonner";
 import { ThemeProvider } from "@repo/ui/lib/theme-provider";
 import { a11yDevtoolsPlugin } from "@tanstack/devtools-a11y/react";
@@ -8,6 +9,9 @@ import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+
+import { getCurrentLocale } from "#/lib/i18n";
+import { m } from "#/paraglide/messages.js";
 
 import appCss from "#/styles.css?url";
 
@@ -22,57 +26,62 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   // beforeLoad: ({ context }) => {
   //   context.queryClient.prefetchQuery(authQueryOptions());
   // },
-  head: () => ({
-    meta: [
-      {
-        charSet: "utf-8",
-      },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1",
-      },
-      {
-        title: "Cloud Blog CMS",
-      },
-      {
-        name: "description",
-        content:
-          "Cloudflare-native personal blog CMS with visual writing, Markdown publishing, and AI automation.",
-      },
-      {
-        property: "og:title",
-        content: "Cloud Blog CMS",
-      },
-      {
-        property: "og:description",
-        content: "A reusable Cloudflare-native blog CMS template and AI initialization Skill.",
-      },
-      {
-        property: "og:image",
-        content: "/og-default.svg",
-      },
-    ],
-    links: [
-      {
-        rel: "icon",
-        href: "/og-default.svg",
-      },
-      {
-        rel: "alternate",
-        type: "application/rss+xml",
-        title: "Cloud Blog CMS RSS",
-        href: "/rss.xml",
-      },
-      { rel: "stylesheet", href: appCss },
-    ],
-  }),
+  head: () => {
+    const siteSettings = getSiteSettingsForLocale(getCurrentLocale());
+
+    return {
+      meta: [
+        {
+          charSet: "utf-8",
+        },
+        {
+          name: "viewport",
+          content: "width=device-width, initial-scale=1",
+        },
+        {
+          title: siteSettings.name,
+        },
+        {
+          name: "description",
+          content: siteSettings.description,
+        },
+        {
+          property: "og:title",
+          content: siteSettings.name,
+        },
+        {
+          property: "og:description",
+          content: siteSettings.description,
+        },
+        {
+          property: "og:image",
+          content: "/og-default.svg",
+        },
+      ],
+      links: [
+        {
+          rel: "icon",
+          href: "/og-default.svg",
+        },
+        {
+          rel: "alternate",
+          type: "application/rss+xml",
+          title: m.rss_feed(),
+          href: "/rss.xml",
+        },
+        { rel: "stylesheet", href: appCss },
+      ],
+    };
+  },
   shellComponent: RootDocument,
 });
 
 function RootDocument({ children }: { readonly children: React.ReactNode }) {
+  const locale = getCurrentLocale();
+
   return (
     // suppress since we're updating the "dark" class in ThemeProvider
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale === "zh" ? "zh-CN" : "en"} suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>

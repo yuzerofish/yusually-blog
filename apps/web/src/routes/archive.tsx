@@ -1,20 +1,22 @@
-import { getArchiveGroups } from "@repo/core";
+import { getArchiveGroupsForLocale } from "@repo/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { SiteShell } from "#/components/site-shell";
+import { getCurrentLocale } from "#/lib/i18n";
+import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/archive")({
   component: ArchivePage,
 });
 
 function ArchivePage() {
-  const groups = getArchiveGroups();
+  const groups = getArchiveGroupsForLocale(getCurrentLocale());
 
   return (
     <SiteShell>
       <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-semibold tracking-normal text-[#1e2b25] dark:text-white">
-          Archive
+          {m.archive_title()}
         </h1>
         <div className="mt-8 grid gap-5">
           {groups.map((group) => (

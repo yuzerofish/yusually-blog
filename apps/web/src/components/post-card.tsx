@@ -1,14 +1,18 @@
-import type { Post, Project } from "@repo/core";
+import type { Post, Project, SupportedLocale } from "@repo/core";
 import { formatDate } from "@repo/core";
 import { Link } from "@tanstack/react-router";
 import { ArrowUpRightIcon, CalendarDaysIcon } from "lucide-react";
 
+import { getCurrentLocale } from "#/lib/i18n";
+import { m } from "#/paraglide/messages.js";
+
 type PostCardProps = {
   readonly post: Post;
   readonly priority?: boolean;
+  readonly locale?: SupportedLocale;
 };
 
-export function PostCard({ post, priority = false }: PostCardProps) {
+export function PostCard({ post, priority = false, locale = getCurrentLocale() }: PostCardProps) {
   return (
     <article className="grid overflow-hidden rounded-lg border border-[#26312c]/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md md:grid-cols-[0.42fr_0.58fr] dark:border-white/10 dark:bg-[#171d1a]">
       <Link to="/blog/$slug" params={{ slug: post.slug }} className="block min-h-56 bg-[#d7d0c1]">
@@ -23,10 +27,10 @@ export function PostCard({ post, priority = false }: PostCardProps) {
         <div className="flex flex-wrap items-center gap-2 text-xs text-[#64716a] dark:text-[#aeb8b1]">
           <span className="inline-flex items-center gap-1">
             <CalendarDaysIcon className="size-3.5" />
-            {formatDate(post.publishedAt)}
+            {formatDate(post.publishedAt, locale)}
           </span>
           {post.pinned ? (
-            <span className="rounded-sm bg-[#e7d36a] px-2 py-0.5 text-[#26312c]">Pinned</span>
+            <span className="rounded-sm bg-[#e7d36a] px-2 py-0.5 text-[#26312c]">{m.pinned()}</span>
           ) : null}
         </div>
         <Link to="/blog/$slug" params={{ slug: post.slug }} className="group mt-3">
