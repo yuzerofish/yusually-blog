@@ -2,13 +2,14 @@ import { deletePost, updatePost } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { findPost, getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
+import { deleteD1Post, getD1PostByIdOrSlug, updateD1Post } from "#/lib/cms-d1";
 
 export const Route = createFileRoute("/api/posts/$id")({
   server: {
     handlers: {
-      GET: ({ params, request }: { params: { id: string }; request: Request }) => {
+      GET: async ({ params, request }: { params: { id: string }; request: Request }) => {
         const locale = getApiLocale(request);
-        const post = findPost(params.id, locale);
+        const post = (await getD1PostByIdOrSlug(params.id)) ?? findPost(params.id, locale);
 
         if (!post) {
           return jsonResponse({ error: "Post not found" }, { status: 404 });
@@ -18,7 +19,8 @@ export const Route = createFileRoute("/api/posts/$id")({
       },
       PATCH: async ({ params, request }: { params: { id: string }; request: Request }) => {
         const locale = getApiLocale(request);
-        const post = findPost(params.id, locale);
+        const persistedPost = await getD1PostByIdOrSlug(params.id);
+        const post = persistedPost ?? findPost(params.id, locale);
 
         if (!post) {
           return jsonResponse({ error: "Post not found" }, { status: 404 });
@@ -26,21 +28,24 @@ export const Route = createFileRoute("/api/posts/$id")({
 
         const body = await readJsonBody<Record<string, unknown>>(request);
 
-        const updated = updatePost(post.id, body);
+        const updated = persistedPost
+          ? await updateD1Post(post.id, body)
+          : updatePost(post.id, body);
 
         return jsonResponse({
           data: updated ?? post,
           requiredScope: "posts:write",
         });
       },
-      DELETE: ({ params, request }: { params: { id: string }; request: Request }) => {
-        const post = findPost(params.id, getApiLocale(request));
+      DELETE: async ({ params, request }: { params: { id: string }; request: Request }) => {
+        const post =
+          (await getD1PostByIdOrSlug(params.id)) ?? findPost(params.id, getApiLocale(request));
 
         if (!post) {
           return jsonResponse({ error: "Post not found" }, { status: 404 });
         }
 
-        const deleted = deletePost(post.id);
+        const deleted = (await deleteD1Post(post.id)) ?? deletePost(post.id);
 
         return jsonResponse({ data: deleted, requiredScope: "posts:write" });
       },

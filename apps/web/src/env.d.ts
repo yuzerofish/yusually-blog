@@ -14,3 +14,7 @@ type CloudflareBindings = {
   CMS_TURNSTILE_SECRET_KEY: string;
   VITE_TURNSTILE_SITE_KEY: string;
 };
+
+declare module "cloudflare:workers" {
+  export const env: CloudflareBindings;
+}

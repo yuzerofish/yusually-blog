@@ -1,7 +1,7 @@
-import { createPost } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { getApiLocale, importPreview, jsonResponse, readJsonBody } from "#/lib/cms-api";
+import { createD1Post } from "#/lib/cms-d1";
 
 export const Route = createFileRoute("/api/import/markdown")({
   server: {
@@ -9,7 +9,7 @@ export const Route = createFileRoute("/api/import/markdown")({
       POST: async ({ request }: { request: Request }) => {
         const body = await readJsonBody<{ filename: string; contentMarkdown: string }>(request);
         const locale = getApiLocale(request);
-        const post = createPost({
+        const post = await createD1Post({
           title: body.filename?.replace(/\.(md|mdx)$/i, "") || "Imported Markdown post",
           contentMarkdown:
             body.contentMarkdown || `# ${body.filename ?? "Imported Markdown post"}\n`,

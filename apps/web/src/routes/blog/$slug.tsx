@@ -1,32 +1,22 @@
-import {
-  formatDate,
-  getApprovedCommentsForPost,
-  getPostBySlug,
-  getRelatedPosts,
-  localizeComment,
-  localizePost,
-} from "@repo/core";
+import { formatDate, localizeComment, localizePost } from "@repo/core";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { MessageSquareIcon, RssIcon } from "lucide-react";
 
 import { CommentForm } from "#/components/comment-form";
 import { SiteShell } from "#/components/site-shell";
+import { $getBlogPostPage } from "#/lib/cms-server";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/blog/$slug")({
-  loader: ({ params }) => {
-    const post = getPostBySlug(params.slug);
+  loader: async ({ params }) => {
+    const data = await $getBlogPostPage({ data: { slug: params.slug } });
 
-    if (!post) {
+    if (!data) {
       throw notFound();
     }
 
-    return {
-      post,
-      comments: getApprovedCommentsForPost(post.id),
-      relatedPosts: getRelatedPosts(post.id),
-    };
+    return data;
   },
   head: ({ loaderData }) => {
     if (!loaderData) {

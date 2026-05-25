@@ -1,0 +1,467 @@
+import {
+  htmlToText,
+  markdownToText,
+  renderMarkdownToHtml,
+  sanitizeHtml,
+  siteSettings,
+  type ApiTokenScope,
+  type Comment,
+  type CommentStatus,
+  type ContentStatus,
+  type Post,
+  type SupportedLocale,
+} from "@repo/core";
+import { env } from "cloudflare:workers";
+
+type D1PostRow = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  cover_image: string | null;
+  content_markdown: string;
+  content_html: string;
+  content_text: string;
+  status: ContentStatus;
+  source: Post["source"];
+  featured: number;
+  pinned: number;
+  comments_enabled: number;
+  seo_title: string | null;
+  seo_description: string | null;
+  i18n: string | null;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+type D1CommentRow = {
+  id: string;
+  post_id: string;
+  parent_id: string | null;
+  author_name: string;
+  author_email_hash: string;
+  author_website: string | null;
+  body: string;
+  i18n: string | null;
+  status: CommentStatus;
+  created_at: string;
+};
+
+type PostInput = Partial<{
+  title: string;
+  slug: string;
+  excerpt: string;
+  coverImage: string;
+  contentMarkdown: string;
+  contentHtml: string;
+  status: ContentStatus;
+  locale: SupportedLocale;
+}>;
+
+type CommentInput = {
+  postSlug: string;
+  parentId?: string | null;
+  authorName?: string;
+  authorEmail?: string;
+  authorWebsite?: string | null;
+  body?: string;
+  locale?: SupportedLocale;
+};
+
+type ListPostsOptions = {
+  includeUnpublished?: boolean;
+  query?: string;
+};
+
+type D1Result<TValue> = { data: TValue } | { error: string };
+
+export async function listD1Posts({
+  includeUnpublished = false,
+  query = "",
+}: ListPostsOptions = {}) {
+  const normalizedQuery = query.trim().toLowerCase();
+  const where = includeUnpublished ? "status != 'deleted'" : "status = 'published'";
+  const params: string[] = [];
+  let sql = `select * from posts where ${where}`;
+
+  if (normalizedQuery) {
+    sql +=
+      " and (lower(title) like ? or lower(excerpt) like ? or lower(content_text) like ? or lower(slug) like ?)";
+    const like = `%${normalizedQuery}%`;
+    params.push(like, like, like, like);
+  }
+
+  sql += " order by pinned desc, published_at desc, updated_at desc";
+
+  const result = await env.CMS_DB.prepare(sql)
+    .bind(...params)
+    .all<D1PostRow>();
+
+  return result.results.map(rowToPost);
+}
+
+export async function getD1PostBySlug(slug: string, includeUnpublished = false) {
+  const result = await env.CMS_DB.prepare(
+    `select * from posts where slug = ? and ${includeUnpublished ? "status != 'deleted'" : "status = 'published'"} limit 1`,
+  )
+    .bind(slug)
+    .first<D1PostRow>();
+
+  return result ? rowToPost(result) : undefined;
+}
+
+export async function getD1PostByIdOrSlug(idOrSlug: string, includeUnpublished = true) {
+  const result = await env.CMS_DB.prepare(
+    `select * from posts where (id = ? or slug = ?) and ${includeUnpublished ? "status != 'deleted'" : "status = 'published'"} limit 1`,
+  )
+    .bind(idOrSlug, idOrSlug)
+    .first<D1PostRow>();
+
+  return result ? rowToPost(result) : undefined;
+}
+
+export async function createD1Post(input: PostInput) {
+  const title = input.title?.trim() || "Untitled post";
+  const slug = await uniqueD1Slug(input.slug?.trim() || slugify(title));
+  const now = new Date().toISOString();
+  const contentMarkdown = input.contentMarkdown?.trim() || `# ${title}\n`;
+  const contentHtml = input.contentHtml
+    ? sanitizeHtml(input.contentHtml)
+    : renderMarkdownToHtml(contentMarkdown);
+  const contentText = input.contentHtml ? htmlToText(contentHtml) : markdownToText(contentMarkdown);
+  const status = input.status ?? "draft";
+  const post: Post = {
+    id: `post_${crypto.randomUUID()}`,
+    title,
+    slug,
+    excerpt: input.excerpt?.trim() || contentText.slice(0, 180),
+    coverImage: input.coverImage?.trim() || siteSettings.defaultOgImage,
+    contentMarkdown,
+    contentHtml,
+    contentText,
+    status,
+    source: "api",
+    featured: false,
+    pinned: false,
+    commentsEnabled: true,
+    publishedAt: now,
+    updatedAt: now,
+    authorName: siteSettings.authorName,
+    tags: [],
+    seoTitle: title,
+    seoDescription: input.excerpt?.trim() || contentText.slice(0, 160),
+  };
+
+  if (input.locale === "zh") {
+    post.i18n = {
+      title: { zh: title },
+      excerpt: { zh: post.excerpt },
+      contentMarkdown: { zh: post.contentMarkdown },
+      contentHtml: { zh: post.contentHtml },
+      contentText: { zh: post.contentText },
+      seoTitle: { zh: post.seoTitle },
+      seoDescription: { zh: post.seoDescription },
+    };
+  }
+
+  await env.CMS_DB.prepare(
+    `insert into posts (
+      id, title, slug, excerpt, cover_image, content_markdown, content_html, content_text,
+      status, source, featured, pinned, comments_enabled, seo_title, seo_description,
+      i18n, published_at, created_at, updated_at
+    ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  )
+    .bind(
+      post.id,
+      post.title,
+      post.slug,
+      post.excerpt,
+      post.coverImage,
+      post.contentMarkdown,
+      post.contentHtml,
+      post.contentText,
+      post.status,
+      post.source,
+      post.featured ? 1 : 0,
+      post.pinned ? 1 : 0,
+      post.commentsEnabled ? 1 : 0,
+      post.seoTitle,
+      post.seoDescription,
+      post.i18n ? JSON.stringify(post.i18n) : null,
+      post.publishedAt,
+      now,
+      post.updatedAt,
+    )
+    .run();
+
+  return post;
+}
+
+export async function updateD1Post(idOrSlug: string, input: PostInput) {
+  const post = await getD1PostByIdOrSlug(idOrSlug);
+
+  if (!post) {
+    return undefined;
+  }
+
+  const title = input.title?.trim() || post.title;
+  const contentMarkdown = input.contentMarkdown?.trim() ?? post.contentMarkdown;
+  const contentHtml =
+    input.contentHtml !== undefined
+      ? sanitizeHtml(input.contentHtml)
+      : input.contentMarkdown !== undefined
+        ? renderMarkdownToHtml(contentMarkdown)
+        : post.contentHtml;
+  const contentText =
+    input.contentHtml !== undefined
+      ? htmlToText(contentHtml)
+      : input.contentMarkdown !== undefined
+        ? markdownToText(contentMarkdown)
+        : post.contentText;
+  const status = input.status ?? post.status;
+  const now = new Date().toISOString();
+  const publishedAt =
+    status === "published" && post.status !== "published" ? now : post.publishedAt;
+
+  await env.CMS_DB.prepare(
+    `update posts set
+      title = ?, excerpt = ?, cover_image = ?, content_markdown = ?, content_html = ?,
+      content_text = ?, status = ?, seo_title = ?, seo_description = ?, published_at = ?,
+      updated_at = ?
+    where id = ?`,
+  )
+    .bind(
+      title,
+      input.excerpt !== undefined ? input.excerpt.trim() : post.excerpt,
+      input.coverImage !== undefined
+        ? input.coverImage.trim() || siteSettings.defaultOgImage
+        : post.coverImage,
+      contentMarkdown,
+      contentHtml,
+      contentText,
+      status,
+      title,
+      input.excerpt !== undefined ? input.excerpt.trim() : post.seoDescription,
+      publishedAt,
+      now,
+      post.id,
+    )
+    .run();
+
+  return getD1PostByIdOrSlug(post.id);
+}
+
+export async function deleteD1Post(idOrSlug: string) {
+  return updateD1Post(idOrSlug, { status: "deleted" });
+}
+
+export async function createD1Comment(input: CommentInput): Promise<D1Result<Comment>> {
+  const post = await getD1PostBySlug(input.postSlug);
+
+  if (!post || !post.commentsEnabled || !siteSettings.commentsEnabled) {
+    return { error: "Post not found or comments are disabled" };
+  }
+
+  const body = input.body?.trim() ?? "";
+  const authorName = input.authorName?.trim() ?? "";
+  const authorEmail = input.authorEmail?.trim().toLowerCase() ?? "";
+  const authorWebsite = input.authorWebsite?.trim() || null;
+
+  if (!authorName || !authorEmail || !body) {
+    return { error: "Name, email, and comment body are required" };
+  }
+
+  if (body.length < 2 || body.length > 4000) {
+    return { error: "Comment body must be between 2 and 4000 characters" };
+  }
+
+  if (countLinks(body) > 3) {
+    return { error: "Comment contains too many links" };
+  }
+
+  const now = new Date().toISOString();
+  const comment: Comment = {
+    id: `comment_${crypto.randomUUID()}`,
+    postId: post.id,
+    parentId: input.parentId ?? null,
+    authorName,
+    authorEmailHash: await digestText(authorEmail),
+    authorWebsite,
+    body,
+    status: "pending",
+    createdAt: now,
+  };
+
+  if (input.locale === "zh") {
+    comment.i18n = {
+      body: { zh: body },
+    };
+  }
+
+  await env.CMS_DB.prepare(
+    `insert into comments (
+      id, post_id, parent_id, author_name, author_email_hash, author_website,
+      body, i18n, status, created_at, updated_at
+    ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  )
+    .bind(
+      comment.id,
+      comment.postId,
+      comment.parentId,
+      comment.authorName,
+      comment.authorEmailHash,
+      comment.authorWebsite,
+      comment.body,
+      comment.i18n ? JSON.stringify(comment.i18n) : null,
+      comment.status,
+      comment.createdAt,
+      now,
+    )
+    .run();
+
+  return { data: comment };
+}
+
+export async function listD1ApprovedComments(postId: string) {
+  const result = await env.CMS_DB.prepare(
+    "select * from comments where post_id = ? and status = 'approved' order by created_at asc",
+  )
+    .bind(postId)
+    .all<D1CommentRow>();
+
+  return result.results.map(rowToComment);
+}
+
+export async function moderateD1Comment(id: string, status: Exclude<CommentStatus, "pending">) {
+  await env.CMS_DB.prepare("update comments set status = ?, updated_at = ? where id = ?")
+    .bind(status, new Date().toISOString(), id)
+    .run();
+
+  const row = await env.CMS_DB.prepare("select * from comments where id = ? limit 1")
+    .bind(id)
+    .first<D1CommentRow>();
+
+  return row ? rowToComment(row) : undefined;
+}
+
+export async function createD1ApiToken(input: {
+  name?: string;
+  scopes?: ApiTokenScope[];
+  expiresAt?: string | null;
+}) {
+  const secret = `blogcms_${crypto.randomUUID().replace(/-/g, "")}`;
+  const token = {
+    id: `token_${crypto.randomUUID()}`,
+    name: input.name?.trim() || "Automation token",
+    tokenPrefix: secret.slice(0, 16),
+    scopes: input.scopes?.length ? input.scopes : ["posts:read", "posts:write"],
+    expiresAt: input.expiresAt ?? null,
+    lastUsedAt: null,
+    revokedAt: null,
+    createdAt: new Date().toISOString(),
+  };
+
+  await env.CMS_DB.prepare(
+    "insert into api_tokens (id, name, token_hash, scopes, expires_at, last_used_at, revoked_at, created_at) values (?, ?, ?, ?, ?, ?, ?, ?)",
+  )
+    .bind(
+      token.id,
+      token.name,
+      await digestText(secret),
+      JSON.stringify(token.scopes),
+      token.expiresAt,
+      token.lastUsedAt,
+      token.revokedAt,
+      token.createdAt,
+    )
+    .run();
+
+  return { token, secret };
+}
+
+function rowToPost(row: D1PostRow): Post {
+  return {
+    id: row.id,
+    title: row.title,
+    slug: row.slug,
+    excerpt: row.excerpt,
+    coverImage: row.cover_image || siteSettings.defaultOgImage,
+    contentMarkdown: row.content_markdown,
+    contentHtml: row.content_html,
+    contentText: row.content_text,
+    status: row.status,
+    source: row.source,
+    featured: Boolean(row.featured),
+    pinned: Boolean(row.pinned),
+    commentsEnabled: Boolean(row.comments_enabled),
+    publishedAt: row.published_at ?? row.created_at,
+    updatedAt: row.updated_at,
+    authorName: siteSettings.authorName,
+    tags: [],
+    seoTitle: row.seo_title ?? row.title,
+    seoDescription: row.seo_description ?? row.excerpt,
+    i18n: parseJson(row.i18n),
+  };
+}
+
+function rowToComment(row: D1CommentRow): Comment {
+  return {
+    id: row.id,
+    postId: row.post_id,
+    parentId: row.parent_id,
+    authorName: row.author_name,
+    authorEmailHash: row.author_email_hash,
+    authorWebsite: row.author_website,
+    body: row.body,
+    status: row.status,
+    createdAt: row.created_at,
+    i18n: parseJson(row.i18n),
+  };
+}
+
+async function uniqueD1Slug(base: string) {
+  const normalized = base || "untitled-post";
+  let candidate = normalized;
+  let index = 2;
+
+  while (await getD1PostBySlug(candidate, true)) {
+    candidate = `${normalized}-${index}`;
+    index += 1;
+  }
+
+  return candidate;
+}
+
+function parseJson<TValue>(value: string | null): TValue | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  try {
+    return JSON.parse(value) as TValue;
+  } catch {
+    return undefined;
+  }
+}
+
+function countLinks(value: string) {
+  return (value.match(/https?:\/\//g) ?? []).length;
+}
+
+async function digestText(value: string) {
+  const data = new TextEncoder().encode(value);
+  const hash = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(hash))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 96);
+}

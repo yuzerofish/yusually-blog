@@ -2,6 +2,7 @@ import { createComment, resolveLocale } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { jsonResponse, readJsonBody } from "#/lib/cms-api";
+import { createD1Comment, getD1PostBySlug } from "#/lib/cms-d1";
 import { checkCommentRateLimit, getClientIp, verifyTurnstile } from "#/lib/comment-guard";
 
 export const Route = createFileRoute("/api/comments")({
@@ -40,14 +41,21 @@ export const Route = createFileRoute("/api/comments")({
           return jsonResponse({ error: rateLimit.error }, { status: 429 });
         }
 
-        const result = await createComment({
+        const commentInput = {
           postSlug: body.postSlug ?? "",
           authorName: body.authorName,
           authorEmail: body.authorEmail,
           authorWebsite: body.authorWebsite,
           body: body.body,
           locale: resolveLocale(new URL(request.url).searchParams.get("lang") ?? undefined),
-        });
+        };
+        const persistedPost = await getD1PostBySlug(commentInput.postSlug);
+        const persistedResult = persistedPost ? await createD1Comment(commentInput) : undefined;
+        const result = persistedResult
+          ? "data" in persistedResult
+            ? { comment: persistedResult.data }
+            : { error: persistedResult.error }
+          : await createComment(commentInput);
 
         if ("error" in result) {
           return jsonResponse({ error: result.error }, { status: 400 });

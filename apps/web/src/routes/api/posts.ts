@@ -2,34 +2,43 @@ import { localizePost, resolveLocale, searchPosts } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { createPostPreview, getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
+import { createD1Post, listD1Posts } from "#/lib/cms-d1";
 
 export const Route = createFileRoute("/api/posts")({
   server: {
     handlers: {
-      GET: ({ request }: { request: Request }) => {
+      GET: async ({ request }: { request: Request }) => {
         const locale = getApiLocale(request);
         const url = new URL(request.url);
         const includeUnpublished = url.searchParams.get("status") === "all";
         const query = url.searchParams.get("q") ?? "";
         const tagSlug = url.searchParams.get("tag") ?? undefined;
+        const persistedPosts = await listD1Posts({ includeUnpublished, query });
+        const seededPosts = searchPosts({ includeUnpublished, query, tagSlug });
+        const persistedSlugs = new Set(persistedPosts.map((post) => post.slug));
+        const posts = [
+          ...persistedPosts,
+          ...seededPosts.filter((post) => !persistedSlugs.has(post.slug)),
+        ];
 
         return jsonResponse({
-          data: searchPosts({ includeUnpublished, query, tagSlug }).map((post) =>
-            localizePost(post, locale),
-          ),
+          data: posts.map((post) => localizePost(post, locale)),
           locale,
         });
       },
       POST: async ({ request }: { request: Request }) => {
         const body = await readJsonBody<Parameters<typeof createPostPreview>[0]>(request);
-        const post = createPostPreview({
+        const post = await createD1Post({
           ...body,
           locale: resolveLocale(body.locale),
         });
 
         return jsonResponse(
           {
-            data: post,
+            data: {
+              ...post,
+              url: `${new URL(request.url).origin}/blog/${post.slug}`,
+            },
             requiredScope: "posts:write",
           },
           { status: 201 },
