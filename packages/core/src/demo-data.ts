@@ -284,12 +284,25 @@ export const projects: Project[] = [
       "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1600&q=80",
     projectUrl: "https://cms.01mvp.com",
     githubUrl: "https://github.com/01mvp/blog-starter",
+    contentMarkdown:
+      "Cloud Blog CMS Template packages the public blog, admin CMS, CLI, OpenAPI, D1 records, and R2-backed assets into one reusable Cloudflare-native starter.",
+    contentHtml:
+      "<p>Cloud Blog CMS Template packages the public blog, admin CMS, CLI, OpenAPI, D1 records, and R2-backed assets into one reusable Cloudflare-native starter.</p>",
     tags: [cloudflare, cms],
+    screenshots: [],
+    status: "published",
     publishedAt: "2026-05-24T10:00:00.000Z",
+    updatedAt: "2026-05-24T10:00:00.000Z",
     i18n: {
       title: { zh: "Cloud Blog CMS 模板" },
       excerpt: {
         zh: "可复用的 TanStack Start 模板，内置 Workers、D1、R2、RSS、站点地图、评论和管理后台工作流。",
+      },
+      contentMarkdown: {
+        zh: "Cloud Blog CMS 模板把公开博客、管理后台、CLI、OpenAPI、D1 记录和 R2 资源打包成一个可复用的 Cloudflare 原生 starter。",
+      },
+      contentHtml: {
+        zh: "<p>Cloud Blog CMS 模板把公开博客、管理后台、CLI、OpenAPI、D1 记录和 R2 资源打包成一个可复用的 Cloudflare 原生 starter。</p>",
       },
     },
   },
@@ -303,12 +316,25 @@ export const projects: Project[] = [
       "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1600&q=80",
     projectUrl: "https://demo.01mvp.com",
     githubUrl: "https://github.com/01mvp/blog-starter/tree/main/skills/cloud-blog-cms",
+    contentMarkdown:
+      "The cloud-blog-cms Skill guides an agent through resource creation, settings, first content, deploy, smoke checks, and backup validation.",
+    contentHtml:
+      "<p>The cloud-blog-cms Skill guides an agent through resource creation, settings, first content, deploy, smoke checks, and backup validation.</p>",
     tags: [ai, cloudflare],
+    screenshots: [],
+    status: "published",
     publishedAt: "2026-05-24T11:00:00.000Z",
+    updatedAt: "2026-05-24T11:00:00.000Z",
     i18n: {
       title: { zh: "cloud-blog-cms Skill" },
       excerpt: {
         zh: "用于初始化新博客、创建 Cloudflare 资源、部署并验证结果的 Agent 工作流。",
+      },
+      contentMarkdown: {
+        zh: "cloud-blog-cms Skill 引导 Agent 完成资源创建、站点设置、首篇内容、部署、冒烟检查和备份验证。",
+      },
+      contentHtml: {
+        zh: "<p>cloud-blog-cms Skill 引导 Agent 完成资源创建、站点设置、首篇内容、部署、冒烟检查和备份验证。</p>",
       },
     },
   },

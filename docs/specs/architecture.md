@@ -27,18 +27,18 @@ Cloud Blog CMS is a TanStack Start monorepo built for Cloudflare Workers. The re
 - `primaryLanguage` is selected during initialization and stored in D1 site settings.
 - `themePreset` is stored in site settings and drives the public site, admin UI, and auth screens through shared CSS tokens. Supported presets are `claude`, `apple`, and `editorial`.
 - Public product copy includes English and Chinese on the home page.
-- Content records preserve bilingual fields through `i18n` JSON for posts, tags, projects, comments, site name, site description, author bio, and SEO fields.
+- Content records preserve bilingual fields through `i18n` JSON for posts, pages, tags, projects, comments, site name, site description, author bio, and SEO fields.
 
 ## Public And Admin Surfaces
 
 - Public routes: home, blog list, post detail, tags, archive, projects, about, RSS, feed, sitemap, robots, API docs, and OpenAPI JSON.
-- Admin routes: overview, posts, assets, comments, settings, and scoped API tokens.
+- Admin routes: overview, posts, pages, projects, assets, comments, settings, and scoped API tokens.
 - Admin auth uses D1-backed email/password users and D1 sessions.
 - Automation tokens are stored hashed in D1 and checked by scope.
 
 ## Automation Flow
 
-The Skill and CLI use the same HTTP API as the admin UI. A generated site can be initialized by provisioning Cloudflare resources, applying D1 migrations, creating the first admin, logging in to mint a scoped token, writing site settings, publishing the first bilingual post, uploading assets, submitting and approving a comment, and exporting a backup.
+The Skill and CLI use the same HTTP API as the admin UI. A generated site can be initialized by provisioning Cloudflare resources, applying D1 migrations, creating the first admin, logging in to mint a scoped token, writing site settings, publishing the first bilingual post, updating static pages and projects, uploading assets, submitting and approving a comment, and exporting a backup.
 
 ## Import Flow
 
@@ -46,7 +46,7 @@ Markdown imports parse simple frontmatter and preserve Markdown as the source of
 
 ## Export And Backup Flow
 
-JSON export remains the lightweight API response for automation. ZIP export packages Markdown, HTML, site settings, posts, comments, assets, tags, projects, and a manifest under `export/`, stores the archive in R2, and rewrites known local asset URLs to relative paths inside the archive. Manual backups use `POST /api/backups`; scheduled backups use the same ZIP builder from the Worker `scheduled` handler.
+JSON export remains the lightweight API response for automation. ZIP export packages Markdown, HTML, site settings, posts, pages, comments, assets, tags, projects, and a manifest under `export/`, stores the archive in R2, and rewrites known local asset URLs to relative paths inside the archive. Manual backups use `POST /api/backups`; scheduled backups use the same ZIP builder from the Worker `scheduled` handler.
 
 ## Email Flow
 

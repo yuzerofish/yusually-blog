@@ -903,6 +903,28 @@ export const admin_nav_overview: ((
 /**
  * | output |
  * | --- |
+ * | "Pages" |
+ *
+ * @param {Admin_Nav_PagesInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_nav_pages: ((
+  inputs?: Admin_Nav_PagesInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Nav_PagesInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Posts" |
  *
  * @param {Admin_Nav_PostsInputs} inputs
@@ -917,6 +939,28 @@ export const admin_nav_posts: ((
 ) => LocalizedString) &
   import("../runtime.js").MessageMetadata<
     Admin_Nav_PostsInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Projects" |
+ *
+ * @param {Admin_Nav_ProjectsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_nav_projects: ((
+  inputs?: Admin_Nav_ProjectsInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Nav_ProjectsInputs,
     {
       locale?: "en" | "zh";
     },
@@ -969,6 +1013,50 @@ export const admin_new_post: ((
 /**
  * | output |
  * | --- |
+ * | "New page" |
+ *
+ * @param {Admin_New_PageInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_new_page: ((
+  inputs?: Admin_New_PageInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_New_PageInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "New project" |
+ *
+ * @param {Admin_New_ProjectInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_new_project: ((
+  inputs?: Admin_New_ProjectInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_New_ProjectInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Admin" |
  *
  * @param {Admin_Overview_EyebrowInputs} inputs
@@ -1005,6 +1093,72 @@ export const admin_overview_title: ((
 ) => LocalizedString) &
   import("../runtime.js").MessageMetadata<
     Admin_Overview_TitleInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Edit static Markdown pages such as About." |
+ *
+ * @param {Admin_Pages_DescriptionInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_pages_description: ((
+  inputs?: Admin_Pages_DescriptionInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Pages_DescriptionInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Page editor" |
+ *
+ * @param {Admin_Pages_Editor_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_pages_editor_title: ((
+  inputs?: Admin_Pages_Editor_TitleInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Pages_Editor_TitleInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Pages" |
+ *
+ * @param {Admin_Pages_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_pages_title: ((
+  inputs?: Admin_Pages_TitleInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Pages_TitleInputs,
     {
       locale?: "en" | "zh";
     },
@@ -1445,6 +1599,160 @@ export const admin_posts_view: ((
 ) => LocalizedString) &
   import("../runtime.js").MessageMetadata<
     Admin_Posts_ViewInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Manage portfolio entries, links, tags, screenshots, and Markdown notes." |
+ *
+ * @param {Admin_Projects_DescriptionInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_projects_description: ((
+  inputs?: Admin_Projects_DescriptionInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Projects_DescriptionInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Project editor" |
+ *
+ * @param {Admin_Projects_Editor_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_projects_editor_title: ((
+  inputs?: Admin_Projects_Editor_TitleInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Projects_Editor_TitleInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Projects" |
+ *
+ * @param {Admin_Projects_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_projects_title: ((
+  inputs?: Admin_Projects_TitleInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Projects_TitleInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Cover image" |
+ *
+ * @param {Admin_Project_CoverInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_project_cover: ((
+  inputs?: Admin_Project_CoverInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Project_CoverInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "GitHub URL" |
+ *
+ * @param {Admin_Project_Github_UrlInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_project_github_url: ((
+  inputs?: Admin_Project_Github_UrlInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Project_Github_UrlInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Project URL" |
+ *
+ * @param {Admin_Project_Live_UrlInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_project_live_url: ((
+  inputs?: Admin_Project_Live_UrlInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Project_Live_UrlInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Screenshots" |
+ *
+ * @param {Admin_Project_ScreenshotsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_project_screenshots: ((
+  inputs?: Admin_Project_ScreenshotsInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Project_ScreenshotsInputs,
     {
       locale?: "en" | "zh";
     },
@@ -4664,11 +4972,18 @@ export type Admin_Moderation_Queue_DetailInputs = {
 export type Admin_Nav_AssetsInputs = {};
 export type Admin_Nav_CommentsInputs = {};
 export type Admin_Nav_OverviewInputs = {};
+export type Admin_Nav_PagesInputs = {};
 export type Admin_Nav_PostsInputs = {};
+export type Admin_Nav_ProjectsInputs = {};
 export type Admin_Nav_SettingsInputs = {};
 export type Admin_New_PostInputs = {};
+export type Admin_New_PageInputs = {};
+export type Admin_New_ProjectInputs = {};
 export type Admin_Overview_EyebrowInputs = {};
 export type Admin_Overview_TitleInputs = {};
+export type Admin_Pages_DescriptionInputs = {};
+export type Admin_Pages_Editor_TitleInputs = {};
+export type Admin_Pages_TitleInputs = {};
 export type Admin_Posts_ActionsInputs = {};
 export type Admin_Posts_ArchiveInputs = {};
 export type Admin_Posts_Column_TitleInputs = {};
@@ -4693,6 +5008,13 @@ export type Admin_Posts_StatusInputs = {};
 export type Admin_Posts_TitleInputs = {};
 export type Admin_Posts_UpdatedInputs = {};
 export type Admin_Posts_ViewInputs = {};
+export type Admin_Projects_DescriptionInputs = {};
+export type Admin_Projects_Editor_TitleInputs = {};
+export type Admin_Projects_TitleInputs = {};
+export type Admin_Project_CoverInputs = {};
+export type Admin_Project_Github_UrlInputs = {};
+export type Admin_Project_Live_UrlInputs = {};
+export type Admin_Project_ScreenshotsInputs = {};
 export type Admin_Publish_PostInputs = {};
 export type Admin_Save_DraftInputs = {};
 export type Admin_Save_SettingsInputs = {};

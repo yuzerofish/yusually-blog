@@ -1,21 +1,21 @@
-import { getProjectsForLocale, localizeSiteSettings } from "@repo/core";
+import { localizeProject, localizeSiteSettings } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { ProjectCard } from "#/components/post-card";
 import { SiteShell } from "#/components/site-shell";
-import { $getSiteSettingsPageData } from "#/lib/cms-server";
+import { $getProjectsPageData } from "#/lib/cms-server";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/projects")({
-  loader: () => $getSiteSettingsPageData(),
+  loader: () => $getProjectsPageData(),
   component: ProjectsPage,
 });
 
 function ProjectsPage() {
   const data = Route.useLoaderData();
   const locale = getCurrentLocale();
-  const projects = getProjectsForLocale(locale);
+  const projects = data.projects.map((project) => localizeProject(project, locale));
   const siteSettings = localizeSiteSettings(data.siteSettings, locale);
 
   return (

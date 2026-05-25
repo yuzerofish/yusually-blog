@@ -10,10 +10,12 @@ import {
   type ApiToken,
   type ApiTokenScope,
   type Asset,
+  type CmsPage,
   type Comment,
   type CommentStatus,
   type ContentStatus,
   type Post,
+  type Project,
   type SiteSettings,
   type SupportedLocale,
   type Tag,
@@ -53,6 +55,39 @@ type D1CommentRow = {
   i18n: string | null;
   status: CommentStatus;
   created_at: string;
+};
+
+type D1PageRow = {
+  id: string;
+  title: string;
+  slug: string;
+  content_markdown: string;
+  content_html: string;
+  status: CmsPage["status"];
+  seo_title: string | null;
+  seo_description: string | null;
+  i18n: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+type D1ProjectRow = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  project_url: string | null;
+  github_url: string | null;
+  cover_image: string | null;
+  content_markdown: string;
+  content_html: string;
+  tags: string | null;
+  screenshots: string | null;
+  i18n: string | null;
+  status: Project["status"];
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
 };
 
 type D1AssetRow = {
@@ -107,6 +142,34 @@ type PostInput = Partial<{
   tags: string[];
   locale: SupportedLocale;
   i18n: Post["i18n"];
+}>;
+
+type PageInput = Partial<{
+  title: string;
+  slug: string;
+  contentMarkdown: string;
+  contentHtml: string;
+  status: CmsPage["status"];
+  seoTitle: string;
+  seoDescription: string;
+  locale: SupportedLocale;
+  i18n: CmsPage["i18n"];
+}>;
+
+type ProjectInput = Partial<{
+  title: string;
+  slug: string;
+  excerpt: string;
+  projectUrl: string;
+  githubUrl: string;
+  coverImage: string;
+  contentMarkdown: string;
+  contentHtml: string;
+  tags: string[];
+  screenshots: string[];
+  status: Project["status"];
+  locale: SupportedLocale;
+  i18n: Project["i18n"];
 }>;
 
 type CommentInput = {
@@ -479,6 +542,109 @@ function buildPostI18n(
   return next;
 }
 
+function buildPageI18n(
+  page: CmsPage,
+  input: PageInput,
+  normalized: {
+    contentHtml?: string;
+    contentMarkdown?: string;
+    title?: string;
+  },
+) {
+  if (input.i18n) {
+    return input.i18n;
+  }
+
+  if (input.locale !== "zh") {
+    return page.i18n ?? null;
+  }
+
+  const next = { ...page.i18n };
+  const localizedHtml =
+    normalized.contentHtml ??
+    (normalized.contentMarkdown !== undefined
+      ? renderMarkdownToHtml(normalized.contentMarkdown)
+      : undefined);
+  const localizedText =
+    normalized.contentHtml !== undefined
+      ? htmlToText(normalized.contentHtml)
+      : normalized.contentMarkdown !== undefined
+        ? markdownToText(normalized.contentMarkdown)
+        : undefined;
+
+  if (normalized.title !== undefined) {
+    next.title = { ...next.title, zh: normalized.title };
+  }
+
+  if (normalized.contentMarkdown !== undefined) {
+    next.contentMarkdown = { ...next.contentMarkdown, zh: normalized.contentMarkdown };
+  }
+
+  if (localizedHtml !== undefined) {
+    next.contentHtml = { ...next.contentHtml, zh: localizedHtml };
+  }
+
+  if (input.seoTitle !== undefined || normalized.title !== undefined) {
+    next.seoTitle = {
+      ...next.seoTitle,
+      zh: input.seoTitle?.trim() || normalized.title || page.seoTitle,
+    };
+  }
+
+  if (input.seoDescription !== undefined || localizedText !== undefined) {
+    next.seoDescription = {
+      ...next.seoDescription,
+      zh: input.seoDescription?.trim() || localizedText || page.seoDescription,
+    };
+  }
+
+  return next;
+}
+
+function buildProjectI18n(
+  project: Project,
+  input: ProjectInput,
+  normalized: {
+    contentHtml?: string;
+    contentMarkdown?: string;
+    excerpt?: string;
+    title?: string;
+  },
+) {
+  if (input.i18n) {
+    return input.i18n;
+  }
+
+  if (input.locale !== "zh") {
+    return project.i18n ?? null;
+  }
+
+  const next = { ...project.i18n };
+  const localizedHtml =
+    normalized.contentHtml ??
+    (normalized.contentMarkdown !== undefined
+      ? renderMarkdownToHtml(normalized.contentMarkdown)
+      : undefined);
+
+  if (normalized.title !== undefined) {
+    next.title = { ...next.title, zh: normalized.title };
+  }
+
+  if (normalized.excerpt !== undefined) {
+    next.excerpt = { ...next.excerpt, zh: normalized.excerpt };
+  }
+
+  if (normalized.contentMarkdown !== undefined) {
+    next.contentMarkdown = { ...next.contentMarkdown, zh: normalized.contentMarkdown };
+  }
+
+  if (localizedHtml !== undefined) {
+    next.contentHtml = { ...next.contentHtml, zh: localizedHtml };
+  }
+
+  return next;
+}
+
 export async function deleteD1Post(idOrSlug: string) {
   const post = await getD1PostByIdOrSlug(idOrSlug);
 
@@ -494,6 +660,364 @@ export async function deleteD1Post(idOrSlug: string) {
 
   return {
     ...post,
+    status: "deleted" as const,
+    updatedAt: now,
+  };
+}
+
+export async function listD1Pages({ includeUnpublished = false } = {}) {
+  const where = includeUnpublished ? "status != 'deleted'" : "status = 'published'";
+  const result = await env.CMS_DB.prepare(
+    `select * from pages where ${where} order by updated_at desc`,
+  ).all<D1PageRow>();
+
+  return result.results.map(rowToPage);
+}
+
+export async function getD1PageBySlug(slug: string, includeUnpublished = false) {
+  const row = await env.CMS_DB.prepare(
+    `select * from pages where slug = ? and ${includeUnpublished ? "status != 'deleted'" : "status = 'published'"} limit 1`,
+  )
+    .bind(slug)
+    .first<D1PageRow>();
+
+  return row ? rowToPage(row) : undefined;
+}
+
+export async function getD1PageByIdOrSlug(idOrSlug: string, includeUnpublished = true) {
+  const row = await env.CMS_DB.prepare(
+    `select * from pages where (id = ? or slug = ?) and ${includeUnpublished ? "status != 'deleted'" : "status = 'published'"} limit 1`,
+  )
+    .bind(idOrSlug, idOrSlug)
+    .first<D1PageRow>();
+
+  return row ? rowToPage(row) : undefined;
+}
+
+export async function createD1Page(input: PageInput) {
+  const title = input.title?.trim() || "Untitled page";
+  const slug = await uniqueD1PageSlug(input.slug?.trim() || slugify(title));
+  const now = new Date().toISOString();
+  const contentMarkdown = input.contentMarkdown?.trim() || `# ${title}\n`;
+  const contentHtml = input.contentHtml
+    ? sanitizeHtml(input.contentHtml)
+    : renderMarkdownToHtml(contentMarkdown);
+  const status = normalizeContentRecordStatus(input.status, "draft");
+  const page: CmsPage = {
+    id: `page_${crypto.randomUUID()}`,
+    title,
+    slug,
+    contentMarkdown,
+    contentHtml,
+    status,
+    seoTitle: input.seoTitle?.trim() || title,
+    seoDescription: input.seoDescription?.trim() || markdownToText(contentMarkdown).slice(0, 160),
+    createdAt: now,
+    updatedAt: now,
+    i18n: input.i18n,
+  };
+
+  if (input.locale === "zh") {
+    page.i18n = {
+      ...page.i18n,
+      title: { ...page.i18n?.title, zh: title },
+      contentMarkdown: { ...page.i18n?.contentMarkdown, zh: contentMarkdown },
+      contentHtml: { ...page.i18n?.contentHtml, zh: contentHtml },
+      seoTitle: { ...page.i18n?.seoTitle, zh: page.seoTitle },
+      seoDescription: { ...page.i18n?.seoDescription, zh: page.seoDescription },
+    };
+  }
+
+  await env.CMS_DB.prepare(
+    `insert into pages (
+      id, title, slug, content_markdown, content_html, status,
+      seo_title, seo_description, i18n, created_at, updated_at
+    ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  )
+    .bind(
+      page.id,
+      page.title,
+      page.slug,
+      page.contentMarkdown,
+      page.contentHtml,
+      page.status,
+      page.seoTitle,
+      page.seoDescription,
+      page.i18n ? JSON.stringify(page.i18n) : null,
+      page.createdAt,
+      page.updatedAt,
+    )
+    .run();
+
+  return (await getD1PageByIdOrSlug(page.id)) ?? page;
+}
+
+export async function updateD1Page(idOrSlug: string, input: PageInput) {
+  const page = await getD1PageByIdOrSlug(idOrSlug);
+
+  if (!page) {
+    return undefined;
+  }
+
+  const localizedUpdate = input.locale === "zh";
+  const inputTitle = input.title?.trim();
+  const inputMarkdown = input.contentMarkdown?.trim();
+  const inputHtml = input.contentHtml !== undefined ? sanitizeHtml(input.contentHtml) : undefined;
+  const title = localizedUpdate ? page.title : inputTitle || page.title;
+  const contentMarkdown = localizedUpdate
+    ? page.contentMarkdown
+    : (inputMarkdown ?? page.contentMarkdown);
+  const contentHtml = localizedUpdate
+    ? page.contentHtml
+    : inputHtml !== undefined
+      ? inputHtml
+      : inputMarkdown !== undefined
+        ? renderMarkdownToHtml(contentMarkdown)
+        : page.contentHtml;
+  const i18n = buildPageI18n(page, input, {
+    contentHtml: inputHtml,
+    contentMarkdown: inputMarkdown,
+    title: inputTitle,
+  });
+  const seoTitle = localizedUpdate ? page.seoTitle : input.seoTitle?.trim() || title;
+  const seoDescription = localizedUpdate
+    ? page.seoDescription
+    : input.seoDescription !== undefined
+      ? input.seoDescription.trim()
+      : page.seoDescription;
+  const now = new Date().toISOString();
+
+  await env.CMS_DB.prepare(
+    `update pages set
+      title = ?, content_markdown = ?, content_html = ?, status = ?,
+      seo_title = ?, seo_description = ?, i18n = ?, updated_at = ?
+    where id = ?`,
+  )
+    .bind(
+      title,
+      contentMarkdown,
+      contentHtml,
+      normalizeContentRecordStatus(input.status, page.status),
+      seoTitle,
+      seoDescription,
+      i18n ? JSON.stringify(i18n) : null,
+      now,
+      page.id,
+    )
+    .run();
+
+  return getD1PageByIdOrSlug(page.id);
+}
+
+export async function deleteD1Page(idOrSlug: string) {
+  const page = await getD1PageByIdOrSlug(idOrSlug);
+
+  if (!page) {
+    return undefined;
+  }
+
+  const now = new Date().toISOString();
+
+  await env.CMS_DB.prepare("update pages set status = ?, updated_at = ? where id = ?")
+    .bind("deleted", now, page.id)
+    .run();
+
+  return {
+    ...page,
+    status: "deleted" as const,
+    updatedAt: now,
+  };
+}
+
+export async function listD1Projects({ includeUnpublished = false } = {}) {
+  const where = includeUnpublished ? "status != 'deleted'" : "status = 'published'";
+  const result = await env.CMS_DB.prepare(
+    `select * from projects where ${where} order by published_at desc, updated_at desc`,
+  ).all<D1ProjectRow>();
+
+  return result.results.map(rowToProject);
+}
+
+export async function getD1ProjectByIdOrSlug(idOrSlug: string, includeUnpublished = true) {
+  const row = await env.CMS_DB.prepare(
+    `select * from projects where (id = ? or slug = ?) and ${includeUnpublished ? "status != 'deleted'" : "status = 'published'"} limit 1`,
+  )
+    .bind(idOrSlug, idOrSlug)
+    .first<D1ProjectRow>();
+
+  return row ? rowToProject(row) : undefined;
+}
+
+export async function createD1Project(input: ProjectInput) {
+  const currentSettings = await getD1SiteSettings();
+  const title = input.title?.trim() || "Untitled project";
+  const slug = await uniqueD1ProjectSlug(input.slug?.trim() || slugify(title));
+  const now = new Date().toISOString();
+  const contentMarkdown = input.contentMarkdown?.trim() || `# ${title}\n`;
+  const contentHtml = input.contentHtml
+    ? sanitizeHtml(input.contentHtml)
+    : renderMarkdownToHtml(contentMarkdown);
+  const status = normalizeContentRecordStatus(input.status, "draft");
+  const project: Project = {
+    id: `project_${crypto.randomUUID()}`,
+    title,
+    slug,
+    excerpt: input.excerpt?.trim() || markdownToText(contentMarkdown).slice(0, 180),
+    coverImage: input.coverImage?.trim() || currentSettings.defaultOgImage,
+    projectUrl: input.projectUrl?.trim() || "",
+    githubUrl: input.githubUrl?.trim() || "",
+    contentMarkdown,
+    contentHtml,
+    tags: tagsFromNames(input.tags ?? []),
+    screenshots: cleanStringList(input.screenshots),
+    status,
+    publishedAt: status === "published" ? now : now,
+    updatedAt: now,
+    i18n: input.i18n,
+  };
+
+  if (input.locale === "zh") {
+    project.i18n = {
+      ...project.i18n,
+      title: { ...project.i18n?.title, zh: title },
+      excerpt: { ...project.i18n?.excerpt, zh: project.excerpt },
+      contentMarkdown: { ...project.i18n?.contentMarkdown, zh: contentMarkdown },
+      contentHtml: { ...project.i18n?.contentHtml, zh: contentHtml },
+    };
+  }
+
+  await env.CMS_DB.prepare(
+    `insert into projects (
+      id, title, slug, excerpt, project_url, github_url, cover_image,
+      content_markdown, content_html, tags, screenshots, i18n, status,
+      published_at, created_at, updated_at
+    ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  )
+    .bind(
+      project.id,
+      project.title,
+      project.slug,
+      project.excerpt,
+      project.projectUrl || null,
+      project.githubUrl || null,
+      project.coverImage,
+      project.contentMarkdown,
+      project.contentHtml,
+      JSON.stringify(project.tags.map((tag) => tag.name)),
+      JSON.stringify(project.screenshots),
+      project.i18n ? JSON.stringify(project.i18n) : null,
+      project.status,
+      project.status === "published" ? project.publishedAt : null,
+      now,
+      project.updatedAt,
+    )
+    .run();
+
+  return (await getD1ProjectByIdOrSlug(project.id)) ?? project;
+}
+
+export async function updateD1Project(idOrSlug: string, input: ProjectInput) {
+  const currentSettings = await getD1SiteSettings();
+  const project = await getD1ProjectByIdOrSlug(idOrSlug);
+
+  if (!project) {
+    return undefined;
+  }
+
+  const localizedUpdate = input.locale === "zh";
+  const inputTitle = input.title?.trim();
+  const inputExcerpt = input.excerpt?.trim();
+  const inputMarkdown = input.contentMarkdown?.trim();
+  const inputHtml = input.contentHtml !== undefined ? sanitizeHtml(input.contentHtml) : undefined;
+  const title = localizedUpdate ? project.title : inputTitle || project.title;
+  const contentMarkdown = localizedUpdate
+    ? project.contentMarkdown
+    : (inputMarkdown ?? project.contentMarkdown);
+  const contentHtml = localizedUpdate
+    ? project.contentHtml
+    : inputHtml !== undefined
+      ? inputHtml
+      : inputMarkdown !== undefined
+        ? renderMarkdownToHtml(contentMarkdown)
+        : project.contentHtml;
+  const status = normalizeContentRecordStatus(input.status, project.status);
+  const publishedAt =
+    status === "published" && project.status !== "published"
+      ? new Date().toISOString()
+      : project.publishedAt;
+  const i18n = buildProjectI18n(project, input, {
+    contentHtml: inputHtml,
+    contentMarkdown: inputMarkdown,
+    excerpt: inputExcerpt,
+    title: inputTitle,
+  });
+  const now = new Date().toISOString();
+
+  await env.CMS_DB.prepare(
+    `update projects set
+      title = ?, excerpt = ?, project_url = ?, github_url = ?, cover_image = ?,
+      content_markdown = ?, content_html = ?, tags = ?, screenshots = ?, i18n = ?,
+      status = ?, published_at = ?, updated_at = ?
+    where id = ?`,
+  )
+    .bind(
+      title,
+      localizedUpdate
+        ? project.excerpt
+        : inputExcerpt !== undefined
+          ? inputExcerpt
+          : project.excerpt,
+      localizedUpdate
+        ? project.projectUrl || null
+        : input.projectUrl !== undefined
+          ? input.projectUrl.trim() || null
+          : project.projectUrl || null,
+      localizedUpdate
+        ? project.githubUrl || null
+        : input.githubUrl !== undefined
+          ? input.githubUrl.trim() || null
+          : project.githubUrl || null,
+      localizedUpdate
+        ? project.coverImage
+        : input.coverImage !== undefined
+          ? input.coverImage.trim() || currentSettings.defaultOgImage
+          : project.coverImage,
+      contentMarkdown,
+      contentHtml,
+      JSON.stringify(
+        input.tags !== undefined
+          ? cleanStringList(input.tags)
+          : project.tags.map((tag) => tag.name),
+      ),
+      JSON.stringify(
+        input.screenshots !== undefined ? cleanStringList(input.screenshots) : project.screenshots,
+      ),
+      i18n ? JSON.stringify(i18n) : null,
+      status,
+      status === "published" ? publishedAt : null,
+      now,
+      project.id,
+    )
+    .run();
+
+  return getD1ProjectByIdOrSlug(project.id);
+}
+
+export async function deleteD1Project(idOrSlug: string) {
+  const project = await getD1ProjectByIdOrSlug(idOrSlug);
+
+  if (!project) {
+    return undefined;
+  }
+
+  const now = new Date().toISOString();
+
+  await env.CMS_DB.prepare("update projects set status = ?, updated_at = ? where id = ?")
+    .bind("deleted", now, project.id)
+    .run();
+
+  return {
+    ...project,
     status: "deleted" as const,
     updatedAt: now,
   };
@@ -739,11 +1263,15 @@ export async function verifyD1ApiToken(secret: string, requiredScope: ApiTokenSc
 }
 
 export async function buildD1SiteExport(locale: SupportedLocale) {
-  const [persistedPosts, persistedComments, persistedAssets] = await Promise.all([
-    listD1Posts({ includeUnpublished: true }),
-    listD1Comments(),
-    listD1Assets(),
-  ]);
+  const [persistedPosts, persistedComments, persistedAssets, persistedPages, persistedProjects] =
+    await Promise.all([
+      listD1Posts({ includeUnpublished: true }),
+      listD1Comments(),
+      listD1Assets(),
+      listD1Pages({ includeUnpublished: true }),
+      listD1Projects({ includeUnpublished: true }),
+    ]);
+  const persistedProjectSlugs = new Set(persistedProjects.map((project) => project.slug));
 
   return {
     exportedAt: new Date().toISOString(),
@@ -754,7 +1282,11 @@ export async function buildD1SiteExport(locale: SupportedLocale) {
       comments: persistedComments.filter((comment) => comment.postId === post.id),
     })),
     tags: getTagsForLocale(locale),
-    projects: getProjectsForLocale(locale),
+    pages: persistedPages,
+    projects: [
+      ...persistedProjects,
+      ...getProjectsForLocale(locale).filter((project) => !persistedProjectSlugs.has(project.slug)),
+    ],
     assets: persistedAssets,
     comments: persistedComments,
   };
@@ -900,6 +1432,42 @@ function rowToPost(
   };
 }
 
+function rowToPage(row: D1PageRow): CmsPage {
+  return {
+    id: row.id,
+    title: row.title,
+    slug: row.slug,
+    contentMarkdown: row.content_markdown,
+    contentHtml: row.content_html,
+    status: row.status,
+    seoTitle: row.seo_title ?? row.title,
+    seoDescription: row.seo_description ?? "",
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    i18n: parseJson(row.i18n),
+  };
+}
+
+function rowToProject(row: D1ProjectRow): Project {
+  return {
+    id: row.id,
+    title: row.title,
+    slug: row.slug,
+    excerpt: row.excerpt,
+    coverImage: row.cover_image ?? "",
+    projectUrl: row.project_url ?? "",
+    githubUrl: row.github_url ?? "",
+    contentMarkdown: row.content_markdown,
+    contentHtml: row.content_html,
+    tags: tagsFromNames(parseJson<string[]>(row.tags) ?? []),
+    screenshots: cleanStringList(parseJson<string[]>(row.screenshots) ?? []),
+    status: row.status,
+    publishedAt: row.published_at ?? row.created_at,
+    updatedAt: row.updated_at,
+    i18n: parseJson(row.i18n),
+  };
+}
+
 function rowToTag(row: D1TagRow): Tag {
   return {
     id: row.id,
@@ -1021,6 +1589,57 @@ async function uniqueD1Slug(base: string) {
   }
 
   return candidate;
+}
+
+async function uniqueD1PageSlug(base: string) {
+  const normalized = base || "untitled-page";
+  let candidate = normalized;
+  let index = 2;
+
+  while (await getD1PageBySlug(candidate, true)) {
+    candidate = `${normalized}-${index}`;
+    index += 1;
+  }
+
+  return candidate;
+}
+
+async function uniqueD1ProjectSlug(base: string) {
+  const normalized = base || "untitled-project";
+  let candidate = normalized;
+  let index = 2;
+
+  while (await getD1ProjectByIdOrSlug(candidate, true)) {
+    candidate = `${normalized}-${index}`;
+    index += 1;
+  }
+
+  return candidate;
+}
+
+function normalizeContentRecordStatus(
+  status: CmsPage["status"] | undefined,
+  fallback: CmsPage["status"],
+) {
+  return status === "published" ||
+    status === "archived" ||
+    status === "deleted" ||
+    status === "draft"
+    ? status
+    : fallback;
+}
+
+function cleanStringList(input: string[] | undefined) {
+  return Array.from(new Set((input ?? []).map((value) => value.trim()).filter(Boolean)));
+}
+
+function tagsFromNames(names: string[]) {
+  return cleanStringList(names).map((name) => ({
+    id: `tag_${slugify(name) || name.toLowerCase()}`,
+    name,
+    slug: slugify(name),
+    description: "",
+  }));
 }
 
 function parseJson<TValue>(value: string | null): TValue | undefined {

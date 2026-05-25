@@ -42,11 +42,18 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Admin_Nav_AssetsInputs */
 /** @typedef {{}} Admin_Nav_CommentsInputs */
 /** @typedef {{}} Admin_Nav_OverviewInputs */
+/** @typedef {{}} Admin_Nav_PagesInputs */
 /** @typedef {{}} Admin_Nav_PostsInputs */
+/** @typedef {{}} Admin_Nav_ProjectsInputs */
 /** @typedef {{}} Admin_Nav_SettingsInputs */
 /** @typedef {{}} Admin_New_PostInputs */
+/** @typedef {{}} Admin_New_PageInputs */
+/** @typedef {{}} Admin_New_ProjectInputs */
 /** @typedef {{}} Admin_Overview_EyebrowInputs */
 /** @typedef {{}} Admin_Overview_TitleInputs */
+/** @typedef {{}} Admin_Pages_DescriptionInputs */
+/** @typedef {{}} Admin_Pages_Editor_TitleInputs */
+/** @typedef {{}} Admin_Pages_TitleInputs */
 /** @typedef {{}} Admin_Posts_ActionsInputs */
 /** @typedef {{}} Admin_Posts_ArchiveInputs */
 /** @typedef {{}} Admin_Posts_Column_TitleInputs */
@@ -67,6 +74,13 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Admin_Posts_TitleInputs */
 /** @typedef {{}} Admin_Posts_UpdatedInputs */
 /** @typedef {{}} Admin_Posts_ViewInputs */
+/** @typedef {{}} Admin_Projects_DescriptionInputs */
+/** @typedef {{}} Admin_Projects_Editor_TitleInputs */
+/** @typedef {{}} Admin_Projects_TitleInputs */
+/** @typedef {{}} Admin_Project_CoverInputs */
+/** @typedef {{}} Admin_Project_Github_UrlInputs */
+/** @typedef {{}} Admin_Project_Live_UrlInputs */
+/** @typedef {{}} Admin_Project_ScreenshotsInputs */
 /** @typedef {{}} Admin_Publish_PostInputs */
 /** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
@@ -913,6 +927,23 @@ export const admin_nav_overview =
 /**
  * | output |
  * | --- |
+ * | "Pages" |
+ *
+ * @param {Admin_Nav_PagesInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_nav_pages =
+  /** @type {((inputs?: Admin_Nav_PagesInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Nav_PagesInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_nav_pages(inputs);
+      return __zh.admin_nav_pages(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
  * | "Posts" |
  *
  * @param {Admin_Nav_PostsInputs} inputs
@@ -925,6 +956,23 @@ export const admin_nav_posts =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.admin_nav_posts(inputs);
       return __zh.admin_nav_posts(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Projects" |
+ *
+ * @param {Admin_Nav_ProjectsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_nav_projects =
+  /** @type {((inputs?: Admin_Nav_ProjectsInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Nav_ProjectsInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_nav_projects(inputs);
+      return __zh.admin_nav_projects(inputs);
     }
   );
 /**
@@ -964,6 +1012,40 @@ export const admin_new_post =
 /**
  * | output |
  * | --- |
+ * | "New page" |
+ *
+ * @param {Admin_New_PageInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_new_page =
+  /** @type {((inputs?: Admin_New_PageInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_New_PageInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_new_page(inputs);
+      return __zh.admin_new_page(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "New project" |
+ *
+ * @param {Admin_New_ProjectInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_new_project =
+  /** @type {((inputs?: Admin_New_ProjectInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_New_ProjectInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_new_project(inputs);
+      return __zh.admin_new_project(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
  * | "Admin" |
  *
  * @param {Admin_Overview_EyebrowInputs} inputs
@@ -993,6 +1075,57 @@ export const admin_overview_title =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.admin_overview_title(inputs);
       return __zh.admin_overview_title(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Edit static Markdown pages such as About." |
+ *
+ * @param {Admin_Pages_DescriptionInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_pages_description =
+  /** @type {((inputs?: Admin_Pages_DescriptionInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Pages_DescriptionInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_pages_description(inputs);
+      return __zh.admin_pages_description(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Page editor" |
+ *
+ * @param {Admin_Pages_Editor_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_pages_editor_title =
+  /** @type {((inputs?: Admin_Pages_Editor_TitleInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Pages_Editor_TitleInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_pages_editor_title(inputs);
+      return __zh.admin_pages_editor_title(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Pages" |
+ *
+ * @param {Admin_Pages_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_pages_title =
+  /** @type {((inputs?: Admin_Pages_TitleInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Pages_TitleInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_pages_title(inputs);
+      return __zh.admin_pages_title(inputs);
     }
   );
 /**
@@ -1333,6 +1466,125 @@ export const admin_posts_view =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.admin_posts_view(inputs);
       return __zh.admin_posts_view(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Manage portfolio entries, links, tags, screenshots, and Markdown notes." |
+ *
+ * @param {Admin_Projects_DescriptionInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_projects_description =
+  /** @type {((inputs?: Admin_Projects_DescriptionInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Projects_DescriptionInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_projects_description(inputs);
+      return __zh.admin_projects_description(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Project editor" |
+ *
+ * @param {Admin_Projects_Editor_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_projects_editor_title =
+  /** @type {((inputs?: Admin_Projects_Editor_TitleInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Projects_Editor_TitleInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_projects_editor_title(inputs);
+      return __zh.admin_projects_editor_title(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Projects" |
+ *
+ * @param {Admin_Projects_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_projects_title =
+  /** @type {((inputs?: Admin_Projects_TitleInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Projects_TitleInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_projects_title(inputs);
+      return __zh.admin_projects_title(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Cover image" |
+ *
+ * @param {Admin_Project_CoverInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_project_cover =
+  /** @type {((inputs?: Admin_Project_CoverInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Project_CoverInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_project_cover(inputs);
+      return __zh.admin_project_cover(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "GitHub URL" |
+ *
+ * @param {Admin_Project_Github_UrlInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_project_github_url =
+  /** @type {((inputs?: Admin_Project_Github_UrlInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Project_Github_UrlInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_project_github_url(inputs);
+      return __zh.admin_project_github_url(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Project URL" |
+ *
+ * @param {Admin_Project_Live_UrlInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_project_live_url =
+  /** @type {((inputs?: Admin_Project_Live_UrlInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Project_Live_UrlInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_project_live_url(inputs);
+      return __zh.admin_project_live_url(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Screenshots" |
+ *
+ * @param {Admin_Project_ScreenshotsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_project_screenshots =
+  /** @type {((inputs?: Admin_Project_ScreenshotsInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Project_ScreenshotsInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_project_screenshots(inputs);
+      return __zh.admin_project_screenshots(inputs);
     }
   );
 /**

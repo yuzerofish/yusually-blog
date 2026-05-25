@@ -8,6 +8,7 @@ import {
   tags,
 } from "./cms-store";
 import type {
+  CmsPage,
   Comment,
   DashboardMetric,
   Post,
@@ -39,6 +40,7 @@ export type {
   ApiToken,
   ApiTokenScope,
   Asset,
+  CmsPage,
   Comment,
   CommentStatus,
   ContentSource,
@@ -90,7 +92,20 @@ export function localizeProject(project: Project, locale: SupportedLocale): Proj
     ...project,
     title: localizeText(project.title, project.i18n?.title, locale),
     excerpt: localizeText(project.excerpt, project.i18n?.excerpt, locale),
+    contentMarkdown: localizeText(project.contentMarkdown, project.i18n?.contentMarkdown, locale),
+    contentHtml: localizeText(project.contentHtml, project.i18n?.contentHtml, locale),
     tags: project.tags.map((tag) => localizeTag(tag, locale)),
+  };
+}
+
+export function localizePage(page: CmsPage, locale: SupportedLocale): CmsPage {
+  return {
+    ...page,
+    title: localizeText(page.title, page.i18n?.title, locale),
+    contentMarkdown: localizeText(page.contentMarkdown, page.i18n?.contentMarkdown, locale),
+    contentHtml: localizeText(page.contentHtml, page.i18n?.contentHtml, locale),
+    seoTitle: localizeText(page.seoTitle, page.i18n?.seoTitle, locale),
+    seoDescription: localizeText(page.seoDescription, page.i18n?.seoDescription, locale),
   };
 }
 
@@ -231,7 +246,9 @@ export function getArchiveGroupsForLocale(locale: SupportedLocale) {
 }
 
 export function getProjectsForLocale(locale: SupportedLocale) {
-  return projects.map((project) => localizeProject(project, locale));
+  return projects
+    .filter((project) => project.status === "published")
+    .map((project) => localizeProject(project, locale));
 }
 
 export function getSiteSettingsForLocale(locale: SupportedLocale) {

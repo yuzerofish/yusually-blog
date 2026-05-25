@@ -20,6 +20,12 @@ Usage:
   blogcms login
   blogcms status
   blogcms push <markdown-file-folder-or-json>
+  blogcms page list
+  blogcms page push <markdown-or-json>
+  blogcms page delete <id-or-slug>
+  blogcms project list
+  blogcms project push <markdown-or-json>
+  blogcms project delete <id-or-slug>
   blogcms import <zip-or-html>
   blogcms upload <images-folder>
   blogcms export [--format json|zip] [--output backup.zip]
@@ -184,6 +190,110 @@ Environment:
         });
 
         print(JSON.stringify(response, null, 2));
+      },
+    },
+  ],
+  [
+    "page",
+    {
+      summary: "List, push, or delete static pages",
+      run: async () => {
+        const subcommand = args[0];
+        const api = getApiConfig();
+
+        if (!api) {
+          print("Prepared page command. Configure API env to manage pages.");
+          return;
+        }
+
+        if (subcommand === "list") {
+          const response = await apiFetch(api, "/api/pages?status=all", { method: "GET" });
+          print(JSON.stringify(response, null, 2));
+          return;
+        }
+
+        if (subcommand === "push") {
+          requireArg(args[1], "Use `blogcms page push <markdown-or-json>`.");
+          const input = await readContentInput(args[1]);
+          const id = input.id;
+          const response = await apiFetch(
+            api,
+            id ? `/api/pages/${encodeURIComponent(id)}` : "/api/pages",
+            {
+              method: id ? "PATCH" : "POST",
+              body: {
+                ...input,
+                status: input.status ?? "published",
+              },
+            },
+          );
+
+          print(JSON.stringify(response, null, 2));
+          return;
+        }
+
+        if (subcommand === "delete") {
+          requireArg(args[1], "Use `blogcms page delete <id-or-slug>`.");
+          const response = await apiFetch(api, `/api/pages/${encodeURIComponent(args[1])}`, {
+            method: "DELETE",
+          });
+          print(JSON.stringify(response, null, 2));
+          return;
+        }
+
+        fail("Use `blogcms page list`, `blogcms page push`, or `blogcms page delete`.");
+      },
+    },
+  ],
+  [
+    "project",
+    {
+      summary: "List, push, or delete portfolio projects",
+      run: async () => {
+        const subcommand = args[0];
+        const api = getApiConfig();
+
+        if (!api) {
+          print("Prepared project command. Configure API env to manage projects.");
+          return;
+        }
+
+        if (subcommand === "list") {
+          const response = await apiFetch(api, "/api/projects?status=all", { method: "GET" });
+          print(JSON.stringify(response, null, 2));
+          return;
+        }
+
+        if (subcommand === "push") {
+          requireArg(args[1], "Use `blogcms project push <markdown-or-json>`.");
+          const input = await readContentInput(args[1]);
+          const id = input.id;
+          const response = await apiFetch(
+            api,
+            id ? `/api/projects/${encodeURIComponent(id)}` : "/api/projects",
+            {
+              method: id ? "PATCH" : "POST",
+              body: {
+                ...input,
+                status: input.status ?? "published",
+              },
+            },
+          );
+
+          print(JSON.stringify(response, null, 2));
+          return;
+        }
+
+        if (subcommand === "delete") {
+          requireArg(args[1], "Use `blogcms project delete <id-or-slug>`.");
+          const response = await apiFetch(api, `/api/projects/${encodeURIComponent(args[1])}`, {
+            method: "DELETE",
+          });
+          print(JSON.stringify(response, null, 2));
+          return;
+        }
+
+        fail("Use `blogcms project list`, `blogcms project push`, or `blogcms project delete`.");
       },
     },
   ],
@@ -771,6 +881,14 @@ async function readMarkdownInput(inputPath) {
 }
 
 async function readPostInput(inputPath) {
+  if (extname(inputPath).toLowerCase() === ".json") {
+    return readJsonFile(inputPath);
+  }
+
+  return readMarkdownInput(inputPath);
+}
+
+async function readContentInput(inputPath) {
   if (extname(inputPath).toLowerCase() === ".json") {
     return readJsonFile(inputPath);
   }

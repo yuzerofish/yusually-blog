@@ -61,6 +61,7 @@ export const pages = sqliteTable(
       .default("draft"),
     seoTitle: text("seo_title"),
     seoDescription: text("seo_description"),
+    i18n: text("i18n", { mode: "json" }),
     createdAt: text("created_at").notNull(),
     updatedAt: text("updated_at").notNull(),
   },
@@ -108,6 +109,8 @@ export const projects = sqliteTable(
     coverImage: text("cover_image"),
     contentMarkdown: text("content_markdown").notNull().default(""),
     contentHtml: text("content_html").notNull().default(""),
+    tags: text("tags", { mode: "json" }).notNull().default("[]"),
+    screenshots: text("screenshots", { mode: "json" }).notNull().default("[]"),
     i18n: text("i18n", { mode: "json" }),
     status: text("status", { enum: ["draft", "published", "archived", "deleted"] })
       .notNull()

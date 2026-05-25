@@ -6,6 +6,7 @@ The canonical Cloud Blog CMS schema is in `packages/db/src/schema/cms.sqlite.ts`
 
 - `0001_cloud_blog_cms.sql`: site settings, posts, pages, tags, projects, assets, comments, API tokens, and content indexes.
 - `0002_admin_auth.sql`: admin users and admin sessions.
+- `0003_pages_projects_management.sql`: localized page content plus project tags and screenshot metadata.
 
 ## Core Tables
 
@@ -28,7 +29,7 @@ Posts keep three content forms:
 - `content_html`: rendered and sanitized output cache.
 - `content_text`: plain text for simple D1 search.
 
-Localized content is stored in JSON `i18n` columns on `posts`, `tags`, `projects`, and `comments`. Site-level bilingual settings live inside `site_settings.value`.
+Localized content is stored in JSON `i18n` columns on `posts`, `pages`, `tags`, `projects`, and `comments`. Site-level bilingual settings live inside `site_settings.value`.
 
 ## Security Notes
 

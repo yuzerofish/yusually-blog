@@ -40,11 +40,18 @@
 /** @typedef {{}} Admin_Nav_AssetsInputs */
 /** @typedef {{}} Admin_Nav_CommentsInputs */
 /** @typedef {{}} Admin_Nav_OverviewInputs */
+/** @typedef {{}} Admin_Nav_PagesInputs */
 /** @typedef {{}} Admin_Nav_PostsInputs */
+/** @typedef {{}} Admin_Nav_ProjectsInputs */
 /** @typedef {{}} Admin_Nav_SettingsInputs */
 /** @typedef {{}} Admin_New_PostInputs */
+/** @typedef {{}} Admin_New_PageInputs */
+/** @typedef {{}} Admin_New_ProjectInputs */
 /** @typedef {{}} Admin_Overview_EyebrowInputs */
 /** @typedef {{}} Admin_Overview_TitleInputs */
+/** @typedef {{}} Admin_Pages_DescriptionInputs */
+/** @typedef {{}} Admin_Pages_Editor_TitleInputs */
+/** @typedef {{}} Admin_Pages_TitleInputs */
 /** @typedef {{}} Admin_Posts_ActionsInputs */
 /** @typedef {{}} Admin_Posts_ArchiveInputs */
 /** @typedef {{}} Admin_Posts_Column_TitleInputs */
@@ -65,6 +72,13 @@
 /** @typedef {{}} Admin_Posts_TitleInputs */
 /** @typedef {{}} Admin_Posts_UpdatedInputs */
 /** @typedef {{}} Admin_Posts_ViewInputs */
+/** @typedef {{}} Admin_Projects_DescriptionInputs */
+/** @typedef {{}} Admin_Projects_Editor_TitleInputs */
+/** @typedef {{}} Admin_Projects_TitleInputs */
+/** @typedef {{}} Admin_Project_CoverInputs */
+/** @typedef {{}} Admin_Project_Github_UrlInputs */
+/** @typedef {{}} Admin_Project_Live_UrlInputs */
+/** @typedef {{}} Admin_Project_ScreenshotsInputs */
 /** @typedef {{}} Admin_Publish_PostInputs */
 /** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
@@ -266,11 +280,18 @@ export const admin_moderation_queue_detail: (
 export const admin_nav_assets: (inputs: Admin_Nav_AssetsInputs) => LocalizedString;
 export const admin_nav_comments: (inputs: Admin_Nav_CommentsInputs) => LocalizedString;
 export const admin_nav_overview: (inputs: Admin_Nav_OverviewInputs) => LocalizedString;
+export const admin_nav_pages: (inputs: Admin_Nav_PagesInputs) => LocalizedString;
 export const admin_nav_posts: (inputs: Admin_Nav_PostsInputs) => LocalizedString;
+export const admin_nav_projects: (inputs: Admin_Nav_ProjectsInputs) => LocalizedString;
 export const admin_nav_settings: (inputs: Admin_Nav_SettingsInputs) => LocalizedString;
 export const admin_new_post: (inputs: Admin_New_PostInputs) => LocalizedString;
+export const admin_new_page: (inputs: Admin_New_PageInputs) => LocalizedString;
+export const admin_new_project: (inputs: Admin_New_ProjectInputs) => LocalizedString;
 export const admin_overview_eyebrow: (inputs: Admin_Overview_EyebrowInputs) => LocalizedString;
 export const admin_overview_title: (inputs: Admin_Overview_TitleInputs) => LocalizedString;
+export const admin_pages_description: (inputs: Admin_Pages_DescriptionInputs) => LocalizedString;
+export const admin_pages_editor_title: (inputs: Admin_Pages_Editor_TitleInputs) => LocalizedString;
+export const admin_pages_title: (inputs: Admin_Pages_TitleInputs) => LocalizedString;
 export const admin_posts_actions: (inputs: Admin_Posts_ActionsInputs) => LocalizedString;
 export const admin_posts_archive: (inputs: Admin_Posts_ArchiveInputs) => LocalizedString;
 export const admin_posts_column_title: (inputs: Admin_Posts_Column_TitleInputs) => LocalizedString;
@@ -297,6 +318,19 @@ export const admin_posts_status: (inputs: Admin_Posts_StatusInputs) => Localized
 export const admin_posts_title: (inputs: Admin_Posts_TitleInputs) => LocalizedString;
 export const admin_posts_updated: (inputs: Admin_Posts_UpdatedInputs) => LocalizedString;
 export const admin_posts_view: (inputs: Admin_Posts_ViewInputs) => LocalizedString;
+export const admin_projects_description: (
+  inputs: Admin_Projects_DescriptionInputs,
+) => LocalizedString;
+export const admin_projects_editor_title: (
+  inputs: Admin_Projects_Editor_TitleInputs,
+) => LocalizedString;
+export const admin_projects_title: (inputs: Admin_Projects_TitleInputs) => LocalizedString;
+export const admin_project_cover: (inputs: Admin_Project_CoverInputs) => LocalizedString;
+export const admin_project_github_url: (inputs: Admin_Project_Github_UrlInputs) => LocalizedString;
+export const admin_project_live_url: (inputs: Admin_Project_Live_UrlInputs) => LocalizedString;
+export const admin_project_screenshots: (
+  inputs: Admin_Project_ScreenshotsInputs,
+) => LocalizedString;
 export const admin_publish_post: (inputs: Admin_Publish_PostInputs) => LocalizedString;
 export const admin_save_draft: (inputs: Admin_Save_DraftInputs) => LocalizedString;
 export const admin_save_settings: (inputs: Admin_Save_SettingsInputs) => LocalizedString;
@@ -515,11 +549,18 @@ export type Admin_Moderation_Queue_DetailInputs = {
 export type Admin_Nav_AssetsInputs = {};
 export type Admin_Nav_CommentsInputs = {};
 export type Admin_Nav_OverviewInputs = {};
+export type Admin_Nav_PagesInputs = {};
 export type Admin_Nav_PostsInputs = {};
+export type Admin_Nav_ProjectsInputs = {};
 export type Admin_Nav_SettingsInputs = {};
 export type Admin_New_PostInputs = {};
+export type Admin_New_PageInputs = {};
+export type Admin_New_ProjectInputs = {};
 export type Admin_Overview_EyebrowInputs = {};
 export type Admin_Overview_TitleInputs = {};
+export type Admin_Pages_DescriptionInputs = {};
+export type Admin_Pages_Editor_TitleInputs = {};
+export type Admin_Pages_TitleInputs = {};
 export type Admin_Posts_ActionsInputs = {};
 export type Admin_Posts_ArchiveInputs = {};
 export type Admin_Posts_Column_TitleInputs = {};
@@ -544,6 +585,13 @@ export type Admin_Posts_StatusInputs = {};
 export type Admin_Posts_TitleInputs = {};
 export type Admin_Posts_UpdatedInputs = {};
 export type Admin_Posts_ViewInputs = {};
+export type Admin_Projects_DescriptionInputs = {};
+export type Admin_Projects_Editor_TitleInputs = {};
+export type Admin_Projects_TitleInputs = {};
+export type Admin_Project_CoverInputs = {};
+export type Admin_Project_Github_UrlInputs = {};
+export type Admin_Project_Live_UrlInputs = {};
+export type Admin_Project_ScreenshotsInputs = {};
 export type Admin_Publish_PostInputs = {};
 export type Admin_Save_DraftInputs = {};
 export type Admin_Save_SettingsInputs = {};

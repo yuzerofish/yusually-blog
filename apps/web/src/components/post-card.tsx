@@ -1,3 +1,4 @@
+import { SiGithub } from "@icons-pack/react-simple-icons";
 import type { Post, Project, SupportedLocale } from "@repo/core";
 import { formatDate } from "@repo/core";
 import { Link } from "@tanstack/react-router";
@@ -65,13 +66,26 @@ export function ProjectCard({ project }: { readonly project: Project }) {
       <div className="p-5">
         <div className="flex items-start justify-between gap-4">
           <h2 className="text-xl font-semibold">{project.title}</h2>
-          <a
-            href={project.projectUrl}
-            aria-label={`${project.title} website`}
-            className="rounded-md p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
-          >
-            <ArrowUpRightIcon className="size-4" />
-          </a>
+          <div className="flex shrink-0 items-center gap-1">
+            {project.githubUrl ? (
+              <a
+                href={project.githubUrl}
+                aria-label={`${project.title} GitHub`}
+                className="rounded-md p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              >
+                <SiGithub className="size-4" />
+              </a>
+            ) : null}
+            {project.projectUrl ? (
+              <a
+                href={project.projectUrl}
+                aria-label={`${project.title} website`}
+                className="rounded-md p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              >
+                <ArrowUpRightIcon className="size-4" />
+              </a>
+            ) : null}
+          </div>
         </div>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">{project.excerpt}</p>
         <div className="mt-5 flex flex-wrap gap-2">

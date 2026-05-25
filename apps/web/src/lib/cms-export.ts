@@ -1,5 +1,5 @@
-import type { Asset, Post, SupportedLocale } from "@repo/core";
-import { localizePost, resolveLocale } from "@repo/core";
+import type { Asset, CmsPage, Post, Project, SupportedLocale } from "@repo/core";
+import { localizePage, localizePost, localizeProject, resolveLocale } from "@repo/core";
 import { env } from "cloudflare:workers";
 
 import { buildD1SiteExport, getD1SiteSettings } from "#/lib/cms-d1";
@@ -28,6 +28,8 @@ export async function buildExportZipBundle(locale: SupportedLocale): Promise<Exp
     format: "cloud-blog-cms-export-v1",
     counts: {
       posts: data.posts.length,
+      pages: data.pages.length,
+      projects: data.projects.length,
       comments: data.comments.length,
       assets: data.assets.length,
       bundledAssets: assetEntries.entries.length,
@@ -39,11 +41,14 @@ export async function buildExportZipBundle(locale: SupportedLocale): Promise<Exp
     textEntry("export/manifest.json", manifest),
     textEntry("export/site.json", data.site),
     textEntry("export/posts.json", data.posts),
+    textEntry("export/pages.json", data.pages),
     textEntry("export/comments.json", data.comments),
     textEntry("export/assets.json", data.assets),
     textEntry("export/tags.json", data.tags),
     textEntry("export/projects.json", data.projects),
     ...postEntries(data.posts, data.locale, data.site.url, assetEntries.replacements),
+    ...pageEntries(data.pages, data.locale, data.site.url, assetEntries.replacements),
+    ...projectEntries(data.projects, data.locale, data.site.url, assetEntries.replacements),
     ...assetEntries.entries,
   ];
 
@@ -54,6 +59,52 @@ export async function buildExportZipBundle(locale: SupportedLocale): Promise<Exp
     assetCount: assetEntries.entries.length,
     missingAssetKeys: assetEntries.missingKeys,
   };
+}
+
+function pageEntries(
+  pages: CmsPage[],
+  locale: SupportedLocale,
+  siteUrl: string,
+  replacements: Map<string, string>,
+): ZipEntryInput[] {
+  return pages.flatMap((page) => {
+    const localizedPage = localizePage(page, locale);
+    const baseName = safePathSegment(page.slug);
+
+    return [
+      {
+        path: `export/pages/${baseName}.md`,
+        data: rewriteAssetReferences(localizedPage.contentMarkdown, siteUrl, replacements),
+      },
+      {
+        path: `export/pages/${baseName}.html`,
+        data: rewriteAssetReferences(localizedPage.contentHtml, siteUrl, replacements),
+      },
+    ];
+  });
+}
+
+function projectEntries(
+  projects: Project[],
+  locale: SupportedLocale,
+  siteUrl: string,
+  replacements: Map<string, string>,
+): ZipEntryInput[] {
+  return projects.flatMap((project) => {
+    const localizedProject = localizeProject(project, locale);
+    const baseName = safePathSegment(project.slug);
+
+    return [
+      {
+        path: `export/projects/${baseName}.md`,
+        data: rewriteAssetReferences(localizedProject.contentMarkdown, siteUrl, replacements),
+      },
+      {
+        path: `export/projects/${baseName}.html`,
+        data: rewriteAssetReferences(localizedProject.contentHtml, siteUrl, replacements),
+      },
+    ];
+  });
 }
 
 export async function createScheduledBackup(input: { trigger: "manual" | "cron"; cron?: string }) {

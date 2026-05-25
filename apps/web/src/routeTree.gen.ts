@@ -30,7 +30,9 @@ import { Route as DocsApiRouteImport } from './routes/docs/api'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as ApiTokensRouteImport } from './routes/api/tokens'
 import { Route as ApiSiteRouteImport } from './routes/api/site'
+import { Route as ApiProjectsRouteImport } from './routes/api/projects'
 import { Route as ApiPostsRouteImport } from './routes/api/posts'
+import { Route as ApiPagesRouteImport } from './routes/api/pages'
 import { Route as ApiExportRouteImport } from './routes/api/export'
 import { Route as ApiCommentsRouteImport } from './routes/api/comments'
 import { Route as ApiBackupsRouteImport } from './routes/api/backups'
@@ -42,8 +44,10 @@ import { Route as AuthAppRouteRouteImport } from './routes/_auth/app/route'
 import { Route as AuthAdminRouteRouteImport } from './routes/_auth/admin/route'
 import { Route as AuthAppIndexRouteImport } from './routes/_auth/app/index'
 import { Route as AuthAdminIndexRouteImport } from './routes/_auth/admin/index'
+import { Route as ApiProjectsIdRouteImport } from './routes/api/projects/$id'
 import { Route as ApiPostsBatchRouteImport } from './routes/api/posts/batch'
 import { Route as ApiPostsIdRouteImport } from './routes/api/posts/$id'
+import { Route as ApiPagesIdRouteImport } from './routes/api/pages/$id'
 import { Route as ApiImportZipRouteImport } from './routes/api/import/zip'
 import { Route as ApiImportMarkdownRouteImport } from './routes/api/import/markdown'
 import { Route as ApiImportHtmlRouteImport } from './routes/api/import/html'
@@ -56,7 +60,9 @@ import { Route as ApiAdminMeRouteImport } from './routes/api/admin/me'
 import { Route as ApiAdminLogoutRouteImport } from './routes/api/admin/logout'
 import { Route as ApiAdminLoginRouteImport } from './routes/api/admin/login'
 import { Route as AuthAdminSettingsRouteImport } from './routes/_auth/admin/settings'
+import { Route as AuthAdminProjectsRouteImport } from './routes/_auth/admin/projects'
 import { Route as AuthAdminPostsRouteImport } from './routes/_auth/admin/posts'
+import { Route as AuthAdminPagesRouteImport } from './routes/_auth/admin/pages'
 import { Route as AuthAdminCommentsRouteImport } from './routes/_auth/admin/comments'
 import { Route as AuthAdminAssetsRouteImport } from './routes/_auth/admin/assets'
 import { Route as ApiTokensIdRevokeRouteImport } from './routes/api/tokens/$id/revoke'
@@ -167,9 +173,19 @@ const ApiSiteRoute = ApiSiteRouteImport.update({
   path: '/api/site',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiProjectsRoute = ApiProjectsRouteImport.update({
+  id: '/api/projects',
+  path: '/api/projects',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPostsRoute = ApiPostsRouteImport.update({
   id: '/api/posts',
   path: '/api/posts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPagesRoute = ApiPagesRouteImport.update({
+  id: '/api/pages',
+  path: '/api/pages',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiExportRoute = ApiExportRouteImport.update({
@@ -227,6 +243,11 @@ const AuthAdminIndexRoute = AuthAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthAdminRouteRoute,
 } as any)
+const ApiProjectsIdRoute = ApiProjectsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiProjectsRoute,
+} as any)
 const ApiPostsBatchRoute = ApiPostsBatchRouteImport.update({
   id: '/batch',
   path: '/batch',
@@ -236,6 +257,11 @@ const ApiPostsIdRoute = ApiPostsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => ApiPostsRoute,
+} as any)
+const ApiPagesIdRoute = ApiPagesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiPagesRoute,
 } as any)
 const ApiImportZipRoute = ApiImportZipRouteImport.update({
   id: '/api/import/zip',
@@ -297,9 +323,19 @@ const AuthAdminSettingsRoute = AuthAdminSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthAdminRouteRoute,
 } as any)
+const AuthAdminProjectsRoute = AuthAdminProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => AuthAdminRouteRoute,
+} as any)
 const AuthAdminPostsRoute = AuthAdminPostsRouteImport.update({
   id: '/posts',
   path: '/posts',
+  getParentRoute: () => AuthAdminRouteRoute,
+} as any)
+const AuthAdminPagesRoute = AuthAdminPagesRouteImport.update({
+  id: '/pages',
+  path: '/pages',
   getParentRoute: () => AuthAdminRouteRoute,
 } as any)
 const AuthAdminCommentsRoute = AuthAdminCommentsRouteImport.update({
@@ -354,7 +390,9 @@ export interface FileRoutesByFullPath {
   '/api/backups': typeof ApiBackupsRoute
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
+  '/api/pages': typeof ApiPagesRouteWithChildren
   '/api/posts': typeof ApiPostsRouteWithChildren
+  '/api/projects': typeof ApiProjectsRouteWithChildren
   '/api/site': typeof ApiSiteRoute
   '/api/tokens': typeof ApiTokensRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
@@ -365,7 +403,9 @@ export interface FileRoutesByFullPath {
   '/tags/': typeof TagsIndexRoute
   '/admin/assets': typeof AuthAdminAssetsRoute
   '/admin/comments': typeof AuthAdminCommentsRoute
+  '/admin/pages': typeof AuthAdminPagesRoute
   '/admin/posts': typeof AuthAdminPostsRoute
+  '/admin/projects': typeof AuthAdminProjectsRoute
   '/admin/settings': typeof AuthAdminSettingsRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
@@ -378,8 +418,10 @@ export interface FileRoutesByFullPath {
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
   '/api/import/zip': typeof ApiImportZipRoute
+  '/api/pages/$id': typeof ApiPagesIdRoute
   '/api/posts/$id': typeof ApiPostsIdRoute
   '/api/posts/batch': typeof ApiPostsBatchRoute
+  '/api/projects/$id': typeof ApiProjectsIdRoute
   '/admin/': typeof AuthAdminIndexRoute
   '/app/': typeof AuthAppIndexRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
@@ -406,7 +448,9 @@ export interface FileRoutesByTo {
   '/api/backups': typeof ApiBackupsRoute
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
+  '/api/pages': typeof ApiPagesRouteWithChildren
   '/api/posts': typeof ApiPostsRouteWithChildren
+  '/api/projects': typeof ApiProjectsRouteWithChildren
   '/api/site': typeof ApiSiteRoute
   '/api/tokens': typeof ApiTokensRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
@@ -417,7 +461,9 @@ export interface FileRoutesByTo {
   '/tags': typeof TagsIndexRoute
   '/admin/assets': typeof AuthAdminAssetsRoute
   '/admin/comments': typeof AuthAdminCommentsRoute
+  '/admin/pages': typeof AuthAdminPagesRoute
   '/admin/posts': typeof AuthAdminPostsRoute
+  '/admin/projects': typeof AuthAdminProjectsRoute
   '/admin/settings': typeof AuthAdminSettingsRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
@@ -430,8 +476,10 @@ export interface FileRoutesByTo {
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
   '/api/import/zip': typeof ApiImportZipRoute
+  '/api/pages/$id': typeof ApiPagesIdRoute
   '/api/posts/$id': typeof ApiPostsIdRoute
   '/api/posts/batch': typeof ApiPostsBatchRoute
+  '/api/projects/$id': typeof ApiProjectsIdRoute
   '/admin': typeof AuthAdminIndexRoute
   '/app': typeof AuthAppIndexRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
@@ -463,7 +511,9 @@ export interface FileRoutesById {
   '/api/backups': typeof ApiBackupsRoute
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
+  '/api/pages': typeof ApiPagesRouteWithChildren
   '/api/posts': typeof ApiPostsRouteWithChildren
+  '/api/projects': typeof ApiProjectsRouteWithChildren
   '/api/site': typeof ApiSiteRoute
   '/api/tokens': typeof ApiTokensRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
@@ -474,7 +524,9 @@ export interface FileRoutesById {
   '/tags/': typeof TagsIndexRoute
   '/_auth/admin/assets': typeof AuthAdminAssetsRoute
   '/_auth/admin/comments': typeof AuthAdminCommentsRoute
+  '/_auth/admin/pages': typeof AuthAdminPagesRoute
   '/_auth/admin/posts': typeof AuthAdminPostsRoute
+  '/_auth/admin/projects': typeof AuthAdminProjectsRoute
   '/_auth/admin/settings': typeof AuthAdminSettingsRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
@@ -487,8 +539,10 @@ export interface FileRoutesById {
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
   '/api/import/zip': typeof ApiImportZipRoute
+  '/api/pages/$id': typeof ApiPagesIdRoute
   '/api/posts/$id': typeof ApiPostsIdRoute
   '/api/posts/batch': typeof ApiPostsBatchRoute
+  '/api/projects/$id': typeof ApiProjectsIdRoute
   '/_auth/admin/': typeof AuthAdminIndexRoute
   '/_auth/app/': typeof AuthAppIndexRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
@@ -519,7 +573,9 @@ export interface FileRouteTypes {
     | '/api/backups'
     | '/api/comments'
     | '/api/export'
+    | '/api/pages'
     | '/api/posts'
+    | '/api/projects'
     | '/api/site'
     | '/api/tokens'
     | '/blog/$slug'
@@ -530,7 +586,9 @@ export interface FileRouteTypes {
     | '/tags/'
     | '/admin/assets'
     | '/admin/comments'
+    | '/admin/pages'
     | '/admin/posts'
+    | '/admin/projects'
     | '/admin/settings'
     | '/api/admin/login'
     | '/api/admin/logout'
@@ -543,8 +601,10 @@ export interface FileRouteTypes {
     | '/api/import/html'
     | '/api/import/markdown'
     | '/api/import/zip'
+    | '/api/pages/$id'
     | '/api/posts/$id'
     | '/api/posts/batch'
+    | '/api/projects/$id'
     | '/admin/'
     | '/app/'
     | '/api/comments/$id/approve'
@@ -571,7 +631,9 @@ export interface FileRouteTypes {
     | '/api/backups'
     | '/api/comments'
     | '/api/export'
+    | '/api/pages'
     | '/api/posts'
+    | '/api/projects'
     | '/api/site'
     | '/api/tokens'
     | '/blog/$slug'
@@ -582,7 +644,9 @@ export interface FileRouteTypes {
     | '/tags'
     | '/admin/assets'
     | '/admin/comments'
+    | '/admin/pages'
     | '/admin/posts'
+    | '/admin/projects'
     | '/admin/settings'
     | '/api/admin/login'
     | '/api/admin/logout'
@@ -595,8 +659,10 @@ export interface FileRouteTypes {
     | '/api/import/html'
     | '/api/import/markdown'
     | '/api/import/zip'
+    | '/api/pages/$id'
     | '/api/posts/$id'
     | '/api/posts/batch'
+    | '/api/projects/$id'
     | '/admin'
     | '/app'
     | '/api/comments/$id/approve'
@@ -627,7 +693,9 @@ export interface FileRouteTypes {
     | '/api/backups'
     | '/api/comments'
     | '/api/export'
+    | '/api/pages'
     | '/api/posts'
+    | '/api/projects'
     | '/api/site'
     | '/api/tokens'
     | '/blog/$slug'
@@ -638,7 +706,9 @@ export interface FileRouteTypes {
     | '/tags/'
     | '/_auth/admin/assets'
     | '/_auth/admin/comments'
+    | '/_auth/admin/pages'
     | '/_auth/admin/posts'
+    | '/_auth/admin/projects'
     | '/_auth/admin/settings'
     | '/api/admin/login'
     | '/api/admin/logout'
@@ -651,8 +721,10 @@ export interface FileRouteTypes {
     | '/api/import/html'
     | '/api/import/markdown'
     | '/api/import/zip'
+    | '/api/pages/$id'
     | '/api/posts/$id'
     | '/api/posts/batch'
+    | '/api/projects/$id'
     | '/_auth/admin/'
     | '/_auth/app/'
     | '/api/comments/$id/approve'
@@ -679,7 +751,9 @@ export interface RootRouteChildren {
   ApiBackupsRoute: typeof ApiBackupsRoute
   ApiCommentsRoute: typeof ApiCommentsRouteWithChildren
   ApiExportRoute: typeof ApiExportRoute
+  ApiPagesRoute: typeof ApiPagesRouteWithChildren
   ApiPostsRoute: typeof ApiPostsRouteWithChildren
+  ApiProjectsRoute: typeof ApiProjectsRouteWithChildren
   ApiSiteRoute: typeof ApiSiteRoute
   ApiTokensRoute: typeof ApiTokensRouteWithChildren
   BlogSlugRoute: typeof BlogSlugRoute
@@ -849,11 +923,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSiteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/projects': {
+      id: '/api/projects'
+      path: '/api/projects'
+      fullPath: '/api/projects'
+      preLoaderRoute: typeof ApiProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/posts': {
       id: '/api/posts'
       path: '/api/posts'
       fullPath: '/api/posts'
       preLoaderRoute: typeof ApiPostsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/pages': {
+      id: '/api/pages'
+      path: '/api/pages'
+      fullPath: '/api/pages'
+      preLoaderRoute: typeof ApiPagesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/export': {
@@ -933,6 +1021,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAdminIndexRouteImport
       parentRoute: typeof AuthAdminRouteRoute
     }
+    '/api/projects/$id': {
+      id: '/api/projects/$id'
+      path: '/$id'
+      fullPath: '/api/projects/$id'
+      preLoaderRoute: typeof ApiProjectsIdRouteImport
+      parentRoute: typeof ApiProjectsRoute
+    }
     '/api/posts/batch': {
       id: '/api/posts/batch'
       path: '/batch'
@@ -946,6 +1041,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/posts/$id'
       preLoaderRoute: typeof ApiPostsIdRouteImport
       parentRoute: typeof ApiPostsRoute
+    }
+    '/api/pages/$id': {
+      id: '/api/pages/$id'
+      path: '/$id'
+      fullPath: '/api/pages/$id'
+      preLoaderRoute: typeof ApiPagesIdRouteImport
+      parentRoute: typeof ApiPagesRoute
     }
     '/api/import/zip': {
       id: '/api/import/zip'
@@ -1031,11 +1133,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAdminSettingsRouteImport
       parentRoute: typeof AuthAdminRouteRoute
     }
+    '/_auth/admin/projects': {
+      id: '/_auth/admin/projects'
+      path: '/projects'
+      fullPath: '/admin/projects'
+      preLoaderRoute: typeof AuthAdminProjectsRouteImport
+      parentRoute: typeof AuthAdminRouteRoute
+    }
     '/_auth/admin/posts': {
       id: '/_auth/admin/posts'
       path: '/posts'
       fullPath: '/admin/posts'
       preLoaderRoute: typeof AuthAdminPostsRouteImport
+      parentRoute: typeof AuthAdminRouteRoute
+    }
+    '/_auth/admin/pages': {
+      id: '/_auth/admin/pages'
+      path: '/pages'
+      fullPath: '/admin/pages'
+      preLoaderRoute: typeof AuthAdminPagesRouteImport
       parentRoute: typeof AuthAdminRouteRoute
     }
     '/_auth/admin/comments': {
@@ -1086,7 +1202,9 @@ declare module '@tanstack/react-router' {
 interface AuthAdminRouteRouteChildren {
   AuthAdminAssetsRoute: typeof AuthAdminAssetsRoute
   AuthAdminCommentsRoute: typeof AuthAdminCommentsRoute
+  AuthAdminPagesRoute: typeof AuthAdminPagesRoute
   AuthAdminPostsRoute: typeof AuthAdminPostsRoute
+  AuthAdminProjectsRoute: typeof AuthAdminProjectsRoute
   AuthAdminSettingsRoute: typeof AuthAdminSettingsRoute
   AuthAdminIndexRoute: typeof AuthAdminIndexRoute
 }
@@ -1094,7 +1212,9 @@ interface AuthAdminRouteRouteChildren {
 const AuthAdminRouteRouteChildren: AuthAdminRouteRouteChildren = {
   AuthAdminAssetsRoute: AuthAdminAssetsRoute,
   AuthAdminCommentsRoute: AuthAdminCommentsRoute,
+  AuthAdminPagesRoute: AuthAdminPagesRoute,
   AuthAdminPostsRoute: AuthAdminPostsRoute,
+  AuthAdminProjectsRoute: AuthAdminProjectsRoute,
   AuthAdminSettingsRoute: AuthAdminSettingsRoute,
   AuthAdminIndexRoute: AuthAdminIndexRoute,
 }
@@ -1173,6 +1293,18 @@ const ApiCommentsRouteWithChildren = ApiCommentsRoute._addFileChildren(
   ApiCommentsRouteChildren,
 )
 
+interface ApiPagesRouteChildren {
+  ApiPagesIdRoute: typeof ApiPagesIdRoute
+}
+
+const ApiPagesRouteChildren: ApiPagesRouteChildren = {
+  ApiPagesIdRoute: ApiPagesIdRoute,
+}
+
+const ApiPagesRouteWithChildren = ApiPagesRoute._addFileChildren(
+  ApiPagesRouteChildren,
+)
+
 interface ApiPostsRouteChildren {
   ApiPostsIdRoute: typeof ApiPostsIdRoute
   ApiPostsBatchRoute: typeof ApiPostsBatchRoute
@@ -1185,6 +1317,18 @@ const ApiPostsRouteChildren: ApiPostsRouteChildren = {
 
 const ApiPostsRouteWithChildren = ApiPostsRoute._addFileChildren(
   ApiPostsRouteChildren,
+)
+
+interface ApiProjectsRouteChildren {
+  ApiProjectsIdRoute: typeof ApiProjectsIdRoute
+}
+
+const ApiProjectsRouteChildren: ApiProjectsRouteChildren = {
+  ApiProjectsIdRoute: ApiProjectsIdRoute,
+}
+
+const ApiProjectsRouteWithChildren = ApiProjectsRoute._addFileChildren(
+  ApiProjectsRouteChildren,
 )
 
 interface ApiTokensRouteChildren {
@@ -1217,7 +1361,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiBackupsRoute: ApiBackupsRoute,
   ApiCommentsRoute: ApiCommentsRouteWithChildren,
   ApiExportRoute: ApiExportRoute,
+  ApiPagesRoute: ApiPagesRouteWithChildren,
   ApiPostsRoute: ApiPostsRouteWithChildren,
+  ApiProjectsRoute: ApiProjectsRouteWithChildren,
   ApiSiteRoute: ApiSiteRoute,
   ApiTokensRoute: ApiTokensRouteWithChildren,
   BlogSlugRoute: BlogSlugRoute,

@@ -41,11 +41,18 @@
 /** @typedef {{}} Admin_Nav_AssetsInputs */
 /** @typedef {{}} Admin_Nav_CommentsInputs */
 /** @typedef {{}} Admin_Nav_OverviewInputs */
+/** @typedef {{}} Admin_Nav_PagesInputs */
 /** @typedef {{}} Admin_Nav_PostsInputs */
+/** @typedef {{}} Admin_Nav_ProjectsInputs */
 /** @typedef {{}} Admin_Nav_SettingsInputs */
 /** @typedef {{}} Admin_New_PostInputs */
+/** @typedef {{}} Admin_New_PageInputs */
+/** @typedef {{}} Admin_New_ProjectInputs */
 /** @typedef {{}} Admin_Overview_EyebrowInputs */
 /** @typedef {{}} Admin_Overview_TitleInputs */
+/** @typedef {{}} Admin_Pages_DescriptionInputs */
+/** @typedef {{}} Admin_Pages_Editor_TitleInputs */
+/** @typedef {{}} Admin_Pages_TitleInputs */
 /** @typedef {{}} Admin_Posts_ActionsInputs */
 /** @typedef {{}} Admin_Posts_ArchiveInputs */
 /** @typedef {{}} Admin_Posts_Column_TitleInputs */
@@ -66,6 +73,13 @@
 /** @typedef {{}} Admin_Posts_TitleInputs */
 /** @typedef {{}} Admin_Posts_UpdatedInputs */
 /** @typedef {{}} Admin_Posts_ViewInputs */
+/** @typedef {{}} Admin_Projects_DescriptionInputs */
+/** @typedef {{}} Admin_Projects_Editor_TitleInputs */
+/** @typedef {{}} Admin_Projects_TitleInputs */
+/** @typedef {{}} Admin_Project_CoverInputs */
+/** @typedef {{}} Admin_Project_Github_UrlInputs */
+/** @typedef {{}} Admin_Project_Live_UrlInputs */
+/** @typedef {{}} Admin_Project_ScreenshotsInputs */
 /** @typedef {{}} Admin_Publish_PostInputs */
 /** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
@@ -415,9 +429,19 @@ export const admin_nav_overview =
     return /** @type {LocalizedString} */ `概览`;
   };
 
+export const admin_nav_pages =
+  /** @type {(inputs: Admin_Nav_PagesInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `页面`;
+  };
+
 export const admin_nav_posts =
   /** @type {(inputs: Admin_Nav_PostsInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `文章`;
+  };
+
+export const admin_nav_projects =
+  /** @type {(inputs: Admin_Nav_ProjectsInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `作品`;
   };
 
 export const admin_nav_settings =
@@ -430,6 +454,16 @@ export const admin_new_post =
     return /** @type {LocalizedString} */ `新文章`;
   };
 
+export const admin_new_page =
+  /** @type {(inputs: Admin_New_PageInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `新页面`;
+  };
+
+export const admin_new_project =
+  /** @type {(inputs: Admin_New_ProjectInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `新作品`;
+  };
+
 export const admin_overview_eyebrow =
   /** @type {(inputs: Admin_Overview_EyebrowInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `管理`;
@@ -438,6 +472,21 @@ export const admin_overview_eyebrow =
 export const admin_overview_title =
   /** @type {(inputs: Admin_Overview_TitleInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `CMS 概览`;
+  };
+
+export const admin_pages_description =
+  /** @type {(inputs: Admin_Pages_DescriptionInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `编辑关于页等静态 Markdown 页面。`;
+  };
+
+export const admin_pages_editor_title =
+  /** @type {(inputs: Admin_Pages_Editor_TitleInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `页面编辑器`;
+  };
+
+export const admin_pages_title =
+  /** @type {(inputs: Admin_Pages_TitleInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `页面`;
   };
 
 export const admin_posts_actions =
@@ -538,6 +587,41 @@ export const admin_posts_updated =
 export const admin_posts_view =
   /** @type {(inputs: Admin_Posts_ViewInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `查看`;
+  };
+
+export const admin_projects_description =
+  /** @type {(inputs: Admin_Projects_DescriptionInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `管理作品标题、链接、标签、截图和 Markdown 说明。`;
+  };
+
+export const admin_projects_editor_title =
+  /** @type {(inputs: Admin_Projects_Editor_TitleInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `作品编辑器`;
+  };
+
+export const admin_projects_title =
+  /** @type {(inputs: Admin_Projects_TitleInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `作品`;
+  };
+
+export const admin_project_cover =
+  /** @type {(inputs: Admin_Project_CoverInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `封面图`;
+  };
+
+export const admin_project_github_url =
+  /** @type {(inputs: Admin_Project_Github_UrlInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `GitHub 地址`;
+  };
+
+export const admin_project_live_url =
+  /** @type {(inputs: Admin_Project_Live_UrlInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `项目地址`;
+  };
+
+export const admin_project_screenshots =
+  /** @type {(inputs: Admin_Project_ScreenshotsInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `截图`;
   };
 
 export const admin_publish_post =

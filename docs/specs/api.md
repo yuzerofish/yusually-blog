@@ -23,6 +23,16 @@ Feeds and public metadata use current D1 site settings and localized content whe
 - `GET /api/posts/:id`
 - `PATCH /api/posts/:id`
 - `DELETE /api/posts/:id`
+- `GET /api/pages`
+- `POST /api/pages`
+- `GET /api/pages/:id`
+- `PATCH /api/pages/:id`
+- `DELETE /api/pages/:id`
+- `GET /api/projects`
+- `POST /api/projects`
+- `GET /api/projects/:id`
+- `PATCH /api/projects/:id`
+- `DELETE /api/projects/:id`
 - `POST /api/import/markdown`
 - `POST /api/import/html`
 - `POST /api/import/zip`
@@ -56,6 +66,8 @@ Feeds and public metadata use current D1 site settings and localized content whe
 
 `POST /api/posts/batch` accepts selected post ids and `action=publish|draft|archive|delete`. Publishing requires `posts:publish`; the other actions require `posts:write`.
 
+`GET /api/pages` and `GET /api/projects` accept `status=all` and `lang=en|zh`, and require `site:read`. Create, update, and delete operations require `site:write`. Pages store Markdown, sanitized HTML, SEO fields, status, and localized fields. Projects store title, excerpt, links, cover image, screenshots, tags, Markdown body, sanitized HTML, status, and localized fields.
+
 `POST /api/import/markdown` accepts `filename`, `contentMarkdown`, optional post fields, and simple frontmatter. It derives title, slug, excerpt, tags, SEO fields, cover image, and status, then creates a D1 post.
 
 `POST /api/import/html` accepts `filename`, `contentHtml`, and optional post fields. HTML is sanitized before persistence, and the importer extracts `<title>`, first `<h1>`, meta description, and first image where available.
@@ -66,7 +78,7 @@ Feeds and public metadata use current D1 site settings and localized content whe
 
 `GET /api/comments` returns the moderation queue and requires `comments:moderate`. `POST /api/comments` is public, accepts optional `parentId` for replies, applies honeypot, Turnstile when configured, per-IP rate limits, body length limits, link limits, and creates comments as `pending`.
 
-`GET /api/export` returns JSON data and writes a backup JSON object to R2. `GET /api/export?format=zip` returns a ZIP archive with Markdown posts, HTML posts, JSON manifests, comments, settings, projects, tags, and bundled R2 assets; the ZIP is also written to the backups bucket.
+`GET /api/export` returns JSON data and writes a backup JSON object to R2. `GET /api/export?format=zip` returns a ZIP archive with Markdown posts, HTML posts, Markdown/HTML pages, Markdown/HTML projects, JSON manifests, comments, settings, tags, and bundled R2 assets; the ZIP is also written to the backups bucket.
 
 `POST /api/backups` creates a ZIP export backup in R2 and applies the configured backup retention policy. It uses the same `export:read` scope as export.
 
