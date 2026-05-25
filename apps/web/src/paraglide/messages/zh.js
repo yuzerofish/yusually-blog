@@ -48,11 +48,15 @@
 /** @typedef {{}} Admin_Publish_PostInputs */
 /** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
+/** @typedef {{}} Admin_Settings_Author_BioInputs */
 /** @typedef {{}} Admin_Settings_Author_NameInputs */
 /** @typedef {{}} Admin_Settings_Default_OgInputs */
 /** @typedef {{}} Admin_Settings_DescriptionInputs */
+/** @typedef {{}} Admin_Settings_ErrorInputs */
 /** @typedef {{}} Admin_Settings_HelpInputs */
+/** @typedef {{}} Admin_Settings_IndexingInputs */
 /** @typedef {{}} Admin_Settings_LanguageInputs */
+/** @typedef {{}} Admin_Settings_SavedInputs */
 /** @typedef {{}} Admin_Settings_Site_NameInputs */
 /** @typedef {{}} Admin_Settings_Site_UrlInputs */
 /** @typedef {{}} Admin_Settings_TitleInputs */
@@ -406,6 +410,11 @@ export const admin_save_settings =
     return /** @type {LocalizedString} */ `保存设置`;
   };
 
+export const admin_settings_author_bio =
+  /** @type {(inputs: Admin_Settings_Author_BioInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `作者简介`;
+  };
+
 export const admin_settings_author_name =
   /** @type {(inputs: Admin_Settings_Author_NameInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `作者名称`;
@@ -421,14 +430,29 @@ export const admin_settings_description =
     return /** @type {LocalizedString} */ `描述`;
   };
 
+export const admin_settings_error =
+  /** @type {(inputs: Admin_Settings_ErrorInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `设置保存失败。`;
+  };
+
 export const admin_settings_help =
   /** @type {(inputs: Admin_Settings_HelpInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `基础身份、SEO、RSS、评论和主语言配置。`;
   };
 
+export const admin_settings_indexing =
+  /** @type {(inputs: Admin_Settings_IndexingInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `允许搜索引擎索引`;
+  };
+
 export const admin_settings_language =
   /** @type {(inputs: Admin_Settings_LanguageInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `主语言`;
+  };
+
+export const admin_settings_saved =
+  /** @type {(inputs: Admin_Settings_SavedInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `设置已保存。`;
   };
 
 export const admin_settings_site_name =

@@ -4,8 +4,8 @@ import {
   renderMarkdownToHtml,
   sanitizeHtml,
   getProjectsForLocale,
-  getSiteSettingsForLocale,
   getTagsForLocale,
+  localizeSiteSettings,
   siteSettings,
   type ApiToken,
   type ApiTokenScope,
@@ -14,6 +14,7 @@ import {
   type CommentStatus,
   type ContentStatus,
   type Post,
+  type SiteSettings,
   type SupportedLocale,
 } from "@repo/core";
 import { env } from "cloudflare:workers";
@@ -64,6 +65,12 @@ type D1AssetRow = {
   created_at: string;
 };
 
+type D1SiteSettingsRow = {
+  key: string;
+  value: string;
+  updated_at: string;
+};
+
 type D1ApiTokenRow = {
   id: string;
   name: string;
@@ -110,7 +117,52 @@ type AssetInput = {
   attachedPostId?: string | null;
 };
 
+type SiteSettingsInput = Partial<
+  Pick<
+    SiteSettings,
+    | "name"
+    | "description"
+    | "url"
+    | "authorName"
+    | "authorBio"
+    | "avatarUrl"
+    | "defaultOgImage"
+    | "socialLinks"
+    | "navigation"
+    | "rssEnabled"
+    | "commentsEnabled"
+    | "indexingEnabled"
+    | "primaryLanguage"
+    | "i18n"
+  >
+>;
+
 type D1Result<TValue> = { data: TValue } | { error: string };
+
+const siteSettingsKey = "site";
+
+export async function getD1SiteSettings(locale?: SupportedLocale) {
+  const row = await env.CMS_DB.prepare("select * from site_settings where key = ? limit 1")
+    .bind(siteSettingsKey)
+    .first<D1SiteSettingsRow>();
+  const settings = normalizeSiteSettings(parseJson<SiteSettingsInput>(row?.value ?? null) ?? {});
+
+  return locale ? localizeSiteSettings(settings, locale) : settings;
+}
+
+export async function updateD1SiteSettings(input: SiteSettingsInput) {
+  const current = await getD1SiteSettings();
+  const settings = normalizeSiteSettings(input, current);
+  const now = new Date().toISOString();
+
+  await env.CMS_DB.prepare(
+    "insert into site_settings (key, value, updated_at) values (?, ?, ?) on conflict(key) do update set value = excluded.value, updated_at = excluded.updated_at",
+  )
+    .bind(siteSettingsKey, JSON.stringify(settings), now)
+    .run();
+
+  return settings;
+}
 
 export async function listD1Posts({
   includeUnpublished = false,
@@ -158,6 +210,7 @@ export async function getD1PostByIdOrSlug(idOrSlug: string, includeUnpublished =
 }
 
 export async function createD1Post(input: PostInput) {
+  const currentSettings = await getD1SiteSettings();
   const title = input.title?.trim() || "Untitled post";
   const slug = await uniqueD1Slug(input.slug?.trim() || slugify(title));
   const now = new Date().toISOString();
@@ -172,7 +225,7 @@ export async function createD1Post(input: PostInput) {
     title,
     slug,
     excerpt: input.excerpt?.trim() || contentText.slice(0, 180),
-    coverImage: input.coverImage?.trim() || siteSettings.defaultOgImage,
+    coverImage: input.coverImage?.trim() || currentSettings.defaultOgImage,
     contentMarkdown,
     contentHtml,
     contentText,
@@ -183,7 +236,7 @@ export async function createD1Post(input: PostInput) {
     commentsEnabled: true,
     publishedAt: now,
     updatedAt: now,
-    authorName: siteSettings.authorName,
+    authorName: currentSettings.authorName,
     tags: [],
     seoTitle: title,
     seoDescription: input.excerpt?.trim() || contentText.slice(0, 160),
@@ -213,7 +266,7 @@ export async function createD1Post(input: PostInput) {
       post.title,
       post.slug,
       post.excerpt,
-      post.coverImage,
+      input.coverImage?.trim() || currentSettings.defaultOgImage,
       post.contentMarkdown,
       post.contentHtml,
       post.contentText,
@@ -235,6 +288,7 @@ export async function createD1Post(input: PostInput) {
 }
 
 export async function updateD1Post(idOrSlug: string, input: PostInput) {
+  const currentSettings = await getD1SiteSettings();
   const post = await getD1PostByIdOrSlug(idOrSlug);
 
   if (!post) {
@@ -271,7 +325,7 @@ export async function updateD1Post(idOrSlug: string, input: PostInput) {
       title,
       input.excerpt !== undefined ? input.excerpt.trim() : post.excerpt,
       input.coverImage !== undefined
-        ? input.coverImage.trim() || siteSettings.defaultOgImage
+        ? input.coverImage.trim() || currentSettings.defaultOgImage
         : post.coverImage,
       contentMarkdown,
       contentHtml,
@@ -293,9 +347,10 @@ export async function deleteD1Post(idOrSlug: string) {
 }
 
 export async function createD1Comment(input: CommentInput): Promise<D1Result<Comment>> {
+  const currentSettings = await getD1SiteSettings();
   const post = await getD1PostBySlug(input.postSlug);
 
-  if (!post || !post.commentsEnabled || !siteSettings.commentsEnabled) {
+  if (!post || !post.commentsEnabled || !currentSettings.commentsEnabled) {
     return { error: "Post not found or comments are disabled" };
   }
 
@@ -520,7 +575,7 @@ export async function buildD1SiteExport(locale: SupportedLocale) {
   return {
     exportedAt: new Date().toISOString(),
     locale,
-    site: getSiteSettingsForLocale(locale),
+    site: await getD1SiteSettings(locale),
     posts: persistedPosts.map((post) => ({
       ...post,
       comments: persistedComments.filter((comment) => comment.postId === post.id),
@@ -533,12 +588,14 @@ export async function buildD1SiteExport(locale: SupportedLocale) {
 }
 
 function rowToPost(row: D1PostRow): Post {
+  const currentSettings = runtimeDefaultSiteSettings();
+
   return {
     id: row.id,
     title: row.title,
     slug: row.slug,
     excerpt: row.excerpt,
-    coverImage: row.cover_image || siteSettings.defaultOgImage,
+    coverImage: row.cover_image || currentSettings.defaultOgImage,
     contentMarkdown: row.content_markdown,
     contentHtml: row.content_html,
     contentText: row.content_text,
@@ -549,7 +606,7 @@ function rowToPost(row: D1PostRow): Post {
     commentsEnabled: Boolean(row.comments_enabled),
     publishedAt: row.published_at ?? row.created_at,
     updatedAt: row.updated_at,
-    authorName: siteSettings.authorName,
+    authorName: currentSettings.authorName,
     tags: [],
     seoTitle: row.seo_title ?? row.title,
     seoDescription: row.seo_description ?? row.excerpt,
@@ -596,6 +653,52 @@ function rowToApiToken(row: D1ApiTokenRow): ApiToken {
     revokedAt: row.revoked_at,
     createdAt: row.created_at,
   };
+}
+
+function normalizeSiteSettings(
+  input: SiteSettingsInput,
+  base: SiteSettings = runtimeDefaultSiteSettings(),
+): SiteSettings {
+  const primaryLanguage = (input.primaryLanguage ?? base.primaryLanguage) === "zh" ? "zh" : "en";
+
+  return {
+    ...base,
+    name: cleanString(input.name, base.name),
+    description: cleanString(input.description, base.description),
+    url: cleanUrl(input.url, base.url),
+    authorName: cleanString(input.authorName, base.authorName),
+    authorBio: cleanString(input.authorBio, base.authorBio),
+    avatarUrl: cleanString(input.avatarUrl, base.avatarUrl),
+    defaultOgImage: cleanString(input.defaultOgImage, base.defaultOgImage),
+    socialLinks: Array.isArray(input.socialLinks) ? input.socialLinks : base.socialLinks,
+    navigation: Array.isArray(input.navigation) ? input.navigation : base.navigation,
+    rssEnabled: input.rssEnabled ?? base.rssEnabled,
+    commentsEnabled: input.commentsEnabled ?? base.commentsEnabled,
+    indexingEnabled: input.indexingEnabled ?? base.indexingEnabled,
+    locales: ["en", "zh"],
+    primaryLanguage,
+    i18n: {
+      ...base.i18n,
+      ...input.i18n,
+    },
+  };
+}
+
+function runtimeDefaultSiteSettings(): SiteSettings {
+  const publicUrl = env.CMS_PUBLIC_SITE_URL || env.VITE_BASE_URL || siteSettings.url;
+
+  return {
+    ...siteSettings,
+    url: publicUrl,
+  };
+}
+
+function cleanString(value: string | undefined, fallback: string) {
+  return value?.trim() || fallback;
+}
+
+function cleanUrl(value: string | undefined, fallback: string) {
+  return cleanString(value, fallback).replace(/\/$/, "");
 }
 
 async function uniqueD1Slug(base: string) {

@@ -47,11 +47,15 @@
 /** @typedef {{}} Admin_Publish_PostInputs */
 /** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
+/** @typedef {{}} Admin_Settings_Author_BioInputs */
 /** @typedef {{}} Admin_Settings_Author_NameInputs */
 /** @typedef {{}} Admin_Settings_Default_OgInputs */
 /** @typedef {{}} Admin_Settings_DescriptionInputs */
+/** @typedef {{}} Admin_Settings_ErrorInputs */
 /** @typedef {{}} Admin_Settings_HelpInputs */
+/** @typedef {{}} Admin_Settings_IndexingInputs */
 /** @typedef {{}} Admin_Settings_LanguageInputs */
+/** @typedef {{}} Admin_Settings_SavedInputs */
 /** @typedef {{}} Admin_Settings_Site_NameInputs */
 /** @typedef {{}} Admin_Settings_Site_UrlInputs */
 /** @typedef {{}} Admin_Settings_TitleInputs */
@@ -225,6 +229,9 @@ export const admin_posts_view: (inputs: Admin_Posts_ViewInputs) => LocalizedStri
 export const admin_publish_post: (inputs: Admin_Publish_PostInputs) => LocalizedString;
 export const admin_save_draft: (inputs: Admin_Save_DraftInputs) => LocalizedString;
 export const admin_save_settings: (inputs: Admin_Save_SettingsInputs) => LocalizedString;
+export const admin_settings_author_bio: (
+  inputs: Admin_Settings_Author_BioInputs,
+) => LocalizedString;
 export const admin_settings_author_name: (
   inputs: Admin_Settings_Author_NameInputs,
 ) => LocalizedString;
@@ -234,8 +241,11 @@ export const admin_settings_default_og: (
 export const admin_settings_description: (
   inputs: Admin_Settings_DescriptionInputs,
 ) => LocalizedString;
+export const admin_settings_error: (inputs: Admin_Settings_ErrorInputs) => LocalizedString;
 export const admin_settings_help: (inputs: Admin_Settings_HelpInputs) => LocalizedString;
+export const admin_settings_indexing: (inputs: Admin_Settings_IndexingInputs) => LocalizedString;
 export const admin_settings_language: (inputs: Admin_Settings_LanguageInputs) => LocalizedString;
+export const admin_settings_saved: (inputs: Admin_Settings_SavedInputs) => LocalizedString;
 export const admin_settings_site_name: (inputs: Admin_Settings_Site_NameInputs) => LocalizedString;
 export const admin_settings_site_url: (inputs: Admin_Settings_Site_UrlInputs) => LocalizedString;
 export const admin_settings_title: (inputs: Admin_Settings_TitleInputs) => LocalizedString;
@@ -406,11 +416,15 @@ export type Admin_Posts_ViewInputs = {};
 export type Admin_Publish_PostInputs = {};
 export type Admin_Save_DraftInputs = {};
 export type Admin_Save_SettingsInputs = {};
+export type Admin_Settings_Author_BioInputs = {};
 export type Admin_Settings_Author_NameInputs = {};
 export type Admin_Settings_Default_OgInputs = {};
 export type Admin_Settings_DescriptionInputs = {};
+export type Admin_Settings_ErrorInputs = {};
 export type Admin_Settings_HelpInputs = {};
+export type Admin_Settings_IndexingInputs = {};
 export type Admin_Settings_LanguageInputs = {};
+export type Admin_Settings_SavedInputs = {};
 export type Admin_Settings_Site_NameInputs = {};
 export type Admin_Settings_Site_UrlInputs = {};
 export type Admin_Settings_TitleInputs = {};

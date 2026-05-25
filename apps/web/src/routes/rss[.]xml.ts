@@ -1,11 +1,13 @@
-import { getPublishedPostsForLocale, getSiteSettingsForLocale, siteSettings } from "@repo/core";
+import { getPublishedPosts, localizePost } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
+
+import { getD1SiteSettings, listD1Posts } from "#/lib/cms-d1";
 
 export const Route = createFileRoute("/rss.xml")({
   server: {
     handlers: {
-      GET: () => {
-        const xml = renderRss();
+      GET: async () => {
+        const xml = await renderRss();
 
         return new Response(xml, {
           headers: {
@@ -18,10 +20,16 @@ export const Route = createFileRoute("/rss.xml")({
   },
 });
 
-function renderRss() {
+async function renderRss() {
+  const siteSettings = await getD1SiteSettings();
   const locale = siteSettings.primaryLanguage;
-  const posts = getPublishedPostsForLocale(locale);
-  const localizedSiteSettings = getSiteSettingsForLocale(locale);
+  const persistedPosts = await listD1Posts().catch(() => []);
+  const persistedSlugs = new Set(persistedPosts.map((post) => post.slug));
+  const posts = [
+    ...persistedPosts,
+    ...getPublishedPosts().filter((post) => !persistedSlugs.has(post.slug)),
+  ].map((post) => localizePost(post, locale));
+  const localizedSiteSettings = await getD1SiteSettings(locale);
 
   return `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">

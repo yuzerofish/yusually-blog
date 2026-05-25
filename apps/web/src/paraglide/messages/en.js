@@ -48,11 +48,15 @@
 /** @typedef {{}} Admin_Publish_PostInputs */
 /** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
+/** @typedef {{}} Admin_Settings_Author_BioInputs */
 /** @typedef {{}} Admin_Settings_Author_NameInputs */
 /** @typedef {{}} Admin_Settings_Default_OgInputs */
 /** @typedef {{}} Admin_Settings_DescriptionInputs */
+/** @typedef {{}} Admin_Settings_ErrorInputs */
 /** @typedef {{}} Admin_Settings_HelpInputs */
+/** @typedef {{}} Admin_Settings_IndexingInputs */
 /** @typedef {{}} Admin_Settings_LanguageInputs */
+/** @typedef {{}} Admin_Settings_SavedInputs */
 /** @typedef {{}} Admin_Settings_Site_NameInputs */
 /** @typedef {{}} Admin_Settings_Site_UrlInputs */
 /** @typedef {{}} Admin_Settings_TitleInputs */
@@ -406,6 +410,11 @@ export const admin_save_settings =
     return /** @type {LocalizedString} */ `Save settings`;
   };
 
+export const admin_settings_author_bio =
+  /** @type {(inputs: Admin_Settings_Author_BioInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Author bio`;
+  };
+
 export const admin_settings_author_name =
   /** @type {(inputs: Admin_Settings_Author_NameInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `Author name`;
@@ -421,14 +430,29 @@ export const admin_settings_description =
     return /** @type {LocalizedString} */ `Description`;
   };
 
+export const admin_settings_error =
+  /** @type {(inputs: Admin_Settings_ErrorInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Settings could not be saved.`;
+  };
+
 export const admin_settings_help =
   /** @type {(inputs: Admin_Settings_HelpInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `Basic identity, SEO, RSS, comments, and primary language configuration.`;
   };
 
+export const admin_settings_indexing =
+  /** @type {(inputs: Admin_Settings_IndexingInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Allow search indexing`;
+  };
+
 export const admin_settings_language =
   /** @type {(inputs: Admin_Settings_LanguageInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `Primary language`;
+  };
+
+export const admin_settings_saved =
+  /** @type {(inputs: Admin_Settings_SavedInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Settings saved.`;
   };
 
 export const admin_settings_site_name =

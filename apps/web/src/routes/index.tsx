@@ -1,9 +1,4 @@
-import {
-  getFeaturedPostsForLocale,
-  getPublishedPostsForLocale,
-  getSiteSettingsForLocale,
-  getTagsForLocale,
-} from "@repo/core";
+import { localizePost, localizeSiteSettings, localizeTag } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
@@ -16,22 +11,25 @@ import {
 
 import { PostCard } from "#/components/post-card";
 import { SiteShell } from "#/components/site-shell";
+import { $getHomePageData } from "#/lib/cms-server";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/")({
+  loader: () => $getHomePageData(),
   component: HomePage,
 });
 
 function HomePage() {
+  const data = Route.useLoaderData();
   const locale = getCurrentLocale();
-  const posts = getPublishedPostsForLocale(locale);
-  const featuredPosts = getFeaturedPostsForLocale(locale);
-  const siteSettings = getSiteSettingsForLocale(locale);
-  const tags = getTagsForLocale(locale);
+  const posts = data.posts.map((post) => localizePost(post, locale));
+  const featuredPosts = data.featuredPosts.map((post) => localizePost(post, locale));
+  const siteSettings = localizeSiteSettings(data.siteSettings, locale);
+  const tags = data.tags.map((tag) => localizeTag(tag, locale));
 
   return (
-    <SiteShell>
+    <SiteShell siteSettings={siteSettings}>
       <section className="border-b border-[#26312c]/10 bg-[#eee8da] dark:border-white/10 dark:bg-[#171d1a]">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8 lg:py-16">
           <div className="flex flex-col justify-center">

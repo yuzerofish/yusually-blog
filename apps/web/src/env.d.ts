@@ -54,6 +54,7 @@ type CloudflareBindings = {
   CMS_ASSETS: CmsR2Bucket;
   CMS_BACKUPS: CmsR2Bucket;
   CMS_CACHE: CmsKVNamespace;
+  VITE_BASE_URL: string;
   CMS_PUBLIC_SITE_URL: string;
   CMS_EMAIL_SENDING_ENABLED: string;
   CMS_TURNSTILE_SECRET_KEY: string;

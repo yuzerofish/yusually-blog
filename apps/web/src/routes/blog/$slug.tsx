@@ -1,4 +1,4 @@
-import { formatDate, localizeComment, localizePost } from "@repo/core";
+import { formatDate, localizeComment, localizePost, localizeSiteSettings } from "@repo/core";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { MessageSquareIcon, RssIcon } from "lucide-react";
 
@@ -40,16 +40,17 @@ export const Route = createFileRoute("/blog/$slug")({
 });
 
 function BlogPostPage() {
-  const { comments, post, relatedPosts } = Route.useLoaderData();
+  const { comments, post, relatedPosts, siteSettings } = Route.useLoaderData();
   const locale = getCurrentLocale();
   const localizedPost = localizePost(post, locale);
+  const localizedSiteSettings = localizeSiteSettings(siteSettings, locale);
   const localizedComments = comments.map((comment) => localizeComment(comment, locale));
   const localizedRelatedPosts = relatedPosts.map((relatedPost) =>
     localizePost(relatedPost, locale),
   );
 
   return (
-    <SiteShell>
+    <SiteShell siteSettings={localizedSiteSettings}>
       <article>
         <header className="border-b border-[#26312c]/10 bg-[#eee8da] dark:border-white/10 dark:bg-[#171d1a]">
           <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">

@@ -22,6 +22,8 @@ Usage:
   blogcms import <zip-or-html>
   blogcms upload <images-folder>
   blogcms export
+  blogcms site get
+  blogcms site update --config <site.config.json>
   blogcms deploy
   blogcms admin create
   blogcms admin reset-password
@@ -221,6 +223,43 @@ Environment:
 
         const response = await apiFetch(api, "/api/export", { method: "GET" });
         print(JSON.stringify(response, null, 2));
+      },
+    },
+  ],
+  [
+    "site",
+    {
+      summary: "Read or update site settings",
+      run: async () => {
+        const subcommand = args[0];
+        const api = getApiConfig();
+
+        if (!api) {
+          fail("Set BLOGCMS_SITE_URL and BLOGCMS_API_TOKEN to manage site settings.");
+        }
+
+        if (subcommand === "get") {
+          const response = await apiFetch(api, "/api/site", { method: "GET" });
+          print(JSON.stringify(response, null, 2));
+          return;
+        }
+
+        if (subcommand === "update") {
+          const configPath = readOption(["--config"], undefined);
+
+          if (!configPath) {
+            fail("Use `blogcms site update --config <site.config.json>`.");
+          }
+
+          const response = await apiFetch(api, "/api/site", {
+            method: "PUT",
+            body: await readJsonFile(configPath),
+          });
+          print(JSON.stringify(response, null, 2));
+          return;
+        }
+
+        fail("Use `blogcms site get` or `blogcms site update --config <site.config.json>`.");
       },
     },
   ],
@@ -515,6 +554,14 @@ async function importPayloadFor(inputPath) {
     filename,
     contentMarkdown: content.toString("utf8"),
   };
+}
+
+async function readJsonFile(inputPath) {
+  try {
+    return JSON.parse(await readFile(inputPath, "utf8"));
+  } catch (error) {
+    fail(error instanceof Error ? error.message : `Could not read ${inputPath}`);
+  }
 }
 
 function contentTypeFor(filename) {

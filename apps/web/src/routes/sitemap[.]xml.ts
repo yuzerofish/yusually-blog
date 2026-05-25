@@ -1,10 +1,19 @@
-import { getPublishedPosts, projects, siteSettings, tags } from "@repo/core";
+import { getPublishedPosts, projects, tags } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
+
+import { getD1SiteSettings, listD1Posts } from "#/lib/cms-d1";
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
-      GET: () => {
+      GET: async () => {
+        const runtimeSiteSettings = await getD1SiteSettings();
+        const persistedPosts = await listD1Posts().catch(() => []);
+        const persistedSlugs = new Set(persistedPosts.map((post) => post.slug));
+        const posts = [
+          ...persistedPosts,
+          ...getPublishedPosts().filter((post) => !persistedSlugs.has(post.slug)),
+        ];
         const urls = [
           "",
           "/blog",
@@ -12,7 +21,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           "/archive",
           "/about",
           "/projects",
-          ...getPublishedPosts().map((post) => `/blog/${post.slug}`),
+          ...posts.map((post) => `/blog/${post.slug}`),
           ...tags.map((tag) => `/tags/${tag.slug}`),
           ...projects.map((project) => `/projects#${project.slug}`),
         ];
@@ -22,7 +31,7 @@ export const Route = createFileRoute("/sitemap.xml")({
 ${urls
   .map(
     (path) => `  <url>
-    <loc>${siteSettings.url}${path}</loc>
+    <loc>${runtimeSiteSettings.url}${path}</loc>
   </url>`,
   )
   .join("\n")}

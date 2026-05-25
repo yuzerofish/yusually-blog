@@ -27,6 +27,7 @@ import { Route as TagsSlugRouteImport } from './routes/tags/$slug'
 import { Route as DocsApiRouteImport } from './routes/docs/api'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as ApiTokensRouteImport } from './routes/api/tokens'
+import { Route as ApiSiteRouteImport } from './routes/api/site'
 import { Route as ApiPostsRouteImport } from './routes/api/posts'
 import { Route as ApiExportRouteImport } from './routes/api/export'
 import { Route as ApiCommentsRouteImport } from './routes/api/comments'
@@ -142,6 +143,11 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
 const ApiTokensRoute = ApiTokensRouteImport.update({
   id: '/api/tokens',
   path: '/api/tokens',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSiteRoute = ApiSiteRouteImport.update({
+  id: '/api/site',
+  path: '/api/site',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPostsRoute = ApiPostsRouteImport.update({
@@ -303,6 +309,7 @@ export interface FileRoutesByFullPath {
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
   '/api/posts': typeof ApiPostsRouteWithChildren
+  '/api/site': typeof ApiSiteRoute
   '/api/tokens': typeof ApiTokensRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/docs/api': typeof DocsApiRoute
@@ -347,6 +354,7 @@ export interface FileRoutesByTo {
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
   '/api/posts': typeof ApiPostsRouteWithChildren
+  '/api/site': typeof ApiSiteRoute
   '/api/tokens': typeof ApiTokensRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/docs/api': typeof DocsApiRoute
@@ -396,6 +404,7 @@ export interface FileRoutesById {
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
   '/api/posts': typeof ApiPostsRouteWithChildren
+  '/api/site': typeof ApiSiteRoute
   '/api/tokens': typeof ApiTokensRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/docs/api': typeof DocsApiRoute
@@ -444,6 +453,7 @@ export interface FileRouteTypes {
     | '/api/comments'
     | '/api/export'
     | '/api/posts'
+    | '/api/site'
     | '/api/tokens'
     | '/blog/$slug'
     | '/docs/api'
@@ -488,6 +498,7 @@ export interface FileRouteTypes {
     | '/api/comments'
     | '/api/export'
     | '/api/posts'
+    | '/api/site'
     | '/api/tokens'
     | '/blog/$slug'
     | '/docs/api'
@@ -536,6 +547,7 @@ export interface FileRouteTypes {
     | '/api/comments'
     | '/api/export'
     | '/api/posts'
+    | '/api/site'
     | '/api/tokens'
     | '/blog/$slug'
     | '/docs/api'
@@ -581,6 +593,7 @@ export interface RootRouteChildren {
   ApiCommentsRoute: typeof ApiCommentsRouteWithChildren
   ApiExportRoute: typeof ApiExportRoute
   ApiPostsRoute: typeof ApiPostsRouteWithChildren
+  ApiSiteRoute: typeof ApiSiteRoute
   ApiTokensRoute: typeof ApiTokensRouteWithChildren
   BlogSlugRoute: typeof BlogSlugRoute
   DocsApiRoute: typeof DocsApiRoute
@@ -725,6 +738,13 @@ declare module '@tanstack/react-router' {
       path: '/api/tokens'
       fullPath: '/api/tokens'
       preLoaderRoute: typeof ApiTokensRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/site': {
+      id: '/api/site'
+      path: '/api/site'
+      fullPath: '/api/site'
+      preLoaderRoute: typeof ApiSiteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/posts': {
@@ -1042,6 +1062,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCommentsRoute: ApiCommentsRouteWithChildren,
   ApiExportRoute: ApiExportRoute,
   ApiPostsRoute: ApiPostsRouteWithChildren,
+  ApiSiteRoute: ApiSiteRoute,
   ApiTokensRoute: ApiTokensRouteWithChildren,
   BlogSlugRoute: BlogSlugRoute,
   DocsApiRoute: DocsApiRoute,

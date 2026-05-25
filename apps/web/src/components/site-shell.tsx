@@ -1,5 +1,5 @@
 import { SiGithub } from "@icons-pack/react-simple-icons";
-import { getSiteSettingsForLocale } from "@repo/core";
+import { getSiteSettingsForLocale, type SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Link } from "@tanstack/react-router";
 import { BookOpenIcon, RssIcon, SettingsIcon } from "lucide-react";
@@ -9,9 +9,15 @@ import { ThemeToggle } from "#/components/theme-toggle";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
-export function SiteShell({ children }: { readonly children: React.ReactNode }) {
+export function SiteShell({
+  children,
+  siteSettings: providedSiteSettings,
+}: {
+  readonly children: React.ReactNode;
+  readonly siteSettings?: SiteSettings;
+}) {
   const locale = getCurrentLocale();
-  const siteSettings = getSiteSettingsForLocale(locale);
+  const siteSettings = providedSiteSettings ?? getSiteSettingsForLocale(locale);
   const navigation = [
     { label: m.nav_blog(), href: "/blog" },
     { label: m.nav_tags(), href: "/tags" },

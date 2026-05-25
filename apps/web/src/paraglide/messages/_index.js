@@ -49,11 +49,15 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Admin_Publish_PostInputs */
 /** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
+/** @typedef {{}} Admin_Settings_Author_BioInputs */
 /** @typedef {{}} Admin_Settings_Author_NameInputs */
 /** @typedef {{}} Admin_Settings_Default_OgInputs */
 /** @typedef {{}} Admin_Settings_DescriptionInputs */
+/** @typedef {{}} Admin_Settings_ErrorInputs */
 /** @typedef {{}} Admin_Settings_HelpInputs */
+/** @typedef {{}} Admin_Settings_IndexingInputs */
 /** @typedef {{}} Admin_Settings_LanguageInputs */
+/** @typedef {{}} Admin_Settings_SavedInputs */
 /** @typedef {{}} Admin_Settings_Site_NameInputs */
 /** @typedef {{}} Admin_Settings_Site_UrlInputs */
 /** @typedef {{}} Admin_Settings_TitleInputs */
@@ -988,6 +992,23 @@ export const admin_save_settings =
 /**
  * | output |
  * | --- |
+ * | "Author bio" |
+ *
+ * @param {Admin_Settings_Author_BioInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_settings_author_bio =
+  /** @type {((inputs?: Admin_Settings_Author_BioInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Settings_Author_BioInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_settings_author_bio(inputs);
+      return __zh.admin_settings_author_bio(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
  * | "Author name" |
  *
  * @param {Admin_Settings_Author_NameInputs} inputs
@@ -1039,6 +1060,23 @@ export const admin_settings_description =
 /**
  * | output |
  * | --- |
+ * | "Settings could not be saved." |
+ *
+ * @param {Admin_Settings_ErrorInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_settings_error =
+  /** @type {((inputs?: Admin_Settings_ErrorInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Settings_ErrorInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_settings_error(inputs);
+      return __zh.admin_settings_error(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
  * | "Basic identity, SEO, RSS, comments, and primary language configuration." |
  *
  * @param {Admin_Settings_HelpInputs} inputs
@@ -1056,6 +1094,23 @@ export const admin_settings_help =
 /**
  * | output |
  * | --- |
+ * | "Allow search indexing" |
+ *
+ * @param {Admin_Settings_IndexingInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_settings_indexing =
+  /** @type {((inputs?: Admin_Settings_IndexingInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Settings_IndexingInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_settings_indexing(inputs);
+      return __zh.admin_settings_indexing(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
  * | "Primary language" |
  *
  * @param {Admin_Settings_LanguageInputs} inputs
@@ -1068,6 +1123,23 @@ export const admin_settings_language =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.admin_settings_language(inputs);
       return __zh.admin_settings_language(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Settings saved." |
+ *
+ * @param {Admin_Settings_SavedInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_settings_saved =
+  /** @type {((inputs?: Admin_Settings_SavedInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Settings_SavedInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_settings_saved(inputs);
+      return __zh.admin_settings_saved(inputs);
     }
   );
 /**

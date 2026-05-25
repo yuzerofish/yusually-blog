@@ -37,6 +37,8 @@ export const apiEndpoints = [
   { method: "POST", path: "/api/import/zip", scope: "posts:write" },
   { method: "GET", path: "/api/assets", scope: "site:read" },
   { method: "POST", path: "/api/assets", scope: "assets:write" },
+  { method: "GET", path: "/api/site", scope: "site:read" },
+  { method: "PUT", path: "/api/site", scope: "site:write" },
   { method: "GET", path: "/api/export", scope: "export:read" },
   { method: "POST", path: "/api/comments/{id}/approve", scope: "comments:moderate" },
   { method: "POST", path: "/api/comments/{id}/spam", scope: "comments:moderate" },

@@ -78,6 +78,18 @@ export const Route = createFileRoute("/openapi.json")({
                 responses: { "201": { description: "Asset uploaded" } },
               },
             },
+            "/api/site": {
+              get: {
+                summary: "Read site settings",
+                security: [{ apiToken: ["site:read"] }],
+                responses: { "200": { description: "Site settings" } },
+              },
+              put: {
+                summary: "Update site settings",
+                security: [{ apiToken: ["site:write"] }],
+                responses: { "200": { description: "Site settings updated" } },
+              },
+            },
             "/api/export": {
               get: {
                 summary: "Export site archive",

@@ -1,4 +1,10 @@
-import { apiTokens, getSiteSettingsForLocale, type ApiToken, type ApiTokenScope } from "@repo/core";
+import {
+  apiTokens,
+  getSiteSettingsForLocale,
+  type ApiToken,
+  type ApiTokenScope,
+  type SiteSettings,
+} from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
@@ -18,27 +24,63 @@ type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
 
 function AdminSettingsPage() {
   const locale = getCurrentLocale();
-  const siteSettings = getSiteSettingsForLocale(locale);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings>(getSiteSettingsForLocale(locale));
   const [tokens, setTokens] = useState<ApiToken[]>(apiTokens);
   const [secret, setSecret] = useState<string | null>(null);
+  const [settingsStatus, setSettingsStatus] = useState<"idle" | "saved" | "error">("idle");
 
   useEffect(() => {
     let ignore = false;
 
-    void fetch("/api/tokens")
-      .then((response) => (response.ok ? response.json() : undefined))
-      .then((payload) => {
-        const data = (payload as { data?: ApiToken[] } | undefined)?.data;
+    void Promise.all([
+      fetch("/api/site").then((response) => (response.ok ? response.json() : undefined)),
+      fetch("/api/tokens").then((response) => (response.ok ? response.json() : undefined)),
+    ]).then(([sitePayload, tokenPayload]) => {
+      const siteData = (sitePayload as { data?: SiteSettings } | undefined)?.data;
+      const tokenData = (tokenPayload as { data?: ApiToken[] } | undefined)?.data;
 
-        if (!ignore && data) {
-          setTokens(data);
-        }
-      });
+      if (!ignore && siteData) {
+        setSiteSettings(siteData);
+      }
+
+      if (!ignore && tokenData) {
+        setTokens(tokenData);
+      }
+    });
 
     return () => {
       ignore = true;
     };
   }, []);
+
+  const saveSettings: FormSubmitHandler = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const response = await fetch("/api/site", {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        name: formData.get("siteName"),
+        url: formData.get("siteUrl"),
+        description: formData.get("description"),
+        authorName: formData.get("authorName"),
+        authorBio: formData.get("authorBio"),
+        defaultOgImage: formData.get("defaultOgImage"),
+        primaryLanguage: formData.get("primaryLanguage"),
+        commentsEnabled: formData.get("commentsEnabled") === "on",
+        indexingEnabled: formData.get("indexingEnabled") === "on",
+      }),
+    });
+
+    if (!response.ok) {
+      setSettingsStatus("error");
+      return;
+    }
+
+    const payload = (await response.json()) as { data: SiteSettings };
+    setSiteSettings(payload.data);
+    setSettingsStatus("saved");
+  };
 
   const createToken: FormSubmitHandler = async (event) => {
     event.preventDefault();
@@ -76,40 +118,91 @@ function AdminSettingsPage() {
   return (
     <div className="grid gap-6">
       <section className="rounded-lg border border-[#26312c]/10 bg-white p-6 dark:border-white/10 dark:bg-[#171d1a]">
-        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-normal">{m.admin_settings_title()}</h1>
-            <p className="mt-2 text-sm text-[#64716a] dark:text-[#aeb8b1]">
-              {m.admin_settings_help()}
-            </p>
+        <form key={siteSettings.url} onSubmit={saveSettings} className="grid gap-6">
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+            <div>
+              <h1 className="text-2xl font-semibold tracking-normal">{m.admin_settings_title()}</h1>
+              <p className="mt-2 text-sm text-[#64716a] dark:text-[#aeb8b1]">
+                {m.admin_settings_help()}
+              </p>
+              {settingsStatus !== "idle" ? (
+                <p
+                  className={`mt-2 text-sm ${
+                    settingsStatus === "saved" ? "text-[#1f6f5b]" : "text-[#b9442f]"
+                  }`}
+                >
+                  {settingsStatus === "saved" ? m.admin_settings_saved() : m.admin_settings_error()}
+                </p>
+              ) : null}
+            </div>
+            <Button type="submit">{m.admin_save_settings()}</Button>
           </div>
-          <Button>{m.admin_save_settings()}</Button>
-        </div>
 
-        <form className="mt-6 grid gap-5 md:grid-cols-2">
-          <div className="grid gap-2">
-            <Label htmlFor="site-name">{m.admin_settings_site_name()}</Label>
-            <Input id="site-name" defaultValue={siteSettings.name} />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="site-url">{m.admin_settings_site_url()}</Label>
-            <Input id="site-url" defaultValue={siteSettings.url} />
-          </div>
-          <div className="grid gap-2 md:col-span-2">
-            <Label htmlFor="site-description">{m.admin_settings_description()}</Label>
-            <Input id="site-description" defaultValue={siteSettings.description} />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="author-name">{m.admin_settings_author_name()}</Label>
-            <Input id="author-name" defaultValue={siteSettings.authorName} />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="default-og">{m.admin_settings_default_og()}</Label>
-            <Input id="default-og" defaultValue={siteSettings.defaultOgImage} />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="primary-language">{m.admin_settings_language()}</Label>
-            <Input id="primary-language" defaultValue={siteSettings.primaryLanguage} />
+          <div className="grid gap-5 md:grid-cols-2">
+            <div className="grid gap-2">
+              <Label htmlFor="site-name">{m.admin_settings_site_name()}</Label>
+              <Input id="site-name" name="siteName" defaultValue={siteSettings.name} />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="site-url">{m.admin_settings_site_url()}</Label>
+              <Input id="site-url" name="siteUrl" defaultValue={siteSettings.url} />
+            </div>
+            <div className="grid gap-2 md:col-span-2">
+              <Label htmlFor="site-description">{m.admin_settings_description()}</Label>
+              <Input
+                id="site-description"
+                name="description"
+                defaultValue={siteSettings.description}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="author-name">{m.admin_settings_author_name()}</Label>
+              <Input id="author-name" name="authorName" defaultValue={siteSettings.authorName} />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="default-og">{m.admin_settings_default_og()}</Label>
+              <Input
+                id="default-og"
+                name="defaultOgImage"
+                defaultValue={siteSettings.defaultOgImage}
+              />
+            </div>
+            <div className="grid gap-2 md:col-span-2">
+              <Label htmlFor="author-bio">{m.admin_settings_author_bio()}</Label>
+              <Input id="author-bio" name="authorBio" defaultValue={siteSettings.authorBio} />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="primary-language">{m.admin_settings_language()}</Label>
+              <select
+                id="primary-language"
+                name="primaryLanguage"
+                defaultValue={siteSettings.primaryLanguage}
+                className="h-10 rounded-md border border-[#26312c]/15 bg-white px-3 text-sm dark:border-white/10 dark:bg-[#111614]"
+              >
+                <option value="en">English</option>
+                <option value="zh">中文</option>
+              </select>
+            </div>
+            <div className="grid content-end gap-2">
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  name="commentsEnabled"
+                  defaultChecked={siteSettings.commentsEnabled}
+                  className="size-4 rounded border-[#26312c]/20"
+                />
+                {m.comments()}
+              </label>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  name="indexingEnabled"
+                  defaultChecked={siteSettings.indexingEnabled}
+                  className="size-4 rounded border-[#26312c]/20"
+                />
+                {m.admin_settings_indexing()}
+              </label>
+            </div>
           </div>
         </form>
       </section>
