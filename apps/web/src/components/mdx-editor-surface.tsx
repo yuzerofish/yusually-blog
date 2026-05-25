@@ -44,15 +44,24 @@ export function MdxEditorSurface({ value, onChange }: MdxEditorSurfaceProps) {
       linkDialogPlugin(),
       imagePlugin({
         imageUploadHandler: async (file) => {
+          const formData = new FormData();
+          formData.append("file", file);
+
           const response = await fetch("/api/assets", {
             method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({
-              filename: file.name,
-              contentType: file.type,
-            }),
+            body: formData,
           });
-          const payload = (await response.json()) as { data: { url: string } };
+
+          if (!response.ok) {
+            throw new Error("Image upload failed");
+          }
+
+          const payload = (await response.json()) as { data?: { url?: string } };
+
+          if (!payload.data?.url) {
+            throw new Error("Image upload returned no URL");
+          }
+
           return payload.data.url;
         },
       }),
