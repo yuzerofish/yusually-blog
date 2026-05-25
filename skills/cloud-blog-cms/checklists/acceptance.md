@@ -9,6 +9,7 @@
 - `/openapi.json` responds with the automation contract.
 - English and Chinese public UI copy render through Paraglide.js.
 - The selected primary language is reflected in D1 site settings.
+- The selected theme preset is reflected in D1 site settings and page UI tokens.
 - The first post has English and Chinese title, excerpt, body, and SEO fields.
 - Admin login page loads.
 - First admin user can sign in.

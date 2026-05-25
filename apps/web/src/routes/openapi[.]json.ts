@@ -91,6 +91,28 @@ export const Route = createFileRoute("/openapi.json")({
               put: {
                 summary: "Update site settings",
                 security: [{ apiToken: ["site:write"] }],
+                requestBody: {
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          name: { type: "string" },
+                          url: { type: "string" },
+                          description: { type: "string" },
+                          authorName: { type: "string" },
+                          authorBio: { type: "string" },
+                          defaultOgImage: { type: "string" },
+                          themePreset: { enum: ["claude", "apple", "editorial"] },
+                          primaryLanguage: { enum: ["en", "zh"] },
+                          rssEnabled: { type: "boolean" },
+                          commentsEnabled: { type: "boolean" },
+                          indexingEnabled: { type: "boolean" },
+                        },
+                      },
+                    },
+                  },
+                },
                 responses: { "200": { description: "Site settings updated" } },
               },
             },

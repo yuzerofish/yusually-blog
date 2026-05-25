@@ -1,5 +1,8 @@
 import { authQueryOptions } from "@repo/auth/tanstack/queries";
+import { getSiteSettingsForLocale } from "@repo/core";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+
+import { getCurrentLocale } from "#/lib/i18n";
 
 export const Route = createFileRoute("/_guest")({
   component: RouteComponent,
@@ -25,8 +28,13 @@ export const Route = createFileRoute("/_guest")({
 });
 
 function RouteComponent() {
+  const siteSettings = getSiteSettingsForLocale(getCurrentLocale());
+
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
+    <div
+      data-theme-preset={siteSettings.themePreset}
+      className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10"
+    >
       <div className="w-full max-w-sm">
         <Outlet />
       </div>

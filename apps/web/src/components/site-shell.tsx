@@ -27,18 +27,19 @@ export function SiteShell({
   ];
 
   return (
-    <div className="min-h-svh bg-[#f8f5ef] text-[#26312c] dark:bg-[#111614] dark:text-[#f5f1e8]">
-      <header className="sticky top-0 z-40 border-b border-[#26312c]/10 bg-[#f8f5ef]/92 backdrop-blur dark:border-white/10 dark:bg-[#111614]/90">
+    <div
+      data-theme-preset={siteSettings.themePreset}
+      className="min-h-svh bg-background text-foreground"
+    >
+      <header className="sticky top-0 z-40 border-b border-border/80 bg-background/88 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
           <Link to="/" className="flex min-w-0 items-center gap-3">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-[#1f6f5b] text-white">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-xs">
               <BookOpenIcon className="size-5" />
             </span>
             <span className="min-w-0">
-              <span className="block truncate text-sm font-semibold tracking-[0.14em] uppercase">
-                {siteSettings.name}
-              </span>
-              <span className="hidden text-xs text-[#64716a] sm:block dark:text-[#aeb8b1]">
+              <span className="block truncate text-sm font-semibold">{siteSettings.name}</span>
+              <span className="hidden text-xs text-muted-foreground sm:block">
                 {m.site_subtitle()}
               </span>
             </span>
@@ -49,7 +50,7 @@ export function SiteShell({
               <Link
                 key={item.href}
                 to={item.href}
-                className="rounded-md px-3 py-2 text-sm text-[#46524c] transition hover:bg-white hover:text-[#14201a] dark:text-[#d8ded8] dark:hover:bg-white/10 dark:hover:text-white"
+                className="rounded-md px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
               >
                 {item.label}
               </Link>
@@ -92,11 +93,11 @@ export function SiteShell({
 
       <main>{children}</main>
 
-      <footer className="border-t border-[#26312c]/10 bg-[#eee8da] dark:border-white/10 dark:bg-[#171d1a]">
+      <footer className="border-t border-border/80 bg-muted/45">
         <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 md:grid-cols-[1.2fr_0.8fr] lg:px-8">
           <div>
             <p className="text-sm font-semibold">{siteSettings.name}</p>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-[#64716a] dark:text-[#aeb8b1]">
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
               {siteSettings.description}
             </p>
           </div>

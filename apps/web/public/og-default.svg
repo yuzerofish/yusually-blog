@@ -1,15 +1,17 @@
 <svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="630" fill="#f8f5ef"/>
-  <rect x="72" y="68" width="1056" height="494" rx="18" fill="#ffffff" stroke="#2f3a34" stroke-width="2"/>
-  <rect x="112" y="108" width="380" height="64" rx="6" fill="#1f6f5b"/>
-  <rect x="112" y="202" width="706" height="26" rx="4" fill="#2f3a34"/>
-  <rect x="112" y="254" width="560" height="20" rx="4" fill="#6f7a74"/>
-  <rect x="112" y="292" width="660" height="20" rx="4" fill="#6f7a74"/>
-  <rect x="112" y="372" width="196" height="116" rx="8" fill="#e7d36a"/>
-  <rect x="336" y="372" width="196" height="116" rx="8" fill="#e96f3a"/>
-  <rect x="560" y="372" width="196" height="116" rx="8" fill="#4b8fbf"/>
-  <rect x="844" y="126" width="210" height="210" rx="18" fill="#1f6f5b"/>
-  <path d="M902 238c29-76 112-70 122 8 4 32-19 63-55 69-49 8-88-23-67-77Z" fill="#f8f5ef"/>
-  <text x="112" y="151" fill="#ffffff" font-family="Arial, sans-serif" font-size="34" font-weight="700">Cloud Blog CMS</text>
-  <text x="112" y="548" fill="#2f3a34" font-family="Arial, sans-serif" font-size="34" font-weight="700">Cloudflare-native publishing for humans, CLI, and AI</text>
+  <rect width="1200" height="630" fill="#FAF8F2"/>
+  <rect x="72" y="64" width="1056" height="502" rx="14" fill="#FFFEFB" stroke="#D9D2C4"/>
+  <path d="M120 142H1080" stroke="#E6E0D4"/>
+  <rect x="120" y="104" width="34" height="34" rx="7" fill="#312B25"/>
+  <path d="M130 120.5H144C147.314 120.5 150 123.186 150 126.5V128.5H136C132.686 128.5 130 125.814 130 122.5V120.5Z" fill="#FAF8F2"/>
+  <text x="172" y="128" fill="#312B25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="24" font-weight="650">Cloud Blog CMS</text>
+  <text x="120" y="260" fill="#25211D" font-family="ui-sans-serif, system-ui, sans-serif" font-size="70" font-weight="680">Cloudflare-native</text>
+  <text x="120" y="340" fill="#25211D" font-family="ui-sans-serif, system-ui, sans-serif" font-size="70" font-weight="680">publishing system</text>
+  <text x="120" y="410" fill="#746D62" font-family="ui-sans-serif, system-ui, sans-serif" font-size="30" font-weight="450">Personal blog CMS with bilingual posts, feeds, assets, and AI-ready APIs.</text>
+  <rect x="120" y="474" width="156" height="44" rx="8" fill="#F0EAE0" stroke="#D9D2C4"/>
+  <text x="150" y="504" fill="#312B25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="600">D1 + R2</text>
+  <rect x="292" y="474" width="140" height="44" rx="8" fill="#F0EAE0" stroke="#D9D2C4"/>
+  <text x="322" y="504" fill="#312B25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="600">i18n</text>
+  <rect x="448" y="474" width="196" height="44" rx="8" fill="#F0EAE0" stroke="#D9D2C4"/>
+  <text x="478" y="504" fill="#312B25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="600">Theme presets</text>
 </svg>

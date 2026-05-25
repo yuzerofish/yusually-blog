@@ -74,6 +74,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Admin_Settings_SavedInputs */
 /** @typedef {{}} Admin_Settings_Site_NameInputs */
 /** @typedef {{}} Admin_Settings_Site_UrlInputs */
+/** @typedef {{}} Admin_Settings_Theme_PresetInputs */
 /** @typedef {{}} Admin_Settings_TitleInputs */
 /** @typedef {{}} Admin_Storage_ContractInputs */
 /** @typedef {{}} Admin_Storage_Contract_DetailInputs */
@@ -183,6 +184,9 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Tags_TitleInputs */
 /** @typedef {{}} Theme_DarkInputs */
 /** @typedef {{}} Theme_LightInputs */
+/** @typedef {{}} Theme_Preset_AppleInputs */
+/** @typedef {{}} Theme_Preset_ClaudeInputs */
+/** @typedef {{}} Theme_Preset_EditorialInputs */
 /** @typedef {{}} Theme_SystemInputs */
 /** @typedef {{}} Theme_ToggleInputs */
 /** @typedef {{}} UpdatedInputs */
@@ -1429,6 +1433,23 @@ export const admin_settings_site_url =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.admin_settings_site_url(inputs);
       return __zh.admin_settings_site_url(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Theme preset" |
+ *
+ * @param {Admin_Settings_Theme_PresetInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_settings_theme_preset =
+  /** @type {((inputs?: Admin_Settings_Theme_PresetInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Settings_Theme_PresetInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_settings_theme_preset(inputs);
+      return __zh.admin_settings_theme_preset(inputs);
     }
   );
 /**
@@ -3282,6 +3303,57 @@ export const theme_light =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.theme_light(inputs);
       return __zh.theme_light(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Apple" |
+ *
+ * @param {Theme_Preset_AppleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const theme_preset_apple =
+  /** @type {((inputs?: Theme_Preset_AppleInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Theme_Preset_AppleInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.theme_preset_apple(inputs);
+      return __zh.theme_preset_apple(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Claude" |
+ *
+ * @param {Theme_Preset_ClaudeInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const theme_preset_claude =
+  /** @type {((inputs?: Theme_Preset_ClaudeInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Theme_Preset_ClaudeInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.theme_preset_claude(inputs);
+      return __zh.theme_preset_claude(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Editorial" |
+ *
+ * @param {Theme_Preset_EditorialInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const theme_preset_editorial =
+  /** @type {((inputs?: Theme_Preset_EditorialInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Theme_Preset_EditorialInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.theme_preset_editorial(inputs);
+      return __zh.theme_preset_editorial(inputs);
     }
   );
 /**

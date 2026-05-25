@@ -69,7 +69,7 @@ function SignupForm() {
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
             <Link to="/" className="flex flex-col items-center gap-2 font-medium">
-              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[#1f6f5b] text-white">
+              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-xs">
                 <BookOpenIcon className="size-5" />
               </div>
               <span className="sr-only">{siteSettings.name}</span>

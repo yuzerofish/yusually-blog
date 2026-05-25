@@ -18,7 +18,7 @@ Ask for missing values only when they are not already provided:
 - Author email
 - Primary language: `en` or `zh`
 - Domain, or workers.dev fallback
-- Theme style
+- Theme preset: `claude`, `apple`, or `editorial`
 - Comments enabled
 - Email Sending enabled
 - GitHub Actions enabled
@@ -49,6 +49,7 @@ Ask for missing values only when they are not already provided:
 - Use Paraglide.js compiled messages from `apps/web/messages/{locale}.json`; do not replace it with i18next or next-intl.
 - The generated site must support `en` and `zh` by default.
 - The selected primary language controls initial site settings, feed copy, demo post defaults, and admin settings.
+- The selected theme preset is saved as `themePreset` in site settings and applied through shared UI tokens.
 - Public product introduction copy should include both English and Chinese.
 - Blog content records should keep bilingual fields so switching language changes titles, excerpts, body HTML, tags, comments, projects, and metrics.
 

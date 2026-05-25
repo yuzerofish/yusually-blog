@@ -18,16 +18,14 @@ function AdminOverviewPage() {
 
   return (
     <div className="grid gap-6">
-      <section className="rounded-lg border border-[#26312c]/10 bg-white p-6 dark:border-white/10 dark:bg-[#171d1a]">
+      <section className="rounded-lg border border-border/80 bg-card p-6 shadow-xs">
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
           <div>
-            <p className="text-sm font-semibold tracking-[0.16em] text-[#1f6f5b] uppercase dark:text-[#75c5ad]">
+            <p className="text-sm font-semibold text-link uppercase">
               {m.admin_overview_eyebrow()}
             </p>
-            <h1 className="mt-3 text-3xl font-semibold tracking-normal">
-              {m.admin_overview_title()}
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-[#64716a] dark:text-[#aeb8b1]">
+            <h1 className="mt-3 text-3xl font-semibold">{m.admin_overview_title()}</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
               {m.admin_metric_overview_description({ name: siteSettings.name })}
             </p>
           </div>
@@ -39,26 +37,24 @@ function AdminOverviewPage() {
       </section>
 
       <div className="grid gap-5 lg:grid-cols-3">
-        <section className="rounded-lg border border-[#26312c]/10 bg-white p-5 dark:border-white/10 dark:bg-[#171d1a]">
-          <DatabaseIcon className="size-5 text-[#1f6f5b]" />
+        <section className="rounded-lg border border-border/80 bg-card p-5 shadow-xs">
+          <DatabaseIcon className="size-5 text-link" />
           <h2 className="mt-4 text-lg font-semibold">{m.admin_storage_contract()}</h2>
-          <p className="mt-2 text-sm leading-6 text-[#64716a] dark:text-[#aeb8b1]">
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
             {m.admin_storage_contract_detail()}
           </p>
         </section>
-        <section className="rounded-lg border border-[#26312c]/10 bg-white p-5 dark:border-white/10 dark:bg-[#171d1a]">
-          <Clock3Icon className="size-5 text-[#e96f3a]" />
+        <section className="rounded-lg border border-border/80 bg-card p-5 shadow-xs">
+          <Clock3Icon className="size-5 text-warning" />
           <h2 className="mt-4 text-lg font-semibold">{m.admin_moderation_queue()}</h2>
-          <p className="mt-2 text-sm leading-6 text-[#64716a] dark:text-[#aeb8b1]">
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
             {m.admin_moderation_queue_detail({ count: pendingComments.length })}
           </p>
         </section>
-        <section className="rounded-lg border border-[#26312c]/10 bg-white p-5 dark:border-white/10 dark:bg-[#171d1a]">
-          <CheckCircle2Icon className="size-5 text-[#4b8fbf]" />
+        <section className="rounded-lg border border-border/80 bg-card p-5 shadow-xs">
+          <CheckCircle2Icon className="size-5 text-success" />
           <h2 className="mt-4 text-lg font-semibold">{m.admin_latest_post()}</h2>
-          <p className="mt-2 text-sm leading-6 text-[#64716a] dark:text-[#aeb8b1]">
-            {latestPost.title}
-          </p>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">{latestPost.title}</p>
         </section>
       </div>
     </div>

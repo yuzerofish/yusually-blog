@@ -13,12 +13,13 @@ The Skill collects:
 - Author name and email
 - Primary language: `en` or `zh`
 - Domain, or workers.dev fallback
-- Theme style
+- Theme preset: `claude`, `apple`, or `editorial`
 - Comments preference
 - Email Sending preference
 - GitHub Actions preference
 
 English and Chinese remain enabled regardless of the primary language.
+The theme preset is written to site settings and applied through shared UI tokens.
 
 ## Automation Order
 

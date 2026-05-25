@@ -32,6 +32,7 @@ export type HomePageData = {
 
 export type BlogIndexPageData = {
   posts: Post[];
+  siteSettings: SiteSettings;
   tags: Tag[];
 };
 
@@ -43,16 +44,23 @@ export type ArchiveGroup = {
 
 export type ArchivePageData = {
   groups: ArchiveGroup[];
+  siteSettings: SiteSettings;
 };
 
 export type TagPageData = {
+  siteSettings: SiteSettings;
   tag: Tag;
   posts: Post[];
 };
 
 export type TagsPageData = {
+  siteSettings: SiteSettings;
   tags: Tag[];
   posts: Post[];
+};
+
+export type SiteSettingsPageData = {
+  siteSettings: SiteSettings;
 };
 
 export const $getBlogPostPage = createServerFn({ method: "GET" })
@@ -109,7 +117,11 @@ export const $getHomePageData = createServerFn({ method: "GET" }).handler(
 export const $getBlogIndexPage = createServerFn({ method: "GET" })
   .inputValidator((data: { query?: string; tagSlug?: string }) => data)
   .handler(async ({ data }): Promise<BlogIndexPageData> => {
-    const allPosts = await getMergedPublishedPosts();
+    const { getD1SiteSettings } = await import("./cms-d1");
+    const [allPosts, siteSettings] = await Promise.all([
+      getMergedPublishedPosts(),
+      getD1SiteSettings(),
+    ]);
     const posts = filterPosts(allPosts, {
       query: data.query,
       tagSlug: data.tagSlug,
@@ -117,6 +129,7 @@ export const $getBlogIndexPage = createServerFn({ method: "GET" })
 
     return {
       posts,
+      siteSettings,
       tags: await getMergedTags(allPosts),
     };
   });
@@ -124,18 +137,28 @@ export const $getBlogIndexPage = createServerFn({ method: "GET" })
 export const $getArchivePage = createServerFn({ method: "GET" })
   .inputValidator((data: { locale?: string }) => data)
   .handler(async ({ data }): Promise<ArchivePageData> => {
+    const { getD1SiteSettings } = await import("./cms-d1");
     const locale = resolveLocale(data.locale);
-    const posts = (await getMergedPublishedPosts()).map((post) => localizePost(post, locale));
+    const [siteSettings, mergedPosts] = await Promise.all([
+      getD1SiteSettings(),
+      getMergedPublishedPosts(),
+    ]);
+    const posts = mergedPosts.map((post) => localizePost(post, locale));
 
     return {
       groups: archivePosts(posts, locale),
+      siteSettings,
     };
   });
 
 export const $getTagPage = createServerFn({ method: "GET" })
   .inputValidator((data: { slug: string }) => data)
   .handler(async ({ data }): Promise<TagPageData | null> => {
-    const allPosts = await getMergedPublishedPosts();
+    const { getD1SiteSettings } = await import("./cms-d1");
+    const [allPosts, siteSettings] = await Promise.all([
+      getMergedPublishedPosts(),
+      getD1SiteSettings(),
+    ]);
     const tags = await getMergedTags(allPosts);
     const tag = tags.find((candidate) => candidate.slug === data.slug) ?? getTagBySlug(data.slug);
 
@@ -144,6 +167,7 @@ export const $getTagPage = createServerFn({ method: "GET" })
     }
 
     return {
+      siteSettings,
       tag,
       posts: filterPosts(allPosts, { tagSlug: tag.slug }),
     };
@@ -151,11 +175,26 @@ export const $getTagPage = createServerFn({ method: "GET" })
 
 export const $getTagsPage = createServerFn({ method: "GET" }).handler(
   async (): Promise<TagsPageData> => {
-    const posts = await getMergedPublishedPosts();
+    const { getD1SiteSettings } = await import("./cms-d1");
+    const [posts, siteSettings] = await Promise.all([
+      getMergedPublishedPosts(),
+      getD1SiteSettings(),
+    ]);
 
     return {
+      siteSettings,
       posts,
       tags: await getMergedTags(posts),
+    };
+  },
+);
+
+export const $getSiteSettingsPageData = createServerFn({ method: "GET" }).handler(
+  async (): Promise<SiteSettingsPageData> => {
+    const { getD1SiteSettings } = await import("./cms-d1");
+
+    return {
+      siteSettings: await getD1SiteSettings(),
     };
   },
 );

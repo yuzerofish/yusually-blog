@@ -147,22 +147,30 @@ type SiteSettingsInput = Partial<
     | "rssEnabled"
     | "commentsEnabled"
     | "indexingEnabled"
+    | "themePreset"
     | "primaryLanguage"
     | "i18n"
   >
->;
+> & {
+  theme?: string;
+};
 
 type D1Result<TValue> = { data: TValue } | { error: string };
 
 const siteSettingsKey = "site";
 
 export async function getD1SiteSettings(locale?: SupportedLocale) {
+  const settings = await readD1SiteSettings().catch(() => runtimeDefaultSiteSettings());
+
+  return locale ? localizeSiteSettings(settings, locale) : settings;
+}
+
+async function readD1SiteSettings() {
   const row = await env.CMS_DB.prepare("select * from site_settings where key = ? limit 1")
     .bind(siteSettingsKey)
     .first<D1SiteSettingsRow>();
-  const settings = normalizeSiteSettings(parseJson<SiteSettingsInput>(row?.value ?? null) ?? {});
 
-  return locale ? localizeSiteSettings(settings, locale) : settings;
+  return normalizeSiteSettings(parseJson<SiteSettingsInput>(row?.value ?? null) ?? {});
 }
 
 export async function updateD1SiteSettings(input: SiteSettingsInput) {
@@ -941,6 +949,7 @@ function normalizeSiteSettings(
     rssEnabled: input.rssEnabled ?? base.rssEnabled,
     commentsEnabled: input.commentsEnabled ?? base.commentsEnabled,
     indexingEnabled: input.indexingEnabled ?? base.indexingEnabled,
+    themePreset: normalizeThemePreset(input.themePreset ?? input.theme, base.themePreset),
     locales: ["en", "zh"],
     primaryLanguage,
     i18n: {
@@ -948,6 +957,18 @@ function normalizeSiteSettings(
       ...input.i18n,
     },
   };
+}
+
+function normalizeThemePreset(value: string | undefined, fallback: SiteSettings["themePreset"]) {
+  if (value === "apple" || value === "editorial") {
+    return value;
+  }
+
+  if (value === "editorial-edge") {
+    return "editorial";
+  }
+
+  return value === "claude" ? "claude" : fallback;
 }
 
 function runtimeDefaultSiteSettings(): SiteSettings {

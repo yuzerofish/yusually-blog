@@ -1,4 +1,4 @@
-import { localizePost, localizeTag } from "@repo/core";
+import { localizePost, localizeSiteSettings, localizeTag } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { createFileRoute } from "@tanstack/react-router";
@@ -34,28 +34,23 @@ function BlogIndexPage() {
   const pageSize = 6;
   const tags = data.tags.map((tag) => localizeTag(tag, locale));
   const matchedPosts = data.posts.map((post) => localizePost(post, locale));
+  const siteSettings = localizeSiteSettings(data.siteSettings, locale);
   const pageCount = Math.max(1, Math.ceil(matchedPosts.length / pageSize));
   const currentPage = Math.min(search.page, pageCount);
   const posts = matchedPosts.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   return (
-    <SiteShell>
+    <SiteShell siteSettings={siteSettings}>
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="max-w-3xl">
-          <p className="text-sm font-semibold tracking-[0.16em] text-[#1f6f5b] uppercase dark:text-[#75c5ad]">
-            {m.blog_eyebrow()}
-          </p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-normal text-[#1e2b25] sm:text-5xl dark:text-white">
-            {m.blog_title()}
-          </h1>
-          <p className="mt-4 text-base leading-7 text-[#64716a] dark:text-[#aeb8b1]">
-            {m.blog_description()}
-          </p>
+          <p className="text-sm font-semibold text-link uppercase">{m.blog_eyebrow()}</p>
+          <h1 className="mt-3 text-4xl font-semibold sm:text-5xl">{m.blog_title()}</h1>
+          <p className="mt-4 text-base leading-7 text-muted-foreground">{m.blog_description()}</p>
         </div>
-        <form className="mt-8 grid gap-4 rounded-lg border border-[#26312c]/10 bg-white p-4 shadow-sm md:grid-cols-[minmax(0,1fr)_auto] dark:border-white/10 dark:bg-[#171d1a]">
+        <form className="mt-8 grid gap-4 rounded-lg border border-border/80 bg-card p-4 shadow-xs md:grid-cols-[minmax(0,1fr)_auto]">
           <label className="relative block">
             <span className="sr-only">{m.blog_search_placeholder()}</span>
-            <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[#64716a]" />
+            <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               name="q"
               defaultValue={search.q}
@@ -105,13 +100,13 @@ function BlogIndexPage() {
               <PostCard key={post.id} post={post} priority={index === 0} locale={locale} />
             ))
           ) : (
-            <p className="rounded-lg border border-[#26312c]/10 bg-white p-6 text-sm text-[#64716a] dark:border-white/10 dark:bg-[#171d1a] dark:text-[#aeb8b1]">
+            <p className="rounded-lg border border-border/80 bg-card p-6 text-sm text-muted-foreground">
               {m.blog_no_results()}
             </p>
           )}
         </div>
         <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-[#64716a] dark:text-[#aeb8b1]">
+          <p className="text-sm text-muted-foreground">
             {m.pagination_page({ current: currentPage, total: pageCount })}
           </p>
           <div className="flex gap-2">

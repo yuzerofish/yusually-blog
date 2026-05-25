@@ -1607,6 +1607,28 @@ export const admin_settings_site_url: ((
 /**
  * | output |
  * | --- |
+ * | "Theme preset" |
+ *
+ * @param {Admin_Settings_Theme_PresetInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_settings_theme_preset: ((
+  inputs?: Admin_Settings_Theme_PresetInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Settings_Theme_PresetInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Site settings" |
  *
  * @param {Admin_Settings_TitleInputs} inputs
@@ -4005,6 +4027,72 @@ export const theme_light: ((
 /**
  * | output |
  * | --- |
+ * | "Apple" |
+ *
+ * @param {Theme_Preset_AppleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const theme_preset_apple: ((
+  inputs?: Theme_Preset_AppleInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Theme_Preset_AppleInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Claude" |
+ *
+ * @param {Theme_Preset_ClaudeInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const theme_preset_claude: ((
+  inputs?: Theme_Preset_ClaudeInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Theme_Preset_ClaudeInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Editorial" |
+ *
+ * @param {Theme_Preset_EditorialInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const theme_preset_editorial: ((
+  inputs?: Theme_Preset_EditorialInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Theme_Preset_EditorialInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "System" |
  *
  * @param {Theme_SystemInputs} inputs
@@ -4190,6 +4278,7 @@ export type Admin_Settings_RssInputs = {};
 export type Admin_Settings_SavedInputs = {};
 export type Admin_Settings_Site_NameInputs = {};
 export type Admin_Settings_Site_UrlInputs = {};
+export type Admin_Settings_Theme_PresetInputs = {};
 export type Admin_Settings_TitleInputs = {};
 export type Admin_Storage_ContractInputs = {};
 export type Admin_Storage_Contract_DetailInputs = {};
@@ -4316,6 +4405,9 @@ export type Tag_EyebrowInputs = {};
 export type Tags_TitleInputs = {};
 export type Theme_DarkInputs = {};
 export type Theme_LightInputs = {};
+export type Theme_Preset_AppleInputs = {};
+export type Theme_Preset_ClaudeInputs = {};
+export type Theme_Preset_EditorialInputs = {};
 export type Theme_SystemInputs = {};
 export type Theme_ToggleInputs = {};
 export type UpdatedInputs = {};

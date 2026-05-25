@@ -24,6 +24,7 @@ export const siteSettings: SiteSettings = {
   rssEnabled: true,
   commentsEnabled: true,
   indexingEnabled: true,
+  themePreset: "claude",
   locales: ["en", "zh"],
   primaryLanguage: "en",
   i18n: {

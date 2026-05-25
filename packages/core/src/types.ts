@@ -2,6 +2,8 @@ export type ContentStatus = "draft" | "published" | "scheduled" | "archived" | "
 
 export type SupportedLocale = "en" | "zh";
 
+export type ThemePreset = "claude" | "apple" | "editorial";
+
 export type LocalizedString = Partial<Record<SupportedLocale, string>>;
 
 export type LocalizedFields<TField extends string> = Partial<Record<TField, LocalizedString>>;
@@ -112,6 +114,7 @@ export type SiteSettings = {
   rssEnabled: boolean;
   commentsEnabled: boolean;
   indexingEnabled: boolean;
+  themePreset: ThemePreset;
   locales: SupportedLocale[];
   primaryLanguage: SupportedLocale;
   i18n?: LocalizedFields<"name" | "description" | "authorBio">;

@@ -61,14 +61,12 @@ function AdminAssetsPage() {
     <section className="grid gap-6">
       <form
         onSubmit={handleSubmit}
-        className="rounded-lg border border-[#26312c]/10 bg-white p-6 dark:border-white/10 dark:bg-[#171d1a]"
+        className="rounded-lg border border-border/80 bg-card p-6 shadow-xs"
       >
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
-            <h1 className="text-2xl font-semibold tracking-normal">{m.admin_assets_title()}</h1>
-            <p className="mt-2 text-sm text-[#64716a] dark:text-[#aeb8b1]">
-              {m.admin_assets_description()}
-            </p>
+            <h1 className="text-2xl font-semibold">{m.admin_assets_title()}</h1>
+            <p className="mt-2 text-sm text-muted-foreground">{m.admin_assets_description()}</p>
           </div>
           <Button type="submit" disabled={state === "uploading"}>
             <UploadIcon />
@@ -83,25 +81,20 @@ function AdminAssetsPage() {
           </div>
         </div>
         {state === "uploaded" ? (
-          <p className="mt-3 text-sm text-[#1f6f5b] dark:text-[#75c5ad]">
-            {m.admin_assets_uploaded()}
-          </p>
+          <p className="mt-3 text-sm text-success">{m.admin_assets_uploaded()}</p>
         ) : null}
         {state === "error" ? (
           <p className="mt-3 text-sm text-destructive">{m.admin_assets_error()}</p>
         ) : null}
       </form>
 
-      <div className="rounded-lg border border-[#26312c]/10 bg-white p-6 dark:border-white/10 dark:bg-[#171d1a]">
+      <div className="rounded-lg border border-border/80 bg-card p-6 shadow-xs">
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {rows.map((asset) => (
-            <article
-              key={asset.id}
-              className="rounded-lg border border-[#26312c]/10 bg-[#f8f5ef] p-4 dark:border-white/10 dark:bg-white/5"
-            >
+            <article key={asset.id} className="rounded-lg border border-border bg-muted/45 p-4">
               <img src={asset.url} alt="" className="h-36 w-full rounded-md object-cover" />
               <p className="mt-3 truncate font-medium">{asset.filename}</p>
-              <p className="mt-1 text-xs text-[#64716a] dark:text-[#aeb8b1]">{asset.contentType}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{asset.contentType}</p>
             </article>
           ))}
         </div>

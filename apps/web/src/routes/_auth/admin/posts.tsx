@@ -179,13 +179,11 @@ function AdminPostsPage() {
 
   return (
     <section className="grid gap-6">
-      <div className="rounded-lg border border-[#26312c]/10 bg-white p-6 dark:border-white/10 dark:bg-[#171d1a]">
+      <div className="rounded-lg border border-border/80 bg-card p-6 shadow-xs">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
-            <h1 className="text-2xl font-semibold tracking-normal">{m.admin_posts_title()}</h1>
-            <p className="mt-2 text-sm text-[#64716a] dark:text-[#aeb8b1]">
-              {m.admin_posts_description()}
-            </p>
+            <h1 className="text-2xl font-semibold">{m.admin_posts_title()}</h1>
+            <p className="mt-2 text-sm text-muted-foreground">{m.admin_posts_description()}</p>
           </div>
           <Button type="button" onClick={startNewPost}>
             <PlusIcon />
@@ -193,8 +191,8 @@ function AdminPostsPage() {
           </Button>
         </div>
 
-        <div className="mt-6 flex max-w-md items-center gap-2 rounded-md border border-[#26312c]/10 bg-[#f8f5ef] px-3 dark:border-white/10 dark:bg-white/5">
-          <SearchIcon className="size-4 text-[#64716a]" />
+        <div className="mt-6 flex max-w-md items-center gap-2 rounded-md border border-input bg-background px-3 shadow-xs">
+          <SearchIcon className="size-4 text-muted-foreground" />
           <Input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
@@ -208,7 +206,7 @@ function AdminPostsPage() {
             id="post-status-filter"
             value={statusFilter}
             onChange={(event) => setStatusFilter(event.currentTarget.value as typeof statusFilter)}
-            className="mt-2 h-10 w-full rounded-md border border-[#26312c]/15 bg-white px-3 text-sm dark:border-white/10 dark:bg-[#111614]"
+            className="mt-2 h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
           >
             {statusOptions.map((status) => (
               <option key={status} value={status}>
@@ -223,7 +221,7 @@ function AdminPostsPage() {
             id="post-tag-filter"
             value={tagFilter}
             onChange={(event) => setTagFilter(event.currentTarget.value)}
-            className="mt-2 h-10 w-full rounded-md border border-[#26312c]/15 bg-white px-3 text-sm dark:border-white/10 dark:bg-[#111614]"
+            className="mt-2 h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
           >
             <option value="all">{m.admin_posts_filter_all_tags()}</option>
             {tagOptions.map((tag) => (
@@ -234,9 +232,9 @@ function AdminPostsPage() {
           </select>
         </div>
 
-        <div className="mt-6 overflow-hidden rounded-lg border border-[#26312c]/10 dark:border-white/10">
+        <div className="mt-6 overflow-hidden rounded-lg border border-border/80">
           <table className="w-full min-w-[880px] text-left text-sm">
-            <thead className="bg-[#f8f5ef] text-xs tracking-[0.12em] text-[#64716a] uppercase dark:bg-white/5 dark:text-[#aeb8b1]">
+            <thead className="bg-muted/55 text-xs text-muted-foreground uppercase">
               <tr>
                 <th className="px-4 py-3">{m.admin_posts_column_title()}</th>
                 <th className="px-4 py-3">{m.admin_posts_status()}</th>
@@ -246,24 +244,22 @@ function AdminPostsPage() {
                 <th className="px-4 py-3">{m.admin_posts_actions()}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#26312c]/10 dark:divide-white/10">
+            <tbody className="divide-y divide-border/80">
               {visiblePosts.map((post) => (
                 <tr key={post.id}>
                   <td className="px-4 py-4 font-medium">{post.title}</td>
                   <td className="px-4 py-4">
-                    <span className="rounded-sm bg-[#1f6f5b]/10 px-2 py-1 text-xs font-medium text-[#1f6f5b] dark:text-[#75c5ad]">
+                    <span className="rounded-sm bg-accent px-2 py-1 text-xs font-medium text-accent-foreground">
                       {post.status}
                     </span>
                   </td>
-                  <td className="px-4 py-4 text-[#64716a] dark:text-[#aeb8b1]">{post.source}</td>
-                  <td className="px-4 py-4 text-[#64716a] dark:text-[#aeb8b1]">
-                    {post.updatedAt.slice(0, 10)}
-                  </td>
+                  <td className="px-4 py-4 text-muted-foreground">{post.source}</td>
+                  <td className="px-4 py-4 text-muted-foreground">{post.updatedAt.slice(0, 10)}</td>
                   <td className="px-4 py-4">
                     <Link
                       to="/blog/$slug"
                       params={{ slug: post.slug }}
-                      className="text-[#1f6f5b] hover:underline dark:text-[#75c5ad]"
+                      className="text-link hover:underline"
                     >
                       {m.admin_posts_view()}
                     </Link>
@@ -309,16 +305,14 @@ function AdminPostsPage() {
         key={editingPost?.id ?? "new-post"}
         id="post-editor"
         onSubmit={handleEditorSubmit}
-        className="rounded-lg border border-[#26312c]/10 bg-white p-6 dark:border-white/10 dark:bg-[#171d1a]"
+        className="rounded-lg border border-border/80 bg-card p-6 shadow-xs"
       >
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
-            <h2 className="text-2xl font-semibold tracking-normal">
+            <h2 className="text-2xl font-semibold">
               {editingPost ? m.admin_editor_edit_title() : m.admin_editor_title()}
             </h2>
-            <p className="mt-2 text-sm text-[#64716a] dark:text-[#aeb8b1]">
-              {m.admin_editor_description()}
-            </p>
+            <p className="mt-2 text-sm text-muted-foreground">{m.admin_editor_description()}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button type="submit" name="status" value="draft" variant="outline">
@@ -374,7 +368,7 @@ function AdminPostsPage() {
                 type="checkbox"
                 name="commentsEnabled"
                 defaultChecked={editingPost?.commentsEnabled ?? true}
-                className="size-4 rounded border-[#26312c]/20"
+                className="size-4 rounded border-input"
               />
               {m.admin_editor_comments_enabled()}
             </label>
@@ -402,7 +396,7 @@ function AdminPostsPage() {
               </Button>
             </div>
             {editorState === "saved" ? (
-              <p className="text-sm text-[#1f6f5b] dark:text-[#75c5ad]">{m.admin_editor_saved()}</p>
+              <p className="text-sm text-success">{m.admin_editor_saved()}</p>
             ) : null}
             {editorState === "error" ? (
               <p className="text-sm text-destructive">{m.admin_editor_error()}</p>
@@ -423,7 +417,7 @@ function AdminPostsPage() {
 
           {editorMode === "preview" ? (
             <div
-              className="prose prose-neutral dark:prose-invert min-h-96 max-w-none rounded-md border border-[#26312c]/10 bg-[#f8f5ef] p-5 dark:border-white/10 dark:bg-white/5"
+              className="prose prose-neutral prose-a:text-link dark:prose-invert min-h-96 max-w-none rounded-md border border-border bg-muted/45 p-5"
               dangerouslySetInnerHTML={{ __html: previewHtml }}
             />
           ) : null}

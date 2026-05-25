@@ -19,7 +19,7 @@
     }
   },
   "i18nRuntime": "paraglide-js",
-  "theme": "editorial-edge",
+  "themePreset": "claude",
   "commentsEnabled": true,
   "emailSendingEnabled": false,
   "githubActionsEnabled": false

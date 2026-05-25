@@ -73,6 +73,7 @@
 /** @typedef {{}} Admin_Settings_SavedInputs */
 /** @typedef {{}} Admin_Settings_Site_NameInputs */
 /** @typedef {{}} Admin_Settings_Site_UrlInputs */
+/** @typedef {{}} Admin_Settings_Theme_PresetInputs */
 /** @typedef {{}} Admin_Settings_TitleInputs */
 /** @typedef {{}} Admin_Storage_ContractInputs */
 /** @typedef {{}} Admin_Storage_Contract_DetailInputs */
@@ -182,6 +183,9 @@
 /** @typedef {{}} Tags_TitleInputs */
 /** @typedef {{}} Theme_DarkInputs */
 /** @typedef {{}} Theme_LightInputs */
+/** @typedef {{}} Theme_Preset_AppleInputs */
+/** @typedef {{}} Theme_Preset_ClaudeInputs */
+/** @typedef {{}} Theme_Preset_EditorialInputs */
 /** @typedef {{}} Theme_SystemInputs */
 /** @typedef {{}} Theme_ToggleInputs */
 /** @typedef {{}} UpdatedInputs */
@@ -550,6 +554,11 @@ export const admin_settings_site_name =
 export const admin_settings_site_url =
   /** @type {(inputs: Admin_Settings_Site_UrlInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `Site URL`;
+  };
+
+export const admin_settings_theme_preset =
+  /** @type {(inputs: Admin_Settings_Theme_PresetInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Theme preset`;
   };
 
 export const admin_settings_title =
@@ -1055,6 +1064,21 @@ export const theme_dark = /** @type {(inputs: Theme_DarkInputs) => LocalizedStri
 export const theme_light = /** @type {(inputs: Theme_LightInputs) => LocalizedString} */ () => {
   return /** @type {LocalizedString} */ `Light`;
 };
+
+export const theme_preset_apple =
+  /** @type {(inputs: Theme_Preset_AppleInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Apple`;
+  };
+
+export const theme_preset_claude =
+  /** @type {(inputs: Theme_Preset_ClaudeInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Claude`;
+  };
+
+export const theme_preset_editorial =
+  /** @type {(inputs: Theme_Preset_EditorialInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Editorial`;
+  };
 
 export const theme_system = /** @type {(inputs: Theme_SystemInputs) => LocalizedString} */ () => {
   return /** @type {LocalizedString} */ `System`;

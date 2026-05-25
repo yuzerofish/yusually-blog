@@ -66,6 +66,7 @@ function AdminSettingsPage() {
         authorName: formData.get("authorName"),
         authorBio: formData.get("authorBio"),
         defaultOgImage: formData.get("defaultOgImage"),
+        themePreset: formData.get("themePreset"),
         primaryLanguage: formData.get("primaryLanguage"),
         rssEnabled: formData.get("rssEnabled") === "on",
         commentsEnabled: formData.get("commentsEnabled") === "on",
@@ -80,6 +81,9 @@ function AdminSettingsPage() {
 
     const payload = (await response.json()) as { data: SiteSettings };
     setSiteSettings(payload.data);
+    window.dispatchEvent(
+      new CustomEvent("blogcms:site-settings-updated", { detail: payload.data }),
+    );
     setSettingsStatus("saved");
   };
 
@@ -118,18 +122,16 @@ function AdminSettingsPage() {
 
   return (
     <div className="grid gap-6">
-      <section className="rounded-lg border border-[#26312c]/10 bg-white p-6 dark:border-white/10 dark:bg-[#171d1a]">
+      <section className="rounded-lg border border-border/80 bg-card p-6 shadow-xs">
         <form key={siteSettings.url} onSubmit={saveSettings} className="grid gap-6">
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div>
-              <h1 className="text-2xl font-semibold tracking-normal">{m.admin_settings_title()}</h1>
-              <p className="mt-2 text-sm text-[#64716a] dark:text-[#aeb8b1]">
-                {m.admin_settings_help()}
-              </p>
+              <h1 className="text-2xl font-semibold">{m.admin_settings_title()}</h1>
+              <p className="mt-2 text-sm text-muted-foreground">{m.admin_settings_help()}</p>
               {settingsStatus !== "idle" ? (
                 <p
                   className={`mt-2 text-sm ${
-                    settingsStatus === "saved" ? "text-[#1f6f5b]" : "text-[#b9442f]"
+                    settingsStatus === "saved" ? "text-success" : "text-destructive"
                   }`}
                 >
                   {settingsStatus === "saved" ? m.admin_settings_saved() : m.admin_settings_error()}
@@ -178,19 +180,32 @@ function AdminSettingsPage() {
                 id="primary-language"
                 name="primaryLanguage"
                 defaultValue={siteSettings.primaryLanguage}
-                className="h-10 rounded-md border border-[#26312c]/15 bg-white px-3 text-sm dark:border-white/10 dark:bg-[#111614]"
+                className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
               >
                 <option value="en">English</option>
                 <option value="zh">中文</option>
               </select>
             </div>
-            <div className="grid content-end gap-2">
+            <div className="grid gap-2">
+              <Label htmlFor="theme-preset">{m.admin_settings_theme_preset()}</Label>
+              <select
+                id="theme-preset"
+                name="themePreset"
+                defaultValue={siteSettings.themePreset}
+                className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+              >
+                <option value="claude">{m.theme_preset_claude()}</option>
+                <option value="apple">{m.theme_preset_apple()}</option>
+                <option value="editorial">{m.theme_preset_editorial()}</option>
+              </select>
+            </div>
+            <div className="grid content-end gap-2 md:col-span-2">
               <label className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
                   name="rssEnabled"
                   defaultChecked={siteSettings.rssEnabled}
-                  className="size-4 rounded border-[#26312c]/20"
+                  className="size-4 rounded border-input"
                 />
                 {m.admin_settings_rss()}
               </label>
@@ -199,7 +214,7 @@ function AdminSettingsPage() {
                   type="checkbox"
                   name="commentsEnabled"
                   defaultChecked={siteSettings.commentsEnabled}
-                  className="size-4 rounded border-[#26312c]/20"
+                  className="size-4 rounded border-input"
                 />
                 {m.comments()}
               </label>
@@ -208,7 +223,7 @@ function AdminSettingsPage() {
                   type="checkbox"
                   name="indexingEnabled"
                   defaultChecked={siteSettings.indexingEnabled}
-                  className="size-4 rounded border-[#26312c]/20"
+                  className="size-4 rounded border-input"
                 />
                 {m.admin_settings_indexing()}
               </label>
@@ -217,14 +232,12 @@ function AdminSettingsPage() {
         </form>
       </section>
 
-      <section className="rounded-lg border border-[#26312c]/10 bg-white p-6 dark:border-white/10 dark:bg-[#171d1a]">
+      <section className="rounded-lg border border-border/80 bg-card p-6 shadow-xs">
         <div className="flex items-start gap-3">
-          <KeyRoundIcon className="mt-1 size-5 text-[#1f6f5b]" />
+          <KeyRoundIcon className="mt-1 size-5 text-link" />
           <div>
-            <h2 className="text-xl font-semibold tracking-normal">{m.admin_tokens_title()}</h2>
-            <p className="mt-2 text-sm text-[#64716a] dark:text-[#aeb8b1]">
-              {m.admin_tokens_description()}
-            </p>
+            <h2 className="text-xl font-semibold">{m.admin_tokens_title()}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">{m.admin_tokens_description()}</p>
           </div>
         </div>
 
@@ -243,7 +256,7 @@ function AdminSettingsPage() {
                     name="scopes"
                     value={scope}
                     defaultChecked={["posts:read", "posts:write", "posts:publish"].includes(scope)}
-                    className="size-4 rounded border-[#26312c]/20"
+                    className="size-4 rounded border-input"
                   />
                   {scope}
                 </label>
@@ -256,21 +269,18 @@ function AdminSettingsPage() {
         </form>
 
         {secret ? (
-          <p className="mt-4 rounded-md bg-[#f8f5ef] p-3 font-mono text-sm text-[#26312c] dark:bg-white/10 dark:text-[#f5f1e8]">
+          <p className="mt-4 rounded-md border border-border bg-muted/55 p-3 font-mono text-sm">
             {m.admin_token_secret_once()}: {secret}
           </p>
         ) : null}
 
         <div className="mt-6 grid gap-3">
           {tokens.map((token) => (
-            <article
-              key={token.id}
-              className="rounded-lg border border-[#26312c]/10 bg-[#f8f5ef] p-4 dark:border-white/10 dark:bg-white/5"
-            >
+            <article key={token.id} className="rounded-lg border border-border bg-muted/45 p-4">
               <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
                 <div>
                   <p className="font-medium">{token.name}</p>
-                  <p className="mt-1 text-xs text-[#64716a] dark:text-[#aeb8b1]">
+                  <p className="mt-1 text-xs text-muted-foreground">
                     {token.tokenPrefix}... · {token.scopes.join(", ")}
                   </p>
                 </div>

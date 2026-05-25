@@ -51,12 +51,12 @@ export function CommentForm({ onCancelReply, parentId, postSlug, replyingTo }: C
   return (
     <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
       {replyingTo ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md bg-[#f8f5ef] px-3 py-2 text-sm text-[#56625c] dark:bg-white/10 dark:text-[#cbd3cd]">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-muted/55 px-3 py-2 text-sm text-muted-foreground">
           <span>{m.comment_replying_to({ name: replyingTo })}</span>
           <button
             type="button"
             onClick={onCancelReply}
-            className="font-medium text-[#1f6f5b] hover:underline dark:text-[#75c5ad]"
+            className="font-medium text-link hover:underline"
           >
             {m.comment_cancel_reply()}
           </button>
@@ -101,9 +101,7 @@ export function CommentForm({ onCancelReply, parentId, postSlug, replyingTo }: C
         <Button type="submit" disabled={state === "submitting"}>
           {state === "submitting" ? m.comment_submitting() : m.submit_comment()}
         </Button>
-        {state === "success" ? (
-          <p className="text-sm text-[#1f6f5b] dark:text-[#75c5ad]">{m.comment_success()}</p>
-        ) : null}
+        {state === "success" ? <p className="text-sm text-success">{m.comment_success()}</p> : null}
         {state === "error" ? <p className="text-sm text-destructive">{m.comment_error()}</p> : null}
       </div>
     </form>

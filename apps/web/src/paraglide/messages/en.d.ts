@@ -72,6 +72,7 @@
 /** @typedef {{}} Admin_Settings_SavedInputs */
 /** @typedef {{}} Admin_Settings_Site_NameInputs */
 /** @typedef {{}} Admin_Settings_Site_UrlInputs */
+/** @typedef {{}} Admin_Settings_Theme_PresetInputs */
 /** @typedef {{}} Admin_Settings_TitleInputs */
 /** @typedef {{}} Admin_Storage_ContractInputs */
 /** @typedef {{}} Admin_Storage_Contract_DetailInputs */
@@ -181,6 +182,9 @@
 /** @typedef {{}} Tags_TitleInputs */
 /** @typedef {{}} Theme_DarkInputs */
 /** @typedef {{}} Theme_LightInputs */
+/** @typedef {{}} Theme_Preset_AppleInputs */
+/** @typedef {{}} Theme_Preset_ClaudeInputs */
+/** @typedef {{}} Theme_Preset_EditorialInputs */
 /** @typedef {{}} Theme_SystemInputs */
 /** @typedef {{}} Theme_ToggleInputs */
 /** @typedef {{}} UpdatedInputs */
@@ -289,6 +293,9 @@ export const admin_settings_rss: (inputs: Admin_Settings_RssInputs) => Localized
 export const admin_settings_saved: (inputs: Admin_Settings_SavedInputs) => LocalizedString;
 export const admin_settings_site_name: (inputs: Admin_Settings_Site_NameInputs) => LocalizedString;
 export const admin_settings_site_url: (inputs: Admin_Settings_Site_UrlInputs) => LocalizedString;
+export const admin_settings_theme_preset: (
+  inputs: Admin_Settings_Theme_PresetInputs,
+) => LocalizedString;
 export const admin_settings_title: (inputs: Admin_Settings_TitleInputs) => LocalizedString;
 export const admin_storage_contract: (inputs: Admin_Storage_ContractInputs) => LocalizedString;
 export const admin_storage_contract_detail: (
@@ -402,6 +409,9 @@ export const tag_eyebrow: (inputs: Tag_EyebrowInputs) => LocalizedString;
 export const tags_title: (inputs: Tags_TitleInputs) => LocalizedString;
 export const theme_dark: (inputs: Theme_DarkInputs) => LocalizedString;
 export const theme_light: (inputs: Theme_LightInputs) => LocalizedString;
+export const theme_preset_apple: (inputs: Theme_Preset_AppleInputs) => LocalizedString;
+export const theme_preset_claude: (inputs: Theme_Preset_ClaudeInputs) => LocalizedString;
+export const theme_preset_editorial: (inputs: Theme_Preset_EditorialInputs) => LocalizedString;
 export const theme_system: (inputs: Theme_SystemInputs) => LocalizedString;
 export const theme_toggle: (inputs: Theme_ToggleInputs) => LocalizedString;
 export const updated: (inputs: UpdatedInputs) => LocalizedString;
@@ -485,6 +495,7 @@ export type Admin_Settings_RssInputs = {};
 export type Admin_Settings_SavedInputs = {};
 export type Admin_Settings_Site_NameInputs = {};
 export type Admin_Settings_Site_UrlInputs = {};
+export type Admin_Settings_Theme_PresetInputs = {};
 export type Admin_Settings_TitleInputs = {};
 export type Admin_Storage_ContractInputs = {};
 export type Admin_Storage_Contract_DetailInputs = {};
@@ -611,6 +622,9 @@ export type Tag_EyebrowInputs = {};
 export type Tags_TitleInputs = {};
 export type Theme_DarkInputs = {};
 export type Theme_LightInputs = {};
+export type Theme_Preset_AppleInputs = {};
+export type Theme_Preset_ClaudeInputs = {};
+export type Theme_Preset_EditorialInputs = {};
 export type Theme_SystemInputs = {};
 export type Theme_ToggleInputs = {};
 export type UpdatedInputs = {};

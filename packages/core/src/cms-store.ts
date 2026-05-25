@@ -378,10 +378,18 @@ export function revokeApiToken(id: string) {
 export function updateSiteSettings(input: Partial<SiteSettings>) {
   Object.assign(state.siteSettings, {
     ...input,
+    themePreset: normalizeThemePreset(input.themePreset, state.siteSettings.themePreset),
     locales: ["en", "zh"],
   });
 
   return state.siteSettings;
+}
+
+function normalizeThemePreset(
+  value: SiteSettings["themePreset"] | undefined,
+  fallback: SiteSettings["themePreset"],
+) {
+  return value === "apple" || value === "editorial" || value === "claude" ? value : fallback;
 }
 
 function clone<TValue>(value: TValue): TValue {

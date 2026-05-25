@@ -30,19 +30,17 @@ function HomePage() {
 
   return (
     <SiteShell siteSettings={siteSettings}>
-      <section className="border-b border-[#26312c]/10 bg-[#eee8da] dark:border-white/10 dark:bg-[#171d1a]">
+      <section className="border-b border-border/80 bg-muted/35">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8 lg:py-16">
           <div className="flex flex-col justify-center">
-            <p className="text-sm font-semibold tracking-[0.18em] text-[#1f6f5b] uppercase dark:text-[#75c5ad]">
-              {m.home_eyebrow()}
-            </p>
-            <h1 className="mt-5 max-w-3xl text-5xl leading-[1.02] font-semibold tracking-normal text-balance text-[#1e2b25] sm:text-6xl dark:text-white">
+            <p className="text-sm font-semibold text-link uppercase">{m.home_eyebrow()}</p>
+            <h1 className="mt-5 max-w-3xl text-5xl leading-[1.02] font-semibold text-balance sm:text-6xl">
               {siteSettings.name}
             </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-8 text-[#56625c] dark:text-[#cbd3cd]">
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
               {siteSettings.description}
             </p>
-            <div className="mt-5 grid max-w-2xl gap-2 text-sm leading-6 text-[#64716a] dark:text-[#aeb8b1]">
+            <div className="mt-5 grid max-w-2xl gap-2 text-sm leading-6 text-muted-foreground">
               <p>{m.home_bilingual_intro_en()}</p>
               <p>{m.home_bilingual_intro_zh()}</p>
             </div>
@@ -67,25 +65,35 @@ function HomePage() {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-lg bg-[#1f6f5b] p-5 text-white shadow-sm">
-              <DatabaseIcon className="size-6" />
+            <div className="rounded-lg border border-border/80 bg-card p-5 shadow-xs">
+              <span className="flex size-10 items-center justify-center rounded-md bg-muted text-link">
+                <DatabaseIcon className="size-5" />
+              </span>
               <p className="mt-8 text-3xl font-semibold">D1</p>
-              <p className="mt-2 text-sm leading-6 text-white/82">{m.feature_d1_body()}</p>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{m.feature_d1_body()}</p>
             </div>
-            <div className="rounded-lg bg-[#e7d36a] p-5 text-[#26312c] shadow-sm">
-              <UploadCloudIcon className="size-6" />
+            <div className="rounded-lg border border-border/80 bg-card p-5 shadow-xs">
+              <span className="flex size-10 items-center justify-center rounded-md bg-accent text-accent-foreground">
+                <UploadCloudIcon className="size-5" />
+              </span>
               <p className="mt-8 text-3xl font-semibold">R2</p>
-              <p className="mt-2 text-sm leading-6 text-[#26312c]/72">{m.feature_r2_body()}</p>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{m.feature_r2_body()}</p>
             </div>
-            <div className="rounded-lg bg-[#4b8fbf] p-5 text-white shadow-sm">
-              <WorkflowIcon className="size-6" />
+            <div className="rounded-lg border border-border/80 bg-card p-5 shadow-xs">
+              <span className="flex size-10 items-center justify-center rounded-md bg-muted text-link">
+                <WorkflowIcon className="size-5" />
+              </span>
               <p className="mt-8 text-3xl font-semibold">{m.feature_api_title()}</p>
-              <p className="mt-2 text-sm leading-6 text-white/82">{m.feature_api_body()}</p>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{m.feature_api_body()}</p>
             </div>
-            <div className="rounded-lg bg-[#e96f3a] p-5 text-white shadow-sm">
-              <ShieldCheckIcon className="size-6" />
+            <div className="rounded-lg border border-border/80 bg-card p-5 shadow-xs">
+              <span className="flex size-10 items-center justify-center rounded-md bg-accent text-accent-foreground">
+                <ShieldCheckIcon className="size-5" />
+              </span>
               <p className="mt-8 text-3xl font-semibold">{m.feature_moderation_title()}</p>
-              <p className="mt-2 text-sm leading-6 text-white/82">{m.feature_moderation_body()}</p>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                {m.feature_moderation_body()}
+              </p>
             </div>
           </div>
         </div>
@@ -94,12 +102,8 @@ function HomePage() {
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <p className="text-sm font-semibold tracking-[0.16em] text-[#1f6f5b] uppercase dark:text-[#75c5ad]">
-              {m.featured()}
-            </p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[#1e2b25] dark:text-white">
-              {m.home_featured_title()}
-            </h2>
+            <p className="text-sm font-semibold text-link uppercase">{m.featured()}</p>
+            <h2 className="mt-2 text-3xl font-semibold">{m.home_featured_title()}</h2>
           </div>
           <Button
             render={<Link to="/blog" search={{ q: "", tag: "", page: 1 }} />}
@@ -117,13 +121,11 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="border-t border-[#26312c]/10 bg-white/60 dark:border-white/10 dark:bg-white/5">
+      <section className="border-y border-border/80 bg-card/55">
         <div className="mx-auto grid max-w-7xl gap-6 px-4 py-10 sm:px-6 lg:grid-cols-[0.7fr_1.3fr] lg:px-8">
           <div>
-            <h2 className="text-2xl font-semibold tracking-normal text-[#1e2b25] dark:text-white">
-              {m.tags_title()}
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-[#64716a] dark:text-[#aeb8b1]">
+            <h2 className="text-2xl font-semibold">{m.tags_title()}</h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
               {m.home_tags_description()}
             </p>
           </div>
@@ -133,7 +135,7 @@ function HomePage() {
                 key={tag.slug}
                 to="/tags/$slug"
                 params={{ slug: tag.slug }}
-                className="rounded-lg border border-[#26312c]/10 bg-white px-4 py-3 text-sm font-medium text-[#26312c] shadow-sm hover:border-[#1f6f5b] hover:text-[#1f6f5b] dark:border-white/10 dark:bg-[#171d1a] dark:text-[#f5f1e8]"
+                className="rounded-md border border-border bg-background px-4 py-3 text-sm font-medium shadow-xs transition hover:border-ring/50 hover:bg-muted hover:text-foreground"
               >
                 {tag.name}
               </Link>
@@ -144,10 +146,8 @@ function HomePage() {
 
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between gap-4">
-          <h2 className="text-2xl font-semibold tracking-normal text-[#1e2b25] dark:text-white">
-            {m.latest_posts()}
-          </h2>
-          <span className="text-sm text-[#64716a] dark:text-[#aeb8b1]">
+          <h2 className="text-2xl font-semibold">{m.latest_posts()}</h2>
+          <span className="text-sm text-muted-foreground">
             {m.published_count({ count: posts.length })}
           </span>
         </div>
@@ -155,14 +155,12 @@ function HomePage() {
           {posts.map((post) => (
             <article
               key={post.id}
-              className="rounded-lg border border-[#26312c]/10 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-[#171d1a]"
+              className="rounded-lg border border-border/80 bg-card p-5 shadow-xs transition hover:border-ring/45 hover:bg-card/85"
             >
               <Link to="/blog/$slug" params={{ slug: post.slug }} className="group">
-                <h3 className="text-xl font-semibold tracking-normal group-hover:text-[#1f6f5b]">
-                  {post.title}
-                </h3>
+                <h3 className="text-xl font-semibold group-hover:text-link">{post.title}</h3>
               </Link>
-              <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#64716a] dark:text-[#aeb8b1]">
+              <p className="mt-3 line-clamp-3 text-sm leading-6 text-muted-foreground">
                 {post.excerpt}
               </p>
             </article>
