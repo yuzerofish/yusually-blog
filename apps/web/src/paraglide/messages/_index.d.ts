@@ -1277,6 +1277,72 @@ export const admin_posts_search: ((
 /**
  * | output |
  * | --- |
+ * | "Select all visible posts" |
+ *
+ * @param {Admin_Posts_Select_AllInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_posts_select_all: ((
+  inputs?: Admin_Posts_Select_AllInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Posts_Select_AllInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Select {title}" |
+ *
+ * @param {Admin_Posts_Select_OneInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_posts_select_one: ((
+  inputs: Admin_Posts_Select_OneInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Posts_Select_OneInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "{count} selected" |
+ *
+ * @param {Admin_Posts_SelectedInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_posts_selected: ((
+  inputs: Admin_Posts_SelectedInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Posts_SelectedInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Source" |
  *
  * @param {Admin_Posts_SourceInputs} inputs
@@ -4615,6 +4681,13 @@ export type Admin_Posts_Filter_StatusInputs = {};
 export type Admin_Posts_Filter_TagInputs = {};
 export type Admin_Posts_Public_UrlInputs = {};
 export type Admin_Posts_SearchInputs = {};
+export type Admin_Posts_Select_AllInputs = {};
+export type Admin_Posts_Select_OneInputs = {
+  title: NonNullable<unknown>;
+};
+export type Admin_Posts_SelectedInputs = {
+  count: NonNullable<unknown>;
+};
 export type Admin_Posts_SourceInputs = {};
 export type Admin_Posts_StatusInputs = {};
 export type Admin_Posts_TitleInputs = {};

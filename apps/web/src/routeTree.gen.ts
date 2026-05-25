@@ -42,6 +42,7 @@ import { Route as AuthAppRouteRouteImport } from './routes/_auth/app/route'
 import { Route as AuthAdminRouteRouteImport } from './routes/_auth/admin/route'
 import { Route as AuthAppIndexRouteImport } from './routes/_auth/app/index'
 import { Route as AuthAdminIndexRouteImport } from './routes/_auth/admin/index'
+import { Route as ApiPostsBatchRouteImport } from './routes/api/posts/batch'
 import { Route as ApiPostsIdRouteImport } from './routes/api/posts/$id'
 import { Route as ApiImportZipRouteImport } from './routes/api/import/zip'
 import { Route as ApiImportMarkdownRouteImport } from './routes/api/import/markdown'
@@ -226,6 +227,11 @@ const AuthAdminIndexRoute = AuthAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthAdminRouteRoute,
 } as any)
+const ApiPostsBatchRoute = ApiPostsBatchRouteImport.update({
+  id: '/batch',
+  path: '/batch',
+  getParentRoute: () => ApiPostsRoute,
+} as any)
 const ApiPostsIdRoute = ApiPostsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -373,6 +379,7 @@ export interface FileRoutesByFullPath {
   '/api/import/markdown': typeof ApiImportMarkdownRoute
   '/api/import/zip': typeof ApiImportZipRoute
   '/api/posts/$id': typeof ApiPostsIdRoute
+  '/api/posts/batch': typeof ApiPostsBatchRoute
   '/admin/': typeof AuthAdminIndexRoute
   '/app/': typeof AuthAppIndexRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
@@ -424,6 +431,7 @@ export interface FileRoutesByTo {
   '/api/import/markdown': typeof ApiImportMarkdownRoute
   '/api/import/zip': typeof ApiImportZipRoute
   '/api/posts/$id': typeof ApiPostsIdRoute
+  '/api/posts/batch': typeof ApiPostsBatchRoute
   '/admin': typeof AuthAdminIndexRoute
   '/app': typeof AuthAppIndexRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
@@ -480,6 +488,7 @@ export interface FileRoutesById {
   '/api/import/markdown': typeof ApiImportMarkdownRoute
   '/api/import/zip': typeof ApiImportZipRoute
   '/api/posts/$id': typeof ApiPostsIdRoute
+  '/api/posts/batch': typeof ApiPostsBatchRoute
   '/_auth/admin/': typeof AuthAdminIndexRoute
   '/_auth/app/': typeof AuthAppIndexRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
@@ -535,6 +544,7 @@ export interface FileRouteTypes {
     | '/api/import/markdown'
     | '/api/import/zip'
     | '/api/posts/$id'
+    | '/api/posts/batch'
     | '/admin/'
     | '/app/'
     | '/api/comments/$id/approve'
@@ -586,6 +596,7 @@ export interface FileRouteTypes {
     | '/api/import/markdown'
     | '/api/import/zip'
     | '/api/posts/$id'
+    | '/api/posts/batch'
     | '/admin'
     | '/app'
     | '/api/comments/$id/approve'
@@ -641,6 +652,7 @@ export interface FileRouteTypes {
     | '/api/import/markdown'
     | '/api/import/zip'
     | '/api/posts/$id'
+    | '/api/posts/batch'
     | '/_auth/admin/'
     | '/_auth/app/'
     | '/api/comments/$id/approve'
@@ -921,6 +933,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAdminIndexRouteImport
       parentRoute: typeof AuthAdminRouteRoute
     }
+    '/api/posts/batch': {
+      id: '/api/posts/batch'
+      path: '/batch'
+      fullPath: '/api/posts/batch'
+      preLoaderRoute: typeof ApiPostsBatchRouteImport
+      parentRoute: typeof ApiPostsRoute
+    }
     '/api/posts/$id': {
       id: '/api/posts/$id'
       path: '/$id'
@@ -1156,10 +1175,12 @@ const ApiCommentsRouteWithChildren = ApiCommentsRoute._addFileChildren(
 
 interface ApiPostsRouteChildren {
   ApiPostsIdRoute: typeof ApiPostsIdRoute
+  ApiPostsBatchRoute: typeof ApiPostsBatchRoute
 }
 
 const ApiPostsRouteChildren: ApiPostsRouteChildren = {
   ApiPostsIdRoute: ApiPostsIdRoute,
+  ApiPostsBatchRoute: ApiPostsBatchRoute,
 }
 
 const ApiPostsRouteWithChildren = ApiPostsRoute._addFileChildren(

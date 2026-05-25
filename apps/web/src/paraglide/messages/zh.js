@@ -58,6 +58,9 @@
 /** @typedef {{}} Admin_Posts_Filter_TagInputs */
 /** @typedef {{}} Admin_Posts_Public_UrlInputs */
 /** @typedef {{}} Admin_Posts_SearchInputs */
+/** @typedef {{}} Admin_Posts_Select_AllInputs */
+/** @typedef {{ title: NonNullable<unknown> }} Admin_Posts_Select_OneInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Admin_Posts_SelectedInputs */
 /** @typedef {{}} Admin_Posts_SourceInputs */
 /** @typedef {{}} Admin_Posts_StatusInputs */
 /** @typedef {{}} Admin_Posts_TitleInputs */
@@ -495,6 +498,21 @@ export const admin_posts_public_url =
 export const admin_posts_search =
   /** @type {(inputs: Admin_Posts_SearchInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `搜索文章`;
+  };
+
+export const admin_posts_select_all =
+  /** @type {(inputs: Admin_Posts_Select_AllInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `选择当前可见文章`;
+  };
+
+export const admin_posts_select_one =
+  /** @type {(inputs: Admin_Posts_Select_OneInputs) => LocalizedString} */ (i) => {
+    return /** @type {LocalizedString} */ `选择 ${i?.title}`;
+  };
+
+export const admin_posts_selected =
+  /** @type {(inputs: Admin_Posts_SelectedInputs) => LocalizedString} */ (i) => {
+    return /** @type {LocalizedString} */ `已选择 ${i?.count} 篇`;
   };
 
 export const admin_posts_source =

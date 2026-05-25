@@ -30,6 +30,29 @@ export const Route = createFileRoute("/openapi.json")({
                 responses: { "201": { description: "Post created" } },
               },
             },
+            "/api/posts/batch": {
+              post: {
+                summary: "Batch update posts",
+                description:
+                  "Applies publish, draft, archive, or delete to selected posts. Publish requires posts:publish in addition to posts:write.",
+                security: [{ apiToken: ["posts:write"] }],
+                requestBody: {
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          ids: { type: "array", items: { type: "string" } },
+                          action: { enum: ["publish", "draft", "archive", "delete"] },
+                        },
+                        required: ["ids", "action"],
+                      },
+                    },
+                  },
+                },
+                responses: { "200": { description: "Posts updated" } },
+              },
+            },
             "/api/posts/{id}": {
               get: {
                 summary: "Get post",

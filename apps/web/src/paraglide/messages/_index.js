@@ -59,6 +59,9 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Admin_Posts_Filter_TagInputs */
 /** @typedef {{}} Admin_Posts_Public_UrlInputs */
 /** @typedef {{}} Admin_Posts_SearchInputs */
+/** @typedef {{}} Admin_Posts_Select_AllInputs */
+/** @typedef {{ title: NonNullable<unknown> }} Admin_Posts_Select_OneInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Admin_Posts_SelectedInputs */
 /** @typedef {{}} Admin_Posts_SourceInputs */
 /** @typedef {{}} Admin_Posts_StatusInputs */
 /** @typedef {{}} Admin_Posts_TitleInputs */
@@ -1194,6 +1197,57 @@ export const admin_posts_search =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.admin_posts_search(inputs);
       return __zh.admin_posts_search(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Select all visible posts" |
+ *
+ * @param {Admin_Posts_Select_AllInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_posts_select_all =
+  /** @type {((inputs?: Admin_Posts_Select_AllInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Posts_Select_AllInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_posts_select_all(inputs);
+      return __zh.admin_posts_select_all(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Select {title}" |
+ *
+ * @param {Admin_Posts_Select_OneInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_posts_select_one =
+  /** @type {((inputs: Admin_Posts_Select_OneInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Posts_Select_OneInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_posts_select_one(inputs);
+      return __zh.admin_posts_select_one(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "{count} selected" |
+ *
+ * @param {Admin_Posts_SelectedInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_posts_selected =
+  /** @type {((inputs: Admin_Posts_SelectedInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Posts_SelectedInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_posts_selected(inputs);
+      return __zh.admin_posts_selected(inputs);
     }
   );
 /**

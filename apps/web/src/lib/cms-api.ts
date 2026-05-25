@@ -30,6 +30,7 @@ export const apiTokenScopes = [
 export const apiEndpoints = [
   { method: "GET", path: "/api/posts", scope: "posts:read" },
   { method: "POST", path: "/api/posts", scope: "posts:write" },
+  { method: "POST", path: "/api/posts/batch", scope: "posts:write" },
   { method: "GET", path: "/api/posts/{id}", scope: "posts:read" },
   { method: "PATCH", path: "/api/posts/{id}", scope: "posts:write" },
   { method: "DELETE", path: "/api/posts/{id}", scope: "posts:write" },

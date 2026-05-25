@@ -29,6 +29,7 @@ const statusOptions: Array<"all" | ContentStatus> = [
   "scheduled",
   "archived",
 ];
+type BatchAction = "publish" | "draft" | "archive" | "delete";
 
 function AdminPostsPage() {
   const locale = getCurrentLocale();
@@ -40,6 +41,7 @@ function AdminPostsPage() {
   const [editorMode, setEditorMode] = useState<"editor" | "source" | "preview">("editor");
   const [editorState, setEditorState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [markdown, setMarkdown] = useState(defaultMarkdown);
+  const [selectedPostIds, setSelectedPostIds] = useState<string[]>([]);
   const previewHtml = useMemo(() => renderMarkdownToHtml(markdown), [markdown]);
 
   const visiblePosts = useMemo(() => {
@@ -68,6 +70,8 @@ function AdminPostsPage() {
 
     return Array.from(tagsBySlug.values()).sort((a, b) => a.name.localeCompare(b.name));
   }, [rows]);
+  const allVisibleSelected =
+    visiblePosts.length > 0 && visiblePosts.every((post) => selectedPostIds.includes(post.id));
 
   useEffect(() => {
     let ignore = false;
@@ -177,6 +181,46 @@ function AdminPostsPage() {
     upsertPost(payload.data);
   };
 
+  const toggleAllVisiblePosts = (checked: boolean) => {
+    const visibleIds = visiblePosts.map((post) => post.id);
+
+    setSelectedPostIds((current) =>
+      checked
+        ? Array.from(new Set([...current, ...visibleIds]))
+        : current.filter((id) => !visibleIds.includes(id)),
+    );
+  };
+
+  const togglePostSelection = (postId: string, checked: boolean) => {
+    setSelectedPostIds((current) =>
+      checked ? Array.from(new Set([...current, postId])) : current.filter((id) => id !== postId),
+    );
+  };
+
+  const applyBatchAction = async (action: BatchAction) => {
+    if (!selectedPostIds.length) {
+      return;
+    }
+
+    const response = await fetch(`/api/posts/batch?lang=${locale}`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ ids: selectedPostIds, action, locale }),
+    });
+
+    if (!response.ok) {
+      return;
+    }
+
+    const payload = (await response.json()) as { data: Post[] };
+
+    for (const post of payload.data) {
+      upsertPost(post);
+    }
+
+    setSelectedPostIds([]);
+  };
+
   return (
     <section className="grid gap-6">
       <div className="rounded-lg border border-border/80 bg-card p-6 shadow-xs">
@@ -231,11 +275,61 @@ function AdminPostsPage() {
             ))}
           </select>
         </div>
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <p className="text-sm text-muted-foreground">
+            {m.admin_posts_selected({ count: selectedPostIds.length })}
+          </p>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={!selectedPostIds.length}
+            onClick={() => void applyBatchAction("publish")}
+          >
+            {m.admin_publish_post()}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={!selectedPostIds.length}
+            onClick={() => void applyBatchAction("draft")}
+          >
+            {m.admin_save_draft()}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={!selectedPostIds.length}
+            onClick={() => void applyBatchAction("archive")}
+          >
+            {m.admin_posts_archive()}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="destructive"
+            disabled={!selectedPostIds.length}
+            onClick={() => void applyBatchAction("delete")}
+          >
+            {m.admin_posts_delete()}
+          </Button>
+        </div>
 
         <div className="mt-6 overflow-hidden rounded-lg border border-border/80">
-          <table className="w-full min-w-[880px] text-left text-sm">
+          <table className="w-full min-w-[940px] text-left text-sm">
             <thead className="bg-muted/55 text-xs text-muted-foreground uppercase">
               <tr>
+                <th className="px-4 py-3">
+                  <input
+                    type="checkbox"
+                    checked={allVisibleSelected}
+                    onChange={(event) => toggleAllVisiblePosts(event.currentTarget.checked)}
+                    aria-label={m.admin_posts_select_all()}
+                    className="size-4 rounded border-input"
+                  />
+                </th>
                 <th className="px-4 py-3">{m.admin_posts_column_title()}</th>
                 <th className="px-4 py-3">{m.admin_posts_status()}</th>
                 <th className="px-4 py-3">{m.admin_posts_source()}</th>
@@ -247,6 +341,17 @@ function AdminPostsPage() {
             <tbody className="divide-y divide-border/80">
               {visiblePosts.map((post) => (
                 <tr key={post.id}>
+                  <td className="px-4 py-4">
+                    <input
+                      type="checkbox"
+                      checked={selectedPostIds.includes(post.id)}
+                      onChange={(event) =>
+                        togglePostSelection(post.id, event.currentTarget.checked)
+                      }
+                      aria-label={m.admin_posts_select_one({ title: post.title })}
+                      className="size-4 rounded border-input"
+                    />
+                  </td>
                   <td className="px-4 py-4 font-medium">{post.title}</td>
                   <td className="px-4 py-4">
                     <span className="rounded-sm bg-accent px-2 py-1 text-xs font-medium text-accent-foreground">
