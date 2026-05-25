@@ -42,6 +42,11 @@ import { Route as ApiImportZipRouteImport } from './routes/api/import/zip'
 import { Route as ApiImportMarkdownRouteImport } from './routes/api/import/markdown'
 import { Route as ApiImportHtmlRouteImport } from './routes/api/import/html'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiAdminUsersRouteImport } from './routes/api/admin/users'
+import { Route as ApiAdminPasswordRouteImport } from './routes/api/admin/password'
+import { Route as ApiAdminMeRouteImport } from './routes/api/admin/me'
+import { Route as ApiAdminLogoutRouteImport } from './routes/api/admin/logout'
+import { Route as ApiAdminLoginRouteImport } from './routes/api/admin/login'
 import { Route as AuthAdminSettingsRouteImport } from './routes/_auth/admin/settings'
 import { Route as AuthAdminPostsRouteImport } from './routes/_auth/admin/posts'
 import { Route as AuthAdminCommentsRouteImport } from './routes/_auth/admin/comments'
@@ -214,6 +219,31 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminUsersRoute = ApiAdminUsersRouteImport.update({
+  id: '/api/admin/users',
+  path: '/api/admin/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminPasswordRoute = ApiAdminPasswordRouteImport.update({
+  id: '/api/admin/password',
+  path: '/api/admin/password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminMeRoute = ApiAdminMeRouteImport.update({
+  id: '/api/admin/me',
+  path: '/api/admin/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminLogoutRoute = ApiAdminLogoutRouteImport.update({
+  id: '/api/admin/logout',
+  path: '/api/admin/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminLoginRoute = ApiAdminLoginRouteImport.update({
+  id: '/api/admin/login',
+  path: '/api/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthAdminSettingsRoute = AuthAdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -284,6 +314,11 @@ export interface FileRoutesByFullPath {
   '/admin/comments': typeof AuthAdminCommentsRoute
   '/admin/posts': typeof AuthAdminPostsRoute
   '/admin/settings': typeof AuthAdminSettingsRoute
+  '/api/admin/login': typeof ApiAdminLoginRoute
+  '/api/admin/logout': typeof ApiAdminLogoutRoute
+  '/api/admin/me': typeof ApiAdminMeRoute
+  '/api/admin/password': typeof ApiAdminPasswordRoute
+  '/api/admin/users': typeof ApiAdminUsersRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
@@ -323,6 +358,11 @@ export interface FileRoutesByTo {
   '/admin/comments': typeof AuthAdminCommentsRoute
   '/admin/posts': typeof AuthAdminPostsRoute
   '/admin/settings': typeof AuthAdminSettingsRoute
+  '/api/admin/login': typeof ApiAdminLoginRoute
+  '/api/admin/logout': typeof ApiAdminLogoutRoute
+  '/api/admin/me': typeof ApiAdminMeRoute
+  '/api/admin/password': typeof ApiAdminPasswordRoute
+  '/api/admin/users': typeof ApiAdminUsersRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
@@ -367,6 +407,11 @@ export interface FileRoutesById {
   '/_auth/admin/comments': typeof AuthAdminCommentsRoute
   '/_auth/admin/posts': typeof AuthAdminPostsRoute
   '/_auth/admin/settings': typeof AuthAdminSettingsRoute
+  '/api/admin/login': typeof ApiAdminLoginRoute
+  '/api/admin/logout': typeof ApiAdminLogoutRoute
+  '/api/admin/me': typeof ApiAdminMeRoute
+  '/api/admin/password': typeof ApiAdminPasswordRoute
+  '/api/admin/users': typeof ApiAdminUsersRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
@@ -410,6 +455,11 @@ export interface FileRouteTypes {
     | '/admin/comments'
     | '/admin/posts'
     | '/admin/settings'
+    | '/api/admin/login'
+    | '/api/admin/logout'
+    | '/api/admin/me'
+    | '/api/admin/password'
+    | '/api/admin/users'
     | '/api/auth/$'
     | '/api/import/html'
     | '/api/import/markdown'
@@ -449,6 +499,11 @@ export interface FileRouteTypes {
     | '/admin/comments'
     | '/admin/posts'
     | '/admin/settings'
+    | '/api/admin/login'
+    | '/api/admin/logout'
+    | '/api/admin/me'
+    | '/api/admin/password'
+    | '/api/admin/users'
     | '/api/auth/$'
     | '/api/import/html'
     | '/api/import/markdown'
@@ -492,6 +547,11 @@ export interface FileRouteTypes {
     | '/_auth/admin/comments'
     | '/_auth/admin/posts'
     | '/_auth/admin/settings'
+    | '/api/admin/login'
+    | '/api/admin/logout'
+    | '/api/admin/me'
+    | '/api/admin/password'
+    | '/api/admin/users'
     | '/api/auth/$'
     | '/api/import/html'
     | '/api/import/markdown'
@@ -528,6 +588,11 @@ export interface RootRouteChildren {
   UploadsSplatRoute: typeof UploadsSplatRoute
   BlogIndexRoute: typeof BlogIndexRoute
   TagsIndexRoute: typeof TagsIndexRoute
+  ApiAdminLoginRoute: typeof ApiAdminLoginRoute
+  ApiAdminLogoutRoute: typeof ApiAdminLogoutRoute
+  ApiAdminMeRoute: typeof ApiAdminMeRoute
+  ApiAdminPasswordRoute: typeof ApiAdminPasswordRoute
+  ApiAdminUsersRoute: typeof ApiAdminUsersRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiImportHtmlRoute: typeof ApiImportHtmlRoute
   ApiImportMarkdownRoute: typeof ApiImportMarkdownRoute
@@ -767,6 +832,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/users': {
+      id: '/api/admin/users'
+      path: '/api/admin/users'
+      fullPath: '/api/admin/users'
+      preLoaderRoute: typeof ApiAdminUsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/password': {
+      id: '/api/admin/password'
+      path: '/api/admin/password'
+      fullPath: '/api/admin/password'
+      preLoaderRoute: typeof ApiAdminPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/me': {
+      id: '/api/admin/me'
+      path: '/api/admin/me'
+      fullPath: '/api/admin/me'
+      preLoaderRoute: typeof ApiAdminMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/logout': {
+      id: '/api/admin/logout'
+      path: '/api/admin/logout'
+      fullPath: '/api/admin/logout'
+      preLoaderRoute: typeof ApiAdminLogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/login': {
+      id: '/api/admin/login'
+      path: '/api/admin/login'
+      fullPath: '/api/admin/login'
+      preLoaderRoute: typeof ApiAdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth/admin/settings': {
       id: '/_auth/admin/settings'
       path: '/settings'
@@ -949,6 +1049,11 @@ const rootRouteChildren: RootRouteChildren = {
   UploadsSplatRoute: UploadsSplatRoute,
   BlogIndexRoute: BlogIndexRoute,
   TagsIndexRoute: TagsIndexRoute,
+  ApiAdminLoginRoute: ApiAdminLoginRoute,
+  ApiAdminLogoutRoute: ApiAdminLogoutRoute,
+  ApiAdminMeRoute: ApiAdminMeRoute,
+  ApiAdminPasswordRoute: ApiAdminPasswordRoute,
+  ApiAdminUsersRoute: ApiAdminUsersRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiImportHtmlRoute: ApiImportHtmlRoute,
   ApiImportMarkdownRoute: ApiImportMarkdownRoute,

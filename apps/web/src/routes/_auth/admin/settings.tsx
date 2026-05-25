@@ -4,7 +4,7 @@ import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { createFileRoute } from "@tanstack/react-router";
 import { KeyRoundIcon } from "lucide-react";
-import { useState, type ComponentProps } from "react";
+import { useEffect, useState, type ComponentProps } from "react";
 
 import { apiTokenScopes } from "#/lib/cms-api";
 import { getCurrentLocale } from "#/lib/i18n";
@@ -21,6 +21,24 @@ function AdminSettingsPage() {
   const siteSettings = getSiteSettingsForLocale(locale);
   const [tokens, setTokens] = useState<ApiToken[]>(apiTokens);
   const [secret, setSecret] = useState<string | null>(null);
+
+  useEffect(() => {
+    let ignore = false;
+
+    void fetch("/api/tokens")
+      .then((response) => (response.ok ? response.json() : undefined))
+      .then((payload) => {
+        const data = (payload as { data?: ApiToken[] } | undefined)?.data;
+
+        if (!ignore && data) {
+          setTokens(data);
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const createToken: FormSubmitHandler = async (event) => {
     event.preventDefault();

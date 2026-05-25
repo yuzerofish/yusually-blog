@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { getApiLocale, importPreview, jsonResponse, readJsonBody } from "#/lib/cms-api";
+import { requireCmsAccess } from "#/lib/cms-authz";
 import { createD1Post } from "#/lib/cms-d1";
 import { storeImportPackage } from "#/lib/cms-r2";
 
@@ -8,6 +9,12 @@ export const Route = createFileRoute("/api/import/zip")({
   server: {
     handlers: {
       POST: async ({ request }: { request: Request }) => {
+        const accessError = await requireCmsAccess(request, "posts:write");
+
+        if (accessError) {
+          return accessError;
+        }
+
         const body = await readJsonBody<{
           filename: string;
           contentMarkdown: string;

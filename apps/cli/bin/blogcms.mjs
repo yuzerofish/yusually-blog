@@ -65,10 +65,37 @@ Environment:
     "login",
     {
       summary: "Store an API token for a Cloud Blog CMS site",
-      run: () => {
-        print(
-          "Set BLOGCMS_SITE_URL and BLOGCMS_API_TOKEN, then run `blogcms status` to verify connectivity.",
-        );
+      run: async () => {
+        const siteUrl = getSiteUrl();
+        const email = readOption(["--email"], process.env.BLOGCMS_ADMIN_EMAIL);
+        const password = readOption(["--password"], process.env.BLOGCMS_ADMIN_PASSWORD);
+
+        if (!siteUrl || !email || !password) {
+          print(
+            "Set BLOGCMS_SITE_URL, then run `blogcms login --email <email> --password <password>` to create an API token.",
+          );
+          return;
+        }
+
+        const session = await adminLogin(siteUrl, email, password);
+        const response = await apiFetchWithCookie(siteUrl, session.cookie, "/api/tokens", {
+          method: "POST",
+          body: {
+            name: "CLI automation token",
+            scopes: [
+              "posts:read",
+              "posts:write",
+              "posts:publish",
+              "assets:write",
+              "comments:moderate",
+              "site:read",
+              "site:write",
+              "export:read",
+            ],
+          },
+        });
+
+        print(JSON.stringify({ siteUrl, apiToken: response.secret }, null, 2));
       },
     },
   ],
@@ -210,20 +237,58 @@ Environment:
     "admin",
     {
       summary: "Admin user operations",
-      run: () => {
+      run: async () => {
         const subcommand = args[0];
 
         if (subcommand === "create") {
-          print(
-            "Admin creation will call the auth adapter after the D1 auth migration is complete.",
-          );
+          const siteUrl = getSiteUrl();
+
+          if (!siteUrl) {
+            print("Set BLOGCMS_SITE_URL to create an admin user through the deployed API.");
+            return;
+          }
+
+          const api = getApiConfig();
+          const body = {
+            name: readOption(["--name"], process.env.BLOGCMS_ADMIN_NAME ?? "Admin"),
+            email: readOption(["--email"], process.env.BLOGCMS_ADMIN_EMAIL),
+            password: readOption(["--password"], process.env.BLOGCMS_ADMIN_PASSWORD),
+          };
+
+          if (!body.email || !body.password) {
+            fail("Use `blogcms admin create --email <email> --password <password>`.");
+          }
+
+          const response = await siteFetch(siteUrl, "/api/admin/users", {
+            method: "POST",
+            token: api?.token,
+            body,
+          });
+          print(JSON.stringify(response, null, 2));
           return;
         }
 
         if (subcommand === "reset-password") {
-          print(
-            "Password reset will update the auth credential record after the D1 auth migration is complete.",
-          );
+          const api = getApiConfig();
+
+          if (!api) {
+            fail("Set BLOGCMS_SITE_URL and BLOGCMS_API_TOKEN to reset an admin password.");
+          }
+
+          const body = {
+            email: readOption(["--email"], process.env.BLOGCMS_ADMIN_EMAIL),
+            password: readOption(["--password"], process.env.BLOGCMS_ADMIN_PASSWORD),
+          };
+
+          if (!body.email || !body.password) {
+            fail("Use `blogcms admin reset-password --email <email> --password <password>`.");
+          }
+
+          const response = await apiFetch(api, "/api/admin/password", {
+            method: "PATCH",
+            body,
+          });
+          print(JSON.stringify(response, null, 2));
           return;
         }
 
@@ -274,7 +339,7 @@ function validatePrimaryLanguage(value) {
 }
 
 function getApiConfig() {
-  const siteUrl = process.env.BLOGCMS_SITE_URL;
+  const siteUrl = getSiteUrl();
   const token = process.env.BLOGCMS_API_TOKEN;
 
   if (!siteUrl || !token) {
@@ -284,12 +349,67 @@ function getApiConfig() {
   return { siteUrl: siteUrl.replace(/\/$/, ""), token };
 }
 
+function getSiteUrl() {
+  return process.env.BLOGCMS_SITE_URL?.replace(/\/$/, "") || null;
+}
+
 async function apiFetch(api, pathname, options) {
-  const response = await fetch(`${api.siteUrl}${pathname}`, {
+  return siteFetch(api.siteUrl, pathname, {
+    ...options,
+    token: api.token,
+  });
+}
+
+async function siteFetch(siteUrl, pathname, options) {
+  const headers = {
+    "content-type": "application/json",
+  };
+
+  if (options.token) {
+    headers.authorization = `Bearer ${options.token}`;
+  }
+
+  const response = await fetch(`${siteUrl}${pathname}`, {
+    method: options.method,
+    headers,
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  });
+  const payload = await response.json();
+
+  if (!response.ok) {
+    fail(JSON.stringify(payload, null, 2));
+  }
+
+  return payload;
+}
+
+async function adminLogin(siteUrl, email, password) {
+  const response = await fetch(`${siteUrl}/api/admin/login`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  const payload = await response.json();
+
+  if (!response.ok) {
+    fail(JSON.stringify(payload, null, 2));
+  }
+
+  const cookie = response.headers.get("set-cookie")?.split(";")[0];
+
+  if (!cookie) {
+    fail("Login did not return a session cookie.");
+  }
+
+  return { payload, cookie };
+}
+
+async function apiFetchWithCookie(siteUrl, cookie, pathname, options) {
+  const response = await fetch(`${siteUrl}${pathname}`, {
     method: options.method,
     headers: {
-      authorization: `Bearer ${api.token}`,
       "content-type": "application/json",
+      cookie,
     },
     body: options.body ? JSON.stringify(options.body) : undefined,
   });

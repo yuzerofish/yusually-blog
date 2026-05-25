@@ -1,5 +1,3 @@
-import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
-import { authClient } from "@repo/auth/auth-client";
 import { authQueryOptions } from "@repo/auth/tanstack/queries";
 import { getSiteSettingsForLocale } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
@@ -10,7 +8,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { BookOpenIcon, LoaderCircleIcon } from "lucide-react";
 import { toast } from "sonner";
 
-import { SignInSocialButton } from "#/components/sign-in-social-button";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
@@ -26,21 +23,23 @@ function SignupForm() {
 
   const { mutate: signupMutate, isPending } = useMutation({
     mutationFn: async (data: { name: string; email: string; password: string }) => {
-      await authClient.signUp.email(
-        {
-          ...data,
-          callbackURL: redirectUrl,
-        },
-        {
-          onError: ({ error }) => {
-            toast.error(error.message || m.signup_error());
-          },
-          onSuccess: () => {
-            queryClient.removeQueries({ queryKey: authQueryOptions().queryKey });
-            navigate({ to: redirectUrl });
-          },
-        },
-      );
+      const response = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const payload = (await response.json()) as { error?: string };
+
+      if (!response.ok) {
+        throw new Error(payload.error || m.signup_error());
+      }
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : m.signup_error());
+    },
+    onSuccess: async () => {
+      queryClient.removeQueries({ queryKey: authQueryOptions().queryKey });
+      await navigate({ to: redirectUrl });
     },
   });
 
@@ -126,25 +125,6 @@ function SignupForm() {
               {isPending && <LoaderCircleIcon className="animate-spin" />}
               {isPending ? m.signup_pending() : m.signup()}
             </Button>
-          </div>
-          <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-            <span className="relative z-10 bg-background px-2 text-muted-foreground">
-              {m.login_alternative()}
-            </span>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <SignInSocialButton
-              provider="github"
-              callbackURL={redirectUrl}
-              disabled={isPending}
-              icon={<SiGithub className="size-4" />}
-            />
-            <SignInSocialButton
-              provider="google"
-              callbackURL={redirectUrl}
-              disabled={isPending}
-              icon={<SiGoogle className="size-4" />}
-            />
           </div>
         </div>
       </form>

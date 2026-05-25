@@ -486,6 +486,30 @@ export async function revokeD1ApiToken(id: string) {
   return row ? rowToApiToken(row) : undefined;
 }
 
+export async function verifyD1ApiToken(secret: string, requiredScope: ApiTokenScope) {
+  const row = await env.CMS_DB.prepare(
+    "select * from api_tokens where token_hash = ? and revoked_at is null and (expires_at is null or expires_at > ?) limit 1",
+  )
+    .bind(await digestText(secret), new Date().toISOString())
+    .first<D1ApiTokenRow>();
+
+  if (!row) {
+    return null;
+  }
+
+  const token = rowToApiToken(row);
+
+  if (!token.scopes.includes(requiredScope)) {
+    return null;
+  }
+
+  await env.CMS_DB.prepare("update api_tokens set last_used_at = ? where id = ?")
+    .bind(new Date().toISOString(), token.id)
+    .run();
+
+  return token;
+}
+
 export async function buildD1SiteExport(locale: SupportedLocale) {
   const [persistedPosts, persistedComments, persistedAssets] = await Promise.all([
     listD1Posts({ includeUnpublished: true }),

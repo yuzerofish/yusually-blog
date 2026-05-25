@@ -2,6 +2,7 @@ import { localizePost, resolveLocale, searchPosts } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { createPostPreview, getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
+import { requireCmsAccess } from "#/lib/cms-authz";
 import { createD1Post, listD1Posts } from "#/lib/cms-d1";
 
 export const Route = createFileRoute("/api/posts")({
@@ -11,6 +12,15 @@ export const Route = createFileRoute("/api/posts")({
         const locale = getApiLocale(request);
         const url = new URL(request.url);
         const includeUnpublished = url.searchParams.get("status") === "all";
+
+        if (includeUnpublished) {
+          const accessError = await requireCmsAccess(request, "posts:read");
+
+          if (accessError) {
+            return accessError;
+          }
+        }
+
         const query = url.searchParams.get("q") ?? "";
         const tagSlug = url.searchParams.get("tag") ?? undefined;
         const persistedPosts = await listD1Posts({ includeUnpublished, query });
@@ -27,6 +37,12 @@ export const Route = createFileRoute("/api/posts")({
         });
       },
       POST: async ({ request }: { request: Request }) => {
+        const accessError = await requireCmsAccess(request, "posts:write");
+
+        if (accessError) {
+          return accessError;
+        }
+
         const body = await readJsonBody<Parameters<typeof createPostPreview>[0]>(request);
         const post = await createD1Post({
           ...body,
