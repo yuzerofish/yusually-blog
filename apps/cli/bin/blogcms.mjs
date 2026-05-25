@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+import { readdir, readFile, stat } from "node:fs/promises";
+import { basename, extname, join } from "node:path";
+
 const command = process.argv[2] ?? "help";
 const args = process.argv.slice(3);
 
@@ -100,9 +103,27 @@ Environment:
     "push",
     {
       summary: "Publish Markdown through the API",
-      run: () => {
+      run: async () => {
         requireArg(args[0], "Provide a Markdown file or folder.");
-        print(`Prepared bilingual Markdown import for ${args[0]}. API mutation lands in Phase 2.`);
+        const input = await readMarkdownInput(args[0]);
+        const api = getApiConfig();
+
+        if (!api) {
+          print(`Prepared bilingual Markdown import for ${args[0]}. Configure API env to publish.`);
+          return;
+        }
+
+        const response = await apiFetch(api, "/api/posts", {
+          method: "POST",
+          body: {
+            title: input.title,
+            slug: input.slug,
+            contentMarkdown: input.contentMarkdown,
+            status: "published",
+          },
+        });
+
+        print(JSON.stringify(response, null, 2));
       },
     },
   ],
@@ -110,9 +131,22 @@ Environment:
     "import",
     {
       summary: "Import Markdown, HTML, or ZIP content",
-      run: () => {
+      run: async () => {
         requireArg(args[0], "Provide an import file.");
-        print(`Prepared import for ${args[0]}. ZIP and HTML parsing lands in Phase 2.`);
+        const api = getApiConfig();
+        const endpoint = importEndpointFor(args[0]);
+
+        if (!api) {
+          print(`Prepared import for ${args[0]}. Configure API env to send it to ${endpoint}.`);
+          return;
+        }
+
+        const response = await apiFetch(api, endpoint, {
+          method: "POST",
+          body: { filename: basename(args[0]) },
+        });
+
+        print(JSON.stringify(response, null, 2));
       },
     },
   ],
@@ -120,11 +154,22 @@ Environment:
     "upload",
     {
       summary: "Upload media assets",
-      run: () => {
+      run: async () => {
         requireArg(args[0], "Provide an images folder.");
-        print(
-          `Prepared asset upload for ${args[0]}. R2 upload mutation lands in Phase 1 hardening.`,
-        );
+        const api = getApiConfig();
+
+        if (!api) {
+          print(`Prepared asset upload for ${args[0]}. Configure API env to upload assets.`);
+          return;
+        }
+
+        const filename = await firstFilename(args[0]);
+        const response = await apiFetch(api, "/api/assets", {
+          method: "POST",
+          body: { filename },
+        });
+
+        print(JSON.stringify(response, null, 2));
       },
     },
   ],
@@ -132,8 +177,16 @@ Environment:
     "export",
     {
       summary: "Export posts, pages, projects, assets, comments, and settings",
-      run: () => {
-        print("Prepared site export. Remote ZIP generation lands in Phase 2.");
+      run: async () => {
+        const api = getApiConfig();
+
+        if (!api) {
+          print("Prepared site export. Configure API env to fetch the export payload.");
+          return;
+        }
+
+        const response = await apiFetch(api, "/api/export", { method: "GET" });
+        print(JSON.stringify(response, null, 2));
       },
     },
   ],
@@ -179,7 +232,7 @@ if (!entry) {
   fail(`Unknown command: ${command}`);
 }
 
-entry.run();
+await Promise.resolve(entry.run());
 
 function print(message) {
   process.stdout.write(`${message}\n`);
@@ -211,4 +264,104 @@ function validatePrimaryLanguage(value) {
   if (value !== "en" && value !== "zh") {
     fail("Primary language must be `en` or `zh`.");
   }
+}
+
+function getApiConfig() {
+  const siteUrl = process.env.BLOGCMS_SITE_URL;
+  const token = process.env.BLOGCMS_API_TOKEN;
+
+  if (!siteUrl || !token) {
+    return null;
+  }
+
+  return { siteUrl: siteUrl.replace(/\/$/, ""), token };
+}
+
+async function apiFetch(api, pathname, options) {
+  const response = await fetch(`${api.siteUrl}${pathname}`, {
+    method: options.method,
+    headers: {
+      authorization: `Bearer ${api.token}`,
+      "content-type": "application/json",
+    },
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  });
+  const payload = await response.json();
+
+  if (!response.ok) {
+    fail(JSON.stringify(payload, null, 2));
+  }
+
+  return payload;
+}
+
+async function readMarkdownInput(inputPath) {
+  const filePath = await firstMarkdownPath(inputPath);
+  const contentMarkdown = await readFile(filePath, "utf8");
+  const filename = basename(filePath, extname(filePath));
+
+  return {
+    title: firstHeading(contentMarkdown) ?? filename,
+    slug: slugify(filename),
+    contentMarkdown,
+  };
+}
+
+async function firstMarkdownPath(inputPath) {
+  const stats = await stat(inputPath);
+
+  if (stats.isFile()) {
+    return inputPath;
+  }
+
+  const entries = await readdir(inputPath);
+  const markdown = entries.find((entry) => [".md", ".mdx"].includes(extname(entry)));
+
+  if (!markdown) {
+    fail("Folder must contain at least one .md or .mdx file.");
+  }
+
+  return join(inputPath, markdown);
+}
+
+async function firstFilename(inputPath) {
+  const stats = await stat(inputPath);
+
+  if (stats.isFile()) {
+    return basename(inputPath);
+  }
+
+  const entries = await readdir(inputPath);
+  return entries[0] ?? "upload.jpg";
+}
+
+function firstHeading(markdown) {
+  return markdown
+    .split("\n")
+    .find((line) => line.startsWith("# "))
+    ?.replace(/^#\s+/, "")
+    .trim();
+}
+
+function importEndpointFor(inputPath) {
+  const extension = extname(inputPath).toLowerCase();
+
+  if (extension === ".zip") {
+    return "/api/import/zip";
+  }
+
+  if (extension === ".html" || extension === ".htm") {
+    return "/api/import/html";
+  }
+
+  return "/api/import/markdown";
+}
+
+function slugify(value) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 96);
 }

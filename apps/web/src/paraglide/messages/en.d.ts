@@ -43,6 +43,15 @@
 /** @typedef {{}} Account_Signed_In_AsInputs */
 /** @typedef {{}} Account_TitleInputs */
 /** @typedef {{}} Archive_TitleInputs */
+/** @typedef {{}} Api_DescriptionInputs */
+/** @typedef {{}} Api_EyebrowInputs */
+/** @typedef {{}} Api_Manage_SettingsInputs */
+/** @typedef {{}} Api_MethodInputs */
+/** @typedef {{}} Api_Open_OpenapiInputs */
+/** @typedef {{}} Api_PathInputs */
+/** @typedef {{}} Api_ScopeInputs */
+/** @typedef {{}} Api_TitleInputs */
+/** @typedef {{}} Api_Token_ScopesInputs */
 /** @typedef {{}} Back_HomeInputs */
 /** @typedef {{}} Blog_DescriptionInputs */
 /** @typedef {{}} Blog_EyebrowInputs */
@@ -172,6 +181,15 @@ export const account_management_note: (inputs: Account_Management_NoteInputs) =>
 export const account_signed_in_as: (inputs: Account_Signed_In_AsInputs) => LocalizedString;
 export const account_title: (inputs: Account_TitleInputs) => LocalizedString;
 export const archive_title: (inputs: Archive_TitleInputs) => LocalizedString;
+export const api_description: (inputs: Api_DescriptionInputs) => LocalizedString;
+export const api_eyebrow: (inputs: Api_EyebrowInputs) => LocalizedString;
+export const api_manage_settings: (inputs: Api_Manage_SettingsInputs) => LocalizedString;
+export const api_method: (inputs: Api_MethodInputs) => LocalizedString;
+export const api_open_openapi: (inputs: Api_Open_OpenapiInputs) => LocalizedString;
+export const api_path: (inputs: Api_PathInputs) => LocalizedString;
+export const api_scope: (inputs: Api_ScopeInputs) => LocalizedString;
+export const api_title: (inputs: Api_TitleInputs) => LocalizedString;
+export const api_token_scopes: (inputs: Api_Token_ScopesInputs) => LocalizedString;
 export const back_home: (inputs: Back_HomeInputs) => LocalizedString;
 export const blog_description: (inputs: Blog_DescriptionInputs) => LocalizedString;
 export const blog_eyebrow: (inputs: Blog_EyebrowInputs) => LocalizedString;
@@ -294,6 +312,15 @@ export type Account_Management_NoteInputs = {};
 export type Account_Signed_In_AsInputs = {};
 export type Account_TitleInputs = {};
 export type Archive_TitleInputs = {};
+export type Api_DescriptionInputs = {};
+export type Api_EyebrowInputs = {};
+export type Api_Manage_SettingsInputs = {};
+export type Api_MethodInputs = {};
+export type Api_Open_OpenapiInputs = {};
+export type Api_PathInputs = {};
+export type Api_ScopeInputs = {};
+export type Api_TitleInputs = {};
+export type Api_Token_ScopesInputs = {};
 export type Back_HomeInputs = {};
 export type Blog_DescriptionInputs = {};
 export type Blog_EyebrowInputs = {};

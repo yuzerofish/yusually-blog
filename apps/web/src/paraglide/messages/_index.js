@@ -45,6 +45,15 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Account_Signed_In_AsInputs */
 /** @typedef {{}} Account_TitleInputs */
 /** @typedef {{}} Archive_TitleInputs */
+/** @typedef {{}} Api_DescriptionInputs */
+/** @typedef {{}} Api_EyebrowInputs */
+/** @typedef {{}} Api_Manage_SettingsInputs */
+/** @typedef {{}} Api_MethodInputs */
+/** @typedef {{}} Api_Open_OpenapiInputs */
+/** @typedef {{}} Api_PathInputs */
+/** @typedef {{}} Api_ScopeInputs */
+/** @typedef {{}} Api_TitleInputs */
+/** @typedef {{}} Api_Token_ScopesInputs */
 /** @typedef {{}} Back_HomeInputs */
 /** @typedef {{}} Blog_DescriptionInputs */
 /** @typedef {{}} Blog_EyebrowInputs */
@@ -864,6 +873,159 @@ export const archive_title =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.archive_title(inputs);
       return __zh.archive_title(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Use scoped API tokens for publishing, imports, exports, assets, and comment moderation." |
+ *
+ * @param {Api_DescriptionInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_description =
+  /** @type {((inputs?: Api_DescriptionInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Api_DescriptionInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.api_description(inputs);
+      return __zh.api_description(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "API" |
+ *
+ * @param {Api_EyebrowInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_eyebrow =
+  /** @type {((inputs?: Api_EyebrowInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Api_EyebrowInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.api_eyebrow(inputs);
+      return __zh.api_eyebrow(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Manage settings" |
+ *
+ * @param {Api_Manage_SettingsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_manage_settings =
+  /** @type {((inputs?: Api_Manage_SettingsInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Api_Manage_SettingsInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.api_manage_settings(inputs);
+      return __zh.api_manage_settings(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Method" |
+ *
+ * @param {Api_MethodInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_method =
+  /** @type {((inputs?: Api_MethodInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Api_MethodInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.api_method(inputs);
+      return __zh.api_method(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Open OpenAPI JSON" |
+ *
+ * @param {Api_Open_OpenapiInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_open_openapi =
+  /** @type {((inputs?: Api_Open_OpenapiInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Api_Open_OpenapiInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.api_open_openapi(inputs);
+      return __zh.api_open_openapi(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Path" |
+ *
+ * @param {Api_PathInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_path =
+  /** @type {((inputs?: Api_PathInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Api_PathInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.api_path(inputs);
+      return __zh.api_path(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Scope" |
+ *
+ * @param {Api_ScopeInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_scope =
+  /** @type {((inputs?: Api_ScopeInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Api_ScopeInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.api_scope(inputs);
+      return __zh.api_scope(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "OpenAPI and automation endpoints" |
+ *
+ * @param {Api_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_title =
+  /** @type {((inputs?: Api_TitleInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Api_TitleInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.api_title(inputs);
+      return __zh.api_title(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Token scopes" |
+ *
+ * @param {Api_Token_ScopesInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_token_scopes =
+  /** @type {((inputs?: Api_Token_ScopesInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Api_Token_ScopesInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.api_token_scopes(inputs);
+      return __zh.api_token_scopes(inputs);
     }
   );
 /**

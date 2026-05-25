@@ -18,3 +18,14 @@ blogcms init --primary-language zh
 ```
 
 The CLI keeps English and Chinese enabled for every generated site. The selected primary language controls initial settings, feed copy, and the first post defaults. Translation runtime remains Paraglide.js.
+
+## Remote Commands
+
+Set these values before running commands that call the site API:
+
+```sh
+export BLOGCMS_SITE_URL=https://blog-starter.01mvp.com
+export BLOGCMS_API_TOKEN=...
+```
+
+`blogcms push`, `blogcms import`, `blogcms upload`, and `blogcms export` call the matching `/api/*` endpoints when the API environment is configured.

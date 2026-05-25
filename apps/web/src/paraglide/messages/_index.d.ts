@@ -969,6 +969,204 @@ export const archive_title: ((
 /**
  * | output |
  * | --- |
+ * | "Use scoped API tokens for publishing, imports, exports, assets, and comment moderation." |
+ *
+ * @param {Api_DescriptionInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_description: ((
+  inputs?: Api_DescriptionInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Api_DescriptionInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "API" |
+ *
+ * @param {Api_EyebrowInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_eyebrow: ((
+  inputs?: Api_EyebrowInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Api_EyebrowInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Manage settings" |
+ *
+ * @param {Api_Manage_SettingsInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_manage_settings: ((
+  inputs?: Api_Manage_SettingsInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Api_Manage_SettingsInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Method" |
+ *
+ * @param {Api_MethodInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_method: ((
+  inputs?: Api_MethodInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Api_MethodInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Open OpenAPI JSON" |
+ *
+ * @param {Api_Open_OpenapiInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_open_openapi: ((
+  inputs?: Api_Open_OpenapiInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Api_Open_OpenapiInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Path" |
+ *
+ * @param {Api_PathInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_path: ((
+  inputs?: Api_PathInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Api_PathInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Scope" |
+ *
+ * @param {Api_ScopeInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_scope: ((
+  inputs?: Api_ScopeInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Api_ScopeInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "OpenAPI and automation endpoints" |
+ *
+ * @param {Api_TitleInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_title: ((
+  inputs?: Api_TitleInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Api_TitleInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Token scopes" |
+ *
+ * @param {Api_Token_ScopesInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const api_token_scopes: ((
+  inputs?: Api_Token_ScopesInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Api_Token_ScopesInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Back to home" |
  *
  * @param {Back_HomeInputs} inputs
@@ -2577,6 +2775,15 @@ export type Account_Management_NoteInputs = {};
 export type Account_Signed_In_AsInputs = {};
 export type Account_TitleInputs = {};
 export type Archive_TitleInputs = {};
+export type Api_DescriptionInputs = {};
+export type Api_EyebrowInputs = {};
+export type Api_Manage_SettingsInputs = {};
+export type Api_MethodInputs = {};
+export type Api_Open_OpenapiInputs = {};
+export type Api_PathInputs = {};
+export type Api_ScopeInputs = {};
+export type Api_TitleInputs = {};
+export type Api_Token_ScopesInputs = {};
 export type Back_HomeInputs = {};
 export type Blog_DescriptionInputs = {};
 export type Blog_EyebrowInputs = {};

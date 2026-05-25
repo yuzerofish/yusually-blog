@@ -44,6 +44,15 @@
 /** @typedef {{}} Account_Signed_In_AsInputs */
 /** @typedef {{}} Account_TitleInputs */
 /** @typedef {{}} Archive_TitleInputs */
+/** @typedef {{}} Api_DescriptionInputs */
+/** @typedef {{}} Api_EyebrowInputs */
+/** @typedef {{}} Api_Manage_SettingsInputs */
+/** @typedef {{}} Api_MethodInputs */
+/** @typedef {{}} Api_Open_OpenapiInputs */
+/** @typedef {{}} Api_PathInputs */
+/** @typedef {{}} Api_ScopeInputs */
+/** @typedef {{}} Api_TitleInputs */
+/** @typedef {{}} Api_Token_ScopesInputs */
 /** @typedef {{}} Back_HomeInputs */
 /** @typedef {{}} Blog_DescriptionInputs */
 /** @typedef {{}} Blog_EyebrowInputs */
@@ -332,6 +341,46 @@ export const account_title = /** @type {(inputs: Account_TitleInputs) => Localiz
 export const archive_title = /** @type {(inputs: Archive_TitleInputs) => LocalizedString} */ () => {
   return /** @type {LocalizedString} */ `归档`;
 };
+
+export const api_description =
+  /** @type {(inputs: Api_DescriptionInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `使用受限 API Token 进行发布、导入、导出、资源上传和评论审核。`;
+  };
+
+export const api_eyebrow = /** @type {(inputs: Api_EyebrowInputs) => LocalizedString} */ () => {
+  return /** @type {LocalizedString} */ `API`;
+};
+
+export const api_manage_settings =
+  /** @type {(inputs: Api_Manage_SettingsInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `管理设置`;
+  };
+
+export const api_method = /** @type {(inputs: Api_MethodInputs) => LocalizedString} */ () => {
+  return /** @type {LocalizedString} */ `方法`;
+};
+
+export const api_open_openapi =
+  /** @type {(inputs: Api_Open_OpenapiInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `打开 OpenAPI JSON`;
+  };
+
+export const api_path = /** @type {(inputs: Api_PathInputs) => LocalizedString} */ () => {
+  return /** @type {LocalizedString} */ `路径`;
+};
+
+export const api_scope = /** @type {(inputs: Api_ScopeInputs) => LocalizedString} */ () => {
+  return /** @type {LocalizedString} */ `权限`;
+};
+
+export const api_title = /** @type {(inputs: Api_TitleInputs) => LocalizedString} */ () => {
+  return /** @type {LocalizedString} */ `OpenAPI 与自动化端点`;
+};
+
+export const api_token_scopes =
+  /** @type {(inputs: Api_Token_ScopesInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `Token 权限`;
+  };
 
 export const back_home = /** @type {(inputs: Back_HomeInputs) => LocalizedString} */ () => {
   return /** @type {LocalizedString} */ `返回首页`;
