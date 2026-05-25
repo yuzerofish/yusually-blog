@@ -76,6 +76,11 @@ export type ProjectsPageData = {
   projects: Project[];
 };
 
+export type ProjectPageData = {
+  siteSettings: SiteSettings;
+  project: Project;
+};
+
 export const $getBlogPostPage = createServerFn({ method: "GET" })
   .inputValidator((data: { slug: string }) => data)
   .handler(async ({ data }): Promise<BlogPostPageData | null> => {
@@ -233,6 +238,32 @@ export const $getProjectsPageData = createServerFn({ method: "GET" }).handler(
     };
   },
 );
+
+export const $getProjectPageData = createServerFn({ method: "GET" })
+  .inputValidator((data: { slug: string }) => data)
+  .handler(async ({ data }): Promise<ProjectPageData | null> => {
+    const { getD1ProjectByIdOrSlug, getD1SiteSettings } = await import("./cms-d1");
+    const siteSettings = await getD1SiteSettings();
+    const persistedProject = await getD1ProjectByIdOrSlug(data.slug, false);
+
+    if (persistedProject) {
+      return {
+        siteSettings,
+        project: persistedProject,
+      };
+    }
+
+    const seededProject = seedProjects.find(
+      (project) => project.slug === data.slug && project.status === "published",
+    );
+
+    return seededProject
+      ? {
+          siteSettings,
+          project: seededProject,
+        }
+      : null;
+  });
 
 async function getMergedPublishedPosts() {
   const { listD1Posts } = await import("./cms-d1");

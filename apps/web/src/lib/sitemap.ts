@@ -1,22 +1,39 @@
-import { getPublishedPosts, tags } from "@repo/core";
+import { getPublishedPosts, projects as seedProjects, tags as seedTags } from "@repo/core";
 
-import { getD1SiteSettings, listD1Posts } from "#/lib/cms-d1";
+import { getD1SiteSettings, listD1Posts, listD1Projects, listD1Tags } from "#/lib/cms-d1";
 
 export async function getSitemapPaths() {
   const siteSettings = await getD1SiteSettings();
-  const persistedPosts = await listD1Posts().catch(() => []);
+  const [persistedPosts, persistedProjects, persistedTags] = await Promise.all([
+    listD1Posts().catch(() => []),
+    listD1Projects().catch(() => []),
+    listD1Tags().catch(() => []),
+  ]);
   const persistedSlugs = new Set(persistedPosts.map((post) => post.slug));
   const posts = [
     ...persistedPosts,
     ...getPublishedPosts().filter((post) => !persistedSlugs.has(post.slug)),
   ];
+  const persistedProjectSlugs = new Set(persistedProjects.map((project) => project.slug));
+  const projects = [
+    ...persistedProjects,
+    ...seedProjects
+      .filter((project) => project.status === "published")
+      .filter((project) => !persistedProjectSlugs.has(project.slug)),
+  ];
+  const tagSlugs = new Set([
+    ...persistedTags.map((tag) => tag.slug),
+    ...posts.flatMap((post) => post.tags.map((tag) => tag.slug)),
+    ...seedTags.map((tag) => tag.slug),
+  ]);
   const pagePaths = ["", "/blog", "/tags", "/archive", "/about", "/projects"];
   const postPaths = posts.map((post) => `/blog/${post.slug}`);
-  const taxonomyPaths = tags.map((tag) => `/tags/${tag.slug}`);
+  const projectPaths = projects.map((project) => `/projects/${project.slug}`);
+  const taxonomyPaths = Array.from(tagSlugs).map((slug) => `/tags/${slug}`);
 
   return {
     siteUrl: siteSettings.url,
-    allPaths: [...pagePaths, ...postPaths, ...taxonomyPaths],
+    allPaths: [...pagePaths, ...postPaths, ...projectPaths, ...taxonomyPaths],
     pagePaths,
     postPaths,
   };

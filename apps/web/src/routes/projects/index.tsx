@@ -7,7 +7,7 @@ import { $getProjectsPageData } from "#/lib/cms-server";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
-export const Route = createFileRoute("/projects")({
+export const Route = createFileRoute("/projects/")({
   loader: () => $getProjectsPageData(),
   component: ProjectsPage,
 });

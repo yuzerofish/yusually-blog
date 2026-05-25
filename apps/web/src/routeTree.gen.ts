@@ -14,7 +14,6 @@ import { Route as SitemapPostsDotxmlRouteImport } from './routes/sitemap-posts[.
 import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
 import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
-import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as OpenapiDotjsonRouteImport } from './routes/openapi[.]json'
 import { Route as FeedDotxmlRouteImport } from './routes/feed[.]xml'
 import { Route as ArchiveRouteImport } from './routes/archive'
@@ -23,9 +22,11 @@ import { Route as GuestRouteRouteImport } from './routes/_guest/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TagsIndexRouteImport } from './routes/tags/index'
+import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as UploadsSplatRouteImport } from './routes/uploads/$'
 import { Route as TagsSlugRouteImport } from './routes/tags/$slug'
+import { Route as ProjectsSlugRouteImport } from './routes/projects/$slug'
 import { Route as DocsApiRouteImport } from './routes/docs/api'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as ApiTokensRouteImport } from './routes/api/tokens'
@@ -95,11 +96,6 @@ const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProjectsRoute = ProjectsRouteImport.update({
-  id: '/projects',
-  path: '/projects',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const OpenapiDotjsonRoute = OpenapiDotjsonRouteImport.update({
   id: '/openapi.json',
   path: '/openapi.json',
@@ -138,6 +134,11 @@ const TagsIndexRoute = TagsIndexRouteImport.update({
   path: '/tags/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
@@ -151,6 +152,11 @@ const UploadsSplatRoute = UploadsSplatRouteImport.update({
 const TagsSlugRoute = TagsSlugRouteImport.update({
   id: '/tags/$slug',
   path: '/tags/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsSlugRoute = ProjectsSlugRouteImport.update({
+  id: '/projects/$slug',
+  path: '/projects/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocsApiRoute = DocsApiRouteImport.update({
@@ -375,7 +381,6 @@ export interface FileRoutesByFullPath {
   '/archive': typeof ArchiveRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/openapi.json': typeof OpenapiDotjsonRoute
-  '/projects': typeof ProjectsRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
@@ -397,9 +402,11 @@ export interface FileRoutesByFullPath {
   '/api/tokens': typeof ApiTokensRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/docs/api': typeof DocsApiRoute
+  '/projects/$slug': typeof ProjectsSlugRoute
   '/tags/$slug': typeof TagsSlugRoute
   '/uploads/$': typeof UploadsSplatRoute
   '/blog/': typeof BlogIndexRoute
+  '/projects/': typeof ProjectsIndexRoute
   '/tags/': typeof TagsIndexRoute
   '/admin/assets': typeof AuthAdminAssetsRoute
   '/admin/comments': typeof AuthAdminCommentsRoute
@@ -435,7 +442,6 @@ export interface FileRoutesByTo {
   '/archive': typeof ArchiveRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/openapi.json': typeof OpenapiDotjsonRoute
-  '/projects': typeof ProjectsRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
@@ -455,9 +461,11 @@ export interface FileRoutesByTo {
   '/api/tokens': typeof ApiTokensRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/docs/api': typeof DocsApiRoute
+  '/projects/$slug': typeof ProjectsSlugRoute
   '/tags/$slug': typeof TagsSlugRoute
   '/uploads/$': typeof UploadsSplatRoute
   '/blog': typeof BlogIndexRoute
+  '/projects': typeof ProjectsIndexRoute
   '/tags': typeof TagsIndexRoute
   '/admin/assets': typeof AuthAdminAssetsRoute
   '/admin/comments': typeof AuthAdminCommentsRoute
@@ -496,7 +504,6 @@ export interface FileRoutesById {
   '/archive': typeof ArchiveRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/openapi.json': typeof OpenapiDotjsonRoute
-  '/projects': typeof ProjectsRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
@@ -518,9 +525,11 @@ export interface FileRoutesById {
   '/api/tokens': typeof ApiTokensRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/docs/api': typeof DocsApiRoute
+  '/projects/$slug': typeof ProjectsSlugRoute
   '/tags/$slug': typeof TagsSlugRoute
   '/uploads/$': typeof UploadsSplatRoute
   '/blog/': typeof BlogIndexRoute
+  '/projects/': typeof ProjectsIndexRoute
   '/tags/': typeof TagsIndexRoute
   '/_auth/admin/assets': typeof AuthAdminAssetsRoute
   '/_auth/admin/comments': typeof AuthAdminCommentsRoute
@@ -558,7 +567,6 @@ export interface FileRouteTypes {
     | '/archive'
     | '/feed.xml'
     | '/openapi.json'
-    | '/projects'
     | '/robots.txt'
     | '/rss.xml'
     | '/sitemap-pages.xml'
@@ -580,9 +588,11 @@ export interface FileRouteTypes {
     | '/api/tokens'
     | '/blog/$slug'
     | '/docs/api'
+    | '/projects/$slug'
     | '/tags/$slug'
     | '/uploads/$'
     | '/blog/'
+    | '/projects/'
     | '/tags/'
     | '/admin/assets'
     | '/admin/comments'
@@ -618,7 +628,6 @@ export interface FileRouteTypes {
     | '/archive'
     | '/feed.xml'
     | '/openapi.json'
-    | '/projects'
     | '/robots.txt'
     | '/rss.xml'
     | '/sitemap-pages.xml'
@@ -638,9 +647,11 @@ export interface FileRouteTypes {
     | '/api/tokens'
     | '/blog/$slug'
     | '/docs/api'
+    | '/projects/$slug'
     | '/tags/$slug'
     | '/uploads/$'
     | '/blog'
+    | '/projects'
     | '/tags'
     | '/admin/assets'
     | '/admin/comments'
@@ -678,7 +689,6 @@ export interface FileRouteTypes {
     | '/archive'
     | '/feed.xml'
     | '/openapi.json'
-    | '/projects'
     | '/robots.txt'
     | '/rss.xml'
     | '/sitemap-pages.xml'
@@ -700,9 +710,11 @@ export interface FileRouteTypes {
     | '/api/tokens'
     | '/blog/$slug'
     | '/docs/api'
+    | '/projects/$slug'
     | '/tags/$slug'
     | '/uploads/$'
     | '/blog/'
+    | '/projects/'
     | '/tags/'
     | '/_auth/admin/assets'
     | '/_auth/admin/comments'
@@ -741,7 +753,6 @@ export interface RootRouteChildren {
   ArchiveRoute: typeof ArchiveRoute
   FeedDotxmlRoute: typeof FeedDotxmlRoute
   OpenapiDotjsonRoute: typeof OpenapiDotjsonRoute
-  ProjectsRoute: typeof ProjectsRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
@@ -758,9 +769,11 @@ export interface RootRouteChildren {
   ApiTokensRoute: typeof ApiTokensRouteWithChildren
   BlogSlugRoute: typeof BlogSlugRoute
   DocsApiRoute: typeof DocsApiRoute
+  ProjectsSlugRoute: typeof ProjectsSlugRoute
   TagsSlugRoute: typeof TagsSlugRoute
   UploadsSplatRoute: typeof UploadsSplatRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  ProjectsIndexRoute: typeof ProjectsIndexRoute
   TagsIndexRoute: typeof TagsIndexRoute
   ApiAdminLoginRoute: typeof ApiAdminLoginRoute
   ApiAdminLogoutRoute: typeof ApiAdminLogoutRoute
@@ -809,13 +822,6 @@ declare module '@tanstack/react-router' {
       path: '/robots.txt'
       fullPath: '/robots.txt'
       preLoaderRoute: typeof RobotsDottxtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/projects': {
-      id: '/projects'
-      path: '/projects'
-      fullPath: '/projects'
-      preLoaderRoute: typeof ProjectsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/openapi.json': {
@@ -874,6 +880,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TagsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/projects/': {
+      id: '/projects/'
+      path: '/projects'
+      fullPath: '/projects/'
+      preLoaderRoute: typeof ProjectsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/': {
       id: '/blog/'
       path: '/blog'
@@ -893,6 +906,13 @@ declare module '@tanstack/react-router' {
       path: '/tags/$slug'
       fullPath: '/tags/$slug'
       preLoaderRoute: typeof TagsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/$slug': {
+      id: '/projects/$slug'
+      path: '/projects/$slug'
+      fullPath: '/projects/$slug'
+      preLoaderRoute: typeof ProjectsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/docs/api': {
@@ -1351,7 +1371,6 @@ const rootRouteChildren: RootRouteChildren = {
   ArchiveRoute: ArchiveRoute,
   FeedDotxmlRoute: FeedDotxmlRoute,
   OpenapiDotjsonRoute: OpenapiDotjsonRoute,
-  ProjectsRoute: ProjectsRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   RssDotxmlRoute: RssDotxmlRoute,
   SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
@@ -1368,9 +1387,11 @@ const rootRouteChildren: RootRouteChildren = {
   ApiTokensRoute: ApiTokensRouteWithChildren,
   BlogSlugRoute: BlogSlugRoute,
   DocsApiRoute: DocsApiRoute,
+  ProjectsSlugRoute: ProjectsSlugRoute,
   TagsSlugRoute: TagsSlugRoute,
   UploadsSplatRoute: UploadsSplatRoute,
   BlogIndexRoute: BlogIndexRoute,
+  ProjectsIndexRoute: ProjectsIndexRoute,
   TagsIndexRoute: TagsIndexRoute,
   ApiAdminLoginRoute: ApiAdminLoginRoute,
   ApiAdminLogoutRoute: ApiAdminLogoutRoute,
