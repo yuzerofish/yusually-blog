@@ -112,6 +112,7 @@ export function createPostPreview(
     seoTitle: string;
     seoDescription: string;
     tags: string[];
+    publishedAt: string;
     locale: SupportedLocale;
     i18n: Post["i18n"];
   }>,

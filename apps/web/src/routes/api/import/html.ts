@@ -22,7 +22,7 @@ export const Route = createFileRoute("/api/import/html")({
           locale: body.locale ?? getApiLocale(request),
         });
 
-        if (parsed.status === "published") {
+        if (parsed.status === "published" || parsed.status === "scheduled") {
           const publishError = await requireCmsAccess(request, "posts:publish");
 
           if (publishError) {

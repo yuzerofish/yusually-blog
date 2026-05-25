@@ -9,7 +9,7 @@ import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { PlusIcon, SearchIcon } from "lucide-react";
+import { CalendarClockIcon, PlusIcon, SearchIcon } from "lucide-react";
 import { useEffect, useMemo, useState, type ComponentProps } from "react";
 
 import { MdxEditorSurface } from "#/components/mdx-editor-surface";
@@ -42,6 +42,9 @@ function AdminPostsPage() {
   const [editorState, setEditorState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [markdown, setMarkdown] = useState(defaultMarkdown);
   const [selectedPostIds, setSelectedPostIds] = useState<string[]>([]);
+  const [fallbackPublishedAtIso] = useState(() =>
+    new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+  );
   const previewHtml = useMemo(() => renderMarkdownToHtml(markdown), [markdown]);
 
   const visiblePosts = useMemo(() => {
@@ -97,11 +100,12 @@ function AdminPostsPage() {
 
     const formData = new FormData(event.currentTarget);
     const submitter = (event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
-    const status = submitter?.value === "published" ? "published" : "draft";
+    const status = (submitter?.value as ContentStatus | undefined) ?? "draft";
     const endpoint = editingPost
       ? `/api/posts/${editingPost.id}?lang=${locale}`
       : `/api/posts?lang=${locale}`;
     const tagsValue = formData.get("tags");
+    const publishedAtValue = formData.get("publishedAt");
 
     const response = await fetch(endpoint, {
       method: editingPost ? "PATCH" : "POST",
@@ -113,6 +117,8 @@ function AdminPostsPage() {
         seoDescription: formData.get("seoDescription"),
         contentMarkdown: markdown,
         status,
+        publishedAt:
+          typeof publishedAtValue === "string" ? datetimeLocalToIso(publishedAtValue) : undefined,
         commentsEnabled: formData.get("commentsEnabled") === "on",
         tags: parseTagNames(typeof tagsValue === "string" ? tagsValue : ""),
         locale,
@@ -423,6 +429,10 @@ function AdminPostsPage() {
             <Button type="submit" name="status" value="draft" variant="outline">
               {m.admin_save_draft()}
             </Button>
+            <Button type="submit" name="status" value="scheduled" variant="outline">
+              <CalendarClockIcon />
+              {m.admin_schedule_post()}
+            </Button>
             <Button type="submit" name="status" value="published">
               {m.admin_publish_post()}
             </Button>
@@ -466,6 +476,15 @@ function AdminPostsPage() {
                 id="editor-tags"
                 name="tags"
                 defaultValue={editingPost?.tags.map((tag) => tag.name).join(", ")}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="editor-published-at">{m.admin_editor_publish_at()}</Label>
+              <Input
+                id="editor-published-at"
+                name="publishedAt"
+                type="datetime-local"
+                defaultValue={toDatetimeLocal(editingPost?.publishedAt ?? fallbackPublishedAtIso)}
               />
             </div>
             <label className="flex items-center gap-2 text-sm">
@@ -537,4 +556,24 @@ function parseTagNames(value: string) {
     .split(/[,\n]/)
     .map((name) => name.trim())
     .filter(Boolean);
+}
+
+function toDatetimeLocal(value: string) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
+}
+
+function datetimeLocalToIso(value: string) {
+  if (!value) {
+    return undefined;
+  }
+
+  const date = new Date(value);
+
+  return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
 }

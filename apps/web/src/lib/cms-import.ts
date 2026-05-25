@@ -25,6 +25,7 @@ export type ImportPostInput = Partial<{
   seoTitle: string;
   seoDescription: string;
   tags: string[];
+  publishedAt: string;
   locale: SupportedLocale;
   i18n: Post["i18n"];
 }>;
@@ -97,6 +98,9 @@ export function parseMarkdownImport(input: ImportPostInput): ImportPostInput {
       metadataString(metadata, ["seoDescription", "seo_description"]) ??
       excerpt,
     tags: normalizeTags(input.tags ?? metadataValue(metadata, ["tags", "tag"])),
+    publishedAt:
+      cleanString(input.publishedAt) ??
+      metadataString(metadata, ["publishedAt", "published_at", "date"]),
     locale: input.locale,
     i18n: input.i18n,
   };
@@ -128,6 +132,7 @@ export function parseHtmlImport(input: ImportPostInput): ImportPostInput {
     seoTitle: cleanString(input.seoTitle) ?? title,
     seoDescription: cleanString(input.seoDescription) ?? excerpt,
     tags: normalizeTags(input.tags),
+    publishedAt: cleanString(input.publishedAt),
     locale: input.locale,
     i18n: input.i18n,
   };

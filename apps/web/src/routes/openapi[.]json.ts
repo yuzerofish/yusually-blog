@@ -25,7 +25,7 @@ export const Route = createFileRoute("/openapi.json")({
               post: {
                 summary: "Create post",
                 description:
-                  "Creating a published post requires both posts:write and posts:publish scopes.",
+                  "Creating a published or scheduled post requires both posts:write and posts:publish scopes.",
                 security: [{ apiToken: ["posts:write"] }],
                 responses: { "201": { description: "Post created" } },
               },
@@ -62,7 +62,7 @@ export const Route = createFileRoute("/openapi.json")({
               patch: {
                 summary: "Update post",
                 description:
-                  "Changing a post to published requires both posts:write and posts:publish scopes.",
+                  "Changing a post to published or scheduled requires both posts:write and posts:publish scopes.",
                 security: [{ apiToken: ["posts:write"] }],
                 responses: { "200": { description: "Post updated" } },
               },
@@ -167,7 +167,7 @@ export const Route = createFileRoute("/openapi.json")({
               post: {
                 summary: "Import Markdown",
                 description:
-                  "Parses simple frontmatter, derives title/slug/excerpt, and creates a draft unless status is provided. Published imports also require posts:publish.",
+                  "Parses simple frontmatter, derives title/slug/excerpt, and creates a draft unless status is provided. Published and scheduled imports also require posts:publish.",
                 security: [{ apiToken: ["posts:write"] }],
                 requestBody: {
                   content: {
@@ -426,6 +426,7 @@ export const Route = createFileRoute("/openapi.json")({
                   slug: { type: "string" },
                   excerpt: { type: "string" },
                   status: { enum: ["draft", "published", "scheduled", "archived"] },
+                  publishedAt: { type: "string", format: "date-time" },
                   coverImage: { type: "string" },
                   seoTitle: { type: "string" },
                   seoDescription: { type: "string" },

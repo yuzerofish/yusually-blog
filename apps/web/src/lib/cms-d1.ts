@@ -140,6 +140,7 @@ type PostInput = Partial<{
   seoTitle: string;
   seoDescription: string;
   tags: string[];
+  publishedAt: string;
   locale: SupportedLocale;
   i18n: Post["i18n"];
 }>;
@@ -256,9 +257,15 @@ export async function listD1Posts({
   query = "",
 }: ListPostsOptions = {}) {
   const normalizedQuery = query.trim().toLowerCase();
-  const where = includeUnpublished ? "status != 'deleted'" : "status = 'published'";
+  const where = includeUnpublished
+    ? "status != 'deleted'"
+    : "(status = 'published' or (status = 'scheduled' and published_at <= ?))";
   const params: string[] = [];
   let sql = `select * from posts where ${where}`;
+
+  if (!includeUnpublished) {
+    params.push(new Date().toISOString());
+  }
 
   if (normalizedQuery) {
     sql +=
@@ -279,9 +286,13 @@ export async function listD1Posts({
 
 export async function getD1PostBySlug(slug: string, includeUnpublished = false) {
   const result = await env.CMS_DB.prepare(
-    `select * from posts where slug = ? and ${includeUnpublished ? "status != 'deleted'" : "status = 'published'"} limit 1`,
+    `select * from posts where slug = ? and ${
+      includeUnpublished
+        ? "status != 'deleted'"
+        : "(status = 'published' or (status = 'scheduled' and published_at <= ?))"
+    } limit 1`,
   )
-    .bind(slug)
+    .bind(slug, ...(includeUnpublished ? [] : [new Date().toISOString()]))
     .first<D1PostRow>();
 
   if (!result) {
@@ -295,9 +306,13 @@ export async function getD1PostBySlug(slug: string, includeUnpublished = false) 
 
 export async function getD1PostByIdOrSlug(idOrSlug: string, includeUnpublished = true) {
   const result = await env.CMS_DB.prepare(
-    `select * from posts where (id = ? or slug = ?) and ${includeUnpublished ? "status != 'deleted'" : "status = 'published'"} limit 1`,
+    `select * from posts where (id = ? or slug = ?) and ${
+      includeUnpublished
+        ? "status != 'deleted'"
+        : "(status = 'published' or (status = 'scheduled' and published_at <= ?))"
+    } limit 1`,
   )
-    .bind(idOrSlug, idOrSlug)
+    .bind(idOrSlug, idOrSlug, ...(includeUnpublished ? [] : [new Date().toISOString()]))
     .first<D1PostRow>();
 
   if (!result) {
@@ -327,6 +342,7 @@ export async function createD1Post(input: PostInput) {
   const contentText = input.contentHtml ? htmlToText(contentHtml) : markdownToText(contentMarkdown);
   const status = input.status ?? "draft";
   const source = input.source ?? "api";
+  const publishedAt = normalizeDateInput(input.publishedAt) ?? now;
   const post: Post = {
     id: `post_${crypto.randomUUID()}`,
     title,
@@ -341,7 +357,7 @@ export async function createD1Post(input: PostInput) {
     featured: false,
     pinned: false,
     commentsEnabled: input.commentsEnabled ?? true,
-    publishedAt: now,
+    publishedAt,
     updatedAt: now,
     authorName: currentSettings.authorName,
     tags: [],
@@ -388,7 +404,7 @@ export async function createD1Post(input: PostInput) {
       post.seoTitle,
       post.seoDescription,
       post.i18n ? JSON.stringify(post.i18n) : null,
-      post.publishedAt,
+      publishedAt,
       now,
       post.updatedAt,
     )
@@ -432,8 +448,11 @@ export async function updateD1Post(idOrSlug: string, input: PostInput) {
         : post.contentText;
   const status = input.status ?? post.status;
   const now = new Date().toISOString();
+  const inputPublishedAt =
+    input.publishedAt !== undefined ? normalizeDateInput(input.publishedAt) : undefined;
   const publishedAt =
-    status === "published" && post.status !== "published" ? now : post.publishedAt;
+    inputPublishedAt ??
+    (status === "published" && post.status !== "published" ? now : post.publishedAt);
   const i18n = buildPostI18n(post, input, {
     contentHtml: inputHtml,
     contentMarkdown: inputMarkdown,
@@ -1576,6 +1595,16 @@ function cleanString(value: string | undefined, fallback: string) {
 
 function cleanUrl(value: string | undefined, fallback: string) {
   return cleanString(value, fallback).replace(/\/$/, "");
+}
+
+function normalizeDateInput(value: string | undefined) {
+  if (!value) {
+    return undefined;
+  }
+
+  const date = new Date(value);
+
+  return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
 }
 
 async function uniqueD1Slug(base: string) {

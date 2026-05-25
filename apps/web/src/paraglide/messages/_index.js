@@ -27,6 +27,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Admin_Editor_ErrorInputs */
 /** @typedef {{}} Admin_Editor_ExcerptInputs */
 /** @typedef {{}} Admin_Editor_Preview_ModeInputs */
+/** @typedef {{}} Admin_Editor_Publish_AtInputs */
 /** @typedef {{}} Admin_Editor_Rich_ModeInputs */
 /** @typedef {{}} Admin_Editor_SavedInputs */
 /** @typedef {{}} Admin_Editor_Seo_DescriptionInputs */
@@ -83,6 +84,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Admin_Project_ScreenshotsInputs */
 /** @typedef {{}} Admin_Publish_PostInputs */
 /** @typedef {{}} Admin_Save_DraftInputs */
+/** @typedef {{}} Admin_Schedule_PostInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
 /** @typedef {{}} Admin_Settings_Author_BioInputs */
 /** @typedef {{}} Admin_Settings_Author_NameInputs */
@@ -667,6 +669,23 @@ export const admin_editor_preview_mode =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.admin_editor_preview_mode(inputs);
       return __zh.admin_editor_preview_mode(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Publish at" |
+ *
+ * @param {Admin_Editor_Publish_AtInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_publish_at =
+  /** @type {((inputs?: Admin_Editor_Publish_AtInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Editor_Publish_AtInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_editor_publish_at(inputs);
+      return __zh.admin_editor_publish_at(inputs);
     }
   );
 /**
@@ -1619,6 +1638,23 @@ export const admin_save_draft =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.admin_save_draft(inputs);
       return __zh.admin_save_draft(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Schedule" |
+ *
+ * @param {Admin_Schedule_PostInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_schedule_post =
+  /** @type {((inputs?: Admin_Schedule_PostInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Schedule_PostInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.admin_schedule_post(inputs);
+      return __zh.admin_schedule_post(inputs);
     }
   );
 /**

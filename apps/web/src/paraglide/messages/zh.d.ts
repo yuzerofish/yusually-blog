@@ -25,6 +25,7 @@
 /** @typedef {{}} Admin_Editor_ErrorInputs */
 /** @typedef {{}} Admin_Editor_ExcerptInputs */
 /** @typedef {{}} Admin_Editor_Preview_ModeInputs */
+/** @typedef {{}} Admin_Editor_Publish_AtInputs */
 /** @typedef {{}} Admin_Editor_Rich_ModeInputs */
 /** @typedef {{}} Admin_Editor_SavedInputs */
 /** @typedef {{}} Admin_Editor_Seo_DescriptionInputs */
@@ -81,6 +82,7 @@
 /** @typedef {{}} Admin_Project_ScreenshotsInputs */
 /** @typedef {{}} Admin_Publish_PostInputs */
 /** @typedef {{}} Admin_Save_DraftInputs */
+/** @typedef {{}} Admin_Schedule_PostInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
 /** @typedef {{}} Admin_Settings_Author_BioInputs */
 /** @typedef {{}} Admin_Settings_Author_NameInputs */
@@ -259,6 +261,7 @@ export const admin_editor_excerpt: (inputs: Admin_Editor_ExcerptInputs) => Local
 export const admin_editor_preview_mode: (
   inputs: Admin_Editor_Preview_ModeInputs,
 ) => LocalizedString;
+export const admin_editor_publish_at: (inputs: Admin_Editor_Publish_AtInputs) => LocalizedString;
 export const admin_editor_rich_mode: (inputs: Admin_Editor_Rich_ModeInputs) => LocalizedString;
 export const admin_editor_saved: (inputs: Admin_Editor_SavedInputs) => LocalizedString;
 export const admin_editor_seo_description: (
@@ -333,6 +336,7 @@ export const admin_project_screenshots: (
 ) => LocalizedString;
 export const admin_publish_post: (inputs: Admin_Publish_PostInputs) => LocalizedString;
 export const admin_save_draft: (inputs: Admin_Save_DraftInputs) => LocalizedString;
+export const admin_schedule_post: (inputs: Admin_Schedule_PostInputs) => LocalizedString;
 export const admin_save_settings: (inputs: Admin_Save_SettingsInputs) => LocalizedString;
 export const admin_settings_author_bio: (
   inputs: Admin_Settings_Author_BioInputs,
@@ -530,6 +534,7 @@ export type Admin_Editor_Edit_TitleInputs = {};
 export type Admin_Editor_ErrorInputs = {};
 export type Admin_Editor_ExcerptInputs = {};
 export type Admin_Editor_Preview_ModeInputs = {};
+export type Admin_Editor_Publish_AtInputs = {};
 export type Admin_Editor_Rich_ModeInputs = {};
 export type Admin_Editor_SavedInputs = {};
 export type Admin_Editor_Seo_DescriptionInputs = {};
@@ -594,6 +599,7 @@ export type Admin_Project_Live_UrlInputs = {};
 export type Admin_Project_ScreenshotsInputs = {};
 export type Admin_Publish_PostInputs = {};
 export type Admin_Save_DraftInputs = {};
+export type Admin_Schedule_PostInputs = {};
 export type Admin_Save_SettingsInputs = {};
 export type Admin_Settings_Author_BioInputs = {};
 export type Admin_Settings_Author_NameInputs = {};

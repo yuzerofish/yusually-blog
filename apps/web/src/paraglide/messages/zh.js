@@ -26,6 +26,7 @@
 /** @typedef {{}} Admin_Editor_ErrorInputs */
 /** @typedef {{}} Admin_Editor_ExcerptInputs */
 /** @typedef {{}} Admin_Editor_Preview_ModeInputs */
+/** @typedef {{}} Admin_Editor_Publish_AtInputs */
 /** @typedef {{}} Admin_Editor_Rich_ModeInputs */
 /** @typedef {{}} Admin_Editor_SavedInputs */
 /** @typedef {{}} Admin_Editor_Seo_DescriptionInputs */
@@ -82,6 +83,7 @@
 /** @typedef {{}} Admin_Project_ScreenshotsInputs */
 /** @typedef {{}} Admin_Publish_PostInputs */
 /** @typedef {{}} Admin_Save_DraftInputs */
+/** @typedef {{}} Admin_Schedule_PostInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
 /** @typedef {{}} Admin_Settings_Author_BioInputs */
 /** @typedef {{}} Admin_Settings_Author_NameInputs */
@@ -352,6 +354,11 @@ export const admin_editor_excerpt =
 export const admin_editor_preview_mode =
   /** @type {(inputs: Admin_Editor_Preview_ModeInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `预览`;
+  };
+
+export const admin_editor_publish_at =
+  /** @type {(inputs: Admin_Editor_Publish_AtInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `发布时间`;
   };
 
 export const admin_editor_rich_mode =
@@ -632,6 +639,11 @@ export const admin_publish_post =
 export const admin_save_draft =
   /** @type {(inputs: Admin_Save_DraftInputs) => LocalizedString} */ () => {
     return /** @type {LocalizedString} */ `保存草稿`;
+  };
+
+export const admin_schedule_post =
+  /** @type {(inputs: Admin_Schedule_PostInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `定时发布`;
   };
 
 export const admin_save_settings =

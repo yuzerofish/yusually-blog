@@ -33,6 +33,7 @@ type PostInput = Partial<{
   seoTitle: string;
   seoDescription: string;
   tags: string[];
+  publishedAt: string;
   locale: SupportedLocale;
 }>;
 
@@ -102,7 +103,11 @@ export { dashboardMetrics };
 export function listPosts(options: { includeUnpublished?: boolean } = {}) {
   const list = options.includeUnpublished
     ? state.posts.filter((post) => post.status !== "deleted")
-    : state.posts.filter((post) => post.status === "published");
+    : state.posts.filter(
+        (post) =>
+          post.status === "published" ||
+          (post.status === "scheduled" && post.publishedAt <= new Date().toISOString()),
+      );
 
   return [...list].sort((a, b) => {
     if (a.pinned !== b.pinned) {
@@ -152,6 +157,7 @@ export function createPost(input: PostInput) {
     : renderMarkdownToHtml(contentMarkdown);
   const contentText = input.contentHtml ? htmlToText(contentHtml) : markdownToText(contentMarkdown);
   const status = input.status ?? "draft";
+  const publishedAt = normalizeDateInput(input.publishedAt) ?? now;
 
   const post: Post = {
     id: `post_${crypto.randomUUID()}`,
@@ -167,7 +173,7 @@ export function createPost(input: PostInput) {
     featured: false,
     pinned: false,
     commentsEnabled: input.commentsEnabled ?? true,
-    publishedAt: status === "published" ? now : now,
+    publishedAt,
     updatedAt: now,
     authorName: state.siteSettings.authorName,
     tags: resolveInputTags(input.tags),
@@ -246,9 +252,12 @@ export function updatePost(idOrSlug: string, input: PostInput) {
 
   if (input.status) {
     post.status = input.status;
-    if (input.status === "published") {
-      post.publishedAt = new Date().toISOString();
-    }
+  }
+
+  if (input.publishedAt !== undefined) {
+    post.publishedAt = normalizeDateInput(input.publishedAt) ?? post.publishedAt;
+  } else if (input.status === "published") {
+    post.publishedAt = new Date().toISOString();
   }
 
   post.seoDescription = post.seoDescription || post.excerpt || post.contentText.slice(0, 160);
@@ -461,6 +470,16 @@ function upsertTag(name: string): Tag {
   state.tags.push(tag);
 
   return tag;
+}
+
+function normalizeDateInput(value: string | undefined) {
+  if (!value) {
+    return undefined;
+  }
+
+  const date = new Date(value);
+
+  return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
 }
 
 function slugify(value: string) {

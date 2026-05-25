@@ -161,6 +161,7 @@ Environment:
             excerpt: input.excerpt,
             contentMarkdown: input.contentMarkdown,
             status: input.status ?? "published",
+            publishedAt: input.publishedAt,
             locale: input.locale,
             i18n: input.i18n,
           },

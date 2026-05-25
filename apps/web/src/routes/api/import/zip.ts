@@ -32,7 +32,7 @@ export const Route = createFileRoute("/api/import/zip")({
           );
         }
 
-        if (imported.post.status === "published") {
+        if (imported.post.status === "published" || imported.post.status === "scheduled") {
           const publishError = await requireCmsAccess(request, "posts:publish");
 
           if (publishError) {

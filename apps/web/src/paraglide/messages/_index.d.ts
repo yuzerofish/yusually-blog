@@ -573,6 +573,28 @@ export const admin_editor_preview_mode: ((
 /**
  * | output |
  * | --- |
+ * | "Publish at" |
+ *
+ * @param {Admin_Editor_Publish_AtInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_editor_publish_at: ((
+  inputs?: Admin_Editor_Publish_AtInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Editor_Publish_AtInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Editor" |
  *
  * @param {Admin_Editor_Rich_ModeInputs} inputs
@@ -1797,6 +1819,28 @@ export const admin_save_draft: ((
 ) => LocalizedString) &
   import("../runtime.js").MessageMetadata<
     Admin_Save_DraftInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Schedule" |
+ *
+ * @param {Admin_Schedule_PostInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const admin_schedule_post: ((
+  inputs?: Admin_Schedule_PostInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Admin_Schedule_PostInputs,
     {
       locale?: "en" | "zh";
     },
@@ -4953,6 +4997,7 @@ export type Admin_Editor_Edit_TitleInputs = {};
 export type Admin_Editor_ErrorInputs = {};
 export type Admin_Editor_ExcerptInputs = {};
 export type Admin_Editor_Preview_ModeInputs = {};
+export type Admin_Editor_Publish_AtInputs = {};
 export type Admin_Editor_Rich_ModeInputs = {};
 export type Admin_Editor_SavedInputs = {};
 export type Admin_Editor_Seo_DescriptionInputs = {};
@@ -5017,6 +5062,7 @@ export type Admin_Project_Live_UrlInputs = {};
 export type Admin_Project_ScreenshotsInputs = {};
 export type Admin_Publish_PostInputs = {};
 export type Admin_Save_DraftInputs = {};
+export type Admin_Schedule_PostInputs = {};
 export type Admin_Save_SettingsInputs = {};
 export type Admin_Settings_Author_BioInputs = {};
 export type Admin_Settings_Author_NameInputs = {};

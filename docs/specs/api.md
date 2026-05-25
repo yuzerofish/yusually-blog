@@ -62,7 +62,7 @@ Feeds and public metadata use current D1 site settings and localized content whe
 
 `GET /api/site` returns localized site settings when `lang=en|zh` or `Accept-Language` is provided. `PUT /api/site` accepts `themePreset=claude|apple|editorial` along with title, URL, description, author, language, RSS, comments, and indexing settings.
 
-`POST /api/posts` accepts bilingual `i18n` fields for title, excerpt, Markdown, rendered HTML, text, SEO title, and SEO description. When `locale` is `zh`, the primary input is also stored into Chinese localized fields. Creating or updating a `published` post requires both `posts:write` and `posts:publish`.
+`POST /api/posts` accepts `publishedAt` plus bilingual `i18n` fields for title, excerpt, Markdown, rendered HTML, text, SEO title, and SEO description. When `locale` is `zh`, the primary input is also stored into Chinese localized fields. Creating or updating a `published` or `scheduled` post requires both `posts:write` and `posts:publish`. Scheduled posts become visible in public lists when `publishedAt` is reached.
 
 `POST /api/posts/batch` accepts selected post ids and `action=publish|draft|archive|delete`. Publishing requires `posts:publish`; the other actions require `posts:write`.
 

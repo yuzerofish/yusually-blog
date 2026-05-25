@@ -46,7 +46,7 @@ export const Route = createFileRoute("/api/posts")({
           return accessError;
         }
 
-        if (body.status === "published") {
+        if (body.status === "published" || body.status === "scheduled") {
           const publishError = await requireCmsAccess(request, "posts:publish");
 
           if (publishError) {
