@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getApiLocale, importPreview, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { createD1Post } from "#/lib/cms-d1";
+import { parseMarkdownImport, type ImportPostInput } from "#/lib/cms-import";
 
 export const Route = createFileRoute("/api/import/markdown")({
   server: {
@@ -14,13 +15,24 @@ export const Route = createFileRoute("/api/import/markdown")({
           return accessError;
         }
 
-        const body = await readJsonBody<{ filename: string; contentMarkdown: string }>(request);
-        const locale = getApiLocale(request);
+        const body = await readJsonBody<ImportPostInput>(request);
+        const parsed = parseMarkdownImport({
+          ...body,
+          locale: body.locale ?? getApiLocale(request),
+        });
+
+        if (parsed.status === "published") {
+          const publishError = await requireCmsAccess(request, "posts:publish");
+
+          if (publishError) {
+            return publishError;
+          }
+        }
+
+        const locale = parsed.locale ?? getApiLocale(request);
         const post = await createD1Post({
-          title: body.filename?.replace(/\.(md|mdx)$/i, "") || "Imported Markdown post",
-          contentMarkdown:
-            body.contentMarkdown || `# ${body.filename ?? "Imported Markdown post"}\n`,
-          status: "draft",
+          ...parsed,
+          source: "markdown_upload",
           locale,
         });
 

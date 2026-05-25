@@ -38,3 +38,7 @@ Cloud Blog CMS is a TanStack Start monorepo built for Cloudflare Workers. The re
 ## Automation Flow
 
 The Skill and CLI use the same HTTP API as the admin UI. A generated site can be initialized by provisioning Cloudflare resources, applying D1 migrations, creating the first admin, logging in to mint a scoped token, writing site settings, publishing the first bilingual post, uploading assets, submitting and approving a comment, and exporting a backup.
+
+## Import Flow
+
+Markdown imports parse simple frontmatter and preserve Markdown as the source of truth. HTML imports sanitize markup before persistence. ZIP and folder imports select Markdown first, then HTML, and fall back to an image gallery; image files are uploaded to R2 and local image references are rewritten to public asset URLs.

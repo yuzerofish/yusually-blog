@@ -52,21 +52,48 @@ export const Route = createFileRoute("/openapi.json")({
             "/api/import/markdown": {
               post: {
                 summary: "Import Markdown",
+                description:
+                  "Parses simple frontmatter, derives title/slug/excerpt, and creates a draft unless status is provided. Published imports also require posts:publish.",
                 security: [{ apiToken: ["posts:write"] }],
+                requestBody: {
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/MarkdownImportRequest" },
+                    },
+                  },
+                },
                 responses: { "202": { description: "Markdown import accepted" } },
               },
             },
             "/api/import/html": {
               post: {
                 summary: "Import HTML",
+                description:
+                  "Sanitizes HTML, extracts title and description metadata, and creates a draft unless status is provided.",
                 security: [{ apiToken: ["posts:write"] }],
+                requestBody: {
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/HtmlImportRequest" },
+                    },
+                  },
+                },
                 responses: { "202": { description: "HTML import accepted" } },
               },
             },
             "/api/import/zip": {
               post: {
                 summary: "Import ZIP package",
+                description:
+                  "Accepts a base64 ZIP or CLI file manifest, imports Markdown/HTML content, uploads image entries to R2, and rewrites local image references.",
                 security: [{ apiToken: ["posts:write"] }],
+                requestBody: {
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/ZipImportRequest" },
+                    },
+                  },
+                },
                 responses: { "202": { description: "ZIP import accepted" } },
               },
             },
@@ -215,6 +242,72 @@ export const Route = createFileRoute("/openapi.json")({
                     zh: { type: "string" },
                   },
                 },
+              },
+              ImportPostFields: {
+                type: "object",
+                properties: {
+                  title: { type: "string" },
+                  slug: { type: "string" },
+                  excerpt: { type: "string" },
+                  status: { enum: ["draft", "published", "scheduled", "archived"] },
+                  coverImage: { type: "string" },
+                  seoTitle: { type: "string" },
+                  seoDescription: { type: "string" },
+                  tags: { type: "array", items: { type: "string" } },
+                  locale: { enum: ["en", "zh"] },
+                  i18n: { $ref: "#/components/schemas/LocalizedFields" },
+                },
+              },
+              MarkdownImportRequest: {
+                allOf: [
+                  { $ref: "#/components/schemas/ImportPostFields" },
+                  {
+                    type: "object",
+                    properties: {
+                      filename: { type: "string" },
+                      contentMarkdown: { type: "string" },
+                    },
+                    required: ["contentMarkdown"],
+                  },
+                ],
+              },
+              HtmlImportRequest: {
+                allOf: [
+                  { $ref: "#/components/schemas/ImportPostFields" },
+                  {
+                    type: "object",
+                    properties: {
+                      filename: { type: "string" },
+                      contentHtml: { type: "string" },
+                    },
+                    required: ["contentHtml"],
+                  },
+                ],
+              },
+              ZipImportRequest: {
+                allOf: [
+                  { $ref: "#/components/schemas/ImportPostFields" },
+                  {
+                    type: "object",
+                    properties: {
+                      filename: { type: "string" },
+                      contentBase64: { type: "string" },
+                      files: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            path: { type: "string" },
+                            contentBase64: { type: "string" },
+                            contentText: { type: "string" },
+                            contentType: { type: "string" },
+                          },
+                          required: ["path"],
+                        },
+                      },
+                    },
+                  },
+                ],
               },
             },
           },

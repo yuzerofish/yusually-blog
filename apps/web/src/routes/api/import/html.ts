@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getApiLocale, importPreview, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { createD1Post } from "#/lib/cms-d1";
+import { parseHtmlImport, type ImportPostInput } from "#/lib/cms-import";
 
 export const Route = createFileRoute("/api/import/html")({
   server: {
@@ -14,13 +15,24 @@ export const Route = createFileRoute("/api/import/html")({
           return accessError;
         }
 
-        const body = await readJsonBody<{ filename: string; contentHtml: string }>(request);
-        const locale = getApiLocale(request);
+        const body = await readJsonBody<ImportPostInput>(request);
+        const parsed = parseHtmlImport({
+          ...body,
+          locale: body.locale ?? getApiLocale(request),
+        });
+
+        if (parsed.status === "published") {
+          const publishError = await requireCmsAccess(request, "posts:publish");
+
+          if (publishError) {
+            return publishError;
+          }
+        }
+
+        const locale = parsed.locale ?? getApiLocale(request);
         const post = await createD1Post({
-          title: body.filename?.replace(/\.html?$/i, "") || "Imported HTML post",
-          contentMarkdown: "",
-          contentHtml: body.contentHtml || `<h1>${body.filename ?? "Imported HTML post"}</h1>`,
-          status: "draft",
+          ...parsed,
+          source: "html_upload",
           locale,
         });
 

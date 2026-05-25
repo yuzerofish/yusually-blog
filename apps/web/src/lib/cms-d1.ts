@@ -100,6 +100,7 @@ type PostInput = Partial<{
   contentMarkdown: string;
   contentHtml: string;
   status: ContentStatus;
+  source: Post["source"];
   commentsEnabled: boolean;
   seoTitle: string;
   seoDescription: string;
@@ -262,6 +263,7 @@ export async function createD1Post(input: PostInput) {
     : renderMarkdownToHtml(contentMarkdown);
   const contentText = input.contentHtml ? htmlToText(contentHtml) : markdownToText(contentMarkdown);
   const status = input.status ?? "draft";
+  const source = input.source ?? "api";
   const post: Post = {
     id: `post_${crypto.randomUUID()}`,
     title,
@@ -272,7 +274,7 @@ export async function createD1Post(input: PostInput) {
     contentHtml,
     contentText,
     status,
-    source: "api",
+    source,
     featured: false,
     pinned: false,
     commentsEnabled: input.commentsEnabled ?? true,

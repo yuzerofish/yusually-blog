@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { readdir, readFile, stat } from "node:fs/promises";
-import { basename, extname, join } from "node:path";
+import { basename, extname, join, relative } from "node:path";
 
 const command = process.argv[2] ?? "help";
 const args = process.argv.slice(3);
@@ -166,8 +166,7 @@ Environment:
       run: async () => {
         requireArg(args[0], "Provide an import file.");
         const api = getApiConfig();
-        const endpoint = importEndpointFor(args[0]);
-        const payload = await importPayloadFor(args[0]);
+        const { endpoint, body } = await importPayloadFor(args[0]);
 
         if (!api) {
           print(`Prepared import for ${args[0]}. Configure API env to send it to ${endpoint}.`);
@@ -176,7 +175,7 @@ Environment:
 
         const response = await apiFetch(api, endpoint, {
           method: "POST",
-          body: payload,
+          body,
         });
 
         print(JSON.stringify(response, null, 2));
@@ -528,43 +527,87 @@ function firstHeading(markdown) {
     .trim();
 }
 
-function importEndpointFor(inputPath) {
-  const extension = extname(inputPath).toLowerCase();
-
-  if (extension === ".zip") {
-    return "/api/import/zip";
-  }
-
-  if (extension === ".html" || extension === ".htm") {
-    return "/api/import/html";
-  }
-
-  return "/api/import/markdown";
-}
-
 async function importPayloadFor(inputPath) {
+  const stats = await stat(inputPath);
+
+  if (stats.isDirectory()) {
+    return {
+      endpoint: "/api/import/zip",
+      body: {
+        filename: basename(inputPath),
+        files: await readImportFolder(inputPath),
+      },
+    };
+  }
+
   const filename = basename(inputPath);
   const extension = extname(inputPath).toLowerCase();
   const content = await readFile(inputPath);
 
   if (extension === ".zip") {
     return {
-      filename,
-      contentBase64: content.toString("base64"),
+      endpoint: "/api/import/zip",
+      body: {
+        filename,
+        contentBase64: content.toString("base64"),
+      },
     };
   }
 
   if (extension === ".html" || extension === ".htm") {
     return {
-      filename,
-      contentHtml: content.toString("utf8"),
+      endpoint: "/api/import/html",
+      body: {
+        filename,
+        contentHtml: content.toString("utf8"),
+      },
     };
   }
 
   return {
-    filename,
-    contentMarkdown: content.toString("utf8"),
+    endpoint: "/api/import/markdown",
+    body: {
+      filename,
+      contentMarkdown: content.toString("utf8"),
+    },
   };
+}
+
+async function readImportFolder(rootPath) {
+  const files = [];
+
+  await collectImportFiles(rootPath, rootPath, files);
+
+  return files;
+}
+
+async function collectImportFiles(rootPath, currentPath, files) {
+  const entries = await readdir(currentPath, { withFileTypes: true });
+
+  for (const entry of entries) {
+    if (entry.name.startsWith(".")) {
+      continue;
+    }
+
+    const fullPath = join(currentPath, entry.name);
+
+    if (entry.isDirectory()) {
+      await collectImportFiles(rootPath, fullPath, files);
+      continue;
+    }
+
+    if (!entry.isFile()) {
+      continue;
+    }
+
+    const content = await readFile(fullPath);
+
+    files.push({
+      path: relative(rootPath, fullPath).replace(/\\/g, "/"),
+      contentType: contentTypeFor(entry.name),
+      contentBase64: content.toString("base64"),
+    });
+  }
 }
 
 async function readJsonFile(inputPath) {
@@ -583,6 +626,9 @@ function contentTypeFor(filename) {
   if (extension === ".gif") return "image/gif";
   if (extension === ".webp") return "image/webp";
   if (extension === ".svg") return "image/svg+xml";
+  if (extension === ".md" || extension === ".mdx") return "text/markdown; charset=utf-8";
+  if (extension === ".html" || extension === ".htm") return "text/html; charset=utf-8";
+  if (extension === ".zip") return "application/zip";
 
   return "application/octet-stream";
 }

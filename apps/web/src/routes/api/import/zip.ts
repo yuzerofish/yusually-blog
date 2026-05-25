@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getApiLocale, importPreview, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { createD1Post } from "#/lib/cms-d1";
+import { parseZipImport, type ZipImportInput } from "#/lib/cms-import";
 import { storeImportPackage } from "#/lib/cms-r2";
 
 export const Route = createFileRoute("/api/import/zip")({
@@ -15,33 +16,54 @@ export const Route = createFileRoute("/api/import/zip")({
           return accessError;
         }
 
-        const body = await readJsonBody<{
-          filename: string;
-          contentMarkdown: string;
-          contentBase64: string;
-        }>(request);
-        const locale = getApiLocale(request);
+        const body = await readJsonBody<ZipImportInput>(request);
+        let imported;
+
+        try {
+          imported = await parseZipImport({
+            ...body,
+            locale: body.locale ?? getApiLocale(request),
+          });
+        } catch (error) {
+          return jsonResponse(
+            { error: error instanceof Error ? error.message : "ZIP import failed" },
+            { status: 400 },
+          );
+        }
+
+        if (imported.post.status === "published") {
+          const publishError = await requireCmsAccess(request, "posts:publish");
+
+          if (publishError) {
+            return publishError;
+          }
+        }
+
+        const locale = imported.post.locale ?? getApiLocale(request);
         const post = await createD1Post({
-          title: body.filename?.replace(/\.zip$/i, "") || "Imported ZIP gallery",
-          contentMarkdown:
-            body.contentMarkdown ||
-            `# ${body.filename ?? "Imported ZIP gallery"}\n\nImported ZIP package accepted.`,
-          status: "draft",
+          ...imported.post,
+          source: "import",
           locale,
         });
-        const asset = await storeImportPackage({
-          filename: body.filename || "import.zip",
-          contentType: "application/zip",
-          contentBase64: body.contentBase64,
-          attachedPostId: post.id,
-        });
+        const asset = body.contentBase64
+          ? await storeImportPackage({
+              filename: body.filename || "import.zip",
+              contentType: "application/zip",
+              contentBase64: body.contentBase64,
+              attachedPostId: post.id,
+            })
+          : null;
 
         return jsonResponse(
           {
             data: {
               ...importPreview("zip", body.filename),
               post,
-              asset,
+              packageAsset: asset,
+              assets: imported.assets,
+              selectedEntry: imported.selectedEntry,
+              entries: imported.entries,
+              kind: imported.kind,
             },
             supportedPackages: ["markdown-with-images", "html-with-assets", "gallery-images"],
             requiredScope: "posts:write",

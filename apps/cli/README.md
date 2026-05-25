@@ -33,6 +33,9 @@ blogcms site update --config /absolute/path/to/site.config.json
 blogcms push ./post.md
 blogcms push ./post-folder
 blogcms push ./first-post.json
+blogcms import ./post-folder
+blogcms import ./post.md
+blogcms import ./legacy.html
 blogcms import ./site.zip
 blogcms upload ./images
 blogcms export
@@ -41,3 +44,5 @@ blogcms admin reset-password --email admin@example.com --password "..."
 ```
 
 `blogcms push` accepts Markdown files, Markdown folders, or JSON post payloads. JSON payloads can include bilingual `i18n` fields for title, excerpt, body, rendered HTML, text, and SEO metadata.
+
+`blogcms import` accepts Markdown, HTML, ZIP archives, or a local folder. Folder imports send a file manifest to the ZIP import API so Markdown/HTML and local images can be processed together.
