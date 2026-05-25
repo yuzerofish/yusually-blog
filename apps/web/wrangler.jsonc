@@ -1,12 +1,11 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "blog-starter",
-  "main": "./.output/server/index.mjs",
+  "main": "@tanstack/react-start/server-entry",
   "compatibility_date": "2026-05-24",
   "compatibility_flags": ["nodejs_compat"],
-  "assets": {
-    "directory": "./.output/public",
-    "binding": "ASSETS",
+  "observability": {
+    "enabled": true,
   },
   "vars": {
     "VITE_BASE_URL": "https://blog-starter.01mvp.com",
@@ -19,7 +18,7 @@
     {
       "binding": "CMS_DB",
       "database_name": "blog-starter-cms",
-      "database_id": "replace-with-cloudflare-d1-id",
+      "database_id": "b267c97c-72a5-45a1-9f5a-cfd0b8e8067c",
       "migrations_dir": "../../packages/db/migrations",
     },
   ],
@@ -36,7 +35,7 @@
   "kv_namespaces": [
     {
       "binding": "CMS_CACHE",
-      "id": "replace-with-cloudflare-kv-id",
+      "id": "c1150cc286374ba9919f48f48a985f36",
     },
   ],
 }

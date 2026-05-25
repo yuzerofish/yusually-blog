@@ -4,8 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "vp dev",
+    "deploy": "pnpm run build && wrangler deploy",
     "preview": "vp preview",
-    "start": "node .output/server/index.mjs",
+    "cf-typegen": "wrangler types",
     "ui": "vpx shadcn@latest"
   },
   "dependencies": {
@@ -33,6 +34,7 @@
   },
   "devDependencies": {
     "@babel/core": "catalog:",
+    "@cloudflare/vite-plugin": "catalog:",
     "@inlang/paraglide-js": "catalog:",
     "@repo/tsconfig": "workspace:*",
     "@rolldown/plugin-babel": "catalog:",
@@ -49,9 +51,9 @@
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "babel-plugin-react-compiler": "catalog:",
-    "nitro": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "wrangler": "catalog:"
   }
 }

@@ -1,10 +1,10 @@
+import { cloudflare } from "@cloudflare/vite-plugin";
 import { paraglideVitePlugin } from "@inlang/paraglide-js";
 import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
-import { nitro } from "nitro/vite";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -43,6 +43,7 @@ export default defineConfig({
   },
   plugins: [
     devtools(),
+    cloudflare({ viteEnvironment: { name: "ssr" } }),
     paraglideVitePlugin({
       project: "./project.inlang",
       outdir: "./src/paraglide",
@@ -53,12 +54,6 @@ export default defineConfig({
       strategy: ["cookie", "globalVariable", "baseLocale"],
     }),
     tanstackStart(),
-    // https://tanstack.com/start/latest/docs/framework/react/guide/hosting
-    nitro({
-      // fixes SSR issues with Vite 8:
-      // https://discord.com/channels/719702312431386674/1490005967067414608/1490634230458224751
-      traceDeps: ["react", "react-dom"],
-    }),
     viteReact(),
     // https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#react-compiler
     babel({
