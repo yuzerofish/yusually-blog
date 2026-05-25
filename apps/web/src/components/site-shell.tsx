@@ -33,12 +33,12 @@ export function SiteShell({
     >
       <header className="sticky top-0 z-40 border-b border-border/80 bg-background/88 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-          <Link to="/" className="flex min-w-0 items-center gap-3">
+          <Link to="/" className="flex shrink-0 items-center gap-3" aria-label={siteSettings.name}>
             <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-xs">
               <BookOpenIcon className="size-5" />
             </span>
-            <span className="min-w-0">
-              <span className="block truncate text-sm font-semibold">{siteSettings.name}</span>
+            <span className="hidden min-w-0 sm:block">
+              <span className="block text-sm leading-5 font-semibold">{siteSettings.name}</span>
               <span className="hidden text-xs text-muted-foreground sm:block">
                 {m.site_subtitle()}
               </span>
