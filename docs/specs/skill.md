@@ -48,7 +48,7 @@ The Skill-generated demo uses:
 - Site: `https://demo.01mvp.com`
 - Alias: `https://blog-demo.01mvp.com`
 - Worker: `blog-demo`
-- Current verified demo version: `6b23e8c6-0105-4672-af3c-a6a20ca8573b`
+- Current verified demo version: `61fbf1b2-59bb-48a2-8edf-16cd2f59c93d`
 
 The demo run created site settings from `skills/cloud-blog-cms/templates/site.config.json`, published `hello-from-generated-cloud-blog-cms`, uploaded an R2 asset, submitted a pending comment, approved it, and generated an R2 export backup.
 
