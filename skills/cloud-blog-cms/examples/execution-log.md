@@ -21,7 +21,7 @@ Run date: 2026-05-25
 - R2 assets: `blog-demo-assets`
 - R2 backups: `blog-demo-backups`
 - KV: `BLOG_DEMO_CMS_CACHE`
-- Current verified demo version: `61fbf1b2-59bb-48a2-8edf-16cd2f59c93d`
+- Current verified demo version: `6379f252-7a68-4fd2-b109-9fbf97b8a1e0`
 
 ## Automated Steps
 
