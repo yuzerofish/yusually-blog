@@ -1255,6 +1255,182 @@ export const blog_title: ((
 /**
  * | output |
  * | --- |
+ * | "Comment" |
+ *
+ * @param {Comment_BodyInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_body: ((
+  inputs?: Comment_BodyInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_BodyInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Company" |
+ *
+ * @param {Comment_CompanyInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_company: ((
+  inputs?: Comment_CompanyInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_CompanyInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Email" |
+ *
+ * @param {Comment_EmailInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_email: ((
+  inputs?: Comment_EmailInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_EmailInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Comment could not be submitted." |
+ *
+ * @param {Comment_ErrorInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_error: ((
+  inputs?: Comment_ErrorInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_ErrorInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Name" |
+ *
+ * @param {Comment_NameInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_name: ((
+  inputs?: Comment_NameInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_NameInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Submitting..." |
+ *
+ * @param {Comment_SubmittingInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_submitting: ((
+  inputs?: Comment_SubmittingInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_SubmittingInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Comment submitted for review." |
+ *
+ * @param {Comment_SuccessInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_success: ((
+  inputs?: Comment_SuccessInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_SuccessInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
+ * | "Website" |
+ *
+ * @param {Comment_WebsiteInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_website: ((
+  inputs?: Comment_WebsiteInputs,
+  options?: {
+    locale?: "en" | "zh";
+  },
+) => LocalizedString) &
+  import("../runtime.js").MessageMetadata<
+    Comment_WebsiteInputs,
+    {
+      locale?: "en" | "zh";
+    },
+    {}
+  >;
+/**
+ * | output |
+ * | --- |
  * | "Comments" |
  *
  * @param {CommentsInputs} inputs
@@ -2788,6 +2964,14 @@ export type Back_HomeInputs = {};
 export type Blog_DescriptionInputs = {};
 export type Blog_EyebrowInputs = {};
 export type Blog_TitleInputs = {};
+export type Comment_BodyInputs = {};
+export type Comment_CompanyInputs = {};
+export type Comment_EmailInputs = {};
+export type Comment_ErrorInputs = {};
+export type Comment_NameInputs = {};
+export type Comment_SubmittingInputs = {};
+export type Comment_SuccessInputs = {};
+export type Comment_WebsiteInputs = {};
 export type CommentsInputs = {};
 export type Comments_DescriptionInputs = {};
 export type ContentsInputs = {};

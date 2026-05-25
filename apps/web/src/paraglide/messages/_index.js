@@ -58,6 +58,14 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js";
 /** @typedef {{}} Blog_DescriptionInputs */
 /** @typedef {{}} Blog_EyebrowInputs */
 /** @typedef {{}} Blog_TitleInputs */
+/** @typedef {{}} Comment_BodyInputs */
+/** @typedef {{}} Comment_CompanyInputs */
+/** @typedef {{}} Comment_EmailInputs */
+/** @typedef {{}} Comment_ErrorInputs */
+/** @typedef {{}} Comment_NameInputs */
+/** @typedef {{}} Comment_SubmittingInputs */
+/** @typedef {{}} Comment_SuccessInputs */
+/** @typedef {{}} Comment_WebsiteInputs */
 /** @typedef {{}} CommentsInputs */
 /** @typedef {{}} Comments_DescriptionInputs */
 /** @typedef {{}} ContentsInputs */
@@ -1094,6 +1102,142 @@ export const blog_title =
       const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
       if (locale === "en") return __en.blog_title(inputs);
       return __zh.blog_title(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Comment" |
+ *
+ * @param {Comment_BodyInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_body =
+  /** @type {((inputs?: Comment_BodyInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_BodyInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_body(inputs);
+      return __zh.comment_body(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Company" |
+ *
+ * @param {Comment_CompanyInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_company =
+  /** @type {((inputs?: Comment_CompanyInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_CompanyInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_company(inputs);
+      return __zh.comment_company(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Email" |
+ *
+ * @param {Comment_EmailInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_email =
+  /** @type {((inputs?: Comment_EmailInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_EmailInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_email(inputs);
+      return __zh.comment_email(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Comment could not be submitted." |
+ *
+ * @param {Comment_ErrorInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_error =
+  /** @type {((inputs?: Comment_ErrorInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_ErrorInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_error(inputs);
+      return __zh.comment_error(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Name" |
+ *
+ * @param {Comment_NameInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_name =
+  /** @type {((inputs?: Comment_NameInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_NameInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_name(inputs);
+      return __zh.comment_name(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Submitting..." |
+ *
+ * @param {Comment_SubmittingInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_submitting =
+  /** @type {((inputs?: Comment_SubmittingInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_SubmittingInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_submitting(inputs);
+      return __zh.comment_submitting(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Comment submitted for review." |
+ *
+ * @param {Comment_SuccessInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_success =
+  /** @type {((inputs?: Comment_SuccessInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_SuccessInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_success(inputs);
+      return __zh.comment_success(inputs);
+    }
+  );
+/**
+ * | output |
+ * | --- |
+ * | "Website" |
+ *
+ * @param {Comment_WebsiteInputs} inputs
+ * @param {{ locale?: "en" | "zh" }} options
+ * @returns {LocalizedString}
+ */
+export const comment_website =
+  /** @type {((inputs?: Comment_WebsiteInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_WebsiteInputs, { locale?: "en" | "zh" }, {}>} */ (
+    (inputs = {}, options = {}) => {
+      const locale = experimentalStaticLocale ?? options.locale ?? getLocale();
+      if (locale === "en") return __en.comment_website(inputs);
+      return __zh.comment_website(inputs);
     }
   );
 /**

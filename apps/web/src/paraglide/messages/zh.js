@@ -57,6 +57,14 @@
 /** @typedef {{}} Blog_DescriptionInputs */
 /** @typedef {{}} Blog_EyebrowInputs */
 /** @typedef {{}} Blog_TitleInputs */
+/** @typedef {{}} Comment_BodyInputs */
+/** @typedef {{}} Comment_CompanyInputs */
+/** @typedef {{}} Comment_EmailInputs */
+/** @typedef {{}} Comment_ErrorInputs */
+/** @typedef {{}} Comment_NameInputs */
+/** @typedef {{}} Comment_SubmittingInputs */
+/** @typedef {{}} Comment_SuccessInputs */
+/** @typedef {{}} Comment_WebsiteInputs */
 /** @typedef {{}} CommentsInputs */
 /** @typedef {{}} Comments_DescriptionInputs */
 /** @typedef {{}} ContentsInputs */
@@ -398,6 +406,42 @@ export const blog_eyebrow = /** @type {(inputs: Blog_EyebrowInputs) => Localized
 export const blog_title = /** @type {(inputs: Blog_TitleInputs) => LocalizedString} */ () => {
   return /** @type {LocalizedString} */ `长期可用的发布笔记`;
 };
+
+export const comment_body = /** @type {(inputs: Comment_BodyInputs) => LocalizedString} */ () => {
+  return /** @type {LocalizedString} */ `评论内容`;
+};
+
+export const comment_company =
+  /** @type {(inputs: Comment_CompanyInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `公司`;
+  };
+
+export const comment_email = /** @type {(inputs: Comment_EmailInputs) => LocalizedString} */ () => {
+  return /** @type {LocalizedString} */ `邮箱`;
+};
+
+export const comment_error = /** @type {(inputs: Comment_ErrorInputs) => LocalizedString} */ () => {
+  return /** @type {LocalizedString} */ `评论提交失败。`;
+};
+
+export const comment_name = /** @type {(inputs: Comment_NameInputs) => LocalizedString} */ () => {
+  return /** @type {LocalizedString} */ `昵称`;
+};
+
+export const comment_submitting =
+  /** @type {(inputs: Comment_SubmittingInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `正在提交...`;
+  };
+
+export const comment_success =
+  /** @type {(inputs: Comment_SuccessInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `评论已提交，等待审核。`;
+  };
+
+export const comment_website =
+  /** @type {(inputs: Comment_WebsiteInputs) => LocalizedString} */ () => {
+    return /** @type {LocalizedString} */ `个人网站`;
+  };
 
 export const comments = /** @type {(inputs: CommentsInputs) => LocalizedString} */ () => {
   return /** @type {LocalizedString} */ `评论`;

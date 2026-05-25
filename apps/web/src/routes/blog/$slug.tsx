@@ -6,10 +6,10 @@ import {
   localizeComment,
   localizePost,
 } from "@repo/core";
-import { Button } from "@repo/ui/components/button";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { MessageSquareIcon, RssIcon } from "lucide-react";
 
+import { CommentForm } from "#/components/comment-form";
 import { SiteShell } from "#/components/site-shell";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
@@ -133,10 +133,8 @@ function BlogPostPage() {
                     {m.comments_description()}
                   </p>
                 </div>
-                <Button variant="outline" size="sm">
-                  {m.submit_comment()}
-                </Button>
               </div>
+              <CommentForm postSlug={localizedPost.slug} />
               <div className="mt-6 grid gap-4">
                 {localizedComments.map((comment) => (
                   <div

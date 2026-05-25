@@ -56,6 +56,14 @@
 /** @typedef {{}} Blog_DescriptionInputs */
 /** @typedef {{}} Blog_EyebrowInputs */
 /** @typedef {{}} Blog_TitleInputs */
+/** @typedef {{}} Comment_BodyInputs */
+/** @typedef {{}} Comment_CompanyInputs */
+/** @typedef {{}} Comment_EmailInputs */
+/** @typedef {{}} Comment_ErrorInputs */
+/** @typedef {{}} Comment_NameInputs */
+/** @typedef {{}} Comment_SubmittingInputs */
+/** @typedef {{}} Comment_SuccessInputs */
+/** @typedef {{}} Comment_WebsiteInputs */
 /** @typedef {{}} CommentsInputs */
 /** @typedef {{}} Comments_DescriptionInputs */
 /** @typedef {{}} ContentsInputs */
@@ -194,6 +202,14 @@ export const back_home: (inputs: Back_HomeInputs) => LocalizedString;
 export const blog_description: (inputs: Blog_DescriptionInputs) => LocalizedString;
 export const blog_eyebrow: (inputs: Blog_EyebrowInputs) => LocalizedString;
 export const blog_title: (inputs: Blog_TitleInputs) => LocalizedString;
+export const comment_body: (inputs: Comment_BodyInputs) => LocalizedString;
+export const comment_company: (inputs: Comment_CompanyInputs) => LocalizedString;
+export const comment_email: (inputs: Comment_EmailInputs) => LocalizedString;
+export const comment_error: (inputs: Comment_ErrorInputs) => LocalizedString;
+export const comment_name: (inputs: Comment_NameInputs) => LocalizedString;
+export const comment_submitting: (inputs: Comment_SubmittingInputs) => LocalizedString;
+export const comment_success: (inputs: Comment_SuccessInputs) => LocalizedString;
+export const comment_website: (inputs: Comment_WebsiteInputs) => LocalizedString;
 export const comments: (inputs: CommentsInputs) => LocalizedString;
 export const comments_description: (inputs: Comments_DescriptionInputs) => LocalizedString;
 export const contents: (inputs: ContentsInputs) => LocalizedString;
@@ -325,6 +341,14 @@ export type Back_HomeInputs = {};
 export type Blog_DescriptionInputs = {};
 export type Blog_EyebrowInputs = {};
 export type Blog_TitleInputs = {};
+export type Comment_BodyInputs = {};
+export type Comment_CompanyInputs = {};
+export type Comment_EmailInputs = {};
+export type Comment_ErrorInputs = {};
+export type Comment_NameInputs = {};
+export type Comment_SubmittingInputs = {};
+export type Comment_SuccessInputs = {};
+export type Comment_WebsiteInputs = {};
 export type CommentsInputs = {};
 export type Comments_DescriptionInputs = {};
 export type ContentsInputs = {};
