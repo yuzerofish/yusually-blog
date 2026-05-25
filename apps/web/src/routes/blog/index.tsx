@@ -1,4 +1,4 @@
-import { getTagsForLocale, localizePost, searchPosts } from "@repo/core";
+import { localizePost, localizeTag } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { createFileRoute } from "@tanstack/react-router";
@@ -6,6 +6,7 @@ import { SearchIcon } from "lucide-react";
 
 import { PostCard } from "#/components/post-card";
 import { SiteShell } from "#/components/site-shell";
+import { $getBlogIndexPage } from "#/lib/cms-server";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
@@ -15,18 +16,24 @@ export const Route = createFileRoute("/blog/")({
     tag: typeof search.tag === "string" ? search.tag : "",
     page: Math.max(1, Number(search.page) || 1),
   }),
+  loaderDeps: ({ search }) => search,
+  loader: ({ deps }) =>
+    $getBlogIndexPage({
+      data: {
+        query: deps.q,
+        tagSlug: deps.tag || undefined,
+      },
+    }),
   component: BlogIndexPage,
 });
 
 function BlogIndexPage() {
   const locale = getCurrentLocale();
   const search = Route.useSearch();
+  const data = Route.useLoaderData();
   const pageSize = 6;
-  const tags = getTagsForLocale(locale);
-  const matchedPosts = searchPosts({
-    query: search.q,
-    tagSlug: search.tag || undefined,
-  }).map((post) => localizePost(post, locale));
+  const tags = data.tags.map((tag) => localizeTag(tag, locale));
+  const matchedPosts = data.posts.map((post) => localizePost(post, locale));
   const pageCount = Math.max(1, Math.ceil(matchedPosts.length / pageSize));
   const currentPage = Math.min(search.page, pageCount);
   const posts = matchedPosts.slice((currentPage - 1) * pageSize, currentPage * pageSize);

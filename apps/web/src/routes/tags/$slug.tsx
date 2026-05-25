@@ -1,23 +1,21 @@
-import { getPostsByTag, getTagBySlug, localizePost, localizeTag } from "@repo/core";
+import { localizePost, localizeTag } from "@repo/core";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 
 import { PostCard } from "#/components/post-card";
 import { SiteShell } from "#/components/site-shell";
+import { $getTagPage } from "#/lib/cms-server";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/tags/$slug")({
-  loader: ({ params }) => {
-    const tag = getTagBySlug(params.slug);
+  loader: async ({ params }) => {
+    const data = await $getTagPage({ data: { slug: params.slug } });
 
-    if (!tag) {
+    if (!data) {
       throw notFound();
     }
 
-    return {
-      tag,
-      posts: getPostsByTag(tag.slug),
-    };
+    return data;
   },
   component: TagDetailPage,
 });

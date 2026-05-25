@@ -4,10 +4,14 @@ import {
   getPublishedPosts,
   getPostBySlug,
   getRelatedPosts,
+  getTagBySlug,
+  localizePost,
+  resolveLocale,
   tags,
   type Comment,
   type Post,
   type SiteSettings,
+  type SupportedLocale,
   type Tag,
 } from "@repo/core";
 import { createServerFn } from "@tanstack/react-start";
@@ -24,6 +28,26 @@ export type HomePageData = {
   featuredPosts: Post[];
   siteSettings: SiteSettings;
   tags: Tag[];
+};
+
+export type BlogIndexPageData = {
+  posts: Post[];
+  tags: Tag[];
+};
+
+export type ArchiveGroup = {
+  key: string;
+  label: string;
+  posts: Post[];
+};
+
+export type ArchivePageData = {
+  groups: ArchiveGroup[];
+};
+
+export type TagPageData = {
+  tag: Tag;
+  posts: Post[];
 };
 
 export const $getBlogPostPage = createServerFn({ method: "GET" })
@@ -58,16 +82,11 @@ export const $getBlogPostPage = createServerFn({ method: "GET" })
 
 export const $getHomePageData = createServerFn({ method: "GET" }).handler(
   async (): Promise<HomePageData> => {
-    const { getD1SiteSettings, listD1Posts } = await import("./cms-d1");
-    const [siteSettings, persistedPosts] = await Promise.all([
+    const { getD1SiteSettings } = await import("./cms-d1");
+    const [siteSettings, posts] = await Promise.all([
       getD1SiteSettings(),
-      listD1Posts().catch(() => []),
+      getMergedPublishedPosts(),
     ]);
-    const persistedSlugs = new Set(persistedPosts.map((post) => post.slug));
-    const posts = [
-      ...persistedPosts,
-      ...getPublishedPosts().filter((post) => !persistedSlugs.has(post.slug)),
-    ];
     const seededFeaturedSlugs = new Set(getFeaturedPosts().map((post) => post.slug));
     const featuredPosts = posts.filter(
       (post) => post.featured || seededFeaturedSlugs.has(post.slug),
@@ -81,3 +100,95 @@ export const $getHomePageData = createServerFn({ method: "GET" }).handler(
     };
   },
 );
+
+export const $getBlogIndexPage = createServerFn({ method: "GET" })
+  .inputValidator((data: { query?: string; tagSlug?: string }) => data)
+  .handler(async ({ data }): Promise<BlogIndexPageData> => {
+    const posts = filterPosts(await getMergedPublishedPosts(), {
+      query: data.query,
+      tagSlug: data.tagSlug,
+    });
+
+    return {
+      posts,
+      tags,
+    };
+  });
+
+export const $getArchivePage = createServerFn({ method: "GET" })
+  .inputValidator((data: { locale?: string }) => data)
+  .handler(async ({ data }): Promise<ArchivePageData> => {
+    const locale = resolveLocale(data.locale);
+    const posts = (await getMergedPublishedPosts()).map((post) => localizePost(post, locale));
+
+    return {
+      groups: archivePosts(posts, locale),
+    };
+  });
+
+export const $getTagPage = createServerFn({ method: "GET" })
+  .inputValidator((data: { slug: string }) => data)
+  .handler(async ({ data }): Promise<TagPageData | null> => {
+    const tag = getTagBySlug(data.slug);
+
+    if (!tag) {
+      return null;
+    }
+
+    return {
+      tag,
+      posts: filterPosts(await getMergedPublishedPosts(), { tagSlug: tag.slug }),
+    };
+  });
+
+async function getMergedPublishedPosts() {
+  const { listD1Posts } = await import("./cms-d1");
+  const persistedPosts = await listD1Posts().catch(() => []);
+  const persistedSlugs = new Set(persistedPosts.map((post) => post.slug));
+
+  return [
+    ...persistedPosts,
+    ...getPublishedPosts().filter((post) => !persistedSlugs.has(post.slug)),
+  ];
+}
+
+function filterPosts(posts: Post[], { query = "", tagSlug }: { query?: string; tagSlug?: string }) {
+  const normalizedQuery = query.trim().toLowerCase();
+
+  return posts.filter((post) => {
+    const matchesTag = tagSlug ? post.tags.some((tag) => tag.slug === tagSlug) : true;
+    const matchesQuery = normalizedQuery
+      ? [post.title, post.excerpt, post.contentText, post.slug]
+          .join(" ")
+          .toLowerCase()
+          .includes(normalizedQuery)
+      : true;
+
+    return matchesTag && matchesQuery;
+  });
+}
+
+function archivePosts(posts: Post[], locale: SupportedLocale) {
+  const formatter = new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en-US", {
+    month: "long",
+    year: "numeric",
+  });
+  const groups = new Map<string, ArchiveGroup>();
+
+  for (const post of posts) {
+    const date = new Date(post.publishedAt);
+    const key = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
+
+    if (!groups.has(key)) {
+      groups.set(key, {
+        key,
+        label: formatter.format(date),
+        posts: [],
+      });
+    }
+
+    groups.get(key)?.posts.push(post);
+  }
+
+  return Array.from(groups.values());
+}

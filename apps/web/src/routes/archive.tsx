@@ -1,16 +1,17 @@
-import { getArchiveGroupsForLocale } from "@repo/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { SiteShell } from "#/components/site-shell";
+import { $getArchivePage } from "#/lib/cms-server";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/archive")({
+  loader: () => $getArchivePage({ data: { locale: getCurrentLocale() } }),
   component: ArchivePage,
 });
 
 function ArchivePage() {
-  const groups = getArchiveGroupsForLocale(getCurrentLocale());
+  const { groups } = Route.useLoaderData();
 
   return (
     <SiteShell>
