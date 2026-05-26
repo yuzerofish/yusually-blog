@@ -93,6 +93,11 @@
 /** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Schedule_PostInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
+/** @typedef {{}} Admin_Email_SettingsInputs */
+/** @typedef {{}} Admin_Email_VerificationInputs */
+/** @typedef {{}} Admin_Email_Verification_HelpInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Admin_Email_Verification_ProviderInputs */
+/** @typedef {{}} Admin_Email_Verification_UnavailableInputs */
 /** @typedef {{}} Admin_Settings_Author_BioInputs */
 /** @typedef {{}} Admin_Settings_Author_NameInputs */
 /** @typedef {{}} Admin_Settings_Default_OgInputs */
@@ -145,6 +150,7 @@
 /** @typedef {{}} Comment_Auth_LoadingInputs */
 /** @typedef {{}} Comment_Continue_GithubInputs */
 /** @typedef {{}} Comment_EmailInputs */
+/** @typedef {{}} Comment_Email_Verification_SentInputs */
 /** @typedef {{}} Comment_ErrorInputs */
 /** @typedef {{}} Comment_Login_DescriptionInputs */
 /** @typedef {{}} Comment_Login_RequiredInputs */
@@ -617,6 +623,26 @@ export const admin_save_settings = /** @type {(inputs: Admin_Save_SettingsInputs
 	return /** @type {LocalizedString} */ (`Save settings`)
 };
 
+export const admin_email_settings = /** @type {(inputs: Admin_Email_SettingsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Email accounts`)
+};
+
+export const admin_email_verification = /** @type {(inputs: Admin_Email_VerificationInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Require email verification`)
+};
+
+export const admin_email_verification_help = /** @type {(inputs: Admin_Email_Verification_HelpInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`New email/password comment accounts must verify their email before signing in. Configure Cloudflare Email Sending or Resend first.`)
+};
+
+export const admin_email_verification_provider = /** @type {(inputs: Admin_Email_Verification_ProviderInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Email provider detected: ${i?.provider}.`)
+};
+
+export const admin_email_verification_unavailable = /** @type {(inputs: Admin_Email_Verification_UnavailableInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Configure Cloudflare Email Sending or Resend environment variables before enabling email verification.`)
+};
+
 export const admin_settings_author_bio = /** @type {(inputs: Admin_Settings_Author_BioInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Author bio`)
 };
@@ -823,6 +849,10 @@ export const comment_continue_github = /** @type {(inputs: Comment_Continue_Gith
 
 export const comment_email = /** @type {(inputs: Comment_EmailInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Email`)
+};
+
+export const comment_email_verification_sent = /** @type {(inputs: Comment_Email_Verification_SentInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Verification email sent. Check your inbox before signing in.`)
 };
 
 export const comment_error = /** @type {(inputs: Comment_ErrorInputs) => LocalizedString} */ () => {

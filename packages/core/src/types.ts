@@ -139,6 +139,7 @@ export type SiteSettings = {
   commentsRequireApproval: boolean;
   commentAutoBlockEnabled: boolean;
   commentBlockedKeywords: string[];
+  emailVerificationEnabled: boolean;
   indexingEnabled: boolean;
   themePreset: ThemePreset;
   layoutPreset: LayoutPreset;

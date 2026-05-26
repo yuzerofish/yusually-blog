@@ -93,6 +93,11 @@
 /** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Schedule_PostInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
+/** @typedef {{}} Admin_Email_SettingsInputs */
+/** @typedef {{}} Admin_Email_VerificationInputs */
+/** @typedef {{}} Admin_Email_Verification_HelpInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Admin_Email_Verification_ProviderInputs */
+/** @typedef {{}} Admin_Email_Verification_UnavailableInputs */
 /** @typedef {{}} Admin_Settings_Author_BioInputs */
 /** @typedef {{}} Admin_Settings_Author_NameInputs */
 /** @typedef {{}} Admin_Settings_Default_OgInputs */
@@ -145,6 +150,7 @@
 /** @typedef {{}} Comment_Auth_LoadingInputs */
 /** @typedef {{}} Comment_Continue_GithubInputs */
 /** @typedef {{}} Comment_EmailInputs */
+/** @typedef {{}} Comment_Email_Verification_SentInputs */
 /** @typedef {{}} Comment_ErrorInputs */
 /** @typedef {{}} Comment_Login_DescriptionInputs */
 /** @typedef {{}} Comment_Login_RequiredInputs */
@@ -617,6 +623,26 @@ export const admin_save_settings = /** @type {(inputs: Admin_Save_SettingsInputs
 	return /** @type {LocalizedString} */ (`保存设置`)
 };
 
+export const admin_email_settings = /** @type {(inputs: Admin_Email_SettingsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`邮箱账号`)
+};
+
+export const admin_email_verification = /** @type {(inputs: Admin_Email_VerificationInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`要求邮箱验证`)
+};
+
+export const admin_email_verification_help = /** @type {(inputs: Admin_Email_Verification_HelpInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`新的邮箱密码评论账号需要先验证邮箱，再登录评论。开启前需要先配置 Cloudflare Email Sending 或 Resend。`)
+};
+
+export const admin_email_verification_provider = /** @type {(inputs: Admin_Email_Verification_ProviderInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`已检测到邮件服务：${i?.provider}。`)
+};
+
+export const admin_email_verification_unavailable = /** @type {(inputs: Admin_Email_Verification_UnavailableInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`需要先配置 Cloudflare Email Sending 或 Resend 环境变量，才能开启邮箱验证。`)
+};
+
 export const admin_settings_author_bio = /** @type {(inputs: Admin_Settings_Author_BioInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`作者简介`)
 };
@@ -823,6 +849,10 @@ export const comment_continue_github = /** @type {(inputs: Comment_Continue_Gith
 
 export const comment_email = /** @type {(inputs: Comment_EmailInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`邮箱`)
+};
+
+export const comment_email_verification_sent = /** @type {(inputs: Comment_Email_Verification_SentInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`验证邮件已发送，请先查收邮件再登录。`)
 };
 
 export const comment_error = /** @type {(inputs: Comment_ErrorInputs) => LocalizedString} */ () => {

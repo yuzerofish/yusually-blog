@@ -5,6 +5,11 @@ import { env } from "cloudflare:workers";
 import { eq } from "drizzle-orm";
 
 import { auth } from "#/lib/auth";
+import {
+  deleteCommentEmailVerification,
+  isCommentEmailVerificationRequired,
+  sendCommentEmailVerification,
+} from "#/lib/email-verification";
 
 export type CommentUser = {
   id: string;
@@ -27,6 +32,7 @@ type BetterAuthUser = {
   id: string;
   name: string;
   email: string;
+  emailVerified?: boolean;
   image?: string | null;
   createdAt?: Date | string | number;
 };
@@ -52,7 +58,21 @@ export async function getCommentUserFromRequest(request: Request) {
     headers: request.headers,
   });
 
-  return session?.user ? toCommentUser(session.user) : null;
+  if (!session?.user) {
+    return null;
+  }
+
+  const user = await toCommentUser(session.user);
+
+  if (
+    user.provider === "email" &&
+    !session.user.emailVerified &&
+    (await isCommentEmailVerificationRequired())
+  ) {
+    return null;
+  }
+
+  return user;
 }
 
 export async function signupCommentUser(input: CommentUserInput, request: Request) {
@@ -64,8 +84,30 @@ export async function signupCommentUser(input: CommentUserInput, request: Reques
 
   const context = await auth.$context;
   const existing = await context.internalAdapter.findUserByEmail(email);
+  const verificationRequired = await isCommentEmailVerificationRequired();
 
   if (existing) {
+    const existingUser = toBetterAuthUser(existing);
+
+    if (verificationRequired && existingUser && !existingUser.emailVerified) {
+      const verification = await sendCommentEmailVerification({
+        email,
+        name: existingUser.name || name,
+        request,
+        userId: existingUser.id,
+      });
+
+      if (!verification.sent) {
+        await deleteCommentEmailVerification(existingUser.id).catch(() => undefined);
+        return { error: "Verification email could not be sent" } as const;
+      }
+
+      return {
+        data: await toCommentUser(existingUser),
+        verificationRequired: true,
+      } as const;
+    }
+
     return { error: "Comment account already exists" } as const;
   }
 
@@ -73,7 +115,7 @@ export async function signupCommentUser(input: CommentUserInput, request: Reques
   const user = await context.internalAdapter.createUser({
     name,
     email,
-    emailVerified: true,
+    emailVerified: !verificationRequired,
   });
 
   try {
@@ -87,6 +129,26 @@ export async function signupCommentUser(input: CommentUserInput, request: Reques
   } catch (error) {
     await context.internalAdapter.deleteUser(user.id).catch(() => undefined);
     throw error;
+  }
+
+  if (verificationRequired) {
+    const verification = await sendCommentEmailVerification({
+      email,
+      name,
+      request,
+      userId: user.id,
+    });
+
+    if (!verification.sent) {
+      await deleteCommentEmailVerification(user.id).catch(() => undefined);
+      await context.internalAdapter.deleteUser(user.id).catch(() => undefined);
+      return { error: "Verification email could not be sent" } as const;
+    }
+
+    return {
+      data: await toCommentUser({ ...user, emailVerified: false }),
+      verificationRequired: true,
+    } as const;
   }
 
   return loginCommentUser({ email, password }, request);
@@ -105,6 +167,12 @@ export async function loginCommentUser(
 
   if (!response.ok || !payload?.user) {
     return { error: authErrorMessage(payload, "Invalid email or password") } as const;
+  }
+
+  if (!payload.user.emailVerified && (await isCommentEmailVerificationRequired())) {
+    return {
+      error: "Email verification is required. Check your inbox for the verification link.",
+    } as const;
   }
 
   return {
@@ -236,6 +304,20 @@ function authErrorMessage(
   fallback: string,
 ) {
   return payload?.message || payload?.error || payload?.code || fallback;
+}
+
+function toBetterAuthUser(value: unknown) {
+  const record = value as ({ user?: BetterAuthUser } & Partial<BetterAuthUser>) | null;
+
+  if (record?.user) {
+    return record.user;
+  }
+
+  if (record?.id && record.email && record.name) {
+    return record as BetterAuthUser;
+  }
+
+  return null;
 }
 
 function extractSetCookieHeaders(response: Response) {

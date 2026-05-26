@@ -15,7 +15,7 @@ type CommentFormProps = {
 };
 
 type SubmitState = "idle" | "submitting" | "success" | "error";
-type AuthState = "idle" | "submitting" | "error";
+type AuthState = "idle" | "submitting" | "error" | "verification";
 type AuthMode = "login" | "signup";
 type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
 const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
@@ -101,7 +101,16 @@ export function CommentForm({ onCancelReply, parentId, postSlug, replyingTo }: C
         password: formData.get("password"),
       }),
     });
-    const payload = (await response.json()) as { data?: CommentAuthUser };
+    const payload = (await response.json()) as {
+      data?: CommentAuthUser | null;
+      verificationRequired?: boolean;
+    };
+
+    if (payload.verificationRequired) {
+      setAuthState("verification");
+      event.currentTarget.reset();
+      return;
+    }
 
     if (!response.ok || !payload.data) {
       setAuthState("error");
@@ -191,6 +200,9 @@ export function CommentForm({ onCancelReply, parentId, postSlug, replyingTo }: C
             </div>
             {authState === "error" ? (
               <p className="text-sm text-destructive">{m.comment_auth_error()}</p>
+            ) : null}
+            {authState === "verification" ? (
+              <p className="text-sm text-success">{m.comment_email_verification_sent()}</p>
             ) : null}
           </form>
         </div>

@@ -16,6 +16,10 @@ export const Route = createFileRoute("/api/comment-auth/signup")({
           return jsonResponse({ error: result.error }, { status: 400 });
         }
 
+        if ("verificationRequired" in result) {
+          return jsonResponse({ data: null, verificationRequired: true }, { status: 202 });
+        }
+
         return jsonResponse({ data: publicCommentUser(result.data) }, { headers: result.headers });
       },
     },

@@ -63,6 +63,8 @@ export const apiEndpoints = [
   { method: "POST", path: "/api/comment-auth/signup", scope: "public" },
   { method: "POST", path: "/api/comment-auth/logout", scope: "comment-session" },
   { method: "GET", path: "/api/comment-auth/github/start", scope: "public" },
+  { method: "GET", path: "/api/comment-auth/verify-email", scope: "public" },
+  { method: "GET", path: "/api/admin/email-status", scope: "site:read" },
   { method: "GET", path: "/api/tokens", scope: "site:read" },
   { method: "POST", path: "/api/tokens", scope: "site:write" },
   { method: "POST", path: "/api/tokens/{id}/revoke", scope: "site:write" },

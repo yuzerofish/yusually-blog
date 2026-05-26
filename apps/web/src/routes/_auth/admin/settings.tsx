@@ -21,10 +21,32 @@ export const Route = createFileRoute("/_auth/admin/settings")({
 });
 
 type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
+type EmailVerificationStatus = {
+  enabled: boolean;
+  requested: boolean;
+  delivery: {
+    configured: boolean;
+    provider: "cloudflare" | "resend" | null;
+    missing: string[];
+  };
+};
+
+const defaultEmailVerificationStatus: EmailVerificationStatus = {
+  delivery: {
+    configured: false,
+    missing: [],
+    provider: null,
+  },
+  enabled: false,
+  requested: false,
+};
 
 function AdminSettingsPage() {
   const locale = getCurrentLocale();
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(getSiteSettingsForLocale(locale));
+  const [emailStatus, setEmailStatus] = useState<EmailVerificationStatus>(
+    defaultEmailVerificationStatus,
+  );
   const [tokens, setTokens] = useState<ApiToken[]>(apiTokens);
   const [secret, setSecret] = useState<string | null>(null);
   const [settingsStatus, setSettingsStatus] = useState<"idle" | "saved" | "error">("idle");
@@ -34,13 +56,21 @@ function AdminSettingsPage() {
 
     void Promise.all([
       fetch("/api/site").then((response) => (response.ok ? response.json() : undefined)),
+      fetch("/api/admin/email-status").then((response) =>
+        response.ok ? response.json() : undefined,
+      ),
       fetch("/api/tokens").then((response) => (response.ok ? response.json() : undefined)),
-    ]).then(([sitePayload, tokenPayload]) => {
+    ]).then(([sitePayload, emailPayload, tokenPayload]) => {
       const siteData = (sitePayload as { data?: SiteSettings } | undefined)?.data;
+      const emailData = (emailPayload as { data?: EmailVerificationStatus } | undefined)?.data;
       const tokenData = (tokenPayload as { data?: ApiToken[] } | undefined)?.data;
 
       if (!ignore && siteData) {
         setSiteSettings(siteData);
+      }
+
+      if (!ignore && emailData) {
+        setEmailStatus(emailData);
       }
 
       if (!ignore && tokenData) {
@@ -81,6 +111,8 @@ function AdminSettingsPage() {
         commentsRequireApproval: formData.get("commentsRequireApproval") === "on",
         commentAutoBlockEnabled: formData.get("commentAutoBlockEnabled") === "on",
         commentBlockedKeywords: blockedKeywords,
+        emailVerificationEnabled:
+          emailStatus.delivery.configured && formData.get("emailVerificationEnabled") === "on",
         indexingEnabled: formData.get("indexingEnabled") === "on",
         layoutPreset: formData.get("layoutPreset"),
       }),
@@ -132,10 +164,21 @@ function AdminSettingsPage() {
     setTokens((current) => current.map((token) => (token.id === id ? payload.data : token)));
   };
 
+  const emailProviderLabel =
+    emailStatus.delivery.provider === "cloudflare"
+      ? "Cloudflare Email"
+      : emailStatus.delivery.provider === "resend"
+        ? "Resend"
+        : "";
+
   return (
     <div className="grid gap-6">
       <section className="rounded-lg border border-border/80 bg-card p-6 shadow-xs">
-        <form key={siteSettings.url} onSubmit={saveSettings} className="grid gap-6">
+        <form
+          key={`${siteSettings.url}-${siteSettings.emailVerificationEnabled}`}
+          onSubmit={saveSettings}
+          className="grid gap-6"
+        >
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div>
               <h1 className="text-2xl font-semibold">{m.admin_settings_title()}</h1>
@@ -244,6 +287,43 @@ function AdminSettingsPage() {
                 {m.admin_settings_indexing()}
               </label>
             </div>
+            <fieldset className="grid gap-3 rounded-md border border-border bg-muted/35 p-4 md:col-span-2">
+              <legend className="px-1 text-sm font-medium">{m.admin_email_settings()}</legend>
+              <div
+                className={`flex items-start gap-3 text-sm ${
+                  emailStatus.delivery.configured ? "" : "opacity-65"
+                }`}
+              >
+                <input
+                  id="email-verification-enabled"
+                  type="checkbox"
+                  name="emailVerificationEnabled"
+                  defaultChecked={
+                    siteSettings.emailVerificationEnabled && emailStatus.delivery.configured
+                  }
+                  disabled={!emailStatus.delivery.configured}
+                  className="mt-0.5 size-4 rounded border-input"
+                />
+                <Label
+                  htmlFor="email-verification-enabled"
+                  className="grid gap-1 text-sm leading-5 font-normal"
+                >
+                  <span>{m.admin_email_verification()}</span>
+                  <span className="text-xs leading-5 text-muted-foreground">
+                    {m.admin_email_verification_help()}
+                  </span>
+                </Label>
+              </div>
+              <p
+                className={`text-xs ${
+                  emailStatus.delivery.configured ? "text-success" : "text-muted-foreground"
+                }`}
+              >
+                {emailStatus.delivery.configured
+                  ? m.admin_email_verification_provider({ provider: emailProviderLabel })
+                  : m.admin_email_verification_unavailable()}
+              </p>
+            </fieldset>
             <fieldset className="grid gap-3 rounded-md border border-border bg-muted/35 p-4 md:col-span-2">
               <legend className="px-1 text-sm font-medium">{m.admin_comment_settings()}</legend>
               <label className="flex items-center gap-2 text-sm">

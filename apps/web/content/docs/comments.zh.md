@@ -28,6 +28,7 @@ https://your-domain.com/api/auth/callback/github
 - 评论是否需要审核后才公开
 - 命中屏蔽关键词后是否自动隐藏
 - 屏蔽关键词列表
+- 邮箱密码评论账号是否需要验证邮箱后再登录
 
 ## 关键词屏蔽
 
@@ -39,4 +40,4 @@ https://your-domain.com/api/auth/callback/github
 
 在 `/admin/comments` 处理待审核和已屏蔽评论。管理员可以审核通过、标记为垃圾评论或删除评论。
 
-在 `/admin/settings` 调整默认审核模式和关键词屏蔽规则，不需要重新部署站点。
+在 `/admin/settings` 调整默认审核模式、关键词屏蔽规则和可选邮箱验证，不需要重新部署站点。邮箱验证需要先配置 Cloudflare Email Sending 或 Resend。

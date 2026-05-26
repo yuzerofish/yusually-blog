@@ -1303,6 +1303,76 @@ export const admin_save_settings: ((inputs?: Admin_Save_SettingsInputs, options?
 /**
 * | output |
 * | --- |
+* | "Email accounts" |
+*
+* @param {Admin_Email_SettingsInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_email_settings: ((inputs?: Admin_Email_SettingsInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Email_SettingsInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Require email verification" |
+*
+* @param {Admin_Email_VerificationInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_email_verification: ((inputs?: Admin_Email_VerificationInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Email_VerificationInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "New email/password comment accounts must verify their email before signing in. Configure Cloudflare Email Sending or Resend first." |
+*
+* @param {Admin_Email_Verification_HelpInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_email_verification_help: ((inputs?: Admin_Email_Verification_HelpInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Email_Verification_HelpInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Email provider detected: {provider}." |
+*
+* @param {Admin_Email_Verification_ProviderInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_email_verification_provider: ((inputs: Admin_Email_Verification_ProviderInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Email_Verification_ProviderInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Configure Cloudflare Email Sending or Resend environment variables before enabling email verification." |
+*
+* @param {Admin_Email_Verification_UnavailableInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_email_verification_unavailable: ((inputs?: Admin_Email_Verification_UnavailableInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Email_Verification_UnavailableInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
 * | "Author bio" |
 *
 * @param {Admin_Settings_Author_BioInputs} inputs
@@ -2026,6 +2096,20 @@ export const comment_continue_github: ((inputs?: Comment_Continue_GithubInputs, 
 export const comment_email: ((inputs?: Comment_EmailInputs, options?: {
     locale?: "en" | "zh";
 }) => LocalizedString) & import("../runtime.js").MessageMetadata<Comment_EmailInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Verification email sent. Check your inbox before signing in." |
+*
+* @param {Comment_Email_Verification_SentInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const comment_email_verification_sent: ((inputs?: Comment_Email_Verification_SentInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Comment_Email_Verification_SentInputs, {
     locale?: "en" | "zh";
 }, {}>;
 /**
@@ -3502,6 +3586,13 @@ export type Admin_Publish_PostInputs = {};
 export type Admin_Save_DraftInputs = {};
 export type Admin_Schedule_PostInputs = {};
 export type Admin_Save_SettingsInputs = {};
+export type Admin_Email_SettingsInputs = {};
+export type Admin_Email_VerificationInputs = {};
+export type Admin_Email_Verification_HelpInputs = {};
+export type Admin_Email_Verification_ProviderInputs = {
+    provider: NonNullable<unknown>;
+};
+export type Admin_Email_Verification_UnavailableInputs = {};
 export type Admin_Settings_Author_BioInputs = {};
 export type Admin_Settings_Author_NameInputs = {};
 export type Admin_Settings_Default_OgInputs = {};
@@ -3554,6 +3645,7 @@ export type Comment_Auth_ErrorInputs = {};
 export type Comment_Auth_LoadingInputs = {};
 export type Comment_Continue_GithubInputs = {};
 export type Comment_EmailInputs = {};
+export type Comment_Email_Verification_SentInputs = {};
 export type Comment_ErrorInputs = {};
 export type Comment_Login_DescriptionInputs = {};
 export type Comment_Login_RequiredInputs = {};

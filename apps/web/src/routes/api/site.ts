@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { getD1SiteSettings, updateD1SiteSettings } from "#/lib/cms-d1";
+import { getEmailDeliveryStatus } from "#/lib/cms-email";
 
 export const Route = createFileRoute("/api/site")({
   server: {
@@ -27,6 +28,16 @@ export const Route = createFileRoute("/api/site")({
         }
 
         const body = await readJsonBody<Parameters<typeof updateD1SiteSettings>[0]>(request);
+
+        if (body.emailVerificationEnabled === true && !getEmailDeliveryStatus().configured) {
+          return jsonResponse(
+            {
+              error:
+                "Configure Cloudflare Email Sending or Resend before enabling email verification.",
+            },
+            { status: 400 },
+          );
+        }
 
         return jsonResponse({
           data: await updateD1SiteSettings(body),

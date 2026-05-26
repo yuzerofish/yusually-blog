@@ -54,6 +54,7 @@ import { Route as ApiPagesIdRouteImport } from './routes/api/pages/$id'
 import { Route as ApiImportZipRouteImport } from './routes/api/import/zip'
 import { Route as ApiImportMarkdownRouteImport } from './routes/api/import/markdown'
 import { Route as ApiImportHtmlRouteImport } from './routes/api/import/html'
+import { Route as ApiCommentAuthVerifyEmailRouteImport } from './routes/api/comment-auth/verify-email'
 import { Route as ApiCommentAuthSignupRouteImport } from './routes/api/comment-auth/signup'
 import { Route as ApiCommentAuthMeRouteImport } from './routes/api/comment-auth/me'
 import { Route as ApiCommentAuthLogoutRouteImport } from './routes/api/comment-auth/logout'
@@ -66,6 +67,7 @@ import { Route as ApiAdminPasswordRouteImport } from './routes/api/admin/passwor
 import { Route as ApiAdminMeRouteImport } from './routes/api/admin/me'
 import { Route as ApiAdminLogoutRouteImport } from './routes/api/admin/logout'
 import { Route as ApiAdminLoginRouteImport } from './routes/api/admin/login'
+import { Route as ApiAdminEmailStatusRouteImport } from './routes/api/admin/email-status'
 import { Route as AuthAdminSettingsRouteImport } from './routes/_auth/admin/settings'
 import { Route as AuthAdminProjectsRouteImport } from './routes/_auth/admin/projects'
 import { Route as AuthAdminPostsRouteImport } from './routes/_auth/admin/posts'
@@ -301,6 +303,12 @@ const ApiImportHtmlRoute = ApiImportHtmlRouteImport.update({
   path: '/api/import/html',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCommentAuthVerifyEmailRoute =
+  ApiCommentAuthVerifyEmailRouteImport.update({
+    id: '/api/comment-auth/verify-email',
+    path: '/api/comment-auth/verify-email',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCommentAuthSignupRoute = ApiCommentAuthSignupRouteImport.update({
   id: '/api/comment-auth/signup',
   path: '/api/comment-auth/signup',
@@ -359,6 +367,11 @@ const ApiAdminLogoutRoute = ApiAdminLogoutRouteImport.update({
 const ApiAdminLoginRoute = ApiAdminLoginRouteImport.update({
   id: '/api/admin/login',
   path: '/api/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminEmailStatusRoute = ApiAdminEmailStatusRouteImport.update({
+  id: '/api/admin/email-status',
+  path: '/api/admin/email-status',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthAdminSettingsRoute = AuthAdminSettingsRouteImport.update({
@@ -458,6 +471,7 @@ export interface FileRoutesByFullPath {
   '/admin/posts': typeof AuthAdminPostsRoute
   '/admin/projects': typeof AuthAdminProjectsRoute
   '/admin/settings': typeof AuthAdminSettingsRoute
+  '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
   '/api/admin/me': typeof ApiAdminMeRoute
@@ -470,6 +484,7 @@ export interface FileRoutesByFullPath {
   '/api/comment-auth/logout': typeof ApiCommentAuthLogoutRoute
   '/api/comment-auth/me': typeof ApiCommentAuthMeRoute
   '/api/comment-auth/signup': typeof ApiCommentAuthSignupRoute
+  '/api/comment-auth/verify-email': typeof ApiCommentAuthVerifyEmailRoute
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
   '/api/import/zip': typeof ApiImportZipRoute
@@ -524,6 +539,7 @@ export interface FileRoutesByTo {
   '/admin/posts': typeof AuthAdminPostsRoute
   '/admin/projects': typeof AuthAdminProjectsRoute
   '/admin/settings': typeof AuthAdminSettingsRoute
+  '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
   '/api/admin/me': typeof ApiAdminMeRoute
@@ -536,6 +552,7 @@ export interface FileRoutesByTo {
   '/api/comment-auth/logout': typeof ApiCommentAuthLogoutRoute
   '/api/comment-auth/me': typeof ApiCommentAuthMeRoute
   '/api/comment-auth/signup': typeof ApiCommentAuthSignupRoute
+  '/api/comment-auth/verify-email': typeof ApiCommentAuthVerifyEmailRoute
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
   '/api/import/zip': typeof ApiImportZipRoute
@@ -595,6 +612,7 @@ export interface FileRoutesById {
   '/_auth/admin/posts': typeof AuthAdminPostsRoute
   '/_auth/admin/projects': typeof AuthAdminProjectsRoute
   '/_auth/admin/settings': typeof AuthAdminSettingsRoute
+  '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
   '/api/admin/me': typeof ApiAdminMeRoute
@@ -607,6 +625,7 @@ export interface FileRoutesById {
   '/api/comment-auth/logout': typeof ApiCommentAuthLogoutRoute
   '/api/comment-auth/me': typeof ApiCommentAuthMeRoute
   '/api/comment-auth/signup': typeof ApiCommentAuthSignupRoute
+  '/api/comment-auth/verify-email': typeof ApiCommentAuthVerifyEmailRoute
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
   '/api/import/zip': typeof ApiImportZipRoute
@@ -665,6 +684,7 @@ export interface FileRouteTypes {
     | '/admin/posts'
     | '/admin/projects'
     | '/admin/settings'
+    | '/api/admin/email-status'
     | '/api/admin/login'
     | '/api/admin/logout'
     | '/api/admin/me'
@@ -677,6 +697,7 @@ export interface FileRouteTypes {
     | '/api/comment-auth/logout'
     | '/api/comment-auth/me'
     | '/api/comment-auth/signup'
+    | '/api/comment-auth/verify-email'
     | '/api/import/html'
     | '/api/import/markdown'
     | '/api/import/zip'
@@ -731,6 +752,7 @@ export interface FileRouteTypes {
     | '/admin/posts'
     | '/admin/projects'
     | '/admin/settings'
+    | '/api/admin/email-status'
     | '/api/admin/login'
     | '/api/admin/logout'
     | '/api/admin/me'
@@ -743,6 +765,7 @@ export interface FileRouteTypes {
     | '/api/comment-auth/logout'
     | '/api/comment-auth/me'
     | '/api/comment-auth/signup'
+    | '/api/comment-auth/verify-email'
     | '/api/import/html'
     | '/api/import/markdown'
     | '/api/import/zip'
@@ -801,6 +824,7 @@ export interface FileRouteTypes {
     | '/_auth/admin/posts'
     | '/_auth/admin/projects'
     | '/_auth/admin/settings'
+    | '/api/admin/email-status'
     | '/api/admin/login'
     | '/api/admin/logout'
     | '/api/admin/me'
@@ -813,6 +837,7 @@ export interface FileRouteTypes {
     | '/api/comment-auth/logout'
     | '/api/comment-auth/me'
     | '/api/comment-auth/signup'
+    | '/api/comment-auth/verify-email'
     | '/api/import/html'
     | '/api/import/markdown'
     | '/api/import/zip'
@@ -861,6 +886,7 @@ export interface RootRouteChildren {
   BlogIndexRoute: typeof BlogIndexRoute
   ProjectsIndexRoute: typeof ProjectsIndexRoute
   TagsIndexRoute: typeof TagsIndexRoute
+  ApiAdminEmailStatusRoute: typeof ApiAdminEmailStatusRoute
   ApiAdminLoginRoute: typeof ApiAdminLoginRoute
   ApiAdminLogoutRoute: typeof ApiAdminLogoutRoute
   ApiAdminMeRoute: typeof ApiAdminMeRoute
@@ -872,6 +898,7 @@ export interface RootRouteChildren {
   ApiCommentAuthLogoutRoute: typeof ApiCommentAuthLogoutRoute
   ApiCommentAuthMeRoute: typeof ApiCommentAuthMeRoute
   ApiCommentAuthSignupRoute: typeof ApiCommentAuthSignupRoute
+  ApiCommentAuthVerifyEmailRoute: typeof ApiCommentAuthVerifyEmailRoute
   ApiImportHtmlRoute: typeof ApiImportHtmlRoute
   ApiImportMarkdownRoute: typeof ApiImportMarkdownRoute
   ApiImportZipRoute: typeof ApiImportZipRoute
@@ -1196,6 +1223,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiImportHtmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/comment-auth/verify-email': {
+      id: '/api/comment-auth/verify-email'
+      path: '/api/comment-auth/verify-email'
+      fullPath: '/api/comment-auth/verify-email'
+      preLoaderRoute: typeof ApiCommentAuthVerifyEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/comment-auth/signup': {
       id: '/api/comment-auth/signup'
       path: '/api/comment-auth/signup'
@@ -1278,6 +1312,13 @@ declare module '@tanstack/react-router' {
       path: '/api/admin/login'
       fullPath: '/api/admin/login'
       preLoaderRoute: typeof ApiAdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/email-status': {
+      id: '/api/admin/email-status'
+      path: '/api/admin/email-status'
+      fullPath: '/api/admin/email-status'
+      preLoaderRoute: typeof ApiAdminEmailStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/admin/settings': {
@@ -1535,6 +1576,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogIndexRoute: BlogIndexRoute,
   ProjectsIndexRoute: ProjectsIndexRoute,
   TagsIndexRoute: TagsIndexRoute,
+  ApiAdminEmailStatusRoute: ApiAdminEmailStatusRoute,
   ApiAdminLoginRoute: ApiAdminLoginRoute,
   ApiAdminLogoutRoute: ApiAdminLogoutRoute,
   ApiAdminMeRoute: ApiAdminMeRoute,
@@ -1546,6 +1588,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCommentAuthLogoutRoute: ApiCommentAuthLogoutRoute,
   ApiCommentAuthMeRoute: ApiCommentAuthMeRoute,
   ApiCommentAuthSignupRoute: ApiCommentAuthSignupRoute,
+  ApiCommentAuthVerifyEmailRoute: ApiCommentAuthVerifyEmailRoute,
   ApiImportHtmlRoute: ApiImportHtmlRoute,
   ApiImportMarkdownRoute: ApiImportMarkdownRoute,
   ApiImportZipRoute: ApiImportZipRoute,

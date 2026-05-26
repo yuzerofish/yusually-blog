@@ -219,6 +219,7 @@ type SiteSettingsInput = Partial<
     | "commentsRequireApproval"
     | "commentAutoBlockEnabled"
     | "commentBlockedKeywords"
+    | "emailVerificationEnabled"
     | "indexingEnabled"
     | "themePreset"
     | "layoutPreset"
@@ -1592,6 +1593,7 @@ function normalizeSiteSettings(
       input.commentBlockedKeywords !== undefined
         ? normalizeCommentBlockedKeywords(input.commentBlockedKeywords)
         : base.commentBlockedKeywords,
+    emailVerificationEnabled: input.emailVerificationEnabled ?? base.emailVerificationEnabled,
     indexingEnabled: input.indexingEnabled ?? base.indexingEnabled,
     themePreset: normalizeThemePreset(input.themePreset ?? input.theme, base.themePreset),
     layoutPreset: normalizeLayoutPreset(input.layoutPreset, base.layoutPreset),

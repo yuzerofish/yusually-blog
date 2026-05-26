@@ -26,5 +26,6 @@
   "commentAutoBlockEnabled": true,
   "commentBlockedKeywords": ["博彩", "赌博", "色情", "诈骗", "辱骂", "violence", "scam", "spam"],
   "emailSendingEnabled": false,
+  "emailVerificationEnabled": false,
   "githubActionsEnabled": false
 }

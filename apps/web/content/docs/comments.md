@@ -28,6 +28,7 @@ The admin settings page controls:
 - whether comments require approval before publication
 - whether blocked keywords automatically hide a comment
 - the blocked keyword list
+- whether email/password comment accounts must verify email before signing in
 
 ## Keyword Blocking
 
@@ -39,4 +40,4 @@ When auto-blocking is enabled, a matching comment is marked as `spam`. When auto
 
 Use `/admin/comments` to review pending and blocked comments. Admins can approve, mark as spam, or delete comments.
 
-Use `/admin/settings` to change the default approval mode and keyword blocking behavior without redeploying the site.
+Use `/admin/settings` to change the default approval mode, keyword blocking behavior, and optional email verification without redeploying the site. Email verification requires Cloudflare Email Sending or Resend configuration.

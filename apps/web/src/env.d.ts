@@ -81,6 +81,9 @@ type CloudflareBindings = {
   CMS_EMAIL_FROM: string;
   CMS_EMAIL_TO: string;
   CMS_PASSWORD_RESET_TTL_MINUTES: string;
+  RESEND_API_KEY?: string;
+  RESEND_FROM_EMAIL?: string;
+  EMAIL_FROM?: string;
   CMS_TURNSTILE_SECRET_KEY: string;
   VITE_TURNSTILE_SITE_KEY: string;
   BETTER_AUTH_SECRET?: string;

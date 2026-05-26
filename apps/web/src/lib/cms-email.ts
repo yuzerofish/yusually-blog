@@ -15,6 +15,14 @@ type SendEmailBinding = {
   send(message: EmailMessageBuilder): Promise<{ messageId: string }>;
 };
 
+type EmailProvider = "cloudflare" | "resend";
+
+export type EmailDeliveryStatus = {
+  configured: boolean;
+  provider: EmailProvider | null;
+  missing: string[];
+};
+
 type EmailResult =
   | { sent: true; messageId: string }
   | { sent: false; reason: "disabled" | "not_configured" | "failed"; error?: string };
@@ -26,24 +34,86 @@ type EmailContext = {
   to?: string;
 };
 
-export async function sendCmsEmail(input: EmailContext): Promise<EmailResult> {
-  const bindings = env as unknown as CloudflareBindings & { CMS_EMAIL?: SendEmailBinding };
+type EmailBindings = CloudflareBindings & {
+  CMS_EMAIL?: SendEmailBinding;
+  RESEND_API_KEY?: string;
+  RESEND_FROM_EMAIL?: string;
+  EMAIL_FROM?: string;
+};
 
-  if (bindings.CMS_EMAIL_SENDING_ENABLED !== "true") {
-    return { sent: false, reason: "disabled" };
+export function getEmailDeliveryStatus(): EmailDeliveryStatus {
+  const bindings = env as unknown as EmailBindings;
+  const cloudflare = getCloudflareEmailConfig(bindings);
+  const resend = getResendEmailConfig(bindings);
+
+  if (cloudflare.configured) {
+    return { configured: true, provider: "cloudflare", missing: [] };
   }
 
-  const from = bindings.CMS_EMAIL_FROM?.trim();
+  if (resend.configured) {
+    return { configured: true, provider: "resend", missing: [] };
+  }
+
+  return {
+    configured: false,
+    provider: null,
+    missing: [...cloudflare.missing, ...resend.missing],
+  };
+}
+
+export async function sendCmsEmail(input: EmailContext): Promise<EmailResult> {
+  const bindings = env as unknown as EmailBindings;
   const to = input.to?.trim() || bindings.CMS_EMAIL_TO?.trim();
 
-  if (!bindings.CMS_EMAIL || !from || !to) {
+  if (!to) {
     return { sent: false, reason: "not_configured" };
   }
 
-  try {
-    const result = await bindings.CMS_EMAIL.send({
+  const cloudflare = getCloudflareEmailConfig(bindings);
+
+  if (cloudflare.configured && bindings.CMS_EMAIL) {
+    return sendCloudflareEmail({
+      binding: bindings.CMS_EMAIL,
+      from: cloudflare.from,
+      html: input.html,
+      subject: input.subject,
+      text: input.text,
       to,
-      from,
+    });
+  }
+
+  const resend = getResendEmailConfig(bindings);
+
+  if (resend.configured) {
+    return sendResendEmail({
+      apiKey: resend.apiKey,
+      from: resend.from,
+      html: input.html,
+      subject: input.subject,
+      text: input.text,
+      to,
+    });
+  }
+
+  if (bindings.CMS_EMAIL_SENDING_ENABLED !== "true" && !bindings.RESEND_API_KEY?.trim()) {
+    return { sent: false, reason: "disabled" };
+  }
+
+  return { sent: false, reason: "not_configured" };
+}
+
+async function sendCloudflareEmail(input: {
+  binding: SendEmailBinding;
+  from: string;
+  to: string;
+  subject: string;
+  text: string;
+  html?: string;
+}): Promise<EmailResult> {
+  try {
+    const result = await input.binding.send({
+      to: input.to,
+      from: input.from,
       subject: input.subject,
       text: input.text,
       html: input.html,
@@ -57,6 +127,96 @@ export async function sendCmsEmail(input: EmailContext): Promise<EmailResult> {
       error: error instanceof Error ? error.message : "Email send failed",
     };
   }
+}
+
+async function sendResendEmail(input: {
+  apiKey: string;
+  from: string;
+  to: string;
+  subject: string;
+  text: string;
+  html?: string;
+}): Promise<EmailResult> {
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${input.apiKey}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        from: input.from,
+        to: input.to,
+        subject: input.subject,
+        text: input.text,
+        html: input.html,
+      }),
+    });
+    const payload = (await response.json().catch(() => ({}))) as { id?: string; message?: string };
+
+    if (!response.ok || !payload.id) {
+      return {
+        sent: false,
+        reason: "failed",
+        error: payload.message || `Resend returned ${response.status}`,
+      };
+    }
+
+    return { sent: true, messageId: payload.id };
+  } catch (error) {
+    return {
+      sent: false,
+      reason: "failed",
+      error: error instanceof Error ? error.message : "Email send failed",
+    };
+  }
+}
+
+function getCloudflareEmailConfig(bindings: EmailBindings) {
+  const missing: string[] = [];
+  const from = bindings.CMS_EMAIL_FROM?.trim();
+
+  if (bindings.CMS_EMAIL_SENDING_ENABLED !== "true") {
+    missing.push("CMS_EMAIL_SENDING_ENABLED");
+  }
+
+  if (!bindings.CMS_EMAIL) {
+    missing.push("CMS_EMAIL");
+  }
+
+  if (!from) {
+    missing.push("CMS_EMAIL_FROM");
+  }
+
+  return {
+    configured: missing.length === 0,
+    from: from ?? "",
+    missing,
+  };
+}
+
+function getResendEmailConfig(bindings: EmailBindings) {
+  const missing: string[] = [];
+  const apiKey = bindings.RESEND_API_KEY?.trim();
+  const from =
+    bindings.RESEND_FROM_EMAIL?.trim() ||
+    bindings.CMS_EMAIL_FROM?.trim() ||
+    bindings.EMAIL_FROM?.trim();
+
+  if (!apiKey) {
+    missing.push("RESEND_API_KEY");
+  }
+
+  if (!from) {
+    missing.push("RESEND_FROM_EMAIL");
+  }
+
+  return {
+    apiKey: apiKey ?? "",
+    configured: missing.length === 0,
+    from: from ?? "",
+    missing,
+  };
 }
 
 export async function notifyCommentCreated(input: {
@@ -169,6 +329,29 @@ export async function sendPasswordResetEmail(input: {
     ].join("\n"),
     html: [
       `<p><a href="${escapeHtml(resetUrl)}">Reset your password</a></p>`,
+      `<p>This link expires in ${input.ttlMinutes} minutes.</p>`,
+    ].join(""),
+  });
+}
+
+export async function sendEmailVerificationEmail(input: {
+  email: string;
+  name: string;
+  siteName: string;
+  verifyUrl: string;
+  ttlMinutes: number;
+}) {
+  return sendCmsEmail({
+    to: input.email,
+    subject: `Verify your email for ${input.siteName}`,
+    text: [
+      `Hi ${input.name},`,
+      `Open this link to verify your email address: ${input.verifyUrl}`,
+      `This link expires in ${input.ttlMinutes} minutes.`,
+    ].join("\n"),
+    html: [
+      `<p>Hi ${escapeHtml(input.name)},</p>`,
+      `<p><a href="${escapeHtml(input.verifyUrl)}">Verify your email address</a></p>`,
       `<p>This link expires in ${input.ttlMinutes} minutes.</p>`,
     ].join(""),
   });

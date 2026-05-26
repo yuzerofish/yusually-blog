@@ -95,6 +95,11 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Schedule_PostInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
+/** @typedef {{}} Admin_Email_SettingsInputs */
+/** @typedef {{}} Admin_Email_VerificationInputs */
+/** @typedef {{}} Admin_Email_Verification_HelpInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Admin_Email_Verification_ProviderInputs */
+/** @typedef {{}} Admin_Email_Verification_UnavailableInputs */
 /** @typedef {{}} Admin_Settings_Author_BioInputs */
 /** @typedef {{}} Admin_Settings_Author_NameInputs */
 /** @typedef {{}} Admin_Settings_Default_OgInputs */
@@ -147,6 +152,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Comment_Auth_LoadingInputs */
 /** @typedef {{}} Comment_Continue_GithubInputs */
 /** @typedef {{}} Comment_EmailInputs */
+/** @typedef {{}} Comment_Email_Verification_SentInputs */
 /** @typedef {{}} Comment_ErrorInputs */
 /** @typedef {{}} Comment_Login_DescriptionInputs */
 /** @typedef {{}} Comment_Login_RequiredInputs */
@@ -1552,6 +1558,76 @@ export const admin_save_settings = /** @type {((inputs?: Admin_Save_SettingsInpu
 /**
 * | output |
 * | --- |
+* | "Email accounts" |
+*
+* @param {Admin_Email_SettingsInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_email_settings = /** @type {((inputs?: Admin_Email_SettingsInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Email_SettingsInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "en") return __en.admin_email_settings(inputs)
+	return __zh.admin_email_settings(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Require email verification" |
+*
+* @param {Admin_Email_VerificationInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_email_verification = /** @type {((inputs?: Admin_Email_VerificationInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Email_VerificationInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "en") return __en.admin_email_verification(inputs)
+	return __zh.admin_email_verification(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "New email/password comment accounts must verify their email before signing in. Configure Cloudflare Email Sending or Resend first." |
+*
+* @param {Admin_Email_Verification_HelpInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_email_verification_help = /** @type {((inputs?: Admin_Email_Verification_HelpInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Email_Verification_HelpInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "en") return __en.admin_email_verification_help(inputs)
+	return __zh.admin_email_verification_help(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Email provider detected: {provider}." |
+*
+* @param {Admin_Email_Verification_ProviderInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_email_verification_provider = /** @type {((inputs: Admin_Email_Verification_ProviderInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Email_Verification_ProviderInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "en") return __en.admin_email_verification_provider(inputs)
+	return __zh.admin_email_verification_provider(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Configure Cloudflare Email Sending or Resend environment variables before enabling email verification." |
+*
+* @param {Admin_Email_Verification_UnavailableInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_email_verification_unavailable = /** @type {((inputs?: Admin_Email_Verification_UnavailableInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Email_Verification_UnavailableInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "en") return __en.admin_email_verification_unavailable(inputs)
+	return __zh.admin_email_verification_unavailable(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Author bio" |
 *
 * @param {Admin_Settings_Author_BioInputs} inputs
@@ -2276,6 +2352,20 @@ export const comment_email = /** @type {((inputs?: Comment_EmailInputs, options?
 	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
 	if (locale === "en") return __en.comment_email(inputs)
 	return __zh.comment_email(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Verification email sent. Check your inbox before signing in." |
+*
+* @param {Comment_Email_Verification_SentInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const comment_email_verification_sent = /** @type {((inputs?: Comment_Email_Verification_SentInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_Email_Verification_SentInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "en") return __en.comment_email_verification_sent(inputs)
+	return __zh.comment_email_verification_sent(inputs)
 });
 /**
 * | output |

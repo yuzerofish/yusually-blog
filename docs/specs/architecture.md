@@ -51,6 +51,6 @@ JSON export remains the lightweight API response for automation. ZIP export pack
 
 ## Email Flow
 
-Email Sending is a no-op unless `CMS_EMAIL_SENDING_ENABLED=true`, `CMS_EMAIL_FROM`, `CMS_EMAIL_TO`, and a `CMS_EMAIL` send-email binding are configured. When enabled, the same optional mailer sends comment moderation notices, import/export completion notices, backup completion notices, and password reset links. Password reset tokens are stored in KV with a short TTL.
+Email Sending is a no-op unless Cloudflare Email Sending is configured with `CMS_EMAIL_SENDING_ENABLED=true`, `CMS_EMAIL_FROM`, and a `CMS_EMAIL` send-email binding, or Resend is configured with `RESEND_API_KEY` and `RESEND_FROM_EMAIL`. When enabled, the same optional mailer sends comment moderation notices, import/export completion notices, backup completion notices, password reset links, and optional comment-account email verification links. Password reset tokens are stored in KV with a short TTL.
 
-Email verification-code login must stay behind the same optional Email Sending boundary. Cloudflare Email Sending requires Workers Paid for outbound email, so verification-code login should be presented as a paid enhancement that site owners can choose during setup, while the core auth and publishing flows continue to work with Email Sending disabled.
+Email verification must stay behind the same optional outbound-email boundary and the admin `emailVerificationEnabled` setting. The core auth and publishing flows continue to work when outbound email is disabled or the admin toggle is off.

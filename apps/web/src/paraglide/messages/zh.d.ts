@@ -92,6 +92,11 @@
 /** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Schedule_PostInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
+/** @typedef {{}} Admin_Email_SettingsInputs */
+/** @typedef {{}} Admin_Email_VerificationInputs */
+/** @typedef {{}} Admin_Email_Verification_HelpInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Admin_Email_Verification_ProviderInputs */
+/** @typedef {{}} Admin_Email_Verification_UnavailableInputs */
 /** @typedef {{}} Admin_Settings_Author_BioInputs */
 /** @typedef {{}} Admin_Settings_Author_NameInputs */
 /** @typedef {{}} Admin_Settings_Default_OgInputs */
@@ -144,6 +149,7 @@
 /** @typedef {{}} Comment_Auth_LoadingInputs */
 /** @typedef {{}} Comment_Continue_GithubInputs */
 /** @typedef {{}} Comment_EmailInputs */
+/** @typedef {{}} Comment_Email_Verification_SentInputs */
 /** @typedef {{}} Comment_ErrorInputs */
 /** @typedef {{}} Comment_Login_DescriptionInputs */
 /** @typedef {{}} Comment_Login_RequiredInputs */
@@ -335,6 +341,11 @@ export const admin_publish_post: (inputs: Admin_Publish_PostInputs) => Localized
 export const admin_save_draft: (inputs: Admin_Save_DraftInputs) => LocalizedString;
 export const admin_schedule_post: (inputs: Admin_Schedule_PostInputs) => LocalizedString;
 export const admin_save_settings: (inputs: Admin_Save_SettingsInputs) => LocalizedString;
+export const admin_email_settings: (inputs: Admin_Email_SettingsInputs) => LocalizedString;
+export const admin_email_verification: (inputs: Admin_Email_VerificationInputs) => LocalizedString;
+export const admin_email_verification_help: (inputs: Admin_Email_Verification_HelpInputs) => LocalizedString;
+export const admin_email_verification_provider: (inputs: Admin_Email_Verification_ProviderInputs) => LocalizedString;
+export const admin_email_verification_unavailable: (inputs: Admin_Email_Verification_UnavailableInputs) => LocalizedString;
 export const admin_settings_author_bio: (inputs: Admin_Settings_Author_BioInputs) => LocalizedString;
 export const admin_settings_author_name: (inputs: Admin_Settings_Author_NameInputs) => LocalizedString;
 export const admin_settings_default_og: (inputs: Admin_Settings_Default_OgInputs) => LocalizedString;
@@ -387,6 +398,7 @@ export const comment_auth_error: (inputs: Comment_Auth_ErrorInputs) => Localized
 export const comment_auth_loading: (inputs: Comment_Auth_LoadingInputs) => LocalizedString;
 export const comment_continue_github: (inputs: Comment_Continue_GithubInputs) => LocalizedString;
 export const comment_email: (inputs: Comment_EmailInputs) => LocalizedString;
+export const comment_email_verification_sent: (inputs: Comment_Email_Verification_SentInputs) => LocalizedString;
 export const comment_error: (inputs: Comment_ErrorInputs) => LocalizedString;
 export const comment_login_description: (inputs: Comment_Login_DescriptionInputs) => LocalizedString;
 export const comment_login_required: (inputs: Comment_Login_RequiredInputs) => LocalizedString;
@@ -587,6 +599,13 @@ export type Admin_Publish_PostInputs = {};
 export type Admin_Save_DraftInputs = {};
 export type Admin_Schedule_PostInputs = {};
 export type Admin_Save_SettingsInputs = {};
+export type Admin_Email_SettingsInputs = {};
+export type Admin_Email_VerificationInputs = {};
+export type Admin_Email_Verification_HelpInputs = {};
+export type Admin_Email_Verification_ProviderInputs = {
+    provider: NonNullable<unknown>;
+};
+export type Admin_Email_Verification_UnavailableInputs = {};
 export type Admin_Settings_Author_BioInputs = {};
 export type Admin_Settings_Author_NameInputs = {};
 export type Admin_Settings_Default_OgInputs = {};
@@ -639,6 +658,7 @@ export type Comment_Auth_ErrorInputs = {};
 export type Comment_Auth_LoadingInputs = {};
 export type Comment_Continue_GithubInputs = {};
 export type Comment_EmailInputs = {};
+export type Comment_Email_Verification_SentInputs = {};
 export type Comment_ErrorInputs = {};
 export type Comment_Login_DescriptionInputs = {};
 export type Comment_Login_RequiredInputs = {};

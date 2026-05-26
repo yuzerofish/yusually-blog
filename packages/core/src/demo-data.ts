@@ -26,6 +26,7 @@ export const siteSettings: SiteSettings = {
   commentsRequireApproval: true,
   commentAutoBlockEnabled: true,
   commentBlockedKeywords: ["博彩", "赌博", "色情", "诈骗", "辱骂", "violence", "scam", "spam"],
+  emailVerificationEnabled: false,
   indexingEnabled: true,
   themePreset: "maker",
   layoutPreset: "shelf",

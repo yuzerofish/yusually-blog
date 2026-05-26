@@ -40,6 +40,8 @@ POST   /api/comment-auth/login
 POST   /api/comment-auth/signup
 POST   /api/comment-auth/logout
 GET    /api/comment-auth/github/start
+GET    /api/comment-auth/verify-email
+GET    /api/admin/email-status
 ```
 
 API tokens are scoped. Publishing requires write permissions, and publishing or scheduling posts also requires publish permissions.
@@ -48,7 +50,7 @@ API tokens are scoped. Publishing requires write permissions, and publishing or 
 
 `POST /api/comments` requires a reader session. The request accepts comment body, post id, and optional parent id for replies. The server applies honeypot checks, optional Turnstile verification, rate limits, body length limits, link limits, and blocked-keyword checks.
 
-Reader and admin identities share Better Auth. `/api/comment-auth/*` keeps a comment-facing response shape while sessions and accounts live in the shared Better Auth tables.
+Reader and admin identities share Better Auth. `/api/comment-auth/*` keeps a comment-facing response shape while sessions and accounts live in the shared Better Auth tables. If email verification is enabled in admin settings, email/password comment accounts must confirm the verification link before signing in.
 
 Comments are created as `pending` when manual approval is enabled, `approved` when approval is disabled, and `spam` when blocked keywords match and auto-blocking is enabled.
 

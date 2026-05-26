@@ -266,6 +266,7 @@ export const Route = createFileRoute("/openapi.json")({
                             type: "array",
                             items: { type: "string" },
                           },
+                          emailVerificationEnabled: { type: "boolean" },
                           indexingEnabled: { type: "boolean" },
                         },
                       },
@@ -368,7 +369,10 @@ export const Route = createFileRoute("/openapi.json")({
                     },
                   },
                 },
-                responses: { "200": { description: "Comment session created" } },
+                responses: {
+                  "200": { description: "Comment session created" },
+                  "401": { description: "Email verification required or credentials invalid" },
+                },
               },
             },
             "/api/comment-auth/signup": {
@@ -381,7 +385,23 @@ export const Route = createFileRoute("/openapi.json")({
                     },
                   },
                 },
-                responses: { "200": { description: "Comment user and session created" } },
+                responses: {
+                  "200": { description: "Comment user and session created" },
+                  "202": { description: "Verification email sent" },
+                },
+              },
+            },
+            "/api/comment-auth/verify-email": {
+              get: {
+                summary: "Verify comment account email",
+                parameters: [
+                  { name: "userId", in: "query", schema: { type: "string" } },
+                  { name: "token", in: "query", schema: { type: "string" } },
+                ],
+                responses: {
+                  "200": { description: "Email verified" },
+                  "400": { description: "Verification link invalid or expired" },
+                },
               },
             },
             "/api/comment-auth/logout": {
@@ -394,6 +414,13 @@ export const Route = createFileRoute("/openapi.json")({
               get: {
                 summary: "Start GitHub comment login",
                 responses: { "302": { description: "Redirect to GitHub OAuth" } },
+              },
+            },
+            "/api/admin/email-status": {
+              get: {
+                summary: "Read outbound email configuration status",
+                security: [{ apiToken: ["site:read"] }],
+                responses: { "200": { description: "Email provider and verification status" } },
               },
             },
             "/api/comments/{id}/approve": {
