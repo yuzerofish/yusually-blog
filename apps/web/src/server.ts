@@ -13,7 +13,7 @@ type WorkerExecutionContext = {
 };
 
 export default {
-  fetch(request: Request, _env: CloudflareBindings, _ctx: ExecutionContext) {
+  fetch(request: Request, _env: CloudflareBindings, _ctx: WorkerExecutionContext) {
     return paraglideMiddleware(request, () => handler.fetch(request));
   },
   scheduled(
