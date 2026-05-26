@@ -1,4 +1,4 @@
 {
-  "title": "Cloud Blog CMS",
+  "title": "01mvp-blog-starter",
   "pages": ["index", "usage", "content-systems", "publishing", "comments", "api", "deployment"]
 }

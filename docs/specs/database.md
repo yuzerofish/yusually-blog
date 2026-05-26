@@ -1,13 +1,13 @@
 # Database
 
-The canonical Cloud Blog CMS schema is in `packages/db/src/schema/cms.sqlite.ts`. D1 migrations live in `packages/db/migrations`.
+The canonical 01mvp-blog-starter schema is in `packages/db/src/schema/cms.sqlite.ts`. D1 migrations live in `packages/db/migrations`.
 
 ## Migrations
 
 - `0001_cloud_blog_cms.sql`: site settings, posts, pages, tags, projects, assets, comments, API tokens, and content indexes.
-- `0002_admin_auth.sql`: admin users and admin sessions.
+- `0002_better_auth_d1.sql`: Better Auth users, sessions, credential/social accounts, and verification tokens on D1.
 - `0003_pages_projects_management.sql`: localized page content plus project tags and screenshot metadata.
-- `0004_comment_auth_moderation.sql`: reader comment users, comment sessions, and optional comment author linkage.
+- `0004_comment_moderation.sql`: optional comment author linkage to Better Auth users.
 
 ## Core Tables
 
@@ -18,11 +18,11 @@ The canonical Cloud Blog CMS schema is in `packages/db/src/schema/cms.sqlite.ts`
 - `projects`: portfolio entries.
 - `assets`: R2 object metadata and optional post association.
 - `comments`: self-hosted moderation queue.
-- `comment_users`: D1-backed reader identities for commenting.
-- `comment_sessions`: hashed reader sessions for comment login.
 - `api_tokens`: hashed automation tokens with scoped permissions and revocation.
-- `admin_users`: D1-backed email/password admin users.
-- `admin_sessions`: hashed session tokens for cookie login.
+- `user`: Better Auth identity records for admins and readers. The `role` column separates admin users from reader accounts.
+- `session`: Better Auth browser sessions.
+- `account`: Better Auth credential and social account records, including password hashes.
+- `verification`: Better Auth verification and reset token records.
 
 ## Content Fields
 
@@ -36,7 +36,7 @@ Localized content is stored in JSON `i18n` columns on `posts`, `pages`, `tags`, 
 
 ## Security Notes
 
-- Admin passwords are stored as salted PBKDF2 hashes.
-- Admin sessions, reader comment sessions, and API tokens are stored as SHA-256 hashes.
+- Passwords and browser sessions are handled by Better Auth on top of Drizzle D1.
+- API tokens are stored as SHA-256 hashes. Browser sessions are managed by Better Auth.
 - API tokens expose the secret only once at creation.
 - Comment author email addresses are hashed before storage.

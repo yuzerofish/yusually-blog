@@ -1,3 +1,4 @@
+import "@tanstack/react-start/server-only";
 import type { Asset } from "@repo/core";
 import { env } from "cloudflare:workers";
 
@@ -115,7 +116,7 @@ export async function storeImportPackage(input: {
 export async function storeExportBackup(payload: unknown) {
   const content = JSON.stringify(payload, null, 2);
   const createdAt = new Date().toISOString();
-  const key = objectKey("exports", `cloud-blog-cms-${createdAt.replace(/[:.]/g, "-")}.json`);
+  const key = objectKey("exports", `01mvp-blog-starter-${createdAt.replace(/[:.]/g, "-")}.json`);
 
   await env.CMS_BACKUPS.put(key, content, {
     httpMetadata: {

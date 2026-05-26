@@ -42,6 +42,7 @@ export default defineConfig({
       "routeTree.gen.ts",
       ".tanstack-start/",
       ".tanstack/",
+      "apps/web/src/paraglide/**",
       "drizzle/",
       "migrations/",
       ".drizzle/",

@@ -2,7 +2,8 @@ export type ContentStatus = "draft" | "published" | "scheduled" | "archived" | "
 
 export type SupportedLocale = "en" | "zh";
 
-export type ThemePreset = "claude" | "apple" | "editorial";
+export type ThemePreset = "maker" | "apple" | "editorial";
+export type LayoutPreset = "shelf" | "developer" | "journal";
 
 export type LocalizedString = Partial<Record<SupportedLocale, string>>;
 
@@ -140,6 +141,7 @@ export type SiteSettings = {
   commentBlockedKeywords: string[];
   indexingEnabled: boolean;
   themePreset: ThemePreset;
+  layoutPreset: LayoutPreset;
   locales: SupportedLocale[];
   primaryLanguage: SupportedLocale;
   i18n?: LocalizedFields<"name" | "description" | "authorBio">;

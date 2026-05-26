@@ -8,7 +8,7 @@ export function getDocsLayoutOptions(
 ): BaseLayoutProps {
   return {
     nav: {
-      title: "Cloud Blog CMS",
+      title: "01mvp-blog-starter",
       url: getDocsUrl([], locale),
     },
     links: [

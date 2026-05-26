@@ -52,11 +52,13 @@ export type {
   ContentSource,
   ContentStatus,
   DashboardMetric,
+  LayoutPreset,
   Post,
   Project,
   SiteSettings,
   SupportedLocale,
   Tag,
+  ThemePreset,
 } from "./types";
 
 export function resolveLocale(locale?: string): SupportedLocale {

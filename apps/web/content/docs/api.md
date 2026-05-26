@@ -1,9 +1,9 @@
 ---
 title: API
-description: API and automation surfaces for Cloud Blog CMS.
+description: API and automation surfaces for 01mvp-blog-starter.
 ---
 
-Cloud Blog CMS exposes an OpenAPI document at `/openapi.json`.
+01mvp-blog-starter exposes an OpenAPI document at `/openapi.json`.
 
 The API is used by:
 
@@ -40,7 +40,6 @@ POST   /api/comment-auth/login
 POST   /api/comment-auth/signup
 POST   /api/comment-auth/logout
 GET    /api/comment-auth/github/start
-GET    /api/comment-auth/github/callback
 ```
 
 API tokens are scoped. Publishing requires write permissions, and publishing or scheduling posts also requires publish permissions.
@@ -49,7 +48,7 @@ API tokens are scoped. Publishing requires write permissions, and publishing or 
 
 `POST /api/comments` requires a reader session. The request accepts comment body, post id, and optional parent id for replies. The server applies honeypot checks, optional Turnstile verification, rate limits, body length limits, link limits, and blocked-keyword checks.
 
-Reader auth is separate from admin auth. `/api/comment-auth/*` manages reader email/password sessions and GitHub OAuth sessions for commenting only.
+Reader and admin identities share Better Auth. `/api/comment-auth/*` keeps a comment-facing response shape while sessions and accounts live in the shared Better Auth tables.
 
 Comments are created as `pending` when manual approval is enabled, `approved` when approval is disabled, and `spam` when blocked keywords match and auto-blocking is enabled.
 

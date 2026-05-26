@@ -2,7 +2,7 @@
 
 Canonical production targets:
 
-- Template demo: `https://cms.01mvp.com`
+- Template demo: `https://blog.01mvp.com`
 - Template alias: `https://blog-starter.01mvp.com`
 - Skill-generated demo: `https://demo.01mvp.com`
 - Skill demo alias: `https://blog-demo.01mvp.com`
@@ -52,9 +52,9 @@ pnpm --filter @repo/web exec wrangler d1 migrations apply blog-demo-cms --remote
 The remote databases have applied:
 
 - `0001_cloud_blog_cms.sql`
-- `0002_admin_auth.sql`
+- `0002_better_auth_d1.sql`
 - `0003_pages_projects_management.sql`
-- `0004_comment_auth_moderation.sql`
+- `0004_comment_moderation.sql`
 
 ## Build And Deploy
 
@@ -93,17 +93,18 @@ Wrangler uses `apps/web/src/server.ts` as the Worker entry. It delegates HTTP re
 Create a GitHub OAuth app and set callback URLs for each environment:
 
 ```txt
-http://localhost:3000/api/comment-auth/github/callback
-https://your-domain.com/api/comment-auth/github/callback
+http://localhost:3000/api/auth/callback/github
+https://your-domain.com/api/auth/callback/github
 ```
 
-Set `GITHUB_CLIENT_ID` in `apps/web/wrangler.jsonc` or the Cloudflare dashboard. Store the secret with Wrangler:
+Set `GITHUB_CLIENT_ID` in `apps/web/wrangler.jsonc` or the Cloudflare dashboard. Store the auth and GitHub secrets with Wrangler:
 
 ```sh
+pnpm --filter @repo/web exec wrangler secret put BETTER_AUTH_SECRET --config wrangler.jsonc
 pnpm --filter @repo/web exec wrangler secret put GITHUB_CLIENT_SECRET --config wrangler.jsonc
 ```
 
-For local development, set `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` in `apps/web/.env`. Email/password comment login works without GitHub, but GitHub is the preferred default for reader comments.
+For local development, set `BETTER_AUTH_SECRET`, `GITHUB_CLIENT_ID`, and `GITHUB_CLIENT_SECRET` in `apps/web/.env`. Email/password comment login works without GitHub, but GitHub is the preferred default for reader comments.
 
 ## Optional Email Sending
 
@@ -127,5 +128,17 @@ Email is disabled by default. To enable comment, import, export, backup, and pas
 ```
 
 The sender address and domain must be verified in Cloudflare Email Service before production mail is sent.
+
+Email Sending is a paid optional feature. Cloudflare's current pricing requires Workers Paid for outbound Email Sending, includes 3,000 outbound emails per month, and bills additional outbound email at $0.35 per 1,000 emails. Email Routing inbound forwarding is unlimited.
+
+Do not make email verification-code login a default dependency. It can be added behind the same `CMS_EMAIL` path for sites that choose the paid email feature, while the free core keeps GitHub OAuth, email/password login, direct admin password reset, publishing, comments, moderation, imports, exports, and backups usable without Email Sending.
+
+Operational limits to account for before enabling production email:
+
+- new accounts may initially send only to verified email addresses in the Cloudflare account
+- paid accounts can send to arbitrary recipients, subject to daily sending limits
+- one email can include up to 50 total `to`, `cc`, and `bcc` recipients
+- one email can be up to 5 MiB including attachments
+- Workers binding sends are also constrained by standard Workers CPU, subrequest, and memory limits
 
 The latest main and demo deployments include the Email Sending variables, but `CMS_EMAIL_SENDING_ENABLED` remains `false` until a verified sender and `CMS_EMAIL` binding are configured.

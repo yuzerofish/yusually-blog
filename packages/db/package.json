@@ -10,13 +10,11 @@
     "./schema/cms": "./src/schema/cms.sqlite.ts"
   },
   "scripts": {
-    "db": "drizzle-kit",
-    "auth:generate": "vpx https://pkg.pr.new/auth@9489 generate --config ../auth/src/auth.ts --y --output ./src/schema/auth.schema.ts"
+    "db": "drizzle-kit"
   },
   "dependencies": {
     "drizzle-orm": "catalog:",
-    "nanoid": "catalog:",
-    "postgres": "catalog:"
+    "nanoid": "catalog:"
   },
   "devDependencies": {
     "@repo/tsconfig": "workspace:*",

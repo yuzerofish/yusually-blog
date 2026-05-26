@@ -3,7 +3,7 @@ title: Publishing
 description: Publish through the admin UI, CLI, API, or Git-managed docs.
 ---
 
-Cloud Blog CMS supports several publishing paths.
+01mvp-blog-starter supports several publishing paths.
 
 ## CMS Posts
 

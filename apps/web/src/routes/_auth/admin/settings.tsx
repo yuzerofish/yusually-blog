@@ -82,6 +82,7 @@ function AdminSettingsPage() {
         commentAutoBlockEnabled: formData.get("commentAutoBlockEnabled") === "on",
         commentBlockedKeywords: blockedKeywords,
         indexingEnabled: formData.get("indexingEnabled") === "on",
+        layoutPreset: formData.get("layoutPreset"),
       }),
     });
 
@@ -205,9 +206,22 @@ function AdminSettingsPage() {
                 defaultValue={siteSettings.themePreset}
                 className="h-10 rounded-md border border-input bg-background px-3 text-sm"
               >
-                <option value="claude">{m.theme_preset_claude()}</option>
+                <option value="maker">Maker</option>
                 <option value="apple">{m.theme_preset_apple()}</option>
                 <option value="editorial">{m.theme_preset_editorial()}</option>
+              </select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="layout-preset">Homepage layout</Label>
+              <select
+                id="layout-preset"
+                name="layoutPreset"
+                defaultValue={siteSettings.layoutPreset}
+                className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+              >
+                <option value="shelf">Shelf</option>
+                <option value="developer">Developer</option>
+                <option value="journal">Journal</option>
               </select>
             </div>
             <div className="grid content-end gap-2">

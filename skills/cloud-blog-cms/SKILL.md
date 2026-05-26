@@ -1,11 +1,11 @@
 ---
 name: cloud-blog-cms
-description: Initialize, configure, deploy, and verify a new Cloud Blog CMS site on Cloudflare Workers, D1, R2, and KV.
+description: Initialize, configure, deploy, and verify a new 01mvp-blog-starter site on Cloudflare Workers, D1, R2, and KV.
 ---
 
-# Cloud Blog CMS Skill
+# 01mvp-blog-starter Skill
 
-Use this Skill when creating a new personal blog from the Cloud Blog CMS template or when validating that a generated site matches the template contract.
+Use this Skill when creating a new personal blog from the 01mvp-blog-starter template or when validating that a generated site matches the template contract.
 
 ## Inputs To Collect
 
@@ -18,7 +18,8 @@ Ask for missing values only when they are not already provided:
 - Author email
 - Primary language: `en` or `zh`
 - Domain, or workers.dev fallback
-- Theme preset: `claude`, `apple`, or `editorial`
+- Theme preset: `maker`, `apple`, or `editorial`
+- Layout preset: `shelf`, `developer`, or `journal`
 - Comments enabled
 - Email Sending enabled
 - GitHub Actions enabled
@@ -51,6 +52,7 @@ Ask for missing values only when they are not already provided:
 - The generated site must support `en` and `zh` by default.
 - The selected primary language controls initial site settings, feed copy, demo post defaults, and admin settings.
 - The selected theme preset is saved as `themePreset` in site settings and applied through shared UI tokens.
+- The selected layout preset is saved as `layoutPreset` in site settings and applied to the public home page. Use `maker` + `shelf` as the default combination.
 - Public product introduction copy should include both English and Chinese.
 - Blog content records should keep bilingual fields so switching language changes titles, excerpts, body HTML, tags, comments, projects, and metrics.
 

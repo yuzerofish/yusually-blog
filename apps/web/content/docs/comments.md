@@ -12,8 +12,8 @@ GitHub OAuth is the preferred login method for reader comments. Email/password l
 Configure GitHub OAuth with these callback URLs:
 
 ```txt
-http://localhost:3000/api/comment-auth/github/callback
-https://your-domain.com/api/comment-auth/github/callback
+http://localhost:3000/api/auth/callback/github
+https://your-domain.com/api/auth/callback/github
 ```
 
 Set `GITHUB_CLIENT_ID` in Wrangler vars or the Cloudflare dashboard. Store `GITHUB_CLIENT_SECRET` as a Wrangler secret for production and in `apps/web/.env` for local development.

@@ -63,7 +63,6 @@ export const apiEndpoints = [
   { method: "POST", path: "/api/comment-auth/signup", scope: "public" },
   { method: "POST", path: "/api/comment-auth/logout", scope: "comment-session" },
   { method: "GET", path: "/api/comment-auth/github/start", scope: "public" },
-  { method: "GET", path: "/api/comment-auth/github/callback", scope: "public" },
   { method: "GET", path: "/api/tokens", scope: "site:read" },
   { method: "POST", path: "/api/tokens", scope: "site:write" },
   { method: "POST", path: "/api/tokens/{id}/revoke", scope: "site:write" },
@@ -71,13 +70,40 @@ export const apiEndpoints = [
 ] as const;
 
 export function jsonResponse(body: unknown, init?: ResponseInit) {
+  const headers = new Headers({ "cache-control": "no-store" });
+
+  if (init?.headers) {
+    const inputHeaders = new Headers(init.headers);
+
+    inputHeaders.forEach((value, key) => {
+      if (key.toLowerCase() === "set-cookie") {
+        return;
+      }
+
+      headers.set(key, value);
+    });
+
+    for (const cookie of getSetCookieValues(inputHeaders)) {
+      headers.append("set-cookie", cookie);
+    }
+  }
+
   return Response.json(body, {
     ...init,
-    headers: {
-      "cache-control": "no-store",
-      ...init?.headers,
-    },
+    headers,
   });
+}
+
+function getSetCookieValues(headers: Headers) {
+  const getSetCookie = (
+    headers as Headers & {
+      getSetCookie?: () => string[];
+    }
+  ).getSetCookie;
+  const cookies = getSetCookie ? getSetCookie.call(headers) : [];
+  const fallback = headers.get("set-cookie");
+
+  return cookies.length ? cookies : fallback ? [fallback] : [];
 }
 
 export function getApiLocale(request: Request): SupportedLocale {

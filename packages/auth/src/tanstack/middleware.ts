@@ -1,8 +1,6 @@
 import { createMiddleware } from "@tanstack/react-start";
 import { setResponseStatus } from "@tanstack/react-start/server";
 
-import { _getUser } from "./functions";
-
 // https://tanstack.com/start/latest/docs/framework/react/guide/middleware
 
 /**
@@ -14,6 +12,7 @@ import { _getUser } from "./functions";
  * @see https://better-auth.com/docs/concepts/session-management#cookie-cache
  */
 export const authMiddleware = createMiddleware().server(async ({ next }) => {
+  const { _getUser } = await import("./user.server");
   const user = await _getUser();
 
   if (!user) {
@@ -33,6 +32,7 @@ export const authMiddleware = createMiddleware().server(async ({ next }) => {
  * @see https://better-auth.com/docs/concepts/session-management#cookie-cache
  */
 export const freshAuthMiddleware = createMiddleware().server(async ({ next }) => {
+  const { _getUser } = await import("./user.server");
   const user = await _getUser({
     // ensure session is fresh
     // https://better-auth.com/docs/concepts/session-management#cookie-cache

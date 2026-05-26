@@ -257,64 +257,38 @@ export const admin_assets_uploading: (inputs: Admin_Assets_UploadingInputs) => L
 export const admin_assets_url: (inputs: Admin_Assets_UrlInputs) => LocalizedString;
 export const admin_comments_approve: (inputs: Admin_Comments_ApproveInputs) => LocalizedString;
 export const admin_comments_all_posts: (inputs: Admin_Comments_All_PostsInputs) => LocalizedString;
-export const admin_comments_auto_block: (
-  inputs: Admin_Comments_Auto_BlockInputs,
-) => LocalizedString;
-export const admin_comments_blocked_keywords: (
-  inputs: Admin_Comments_Blocked_KeywordsInputs,
-) => LocalizedString;
-export const admin_comments_blocked_keywords_help: (
-  inputs: Admin_Comments_Blocked_Keywords_HelpInputs,
-) => LocalizedString;
+export const admin_comments_auto_block: (inputs: Admin_Comments_Auto_BlockInputs) => LocalizedString;
+export const admin_comments_blocked_keywords: (inputs: Admin_Comments_Blocked_KeywordsInputs) => LocalizedString;
+export const admin_comments_blocked_keywords_help: (inputs: Admin_Comments_Blocked_Keywords_HelpInputs) => LocalizedString;
 export const admin_comments_delete: (inputs: Admin_Comments_DeleteInputs) => LocalizedString;
-export const admin_comments_description: (
-  inputs: Admin_Comments_DescriptionInputs,
-) => LocalizedString;
+export const admin_comments_description: (inputs: Admin_Comments_DescriptionInputs) => LocalizedString;
 export const admin_comments_empty: (inputs: Admin_Comments_EmptyInputs) => LocalizedString;
-export const admin_comments_filter_post: (
-  inputs: Admin_Comments_Filter_PostInputs,
-) => LocalizedString;
+export const admin_comments_filter_post: (inputs: Admin_Comments_Filter_PostInputs) => LocalizedString;
 export const admin_comments_mark_spam: (inputs: Admin_Comments_Mark_SpamInputs) => LocalizedString;
-export const admin_comments_require_approval: (
-  inputs: Admin_Comments_Require_ApprovalInputs,
-) => LocalizedString;
+export const admin_comments_require_approval: (inputs: Admin_Comments_Require_ApprovalInputs) => LocalizedString;
 export const admin_comments_title: (inputs: Admin_Comments_TitleInputs) => LocalizedString;
 export const admin_comment_settings: (inputs: Admin_Comment_SettingsInputs) => LocalizedString;
-export const admin_editor_default_excerpt: (
-  inputs: Admin_Editor_Default_ExcerptInputs,
-) => LocalizedString;
-export const admin_editor_default_title: (
-  inputs: Admin_Editor_Default_TitleInputs,
-) => LocalizedString;
-export const admin_editor_comments_enabled: (
-  inputs: Admin_Editor_Comments_EnabledInputs,
-) => LocalizedString;
+export const admin_editor_default_excerpt: (inputs: Admin_Editor_Default_ExcerptInputs) => LocalizedString;
+export const admin_editor_default_title: (inputs: Admin_Editor_Default_TitleInputs) => LocalizedString;
+export const admin_editor_comments_enabled: (inputs: Admin_Editor_Comments_EnabledInputs) => LocalizedString;
 export const admin_editor_description: (inputs: Admin_Editor_DescriptionInputs) => LocalizedString;
 export const admin_editor_edit_title: (inputs: Admin_Editor_Edit_TitleInputs) => LocalizedString;
 export const admin_editor_error: (inputs: Admin_Editor_ErrorInputs) => LocalizedString;
 export const admin_editor_excerpt: (inputs: Admin_Editor_ExcerptInputs) => LocalizedString;
-export const admin_editor_preview_mode: (
-  inputs: Admin_Editor_Preview_ModeInputs,
-) => LocalizedString;
+export const admin_editor_preview_mode: (inputs: Admin_Editor_Preview_ModeInputs) => LocalizedString;
 export const admin_editor_publish_at: (inputs: Admin_Editor_Publish_AtInputs) => LocalizedString;
 export const admin_editor_rich_mode: (inputs: Admin_Editor_Rich_ModeInputs) => LocalizedString;
 export const admin_editor_saved: (inputs: Admin_Editor_SavedInputs) => LocalizedString;
-export const admin_editor_seo_description: (
-  inputs: Admin_Editor_Seo_DescriptionInputs,
-) => LocalizedString;
+export const admin_editor_seo_description: (inputs: Admin_Editor_Seo_DescriptionInputs) => LocalizedString;
 export const admin_editor_seo_title: (inputs: Admin_Editor_Seo_TitleInputs) => LocalizedString;
 export const admin_editor_source_mode: (inputs: Admin_Editor_Source_ModeInputs) => LocalizedString;
 export const admin_editor_tags: (inputs: Admin_Editor_TagsInputs) => LocalizedString;
 export const admin_editor_title: (inputs: Admin_Editor_TitleInputs) => LocalizedString;
 export const admin_latest_post: (inputs: Admin_Latest_PostInputs) => LocalizedString;
 export const admin_manage_posts: (inputs: Admin_Manage_PostsInputs) => LocalizedString;
-export const admin_metric_overview_description: (
-  inputs: Admin_Metric_Overview_DescriptionInputs,
-) => LocalizedString;
+export const admin_metric_overview_description: (inputs: Admin_Metric_Overview_DescriptionInputs) => LocalizedString;
 export const admin_moderation_queue: (inputs: Admin_Moderation_QueueInputs) => LocalizedString;
-export const admin_moderation_queue_detail: (
-  inputs: Admin_Moderation_Queue_DetailInputs,
-) => LocalizedString;
+export const admin_moderation_queue_detail: (inputs: Admin_Moderation_Queue_DetailInputs) => LocalizedString;
 export const admin_nav_assets: (inputs: Admin_Nav_AssetsInputs) => LocalizedString;
 export const admin_nav_comments: (inputs: Admin_Nav_CommentsInputs) => LocalizedString;
 export const admin_nav_overview: (inputs: Admin_Nav_OverviewInputs) => LocalizedString;
@@ -336,15 +310,9 @@ export const admin_posts_column_title: (inputs: Admin_Posts_Column_TitleInputs) 
 export const admin_posts_delete: (inputs: Admin_Posts_DeleteInputs) => LocalizedString;
 export const admin_posts_description: (inputs: Admin_Posts_DescriptionInputs) => LocalizedString;
 export const admin_posts_edit: (inputs: Admin_Posts_EditInputs) => LocalizedString;
-export const admin_posts_filter_all_status: (
-  inputs: Admin_Posts_Filter_All_StatusInputs,
-) => LocalizedString;
-export const admin_posts_filter_all_tags: (
-  inputs: Admin_Posts_Filter_All_TagsInputs,
-) => LocalizedString;
-export const admin_posts_filter_status: (
-  inputs: Admin_Posts_Filter_StatusInputs,
-) => LocalizedString;
+export const admin_posts_filter_all_status: (inputs: Admin_Posts_Filter_All_StatusInputs) => LocalizedString;
+export const admin_posts_filter_all_tags: (inputs: Admin_Posts_Filter_All_TagsInputs) => LocalizedString;
+export const admin_posts_filter_status: (inputs: Admin_Posts_Filter_StatusInputs) => LocalizedString;
 export const admin_posts_filter_tag: (inputs: Admin_Posts_Filter_TagInputs) => LocalizedString;
 export const admin_posts_public_url: (inputs: Admin_Posts_Public_UrlInputs) => LocalizedString;
 export const admin_posts_search: (inputs: Admin_Posts_SearchInputs) => LocalizedString;
@@ -356,35 +324,21 @@ export const admin_posts_status: (inputs: Admin_Posts_StatusInputs) => Localized
 export const admin_posts_title: (inputs: Admin_Posts_TitleInputs) => LocalizedString;
 export const admin_posts_updated: (inputs: Admin_Posts_UpdatedInputs) => LocalizedString;
 export const admin_posts_view: (inputs: Admin_Posts_ViewInputs) => LocalizedString;
-export const admin_projects_description: (
-  inputs: Admin_Projects_DescriptionInputs,
-) => LocalizedString;
-export const admin_projects_editor_title: (
-  inputs: Admin_Projects_Editor_TitleInputs,
-) => LocalizedString;
+export const admin_projects_description: (inputs: Admin_Projects_DescriptionInputs) => LocalizedString;
+export const admin_projects_editor_title: (inputs: Admin_Projects_Editor_TitleInputs) => LocalizedString;
 export const admin_projects_title: (inputs: Admin_Projects_TitleInputs) => LocalizedString;
 export const admin_project_cover: (inputs: Admin_Project_CoverInputs) => LocalizedString;
 export const admin_project_github_url: (inputs: Admin_Project_Github_UrlInputs) => LocalizedString;
 export const admin_project_live_url: (inputs: Admin_Project_Live_UrlInputs) => LocalizedString;
-export const admin_project_screenshots: (
-  inputs: Admin_Project_ScreenshotsInputs,
-) => LocalizedString;
+export const admin_project_screenshots: (inputs: Admin_Project_ScreenshotsInputs) => LocalizedString;
 export const admin_publish_post: (inputs: Admin_Publish_PostInputs) => LocalizedString;
 export const admin_save_draft: (inputs: Admin_Save_DraftInputs) => LocalizedString;
 export const admin_schedule_post: (inputs: Admin_Schedule_PostInputs) => LocalizedString;
 export const admin_save_settings: (inputs: Admin_Save_SettingsInputs) => LocalizedString;
-export const admin_settings_author_bio: (
-  inputs: Admin_Settings_Author_BioInputs,
-) => LocalizedString;
-export const admin_settings_author_name: (
-  inputs: Admin_Settings_Author_NameInputs,
-) => LocalizedString;
-export const admin_settings_default_og: (
-  inputs: Admin_Settings_Default_OgInputs,
-) => LocalizedString;
-export const admin_settings_description: (
-  inputs: Admin_Settings_DescriptionInputs,
-) => LocalizedString;
+export const admin_settings_author_bio: (inputs: Admin_Settings_Author_BioInputs) => LocalizedString;
+export const admin_settings_author_name: (inputs: Admin_Settings_Author_NameInputs) => LocalizedString;
+export const admin_settings_default_og: (inputs: Admin_Settings_Default_OgInputs) => LocalizedString;
+export const admin_settings_description: (inputs: Admin_Settings_DescriptionInputs) => LocalizedString;
 export const admin_settings_error: (inputs: Admin_Settings_ErrorInputs) => LocalizedString;
 export const admin_settings_help: (inputs: Admin_Settings_HelpInputs) => LocalizedString;
 export const admin_settings_indexing: (inputs: Admin_Settings_IndexingInputs) => LocalizedString;
@@ -393,14 +347,10 @@ export const admin_settings_rss: (inputs: Admin_Settings_RssInputs) => Localized
 export const admin_settings_saved: (inputs: Admin_Settings_SavedInputs) => LocalizedString;
 export const admin_settings_site_name: (inputs: Admin_Settings_Site_NameInputs) => LocalizedString;
 export const admin_settings_site_url: (inputs: Admin_Settings_Site_UrlInputs) => LocalizedString;
-export const admin_settings_theme_preset: (
-  inputs: Admin_Settings_Theme_PresetInputs,
-) => LocalizedString;
+export const admin_settings_theme_preset: (inputs: Admin_Settings_Theme_PresetInputs) => LocalizedString;
 export const admin_settings_title: (inputs: Admin_Settings_TitleInputs) => LocalizedString;
 export const admin_storage_contract: (inputs: Admin_Storage_ContractInputs) => LocalizedString;
-export const admin_storage_contract_detail: (
-  inputs: Admin_Storage_Contract_DetailInputs,
-) => LocalizedString;
+export const admin_storage_contract_detail: (inputs: Admin_Storage_Contract_DetailInputs) => LocalizedString;
 export const admin_create_token: (inputs: Admin_Create_TokenInputs) => LocalizedString;
 export const admin_revoke_token: (inputs: Admin_Revoke_TokenInputs) => LocalizedString;
 export const admin_token_name: (inputs: Admin_Token_NameInputs) => LocalizedString;
@@ -438,9 +388,7 @@ export const comment_auth_loading: (inputs: Comment_Auth_LoadingInputs) => Local
 export const comment_continue_github: (inputs: Comment_Continue_GithubInputs) => LocalizedString;
 export const comment_email: (inputs: Comment_EmailInputs) => LocalizedString;
 export const comment_error: (inputs: Comment_ErrorInputs) => LocalizedString;
-export const comment_login_description: (
-  inputs: Comment_Login_DescriptionInputs,
-) => LocalizedString;
+export const comment_login_description: (inputs: Comment_Login_DescriptionInputs) => LocalizedString;
 export const comment_login_required: (inputs: Comment_Login_RequiredInputs) => LocalizedString;
 export const comment_name: (inputs: Comment_NameInputs) => LocalizedString;
 export const comment_cancel_reply: (inputs: Comment_Cancel_ReplyInputs) => LocalizedString;
@@ -482,36 +430,20 @@ export const login_error: (inputs: Login_ErrorInputs) => LocalizedString;
 export const login_greeting: (inputs: Login_GreetingInputs) => LocalizedString;
 export const login_no_account: (inputs: Login_No_AccountInputs) => LocalizedString;
 export const login_password: (inputs: Login_PasswordInputs) => LocalizedString;
-export const login_password_placeholder: (
-  inputs: Login_Password_PlaceholderInputs,
-) => LocalizedString;
+export const login_password_placeholder: (inputs: Login_Password_PlaceholderInputs) => LocalizedString;
 export const login_pending: (inputs: Login_PendingInputs) => LocalizedString;
 export const login_social_error: (inputs: Login_Social_ErrorInputs) => LocalizedString;
 export const login_with_provider: (inputs: Login_With_ProviderInputs) => LocalizedString;
 export const password_reset_confirm: (inputs: Password_Reset_ConfirmInputs) => LocalizedString;
-export const password_reset_confirm_error: (
-  inputs: Password_Reset_Confirm_ErrorInputs,
-) => LocalizedString;
-export const password_reset_confirm_pending: (
-  inputs: Password_Reset_Confirm_PendingInputs,
-) => LocalizedString;
-export const password_reset_confirm_success: (
-  inputs: Password_Reset_Confirm_SuccessInputs,
-) => LocalizedString;
+export const password_reset_confirm_error: (inputs: Password_Reset_Confirm_ErrorInputs) => LocalizedString;
+export const password_reset_confirm_pending: (inputs: Password_Reset_Confirm_PendingInputs) => LocalizedString;
+export const password_reset_confirm_success: (inputs: Password_Reset_Confirm_SuccessInputs) => LocalizedString;
 export const password_reset_link: (inputs: Password_Reset_LinkInputs) => LocalizedString;
-export const password_reset_new_password: (
-  inputs: Password_Reset_New_PasswordInputs,
-) => LocalizedString;
+export const password_reset_new_password: (inputs: Password_Reset_New_PasswordInputs) => LocalizedString;
 export const password_reset_request: (inputs: Password_Reset_RequestInputs) => LocalizedString;
-export const password_reset_request_error: (
-  inputs: Password_Reset_Request_ErrorInputs,
-) => LocalizedString;
-export const password_reset_request_pending: (
-  inputs: Password_Reset_Request_PendingInputs,
-) => LocalizedString;
-export const password_reset_request_success: (
-  inputs: Password_Reset_Request_SuccessInputs,
-) => LocalizedString;
+export const password_reset_request_error: (inputs: Password_Reset_Request_ErrorInputs) => LocalizedString;
+export const password_reset_request_pending: (inputs: Password_Reset_Request_PendingInputs) => LocalizedString;
+export const password_reset_request_success: (inputs: Password_Reset_Request_SuccessInputs) => LocalizedString;
 export const password_reset_title: (inputs: Password_Reset_TitleInputs) => LocalizedString;
 export const nav_about: (inputs: Nav_AboutInputs) => LocalizedString;
 export const nav_archive: (inputs: Nav_ArchiveInputs) => LocalizedString;
@@ -599,11 +531,11 @@ export type Admin_Editor_TitleInputs = {};
 export type Admin_Latest_PostInputs = {};
 export type Admin_Manage_PostsInputs = {};
 export type Admin_Metric_Overview_DescriptionInputs = {
-  name: NonNullable<unknown>;
+    name: NonNullable<unknown>;
 };
 export type Admin_Moderation_QueueInputs = {};
 export type Admin_Moderation_Queue_DetailInputs = {
-  count: NonNullable<unknown>;
+    count: NonNullable<unknown>;
 };
 export type Admin_Nav_AssetsInputs = {};
 export type Admin_Nav_CommentsInputs = {};
@@ -634,10 +566,10 @@ export type Admin_Posts_Public_UrlInputs = {};
 export type Admin_Posts_SearchInputs = {};
 export type Admin_Posts_Select_AllInputs = {};
 export type Admin_Posts_Select_OneInputs = {
-  title: NonNullable<unknown>;
+    title: NonNullable<unknown>;
 };
 export type Admin_Posts_SelectedInputs = {
-  count: NonNullable<unknown>;
+    count: NonNullable<unknown>;
 };
 export type Admin_Posts_SourceInputs = {};
 export type Admin_Posts_StatusInputs = {};
@@ -714,10 +646,10 @@ export type Comment_NameInputs = {};
 export type Comment_Cancel_ReplyInputs = {};
 export type Comment_ReplyInputs = {};
 export type Comment_Replying_ToInputs = {
-  name: NonNullable<unknown>;
+    name: NonNullable<unknown>;
 };
 export type Comment_Signed_In_AsInputs = {
-  name: NonNullable<unknown>;
+    name: NonNullable<unknown>;
 };
 export type Comment_SubmittingInputs = {};
 export type Comment_SuccessInputs = {};
@@ -752,17 +684,17 @@ export type Login_AlternativeInputs = {};
 export type Login_EmailInputs = {};
 export type Login_ErrorInputs = {};
 export type Login_GreetingInputs = {
-  name: NonNullable<unknown>;
+    name: NonNullable<unknown>;
 };
 export type Login_No_AccountInputs = {};
 export type Login_PasswordInputs = {};
 export type Login_Password_PlaceholderInputs = {};
 export type Login_PendingInputs = {};
 export type Login_Social_ErrorInputs = {
-  provider: NonNullable<unknown>;
+    provider: NonNullable<unknown>;
 };
 export type Login_With_ProviderInputs = {
-  provider: NonNullable<unknown>;
+    provider: NonNullable<unknown>;
 };
 export type Password_Reset_ConfirmInputs = {};
 export type Password_Reset_Confirm_ErrorInputs = {};
@@ -784,17 +716,17 @@ export type Open_CmsInputs = {};
 export type PinnedInputs = {};
 export type Pagination_NextInputs = {};
 export type Pagination_PageInputs = {
-  current: NonNullable<unknown>;
-  total: NonNullable<unknown>;
+    current: NonNullable<unknown>;
+    total: NonNullable<unknown>;
 };
 export type Pagination_PreviousInputs = {};
 export type Posts_CountInputs = {
-  count: NonNullable<unknown>;
+    count: NonNullable<unknown>;
 };
 export type Projects_EyebrowInputs = {};
 export type Projects_TitleInputs = {};
 export type Published_CountInputs = {
-  count: NonNullable<unknown>;
+    count: NonNullable<unknown>;
 };
 export type Read_Latest_PostsInputs = {};
 export type RelatedInputs = {};
@@ -804,7 +736,7 @@ export type SignupInputs = {};
 export type Signup_Confirm_PasswordInputs = {};
 export type Signup_ErrorInputs = {};
 export type Signup_GreetingInputs = {
-  name: NonNullable<unknown>;
+    name: NonNullable<unknown>;
 };
 export type Signup_Has_AccountInputs = {};
 export type Signup_NameInputs = {};

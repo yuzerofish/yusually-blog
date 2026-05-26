@@ -77,7 +77,7 @@ Environment:
   [
     "login",
     {
-      summary: "Store an API token for a Cloud Blog CMS site",
+      summary: "Store an API token for a 01mvp-blog-starter site",
       run: async () => {
         const siteUrl = getSiteUrl();
         const email = readOption(["--email"], process.env.BLOGCMS_ADMIN_EMAIL);
@@ -866,7 +866,7 @@ function filenameFromResponse(response) {
   const disposition = response.headers.get("content-disposition") ?? "";
   const match = /filename="([^"]+)"/i.exec(disposition);
 
-  return match?.[1] ?? "cloud-blog-cms-export.zip";
+  return match?.[1] ?? "01mvp-blog-starter-export.zip";
 }
 
 async function readMarkdownInput(inputPath) {

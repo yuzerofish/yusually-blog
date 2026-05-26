@@ -1,3 +1,4 @@
+import "@tanstack/react-start/server-only";
 import type { Asset, CmsPage, Post, Project, SupportedLocale } from "@repo/core";
 import { localizePage, localizePost, localizeProject, resolveLocale } from "@repo/core";
 import { env } from "cloudflare:workers";
@@ -20,7 +21,7 @@ export type ExportZipBundle = {
 export async function buildExportZipBundle(locale: SupportedLocale): Promise<ExportZipBundle> {
   const data = await buildD1SiteExport(locale);
   const createdAt = data.exportedAt.replace(/[:.]/g, "-");
-  const filename = `cloud-blog-cms-${createdAt}.zip`;
+  const filename = `01mvp-blog-starter-${createdAt}.zip`;
   const assetEntries = await readAssetEntries(data.assets);
   const manifest = {
     exportedAt: data.exportedAt,

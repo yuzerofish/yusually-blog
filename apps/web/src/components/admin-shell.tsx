@@ -68,6 +68,7 @@ export function AdminShell() {
   return (
     <div
       data-theme-preset={siteSettings.themePreset}
+      data-layout-preset={siteSettings.layoutPreset}
       className="min-h-svh bg-background text-foreground"
     >
       <div className="mx-auto grid max-w-7xl gap-6 px-4 py-4 sm:px-6 lg:grid-cols-[240px_1fr] lg:px-8">

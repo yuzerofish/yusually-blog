@@ -21,10 +21,10 @@ export function LanguageToggle() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="outline" size="icon" />}>
+      <Button render={<DropdownMenuTrigger />} variant="outline" size="icon">
         <LanguagesIcon className="size-4" />
         <span className="sr-only">{m.language()}</span>
-      </DropdownMenuTrigger>
+      </Button>
       <DropdownMenuContent align="end">
         {locales.map((item) => (
           <DropdownMenuCheckboxItem

@@ -1,6 +1,7 @@
 import handler from "@tanstack/react-start/server-entry";
 
 import { createScheduledBackup } from "#/lib/cms-export";
+import { paraglideMiddleware } from "#/paraglide/server.js";
 
 type ScheduledController = {
   cron: string;
@@ -12,7 +13,9 @@ type WorkerExecutionContext = {
 };
 
 export default {
-  fetch: handler.fetch,
+  fetch(request: Request, _env: CloudflareBindings, _ctx: ExecutionContext) {
+    return paraglideMiddleware(request, () => handler.fetch(request));
+  },
   scheduled(
     controller: ScheduledController,
     _env: CloudflareBindings,

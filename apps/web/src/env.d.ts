@@ -83,6 +83,9 @@ type CloudflareBindings = {
   CMS_PASSWORD_RESET_TTL_MINUTES: string;
   CMS_TURNSTILE_SECRET_KEY: string;
   VITE_TURNSTILE_SITE_KEY: string;
+  BETTER_AUTH_SECRET?: string;
+  GITHUB_CLIENT_ID?: string;
+  GITHUB_CLIENT_SECRET?: string;
 };
 
 declare module "cloudflare:workers" {

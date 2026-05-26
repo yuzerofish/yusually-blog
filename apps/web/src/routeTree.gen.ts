@@ -77,7 +77,6 @@ import { Route as ApiCommentsIdSpamRouteImport } from './routes/api/comments/$id
 import { Route as ApiCommentsIdDeleteRouteImport } from './routes/api/comments/$id/delete'
 import { Route as ApiCommentsIdApproveRouteImport } from './routes/api/comments/$id/approve'
 import { Route as ApiCommentAuthGithubStartRouteImport } from './routes/api/comment-auth/github/start'
-import { Route as ApiCommentAuthGithubCallbackRouteImport } from './routes/api/comment-auth/github/callback'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -418,12 +417,6 @@ const ApiCommentAuthGithubStartRoute =
     path: '/api/comment-auth/github/start',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiCommentAuthGithubCallbackRoute =
-  ApiCommentAuthGithubCallbackRouteImport.update({
-    id: '/api/comment-auth/github/callback',
-    path: '/api/comment-auth/github/callback',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -487,7 +480,6 @@ export interface FileRoutesByFullPath {
   '/zh/docs/$': typeof ZhDocsSplatRoute
   '/admin/': typeof AuthAdminIndexRoute
   '/app/': typeof AuthAppIndexRoute
-  '/api/comment-auth/github/callback': typeof ApiCommentAuthGithubCallbackRoute
   '/api/comment-auth/github/start': typeof ApiCommentAuthGithubStartRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
   '/api/comments/$id/delete': typeof ApiCommentsIdDeleteRoute
@@ -554,7 +546,6 @@ export interface FileRoutesByTo {
   '/zh/docs/$': typeof ZhDocsSplatRoute
   '/admin': typeof AuthAdminIndexRoute
   '/app': typeof AuthAppIndexRoute
-  '/api/comment-auth/github/callback': typeof ApiCommentAuthGithubCallbackRoute
   '/api/comment-auth/github/start': typeof ApiCommentAuthGithubStartRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
   '/api/comments/$id/delete': typeof ApiCommentsIdDeleteRoute
@@ -626,7 +617,6 @@ export interface FileRoutesById {
   '/zh/docs/$': typeof ZhDocsSplatRoute
   '/_auth/admin/': typeof AuthAdminIndexRoute
   '/_auth/app/': typeof AuthAppIndexRoute
-  '/api/comment-auth/github/callback': typeof ApiCommentAuthGithubCallbackRoute
   '/api/comment-auth/github/start': typeof ApiCommentAuthGithubStartRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
   '/api/comments/$id/delete': typeof ApiCommentsIdDeleteRoute
@@ -697,7 +687,6 @@ export interface FileRouteTypes {
     | '/zh/docs/$'
     | '/admin/'
     | '/app/'
-    | '/api/comment-auth/github/callback'
     | '/api/comment-auth/github/start'
     | '/api/comments/$id/approve'
     | '/api/comments/$id/delete'
@@ -764,7 +753,6 @@ export interface FileRouteTypes {
     | '/zh/docs/$'
     | '/admin'
     | '/app'
-    | '/api/comment-auth/github/callback'
     | '/api/comment-auth/github/start'
     | '/api/comments/$id/approve'
     | '/api/comments/$id/delete'
@@ -835,7 +823,6 @@ export interface FileRouteTypes {
     | '/zh/docs/$'
     | '/_auth/admin/'
     | '/_auth/app/'
-    | '/api/comment-auth/github/callback'
     | '/api/comment-auth/github/start'
     | '/api/comments/$id/approve'
     | '/api/comments/$id/delete'
@@ -889,7 +876,6 @@ export interface RootRouteChildren {
   ApiImportMarkdownRoute: typeof ApiImportMarkdownRoute
   ApiImportZipRoute: typeof ApiImportZipRoute
   ZhDocsSplatRoute: typeof ZhDocsSplatRoute
-  ApiCommentAuthGithubCallbackRoute: typeof ApiCommentAuthGithubCallbackRoute
   ApiCommentAuthGithubStartRoute: typeof ApiCommentAuthGithubStartRoute
 }
 
@@ -1371,13 +1357,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCommentAuthGithubStartRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/comment-auth/github/callback': {
-      id: '/api/comment-auth/github/callback'
-      path: '/api/comment-auth/github/callback'
-      fullPath: '/api/comment-auth/github/callback'
-      preLoaderRoute: typeof ApiCommentAuthGithubCallbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -1571,7 +1550,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiImportMarkdownRoute: ApiImportMarkdownRoute,
   ApiImportZipRoute: ApiImportZipRoute,
   ZhDocsSplatRoute: ZhDocsSplatRoute,
-  ApiCommentAuthGithubCallbackRoute: ApiCommentAuthGithubCallbackRoute,
   ApiCommentAuthGithubStartRoute: ApiCommentAuthGithubStartRoute,
 }
 export const routeTree = rootRouteImport

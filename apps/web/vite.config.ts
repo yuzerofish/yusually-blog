@@ -8,6 +8,21 @@ import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
 import mdx from "fumadocs-mdx/vite";
 import { defineConfig } from "vite-plus";
 
+const injectedHeadScriptsFallback = {
+  name: "tanstack-start-injected-head-scripts-client-fallback",
+  apply: "serve",
+  resolveId(id: string) {
+    if (id === "tanstack-start-injected-head-scripts:v") {
+      return "\0tanstack-start-injected-head-scripts-client-fallback";
+    }
+  },
+  load(id: string) {
+    if (id === "\0tanstack-start-injected-head-scripts-client-fallback") {
+      return "export const injectedHeadScripts = undefined;";
+    }
+  },
+} as const;
+
 export default defineConfig({
   run: {
     // Vite Task
@@ -56,6 +71,7 @@ export default defineConfig({
       strategy: ["cookie", "globalVariable", "baseLocale"],
     }),
     tanstackStart(),
+    injectedHeadScriptsFallback,
     viteReact(),
     // https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#react-compiler
     babel({

@@ -1,16 +1,16 @@
 ---
-title: Cloud Blog CMS
+title: 01mvp-blog-starter
 description: A Cloudflare-native personal blog CMS with a Git-managed documentation system.
 ---
 
-Cloud Blog CMS is a Cloudflare-native personal blog CMS and AI initialization workflow for `github.com/01mvp/blog-starter`.
+01mvp-blog-starter is a Cloudflare-native personal blog CMS and AI initialization workflow for `github.com/01mvp/blog-starter`.
 
 It ships with two content surfaces by default:
 
 - `/blog` is powered by the CMS. It is for public posts, visual admin writing, comments, RSS, CLI publishing, imports, exports, and backups.
 - `/docs` is powered by Fumadocs and GitHub Markdown/MDX. It is for product docs, developer docs, API guides, and template usage notes.
 
-中文简介：Cloud Blog CMS 是一个基于 Cloudflare Workers、D1、R2 的个人永久博客 CMS。默认同时提供 CMS 博客系统和 Git 管理的 Fumadocs 文档系统。
+中文简介：01mvp-blog-starter 是一个基于 Cloudflare Workers、D1、R2 的个人永久博客 CMS。默认同时提供 CMS 博客系统和 Git 管理的 Fumadocs 文档系统。
 
 ## Stack
 

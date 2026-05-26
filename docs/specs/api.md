@@ -53,7 +53,6 @@ Feeds and public metadata use current D1 site settings and localized content whe
 - `POST /api/comment-auth/signup`
 - `POST /api/comment-auth/logout`
 - `GET /api/comment-auth/github/start`
-- `GET /api/comment-auth/github/callback`
 - `GET /api/tokens`
 - `POST /api/tokens`
 - `POST /api/tokens/:id/revoke`
@@ -66,7 +65,7 @@ Feeds and public metadata use current D1 site settings and localized content whe
 
 `GET /api/posts` accepts `q`, `tag`, `status=all`, and `lang=en|zh`. `status=all` requires `posts:read`. Public post lists return only published posts.
 
-`GET /api/site` returns localized site settings when `lang=en|zh` or `Accept-Language` is provided. `PUT /api/site` accepts `themePreset=claude|apple|editorial` along with title, URL, description, author, language, RSS, comments, comment approval, blocked keywords, auto-blocking, and indexing settings.
+`GET /api/site` returns localized site settings when `lang=en|zh` or `Accept-Language` is provided. `PUT /api/site` accepts `themePreset=maker|apple|editorial` and `layoutPreset=shelf|developer|journal` along with title, URL, description, author, language, RSS, comments, comment approval, blocked keywords, auto-blocking, and indexing settings. Legacy `themePreset=claude` values normalize to `maker`.
 
 `POST /api/posts` accepts `publishedAt` plus bilingual `i18n` fields for title, excerpt, Markdown, rendered HTML, text, SEO title, and SEO description. When `locale` is `zh`, the primary input is also stored into Chinese localized fields. Creating or updating a `published` or `scheduled` post requires both `posts:write` and `posts:publish`. Scheduled posts become visible in public lists when `publishedAt` is reached.
 
@@ -84,7 +83,7 @@ Feeds and public metadata use current D1 site settings and localized content whe
 
 `GET /api/comments` returns the moderation queue and requires `comments:moderate`. `POST /api/comments` requires a comment-user session, accepts optional `parentId` for replies, applies honeypot, Turnstile when configured, per-IP rate limits, body length limits, link limits, and sets the initial status from site moderation settings. Keyword matches are marked `spam`; otherwise comments are `pending` when manual approval is enabled or `approved` when it is disabled.
 
-`/api/comment-auth/*` manages reader-only comment identity through D1 sessions. Email/password login and signup are available through JSON endpoints. GitHub login redirects through `/api/comment-auth/github/start` and returns to `/api/comment-auth/github/callback`.
+`/api/comment-auth/*` is the comment-facing wrapper over Better Auth. Email/password login and signup use Better Auth credential accounts. GitHub login starts at `/api/comment-auth/github/start` and returns through Better Auth at `/api/auth/callback/github`.
 
 `GET /api/export` returns JSON data and writes a backup JSON object to R2. `GET /api/export?format=zip` returns a ZIP archive with Markdown posts, HTML posts, Markdown/HTML pages, Markdown/HTML projects, JSON manifests, comments, settings, tags, and bundled R2 assets; the ZIP is also written to the backups bucket.
 

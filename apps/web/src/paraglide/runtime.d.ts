@@ -25,9 +25,7 @@ export function isExcludedByRouteStrategy(url: string | URL): boolean;
  *
  * @param {ParaglideAsyncLocalStorage | undefined} value
  */
-export function overwriteServerAsyncLocalStorage(
-  value: ParaglideAsyncLocalStorage | undefined,
-): void;
+export function overwriteServerAsyncLocalStorage(value: ParaglideAsyncLocalStorage | undefined): void;
 /**
  * Resolve locale for a given URL using route-aware strategies.
  *
@@ -170,12 +168,9 @@ export function extractLocaleFromUrl(url: URL | string): Locale | undefined;
  * @param {Locale} [options.locale] - Target locale. If not provided, uses getLocale()
  * @returns {URL} The localized URL, always absolute
  */
-export function localizeUrl(
-  url: string | URL,
-  options?: {
+export function localizeUrl(url: string | URL, options?: {
     locale?: Locale;
-  },
-): URL;
+}): URL;
 /**
  * Low-level URL de-localization function, primarily used in server contexts.
  *
@@ -336,12 +331,9 @@ export function shouldRedirect(input?: ShouldRedirectInput): Promise<ShouldRedir
  * @param {Locale} [options.locale] - Target locale. If not provided, uses `getLocale()`
  * @returns {string} The localized href, relative if input was relative
  */
-export function localizeHref(
-  href: string,
-  options?: {
+export function localizeHref(href: string, options?: {
     locale?: Locale;
-  },
-): string;
+}): string;
 /**
  * High-level URL de-localization function optimized for client-side UI usage.
  *
@@ -450,10 +442,7 @@ export function isCustomStrategy(strategy: unknown): boolean;
  * the method getLocale.
  * @returns {void}
  */
-export function defineCustomServerStrategy(
-  strategy: string,
-  handler: CustomServerStrategyHandler,
-): void;
+export function defineCustomServerStrategy(strategy: string, handler: CustomServerStrategyHandler): void;
 /**
  * Defines a custom strategy that is executed on the client.
  *
@@ -464,10 +453,7 @@ export function defineCustomServerStrategy(
  * methods getLocale and setLocale.
  * @returns {void}
  */
-export function defineCustomClientStrategy(
-  strategy: string,
-  handler: CustomClientStrategyHandler,
-): void;
+export function defineCustomClientStrategy(strategy: string, handler: CustomClientStrategyHandler): void;
 /**
  * The project's base locale.
  *
@@ -497,15 +483,7 @@ export const localStorageKey: string;
 /**
  * @type {Array<"cookie" | "baseLocale" | "globalVariable" | "url" | "preferredLanguage" | "localStorage" | `custom-${string}`>}
  */
-export const strategy: Array<
-  | "cookie"
-  | "baseLocale"
-  | "globalVariable"
-  | "url"
-  | "preferredLanguage"
-  | "localStorage"
-  | `custom-${string}`
->;
+export const strategy: Array<"cookie" | "baseLocale" | "globalVariable" | "url" | "preferredLanguage" | "localStorage" | `custom-${string}`>;
 /**
  * Route-level strategy overrides.
  *
@@ -518,17 +496,9 @@ export const strategy: Array<
  * }>}
  */
 export const routeStrategies: Array<{
-  match: string;
-  strategy?: Array<
-    | "cookie"
-    | "baseLocale"
-    | "globalVariable"
-    | "url"
-    | "preferredLanguage"
-    | "localStorage"
-    | `custom-${string}`
-  >;
-  exclude?: boolean;
+    match: string;
+    strategy?: Array<"cookie" | "baseLocale" | "globalVariable" | "url" | "preferredLanguage" | "localStorage" | `custom-${string}`>;
+    exclude?: boolean;
 }>;
 /**
  * The used URL patterns.
@@ -536,8 +506,8 @@ export const routeStrategies: Array<{
  * @type {Array<{ pattern: string, localized: Array<[Locale, string]> }>}
  */
 export const urlPatterns: Array<{
-  pattern: string;
-  localized: Array<[Locale, string]>;
+    pattern: string;
+    localized: Array<[Locale, string]>;
 }>;
 /**
  * @typedef {{
@@ -603,21 +573,11 @@ export function overwriteSetLocale(fn: SetLocaleFn): void;
  */
 export let getUrlOrigin: () => string;
 export function overwriteGetUrlOrigin(fn: () => string): void;
-export function extractLocaleFromRequest(
-  request: Request,
-  options?: ExtractLocaleFromRequestOptions,
-): Locale;
-export function extractLocaleFromRequestWithStrategies(
-  request: Request,
-  strategies: typeof strategy,
-  url?: string | URL,
-): Locale;
-export function extractLocaleFromRequestAsync(
-  request: Request,
-  options?: {
+export function extractLocaleFromRequest(request: Request, options?: ExtractLocaleFromRequestOptions): Locale;
+export function extractLocaleFromRequestWithStrategies(request: Request, strategies: typeof strategy, url?: string | URL): Locale;
+export function extractLocaleFromRequestAsync(request: Request, options?: {
     effectiveRequestUrl?: string | URL;
-  },
-): Promise<Locale>;
+}): Promise<Locale>;
 /**
  * @typedef {"cookie" | "baseLocale" | "globalVariable" | "url" | "preferredLanguage" | "localStorage"} BuiltInStrategy
  */
@@ -641,78 +601,64 @@ export const customServerStrategies: Map<string, CustomServerStrategyHandler>;
 /** @type {Map<string, CustomClientStrategyHandler>} */
 export const customClientStrategies: Map<string, CustomClientStrategyHandler>;
 export type ShouldRedirectServerInput = {
-  request: Request;
-  /**
-   * - Effective request URL to use for route matching, locale detection with the URL strategy, and redirect targets.
-   */
-  effectiveRequestUrl?: string | URL;
-  locale?: Locale;
+    request: Request;
+    /**
+     * - Effective request URL to use for route matching, locale detection with the URL strategy, and redirect targets.
+     */
+    effectiveRequestUrl?: string | URL;
+    locale?: Locale;
 };
 export type ShouldRedirectClientInput = {
-  request?: undefined;
-  url?: string | URL;
-  locale?: Locale;
+    request?: undefined;
+    url?: string | URL;
+    locale?: Locale;
 };
 export type ShouldRedirectInput = ShouldRedirectServerInput | ShouldRedirectClientInput;
 export type ShouldRedirectResult = {
-  /**
-   * - Indicates whether the consumer should perform a redirect.
-   */
-  shouldRedirect: boolean;
-  /**
-   * - Locale resolved using the configured strategies.
-   */
-  locale: Locale;
-  /**
-   * - Destination URL when a redirect is required.
-   */
-  redirectUrl: URL | undefined;
+    /**
+     * - Indicates whether the consumer should perform a redirect.
+     */
+    shouldRedirect: boolean;
+    /**
+     * - Locale resolved using the configured strategies.
+     */
+    locale: Locale;
+    /**
+     * - Destination URL when a redirect is required.
+     */
+    redirectUrl: URL | undefined;
 };
 export type ParaglideAsyncLocalStorage = {
-  getStore():
-    | {
+    getStore(): {
         locale?: Locale;
         origin?: string;
         messageCalls?: Set<string>;
-      }
-    | undefined;
-  run: (
-    store: {
-      locale?: Locale;
-      origin?: string;
-      messageCalls?: Set<string>;
-    },
-    cb: any,
-  ) => any;
+    } | undefined;
+    run: (store: {
+        locale?: Locale;
+        origin?: string;
+        messageCalls?: Set<string>;
+    }, cb: any) => any;
 };
-export type SetLocaleFn = (
-  newLocale: Locale,
-  options?: {
+export type SetLocaleFn = (newLocale: Locale, options?: {
     reload?: boolean;
-  },
-) => void | Promise<void>;
+}) => void | Promise<void>;
 export type ExtractLocaleFromRequestOptions = {
-  /**
-   * - Effective request URL to use for route matching and locale detection with the URL strategy.
-   */
-  effectiveRequestUrl?: string | URL;
+    /**
+     * - Effective request URL to use for route matching and locale detection with the URL strategy.
+     */
+    effectiveRequestUrl?: string | URL;
 };
-export type BuiltInStrategy =
-  | "cookie"
-  | "baseLocale"
-  | "globalVariable"
-  | "url"
-  | "preferredLanguage"
-  | "localStorage";
+export type BuiltInStrategy = "cookie" | "baseLocale" | "globalVariable" | "url" | "preferredLanguage" | "localStorage";
 export type CustomStrategy = `custom_${string}`;
 export type Strategy = BuiltInStrategy | CustomStrategy;
 export type Strategies = Array<Strategy>;
 export type CustomServerStrategyHandler = {
-  getLocale: (request?: Request) => Promise<string | undefined> | (string | undefined);
+    getLocale: (request?: Request) => Promise<string | undefined> | (string | undefined);
 };
 export type CustomClientStrategyHandler = {
-  getLocale: () => Promise<string | undefined> | (string | undefined);
-  setLocale: (locale: string) => Promise<void> | void;
+    getLocale: () => Promise<string | undefined> | (string | undefined);
+    setLocale: (locale: string) => Promise<void> | void;
 };
 /**
  * A locale that is available in the project.
@@ -730,21 +676,21 @@ export type Locale = (typeof locales)[number];
  * backward compatible—you can pass it anywhere a \`string\` is expected.
  */
 export type LocalizedString = string & {
-  readonly __brand: "LocalizedString";
+    readonly __brand: "LocalizedString";
 };
 /**
  * A single markup option passed to a tag instance.
  */
 export type MessageMarkupOption = {
-  name: string;
-  value: unknown;
+    name: string;
+    value: unknown;
 };
 /**
  * A single static markup attribute attached to a tag instance.
  */
 export type MessageMarkupAttribute = {
-  name: string;
-  value: string | true;
+    name: string;
+    value: string | true;
 };
 /**
  * Record of markup options for a tag instance.
@@ -758,9 +704,9 @@ export type MessageMarkupAttributes = Record<string, string | true>;
  * Type-level schema for a single markup tag.
  */
 export type MessageMarkupTag = {
-  options: MessageMarkupOptions;
-  attributes: MessageMarkupAttributes;
-  children: boolean;
+    options: MessageMarkupOptions;
+    attributes: MessageMarkupAttributes;
+    children: boolean;
 };
 /**
  * Type-level schema for all markup tags in a message.
@@ -769,43 +715,35 @@ export type MessageMarkupSchema = Record<string, MessageMarkupTag>;
 /**
  * Type-only metadata attached to compiled message functions.
  */
-export type MessageMetadata<
-  Inputs,
-  Options,
-  Markup extends MessageMarkupSchema = Record<string, MessageMarkupTag>,
-> = {
-  readonly __paraglide?: {
-    inputs: Inputs;
-    options: Options;
-    markup: Markup;
-  };
+export type MessageMetadata<Inputs, Options, Markup extends MessageMarkupSchema = Record<string, MessageMarkupTag>> = {
+    readonly __paraglide?: {
+        inputs: Inputs;
+        options: Options;
+        markup: Markup;
+    };
 };
 /**
  * A compiled, framework-neutral message part.
  */
-export type MessagePart =
-  | {
-      type: "text";
-      value: string;
-    }
-  | {
-      type: "markup-start";
-      name: string;
-      options: MessageMarkupOptions;
-      attributes: MessageMarkupAttributes;
-    }
-  | {
-      type: "markup-end";
-      name: string;
-      options: MessageMarkupOptions;
-      attributes: MessageMarkupAttributes;
-    }
-  | {
-      type: "markup-standalone";
-      name: string;
-      options: MessageMarkupOptions;
-      attributes: MessageMarkupAttributes;
-    };
+export type MessagePart = {
+    type: "text";
+    value: string;
+} | {
+    type: "markup-start";
+    name: string;
+    options: MessageMarkupOptions;
+    attributes: MessageMarkupAttributes;
+} | {
+    type: "markup-end";
+    name: string;
+    options: MessageMarkupOptions;
+    attributes: MessageMarkupAttributes;
+} | {
+    type: "markup-standalone";
+    name: string;
+    options: MessageMarkupOptions;
+    attributes: MessageMarkupAttributes;
+};
 /**
  * A message function is a message for a specific locale.
  */
@@ -815,9 +753,6 @@ export type MessageFunction = (inputs?: Record<string, never>) => LocalizedStrin
  *
  * Uses `getLocale()` under the hood to determine the locale with an option.
  */
-export type MessageBundleFunction<T extends string> = (
-  params: Record<string, never>,
-  options: {
+export type MessageBundleFunction<T extends string> = (params: Record<string, never>, options: {
     locale: T;
-  },
-) => LocalizedString;
+}) => LocalizedString;

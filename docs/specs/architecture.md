@@ -1,6 +1,6 @@
 # Architecture
 
-Cloud Blog CMS is a TanStack Start monorepo built for Cloudflare Workers. The repository ships both the reusable CMS template and the `cloud-blog-cms` AI initialization Skill.
+01mvp-blog-starter is a TanStack Start monorepo built for Cloudflare Workers. The repository ships both the reusable CMS template and the `cloud-blog-cms` AI initialization Skill.
 
 ## Runtime
 
@@ -14,7 +14,7 @@ Cloud Blog CMS is a TanStack Start monorepo built for Cloudflare Workers. The re
 ## Cloudflare Boundary
 
 - Workers run the public site, admin UI, API routes, feeds, sitemap, and robots output.
-- D1 stores posts, comments, site settings, admin users, admin sessions, API tokens, pages, projects, tags, and asset metadata.
+- D1 stores posts, comments, site settings, Better Auth identities and sessions, API tokens, pages, projects, tags, and asset metadata.
 - R2 stores uploaded assets, import packages, JSON exports, and full ZIP backups.
 - KV is available as the `CMS_CACHE` binding for cache metadata.
 - Cron Triggers call the custom Worker entry once per day to generate a ZIP backup and prune old backup objects.
@@ -25,7 +25,8 @@ Cloud Blog CMS is a TanStack Start monorepo built for Cloudflare Workers. The re
 - Paraglide.js is the only UI translation runtime. Source messages live in `apps/web/messages/en.json` and `apps/web/messages/zh.json`; compiled files live in `apps/web/src/paraglide`.
 - English and Chinese are always enabled.
 - `primaryLanguage` is selected during initialization and stored in D1 site settings.
-- `themePreset` is stored in site settings and drives the public site, admin UI, and auth screens through shared CSS tokens. Supported presets are `claude`, `apple`, and `editorial`.
+- `themePreset` is stored in site settings and drives the public site, admin UI, and auth screens through shared CSS tokens. Supported presets are `maker`, `apple`, and `editorial`; legacy `claude` values normalize to `maker`.
+- `layoutPreset` is stored in site settings and controls the public home page structure. Supported presets are `shelf`, `developer`, and `journal`.
 - Public product copy includes English and Chinese on the home page.
 - Content records preserve bilingual fields through `i18n` JSON for posts, pages, tags, projects, comments, site name, site description, author bio, and SEO fields.
 
@@ -33,8 +34,7 @@ Cloud Blog CMS is a TanStack Start monorepo built for Cloudflare Workers. The re
 
 - Public routes: home, blog list, post detail, tags, archive, projects, about, RSS, feed, sitemap, robots, API docs, and OpenAPI JSON.
 - Admin routes: overview, posts, pages, projects, assets, comments, settings, and scoped API tokens.
-- Admin auth uses D1-backed email/password users and D1 sessions.
-- Comment auth uses separate D1 reader identities and sessions. GitHub OAuth is the default social path, with email/password available for readers who do not use GitHub.
+- Admin and reader auth use the shared Better Auth tables on D1. The `user.role` column marks admin users; reader accounts can use GitHub OAuth or email/password.
 - Automation tokens are stored hashed in D1 and checked by scope.
 
 ## Automation Flow
@@ -52,3 +52,5 @@ JSON export remains the lightweight API response for automation. ZIP export pack
 ## Email Flow
 
 Email Sending is a no-op unless `CMS_EMAIL_SENDING_ENABLED=true`, `CMS_EMAIL_FROM`, `CMS_EMAIL_TO`, and a `CMS_EMAIL` send-email binding are configured. When enabled, the same optional mailer sends comment moderation notices, import/export completion notices, backup completion notices, and password reset links. Password reset tokens are stored in KV with a short TTL.
+
+Email verification-code login must stay behind the same optional Email Sending boundary. Cloudflare Email Sending requires Workers Paid for outbound email, so verification-code login should be presented as a paid enhancement that site owners can choose during setup, while the core auth and publishing flows continue to work with Email Sending disabled.

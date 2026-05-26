@@ -1,9 +1,9 @@
 ---
-title: Cloud Blog CMS
+title: 01mvp-blog-starter
 description: 基于 Cloudflare 的个人博客 CMS，并内置 Git 管理的文档系统。
 ---
 
-Cloud Blog CMS 是 `github.com/01mvp/blog-starter` 的 Cloudflare 原生个人博客 CMS 与 AI 初始化工作流。
+01mvp-blog-starter 是 `github.com/01mvp/blog-starter` 的 Cloudflare 原生个人博客 CMS 与 AI 初始化工作流。
 
 默认同时提供两套内容系统：
 

@@ -9,10 +9,10 @@ export const Route = createFileRoute("/openapi.json")({
         return Response.json({
           openapi: "3.1.0",
           info: {
-            title: "Cloud Blog CMS API",
+            title: "01mvp-blog-starter API",
             version: "0.1.0",
             description:
-              "Automation API for bilingual Cloud Blog CMS publishing, imports, exports, assets, and moderation.",
+              "Automation API for bilingual 01mvp-blog-starter publishing, imports, exports, assets, and moderation.",
           },
           paths: {
             "/api/posts": {
@@ -255,7 +255,8 @@ export const Route = createFileRoute("/openapi.json")({
                           authorName: { type: "string" },
                           authorBio: { type: "string" },
                           defaultOgImage: { type: "string" },
-                          themePreset: { enum: ["claude", "apple", "editorial"] },
+                          themePreset: { enum: ["maker", "apple", "editorial"] },
+                          layoutPreset: { enum: ["shelf", "developer", "journal"] },
                           primaryLanguage: { enum: ["en", "zh"] },
                           rssEnabled: { type: "boolean" },
                           commentsEnabled: { type: "boolean" },
@@ -393,12 +394,6 @@ export const Route = createFileRoute("/openapi.json")({
               get: {
                 summary: "Start GitHub comment login",
                 responses: { "302": { description: "Redirect to GitHub OAuth" } },
-              },
-            },
-            "/api/comment-auth/github/callback": {
-              get: {
-                summary: "Complete GitHub comment login",
-                responses: { "302": { description: "Redirect back to comment section" } },
               },
             },
             "/api/comments/{id}/approve": {

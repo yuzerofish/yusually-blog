@@ -1,9 +1,4 @@
-import { loadEnvFile } from "node:process";
-
 import type { Config } from "drizzle-kit";
-
-// Load .env from /apps/web
-loadEnvFile("../../apps/web/.env");
 
 export default {
   out: "./migrations",
@@ -12,8 +7,5 @@ export default {
   verbose: true,
   strict: true,
 
-  dialect: "postgresql",
-  dbCredentials: {
-    url: process.env.DATABASE_URL as string,
-  },
+  dialect: "sqlite",
 } satisfies Config;

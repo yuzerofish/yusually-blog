@@ -1,6 +1,6 @@
 # blogcms CLI
 
-`blogcms` is the automation surface for Cloud Blog CMS. It is used by admins, scripts, and the `cloud-blog-cms` Skill.
+`blogcms` is the automation surface for 01mvp-blog-starter. It is used by admins, scripts, and the `cloud-blog-cms` Skill.
 
 ## Local Check
 
@@ -43,7 +43,7 @@ blogcms import ./legacy.html
 blogcms import ./site.zip
 blogcms upload ./images
 blogcms export
-blogcms export --format zip --output ./cloud-blog-cms-export.zip
+blogcms export --format zip --output ./01mvp-blog-starter-export.zip
 blogcms backup
 blogcms deploy --target main
 blogcms deploy --target demo

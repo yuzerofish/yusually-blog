@@ -1,4 +1,4 @@
-# Cloud Blog CMS 最终需求文档
+# 01mvp-blog-starter 最终需求文档
 
 ## 1. 项目定位
 
@@ -7,25 +7,25 @@
 暂定：
 
 ```txt
-Cloud Blog CMS
+01mvp-blog-starter
 ```
 
 仓库名建议：
 
 ```txt
-01mvp-cloud-blog-cms
+01mvp-blog-starter
 ```
 
 两个最终验收站点：
 
 ```txt
-cms.01mvp.com    # 模板演示站
+blog.01mvp.com    # 模板演示站
 demo.01mvp.com   # 由 Skill 生成的示例站
 ```
 
 ### 1.2 一句话定位
 
-**Cloud Blog CMS 是一个基于 Cloudflare 全家桶的个人永久博客 CMS，既支持小白用户通过后台可视化写作，也支持 AI / CLI / OpenAPI 自动化发布和维护。**
+**01mvp-blog-starter 是一个基于 Cloudflare 全家桶的个人永久博客 CMS，既支持小白用户通过后台可视化写作，也支持 AI / CLI / OpenAPI 自动化发布和维护。**
 
 ### 1.3 项目本质
 
@@ -36,12 +36,12 @@ demo.01mvp.com   # 由 Skill 生成的示例站
 产品 B：给 AI 使用的初始化 Skill
 ```
 
-也就是说，最终不是只交付一个网站，而是交付：
+也就是说，最终交付范围包括：
 
 ```txt
 1. 一个可复用的 Cloudflare-native 博客 CMS 模板
 2. 一个 AI 可以使用的 Skill，用来自动创建新的博客站点
-3. 一个模板演示站 cms.01mvp.com
+3. 一个模板演示站 blog.01mvp.com
 4. 一个通过 Skill 生成的示例站 demo.01mvp.com
 ```
 
@@ -176,10 +176,8 @@ HTML：兼容导入格式
 这意味着：
 
 ```txt
-不是 Fumadocs 文件站
-不是纯静态博客
-不是 Git-based CMS
-而是 D1 CMS-first 的 Cloudflare-native 个人内容系统
+D1 CMS-first 的 Cloudflare-native 个人内容系统
+排除 Fumadocs 文件站、纯静态博客、Git-based CMS 这三类形态
 ```
 
 ## 4.3 AI 自动化优先
@@ -310,7 +308,7 @@ Runtime：Cloudflare Workers
 Database：Cloudflare D1
 ORM：Drizzle ORM
 Storage：Cloudflare R2
-Auth：Better Auth 或自建 Email + Password Auth
+Auth：Better Auth + Drizzle + Cloudflare D1
 Editor：MDXEditor
 Markdown：unified / remark / rehype
 Code Highlight：Shiki
@@ -324,7 +322,7 @@ Skill：skills/cloud-blog-cms
 ## 6.2 仓库结构
 
 ```txt
-01mvp-cloud-blog-cms/
+01mvp-blog-starter/
   apps/
     web/
       # CMS 模板站：TanStack Start + Cloudflare Workers
@@ -1125,7 +1123,7 @@ Skill 必须能生成：
 demo.01mvp.com
 ```
 
-且该站点必须不是手工创建，而是由 Skill 模拟真实用户流程生成。
+且该站点必须由 Skill 模拟真实用户流程生成，不能手工搭建后补材料。
 
 ---
 
@@ -1133,7 +1131,7 @@ demo.01mvp.com
 
 ## Phase 1：CMS 核心闭环
 
-目标：模板站 `cms.01mvp.com` 可以作为完整博客 CMS 使用。
+目标：模板站 `blog.01mvp.com` 可以作为完整博客 CMS 使用。
 
 功能：
 
@@ -1167,7 +1165,7 @@ robots.txt
 验收标准：
 
 ```txt
-1. cms.01mvp.com 可访问。
+1. blog.01mvp.com 可访问。
 2. 后台可登录。
 3. 可创建 Admin 用户。
 4. 可新建文章。
@@ -1306,8 +1304,8 @@ demo.01mvp.com
 最终项目完成时，必须交付：
 
 ```txt
-1. GitHub 仓库：01mvp-cloud-blog-cms
-2. 模板演示站：cms.01mvp.com
+1. GitHub 仓库：01mvp-blog-starter
+2. 模板演示站：blog.01mvp.com
 3. Skill 生成示例站：demo.01mvp.com
 4. 完整 PRD：docs/prd.md
 5. 架构文档：docs/specs/architecture.md
@@ -1332,7 +1330,7 @@ demo.01mvp.com
 可以直接把下面这段放进任务说明：
 
 ```txt
-基于 https://github.com/mugnavo/tanstarter-plus 构建 01mvp-cloud-blog-cms。
+基于 https://github.com/mugnavo/tanstarter-plus 构建 01mvp-blog-starter。
 
 这是一个 Cloudflare-native Personal Blog CMS + AI Init Skill 项目。
 
@@ -1350,7 +1348,7 @@ demo.01mvp.com
 11. 实现导入导出、OpenAPI、API Token、CLI。
 12. 实现 skills/cloud-blog-cms，让 AI 可以自动初始化和部署一个新博客。
 13. 最终交付两个站点：
-    - cms.01mvp.com：模板演示站
+    - blog.01mvp.com：模板演示站
     - demo.01mvp.com：由 Skill 生成的示例站
 14. 邮件发送基于 Cloudflare Email Service，作为 Phase 3 可选增强，不得阻塞免费核心版。
 15. 所有功能按 Phase 1-4 分阶段实现和验收。

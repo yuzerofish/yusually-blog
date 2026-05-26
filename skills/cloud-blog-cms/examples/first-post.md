@@ -1,10 +1,10 @@
 ---
-title: "Hello from Cloud Blog CMS"
-slug: "hello-from-cloud-blog-cms"
+title: "Hello from 01mvp-blog-starter"
+slug: "hello-from-01mvp-blog-starter"
 status: "published"
 tags:
   - Cloudflare
   - Markdown
 ---
 
-This post was created by the `cloud-blog-cms` Skill during site initialization.
+This post was created by the `01mvp-blog-starter` Skill during site initialization.

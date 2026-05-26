@@ -7,7 +7,11 @@ export const Route = createFileRoute("/api/admin/me")({
   server: {
     handlers: {
       GET: async ({ request }: { request: Request }) => {
-        const user = await getAdminUserFromRequest(request);
+        const url = new URL(request.url);
+        const user = await getAdminUserFromRequest(request, {
+          disableCookieCache: url.searchParams.get("disableCookieCache") === "true",
+          disableRefresh: url.searchParams.get("disableRefresh") === "true",
+        });
 
         if (!user) {
           return jsonResponse({ data: null }, { status: 401 });

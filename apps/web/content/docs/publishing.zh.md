@@ -3,7 +3,7 @@ title: 发布
 description: 通过后台、CLI、API 或 Git 文档发布内容。
 ---
 
-Cloud Blog CMS 支持多种发布路径。
+01mvp-blog-starter 支持多种发布路径。
 
 ## CMS 文章
 

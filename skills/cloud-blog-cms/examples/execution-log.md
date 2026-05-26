@@ -1,4 +1,4 @@
-# Cloud Blog CMS Skill Execution Log
+# 01mvp-blog-starter Skill Execution Log
 
 Run date: 2026-05-25
 
@@ -7,7 +7,7 @@ Run date: 2026-05-25
 - Project: `blog-demo`
 - Site URL: `https://demo.01mvp.com`
 - Alias: `https://blog-demo.01mvp.com`
-- Site name: `Cloud Blog CMS Demo`
+- Site name: `01mvp-blog-starter Demo`
 - Author: `Demo Author`
 - Primary language: `en`
 - Locales: `en`, `zh`
@@ -39,11 +39,11 @@ Secrets were stored outside the repository under `/tmp` during the run and are n
 
 ## Created Content
 
-- First post: `https://demo.01mvp.com/blog/hello-from-generated-cloud-blog-cms`
+- First post: `https://demo.01mvp.com/blog/hello-from-generated-01mvp-blog-starter`
 - Chinese API response included `来自 Skill 生成站点的第一篇文章`.
 - Approved comment rendered on the post page: `This comment verifies the generated demo moderation flow.`
 - R2 asset URL matched `/uploads/2026/05/...-og-default.svg`.
-- R2 export backup matched `exports/2026/05/...cloud-blog-cms...json`.
+- R2 export backup matched `exports/2026/05/...01mvp-blog-starter...json`.
 
 ## Verification
 

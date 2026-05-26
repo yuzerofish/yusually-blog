@@ -10,7 +10,7 @@ This document records the current evidence for the PRD acceptance scope. Dates a
 - The template homepage rendered `data-theme-preset="claude"` after the minimalist theme preset rollout.
 - `/rss.xml` on `cms.01mvp.com` returned XML with canonical `https://cms.01mvp.com` links.
 - Main Cloudflare resources are bound in `apps/web/wrangler.jsonc`.
-- D1 migrations `0001_cloud_blog_cms.sql`, `0002_admin_auth.sql`, and `0003_pages_projects_management.sql` were applied remotely.
+- D1 migrations include `0001_cloud_blog_cms.sql`, `0002_better_auth_d1.sql`, `0003_pages_projects_management.sql`, and `0004_comment_moderation.sql`.
 - Email Sending is disabled by default and the core login, publishing, comments, moderation, import, export, backup, and password reset request paths do not depend on it.
 - `/openapi.json` on `cms.01mvp.com` includes the Markdown, HTML, and ZIP import request schemas.
 - `/openapi.json` on `cms.01mvp.com` includes `POST /api/posts/batch`.

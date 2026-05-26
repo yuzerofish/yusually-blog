@@ -1,4 +1,10 @@
+import "@tanstack/react-start/server-only";
+import { createAuthDb } from "@repo/db";
+import { user as authUserTable } from "@repo/db/schema";
 import { env } from "cloudflare:workers";
+import { eq } from "drizzle-orm";
+
+import { auth } from "#/lib/auth";
 
 export type CommentUser = {
   id: string;
@@ -11,215 +17,147 @@ export type CommentUser = {
   lastLoginAt: string | null;
 };
 
-type CommentUserRow = {
+type CommentUserInput = {
+  email?: string;
+  name?: string;
+  password?: string;
+};
+
+type BetterAuthUser = {
   id: string;
   name: string;
   email: string;
-  email_hash: string;
-  avatar_url: string | null;
-  provider: "email" | "github";
-  provider_account_id: string | null;
-  password_hash: string | null;
-  created_at: string;
-  updated_at: string;
-  last_login_at: string | null;
+  image?: string | null;
+  createdAt?: Date | string | number;
 };
 
-type CommentSessionRow = CommentUserRow & {
-  expires_at: string;
+type AuthUserPayload = {
+  user?: BetterAuthUser;
+  message?: string;
+  error?: string;
+  code?: string;
 };
 
-type GitHubUser = {
-  id: number;
-  login: string;
-  name?: string | null;
-  email?: string | null;
-  avatar_url?: string | null;
+type SocialSignInPayload = {
+  url?: string;
+  message?: string;
+  error?: string;
+  code?: string;
 };
 
-type GitHubEmail = {
-  email: string;
-  primary: boolean;
-  verified: boolean;
-};
-
-const commentSessionCookie = "blog_comment_session";
-const githubStateCookie = "blog_comment_github_state";
-const sessionMaxAgeSeconds = 60 * 60 * 24 * 30;
-const githubStateMaxAgeSeconds = 60 * 10;
+const authDb = createAuthDb(env.CMS_DB as Parameters<typeof createAuthDb>[0]);
 
 export async function getCommentUserFromRequest(request: Request) {
-  const token = readCookie(request, commentSessionCookie);
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
 
-  if (!token) {
-    return null;
-  }
-
-  const row = await env.CMS_DB.prepare(
-    `select
-      comment_users.id, comment_users.name, comment_users.email, comment_users.email_hash,
-      comment_users.avatar_url, comment_users.provider, comment_users.provider_account_id,
-      comment_users.password_hash, comment_users.created_at, comment_users.updated_at,
-      comment_users.last_login_at, comment_sessions.expires_at
-    from comment_sessions
-    join comment_users on comment_users.id = comment_sessions.user_id
-    where comment_sessions.token_hash = ? and comment_sessions.expires_at > ?
-    limit 1`,
-  )
-    .bind(await digestText(token), new Date().toISOString())
-    .first<CommentSessionRow>();
-
-  return row ? rowToCommentUser(row) : null;
+  return session?.user ? toCommentUser(session.user) : null;
 }
 
-export async function signupCommentUser(
-  input: { email?: string; name?: string; password?: string },
-  request: Request,
-) {
+export async function signupCommentUser(input: CommentUserInput, request: Request) {
   const email = normalizeEmail(input.email);
-  const password = input.password ?? "";
   const name = input.name?.trim() || email.split("@")[0] || email;
+  const password = input.password ?? "";
 
   assertPassword(password);
 
-  const existing = await getCommentUserByEmail(email);
+  const context = await auth.$context;
+  const existing = await context.internalAdapter.findUserByEmail(email);
 
   if (existing) {
     return { error: "Comment account already exists" } as const;
   }
 
-  const now = new Date().toISOString();
-  const row: CommentUserRow = {
-    id: `comment_user_${crypto.randomUUID()}`,
+  const hashedPassword = await context.password.hash(password);
+  const user = await context.internalAdapter.createUser({
     name,
     email,
-    email_hash: await digestText(email),
-    avatar_url: null,
-    provider: "email",
-    provider_account_id: null,
-    password_hash: await hashPassword(password),
-    created_at: now,
-    updated_at: now,
-    last_login_at: now,
-  };
+    emailVerified: true,
+  });
 
-  await env.CMS_DB.prepare(
-    `insert into comment_users (
-      id, name, email, email_hash, avatar_url, provider, provider_account_id,
-      password_hash, created_at, updated_at, last_login_at
-    ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  )
-    .bind(
-      row.id,
-      row.name,
-      row.email,
-      row.email_hash,
-      row.avatar_url,
-      row.provider,
-      row.provider_account_id,
-      row.password_hash,
-      row.created_at,
-      row.updated_at,
-      row.last_login_at,
-    )
-    .run();
+  try {
+    await authDb.update(authUserTable).set({ role: "reader" }).where(eq(authUserTable.id, user.id));
+    await context.internalAdapter.linkAccount({
+      userId: user.id,
+      accountId: user.id,
+      providerId: "credential",
+      password: hashedPassword,
+    });
+  } catch (error) {
+    await context.internalAdapter.deleteUser(user.id).catch(() => undefined);
+    throw error;
+  }
 
-  return createCommentSession(rowToCommentUser(row), request);
+  return loginCommentUser({ email, password }, request);
 }
 
 export async function loginCommentUser(
   input: { email?: string; password?: string },
   request: Request,
 ) {
-  const user = await getCommentUserByEmail(input.email);
-
-  if (!user?.password_hash || !(await verifyPassword(input.password ?? "", user.password_hash))) {
-    return { error: "Invalid email or password" } as const;
-  }
-
-  await touchLastLogin(user.id);
-
-  return createCommentSession(
-    rowToCommentUser({ ...user, last_login_at: new Date().toISOString() }),
+  const response = await callAuthEndpoint(
+    "/api/auth/sign-in/email",
+    { email: normalizeEmail(input.email), password: input.password ?? "" },
     request,
   );
-}
+  const payload = await readAuthPayload<AuthUserPayload>(response);
 
-export async function logoutCommentUser(request: Request) {
-  const token = readCookie(request, commentSessionCookie);
-
-  if (token) {
-    await env.CMS_DB.prepare("delete from comment_sessions where token_hash = ?")
-      .bind(await digestText(token))
-      .run();
+  if (!response.ok || !payload?.user) {
+    return { error: authErrorMessage(payload, "Invalid email or password") } as const;
   }
 
   return {
-    headers: {
-      "set-cookie": serializeExpiredCookie(commentSessionCookie, request),
-    },
+    data: await toCommentUser(payload.user),
+    headers: extractSetCookieHeaders(response),
+  } as const;
+}
+
+export async function logoutCommentUser(request: Request) {
+  const response = await callAuthEndpoint("/api/auth/sign-out", {}, request);
+
+  return {
+    headers: extractSetCookieHeaders(response),
   };
 }
 
-export function redirectToGitHubForCommentLogin(request: Request) {
-  const clientId = getGitHubClientId();
-
-  if (!clientId || !getGitHubClientSecret()) {
+export async function redirectToGitHubForCommentLogin(request: Request) {
+  if (!hasGitHubProvider()) {
     return Response.json({ error: "GitHub login is not configured" }, { status: 503 });
   }
 
   const url = new URL(request.url);
   const redirectTo = safeRedirectPath(url.searchParams.get("redirectTo") ?? "/");
-  const state = crypto.randomUUID();
-  const githubUrl = new URL("https://github.com/login/oauth/authorize");
+  const callbackURL = new URL(redirectTo, request.url).toString();
+  const errorCallbackURL = new URL(redirectTo, request.url);
 
-  githubUrl.searchParams.set("client_id", clientId);
-  githubUrl.searchParams.set("redirect_uri", getGitHubCallbackUrl(request));
-  githubUrl.searchParams.set("scope", "read:user user:email");
-  githubUrl.searchParams.set("state", state);
+  errorCallbackURL.searchParams.set("commentAuth", "github_error");
 
-  const response = Response.redirect(githubUrl.toString(), 302);
-  response.headers.append(
-    "set-cookie",
-    serializeCookie(
-      githubStateCookie,
-      JSON.stringify({ redirectTo, state }),
-      request,
-      githubStateMaxAgeSeconds,
-    ),
+  const response = await callAuthEndpoint(
+    "/api/auth/sign-in/social",
+    {
+      callbackURL,
+      errorCallbackURL: errorCallbackURL.toString(),
+      provider: "github",
+    },
+    request,
   );
+  const payload = await readAuthPayload<SocialSignInPayload>(response);
 
-  return response;
-}
-
-export async function handleGitHubCommentCallback(request: Request) {
-  const url = new URL(request.url);
-  const code = url.searchParams.get("code");
-  const state = url.searchParams.get("state");
-  const stateCookie = parseGithubState(readCookie(request, githubStateCookie));
-  const expectedState = stateCookie?.state;
-  const redirectPath = stateCookie?.redirectTo ?? "/";
-
-  if (!code || !state || !expectedState || state !== expectedState) {
-    return redirectWithCommentAuthError("/", request);
+  if (!response.ok || !payload?.url) {
+    return Response.json(
+      { error: authErrorMessage(payload, "GitHub login failed") },
+      { status: response.ok ? 500 : response.status },
+    );
   }
 
-  const token = await exchangeGitHubCode(code, request);
+  const redirect = Response.redirect(payload.url, 302);
 
-  if (!token) {
-    return redirectWithCommentAuthError(redirectPath, request);
+  for (const cookie of getSetCookieValues(response.headers)) {
+    redirect.headers.append("set-cookie", cookie);
   }
 
-  const githubUser = await fetchGitHubUser(token);
-  const email = await resolveGitHubEmail(token, githubUser);
-  const user = await upsertGitHubCommentUser(githubUser, email);
-  const session = await createCommentSession(user, request);
-  const response = Response.redirect(new URL(redirectPath, request.url), 302);
-
-  response.headers.append("set-cookie", session.headers["set-cookie"]);
-  response.headers.append("set-cookie", serializeExpiredCookie(githubStateCookie, request));
-
-  return response;
+  return redirect;
 }
 
 export function publicCommentUser(user: CommentUser) {
@@ -232,247 +170,24 @@ export function publicCommentUser(user: CommentUser) {
   };
 }
 
-async function createCommentSession(user: CommentUser, request: Request) {
-  const now = new Date();
-  const token = `comment_${crypto.randomUUID().replace(/-/g, "")}`;
-  const expiresAt = new Date(now.getTime() + sessionMaxAgeSeconds * 1000).toISOString();
-
-  await env.CMS_DB.prepare(
-    "insert into comment_sessions (id, user_id, token_hash, expires_at, created_at) values (?, ?, ?, ?, ?)",
-  )
-    .bind(
-      `comment_session_${crypto.randomUUID()}`,
-      user.id,
-      await digestText(token),
-      expiresAt,
-      now.toISOString(),
-    )
-    .run();
-
+async function toCommentUser(user: BetterAuthUser): Promise<CommentUser> {
   return {
-    data: user,
-    headers: {
-      "set-cookie": serializeCookie(commentSessionCookie, token, request, sessionMaxAgeSeconds),
-    },
-  } as const;
-}
-
-async function upsertGitHubCommentUser(githubUser: GitHubUser, email: string) {
-  const providerAccountId = String(githubUser.id);
-  const now = new Date().toISOString();
-  const existingProvider = await env.CMS_DB.prepare(
-    "select * from comment_users where provider = ? and provider_account_id = ? limit 1",
-  )
-    .bind("github", providerAccountId)
-    .first<CommentUserRow>();
-  const name = githubUser.name?.trim() || githubUser.login || email.split("@")[0] || email;
-  const avatarUrl = githubUser.avatar_url ?? null;
-
-  if (existingProvider) {
-    await env.CMS_DB.prepare(
-      "update comment_users set name = ?, email = ?, email_hash = ?, avatar_url = ?, updated_at = ?, last_login_at = ? where id = ?",
-    )
-      .bind(name, email, await digestText(email), avatarUrl, now, now, existingProvider.id)
-      .run();
-
-    return rowToCommentUser({
-      ...existingProvider,
-      name,
-      email,
-      email_hash: await digestText(email),
-      avatar_url: avatarUrl,
-      updated_at: now,
-      last_login_at: now,
-    });
-  }
-
-  const existingEmail = await getCommentUserByEmail(email);
-
-  if (existingEmail) {
-    await env.CMS_DB.prepare(
-      "update comment_users set name = ?, avatar_url = ?, provider = ?, provider_account_id = ?, updated_at = ?, last_login_at = ? where id = ?",
-    )
-      .bind(name, avatarUrl, "github", providerAccountId, now, now, existingEmail.id)
-      .run();
-
-    return rowToCommentUser({
-      ...existingEmail,
-      name,
-      avatar_url: avatarUrl,
-      provider: "github",
-      provider_account_id: providerAccountId,
-      updated_at: now,
-      last_login_at: now,
-    });
-  }
-
-  const row: CommentUserRow = {
-    id: `comment_user_${crypto.randomUUID()}`,
-    name,
-    email,
-    email_hash: await digestText(email),
-    avatar_url: avatarUrl,
-    provider: "github",
-    provider_account_id: providerAccountId,
-    password_hash: null,
-    created_at: now,
-    updated_at: now,
-    last_login_at: now,
-  };
-
-  await env.CMS_DB.prepare(
-    `insert into comment_users (
-      id, name, email, email_hash, avatar_url, provider, provider_account_id,
-      password_hash, created_at, updated_at, last_login_at
-    ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  )
-    .bind(
-      row.id,
-      row.name,
-      row.email,
-      row.email_hash,
-      row.avatar_url,
-      row.provider,
-      row.provider_account_id,
-      row.password_hash,
-      row.created_at,
-      row.updated_at,
-      row.last_login_at,
-    )
-    .run();
-
-  return rowToCommentUser(row);
-}
-
-async function exchangeGitHubCode(code: string, request: Request) {
-  const response = await fetch("https://github.com/login/oauth/access_token", {
-    method: "POST",
-    headers: {
-      accept: "application/json",
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      client_id: getGitHubClientId(),
-      client_secret: getGitHubClientSecret(),
-      code,
-      redirect_uri: getGitHubCallbackUrl(request),
-    }),
-  });
-  const payload = (await response.json()) as { access_token?: string };
-
-  return payload.access_token ?? null;
-}
-
-async function fetchGitHubUser(token: string) {
-  const response = await fetch("https://api.github.com/user", {
-    headers: gitHubHeaders(token),
-  });
-
-  return (await response.json()) as GitHubUser;
-}
-
-async function resolveGitHubEmail(token: string, githubUser: GitHubUser) {
-  if (githubUser.email) {
-    return normalizeEmail(githubUser.email);
-  }
-
-  const response = await fetch("https://api.github.com/user/emails", {
-    headers: gitHubHeaders(token),
-  });
-
-  if (response.ok) {
-    const emails = (await response.json()) as GitHubEmail[];
-    const primary =
-      emails.find((item) => item.primary && item.verified) ?? emails.find((item) => item.verified);
-
-    if (primary) {
-      return normalizeEmail(primary.email);
-    }
-  }
-
-  return `github_${githubUser.id}@users.noreply.github.com`;
-}
-
-function gitHubHeaders(token: string) {
-  return {
-    accept: "application/vnd.github+json",
-    authorization: `Bearer ${token}`,
-    "user-agent": "cloud-blog-cms-comment-auth",
-    "x-github-api-version": "2022-11-28",
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    emailHash: await digestText(user.email),
+    avatarUrl: user.image ?? null,
+    provider: await resolvePrimaryProvider(user.id),
+    createdAt: toIsoString(user.createdAt),
+    lastLoginAt: null,
   };
 }
 
-async function getCommentUserByEmail(emailInput: string | undefined) {
-  const email = normalizeEmail(emailInput);
+async function resolvePrimaryProvider(userId: string): Promise<CommentUser["provider"]> {
+  const context = await auth.$context;
+  const accounts = await context.internalAdapter.findAccounts(userId);
 
-  return env.CMS_DB.prepare("select * from comment_users where email = ? limit 1")
-    .bind(email)
-    .first<CommentUserRow>();
-}
-
-async function touchLastLogin(userId: string) {
-  await env.CMS_DB.prepare(
-    "update comment_users set last_login_at = ?, updated_at = ? where id = ?",
-  )
-    .bind(new Date().toISOString(), new Date().toISOString(), userId)
-    .run();
-}
-
-function rowToCommentUser(row: CommentUserRow): CommentUser {
-  return {
-    id: row.id,
-    name: row.name,
-    email: row.email,
-    emailHash: row.email_hash,
-    avatarUrl: row.avatar_url,
-    provider: row.provider,
-    createdAt: row.created_at,
-    lastLoginAt: row.last_login_at,
-  };
-}
-
-function getGitHubClientId() {
-  return env.GITHUB_CLIENT_ID || process.env.GITHUB_CLIENT_ID || "";
-}
-
-function getGitHubClientSecret() {
-  return env.GITHUB_CLIENT_SECRET || process.env.GITHUB_CLIENT_SECRET || "";
-}
-
-function getGitHubCallbackUrl(request: Request) {
-  return new URL("/api/comment-auth/github/callback", request.url).toString();
-}
-
-function safeRedirectPath(value: string) {
-  return value.startsWith("/") && !value.startsWith("//") ? value : "/";
-}
-
-function redirectWithCommentAuthError(path: string, request: Request) {
-  const url = new URL(safeRedirectPath(path), request.url);
-  url.searchParams.set("commentAuth", "github_error");
-
-  return Response.redirect(url, 302);
-}
-
-function parseGithubState(value: string | null) {
-  if (!value) {
-    return null;
-  }
-
-  try {
-    const parsed = JSON.parse(value) as { redirectTo?: string; state?: string };
-
-    if (!parsed.state || !parsed.redirectTo) {
-      return null;
-    }
-
-    return {
-      state: parsed.state,
-      redirectTo: safeRedirectPath(parsed.redirectTo),
-    };
-  } catch {
-    return null;
-  }
+  return accounts.some((account) => account.providerId === "github") ? "github" : "email";
 }
 
 function normalizeEmail(value: string | undefined) {
@@ -491,112 +206,86 @@ function assertPassword(password: string) {
   }
 }
 
-async function hashPassword(password: string) {
-  const salt = crypto.getRandomValues(new Uint8Array(16));
-  const iterations = 100_000;
-  const hash = await derivePasswordHash(password, salt, iterations);
+async function callAuthEndpoint(path: string, body: object, request: Request) {
+  const url = new URL(path, request.url);
+  const headers = new Headers(request.headers);
 
-  return `pbkdf2_sha256$${iterations}$${toBase64(salt)}$${toBase64(hash)}`;
+  headers.set("content-type", "application/json");
+
+  return auth.handler(
+    new Request(url, {
+      body: JSON.stringify(body),
+      headers,
+      method: "POST",
+    }),
+  );
 }
 
-async function verifyPassword(password: string, storedHash: string) {
-  const [algorithm, iterationsRaw, saltRaw, hashRaw] = storedHash.split("$");
+async function readAuthPayload<TPayload extends AuthUserPayload | SocialSignInPayload>(
+  response: Response,
+) {
+  try {
+    return (await response.clone().json()) as TPayload;
+  } catch {
+    return null;
+  }
+}
 
-  if (algorithm !== "pbkdf2_sha256" || !iterationsRaw || !saltRaw || !hashRaw) {
-    return false;
+function authErrorMessage(
+  payload: Pick<AuthUserPayload, "code" | "error" | "message"> | null,
+  fallback: string,
+) {
+  return payload?.message || payload?.error || payload?.code || fallback;
+}
+
+function extractSetCookieHeaders(response: Response) {
+  const headers = new Headers();
+
+  for (const cookie of getSetCookieValues(response.headers)) {
+    headers.append("set-cookie", cookie);
   }
 
-  const iterations = Number(iterationsRaw);
-  const salt = fromBase64(saltRaw);
-  const expected = fromBase64(hashRaw);
-  const actual = await derivePasswordHash(password, salt, iterations);
-
-  return timingSafeEqual(actual, expected);
+  return headers;
 }
 
-async function derivePasswordHash(password: string, salt: Uint8Array, iterations: number) {
-  const key = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(password),
-    "PBKDF2",
-    false,
-    ["deriveBits"],
-  );
-  const bits = await crypto.subtle.deriveBits(
-    {
-      name: "PBKDF2",
-      hash: "SHA-256",
-      salt: copyBytes(salt),
-      iterations,
-    },
-    key,
-    256,
-  );
+function getSetCookieValues(headers: Headers) {
+  const getSetCookie = (
+    headers as Headers & {
+      getSetCookie?: () => string[];
+    }
+  ).getSetCookie;
+  const cookies = getSetCookie ? getSetCookie.call(headers) : [];
+  const fallback = headers.get("set-cookie");
 
-  return new Uint8Array(bits);
+  return cookies.length ? cookies : fallback ? [fallback] : [];
+}
+
+function hasGitHubProvider() {
+  return Boolean(env.GITHUB_CLIENT_ID?.trim() && env.GITHUB_CLIENT_SECRET?.trim());
+}
+
+function safeRedirectPath(value: string) {
+  if (!value.startsWith("/") || value.startsWith("//")) {
+    return "/";
+  }
+
+  return value;
 }
 
 async function digestText(value: string) {
-  const hash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  const data = new TextEncoder().encode(value);
+  const hash = await crypto.subtle.digest("SHA-256", data);
 
   return Array.from(new Uint8Array(hash))
     .map((byte) => byte.toString(16).padStart(2, "0"))
     .join("");
 }
 
-function timingSafeEqual(a: Uint8Array, b: Uint8Array) {
-  if (a.byteLength !== b.byteLength) {
-    return false;
+function toIsoString(value: Date | string | number | undefined) {
+  if (!value) {
+    return new Date().toISOString();
   }
 
-  let diff = 0;
-
-  for (let index = 0; index < a.byteLength; index += 1) {
-    diff |= a[index]! ^ b[index]!;
-  }
-
-  return diff === 0;
-}
-
-function toBase64(value: Uint8Array) {
-  let binary = "";
-
-  for (const byte of value) {
-    binary += String.fromCharCode(byte);
-  }
-
-  return btoa(binary);
-}
-
-function fromBase64(value: string) {
-  return Uint8Array.from(atob(value), (character) => character.charCodeAt(0));
-}
-
-function copyBytes(bytes: Uint8Array) {
-  const copy = new Uint8Array(bytes.byteLength);
-  copy.set(bytes);
-
-  return copy;
-}
-
-function readCookie(request: Request, name: string) {
-  const cookie = request.headers.get("cookie") ?? "";
-  const match = cookie
-    .split(";")
-    .map((item) => item.trim())
-    .find((item) => item.startsWith(`${name}=`));
-
-  return match ? decodeURIComponent(match.slice(name.length + 1)) : null;
-}
-
-function serializeCookie(name: string, value: string, request: Request, maxAge: number) {
-  const secure = new URL(request.url).protocol === "https:" ? "; Secure" : "";
-
-  return `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAge}; HttpOnly; SameSite=Lax${secure}`;
-}
-
-function serializeExpiredCookie(name: string, request: Request) {
-  const secure = new URL(request.url).protocol === "https:" ? "; Secure" : "";
-
-  return `${name}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax${secure}`;
+  const date = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(date.getTime()) ? String(value) : date.toISOString();
 }

@@ -1,3 +1,4 @@
+import "@tanstack/react-start/server-only";
 import {
   getCommentInitialStatus,
   htmlToText,
@@ -220,6 +221,7 @@ type SiteSettingsInput = Partial<
     | "commentBlockedKeywords"
     | "indexingEnabled"
     | "themePreset"
+    | "layoutPreset"
     | "primaryLanguage"
     | "i18n"
   >
@@ -1592,6 +1594,7 @@ function normalizeSiteSettings(
         : base.commentBlockedKeywords,
     indexingEnabled: input.indexingEnabled ?? base.indexingEnabled,
     themePreset: normalizeThemePreset(input.themePreset ?? input.theme, base.themePreset),
+    layoutPreset: normalizeLayoutPreset(input.layoutPreset, base.layoutPreset),
     locales: ["en", "zh"],
     primaryLanguage,
     i18n: {
@@ -1602,15 +1605,23 @@ function normalizeSiteSettings(
 }
 
 function normalizeThemePreset(value: string | undefined, fallback: SiteSettings["themePreset"]) {
-  if (value === "apple" || value === "editorial") {
+  if (value === "maker" || value === "apple" || value === "editorial") {
     return value;
+  }
+
+  if (value === "claude") {
+    return "maker";
   }
 
   if (value === "editorial-edge") {
     return "editorial";
   }
 
-  return value === "claude" ? "claude" : fallback;
+  return fallback;
+}
+
+function normalizeLayoutPreset(value: string | undefined, fallback: SiteSettings["layoutPreset"]) {
+  return value === "developer" || value === "journal" || value === "shelf" ? value : fallback;
 }
 
 function runtimeDefaultSiteSettings(): SiteSettings {

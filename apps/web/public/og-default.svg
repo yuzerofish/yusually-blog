@@ -4,7 +4,7 @@
   <path d="M120 142H1080" stroke="#E6E0D4"/>
   <rect x="120" y="104" width="34" height="34" rx="7" fill="#312B25"/>
   <path d="M130 120.5H144C147.314 120.5 150 123.186 150 126.5V128.5H136C132.686 128.5 130 125.814 130 122.5V120.5Z" fill="#FAF8F2"/>
-  <text x="172" y="128" fill="#312B25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="24" font-weight="650">Cloud Blog CMS</text>
+  <text x="172" y="128" fill="#312B25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="24" font-weight="650">01mvp-blog-starter</text>
   <text x="120" y="260" fill="#25211D" font-family="ui-sans-serif, system-ui, sans-serif" font-size="70" font-weight="680">Cloudflare-native</text>
   <text x="120" y="340" fill="#25211D" font-family="ui-sans-serif, system-ui, sans-serif" font-size="70" font-weight="680">publishing system</text>
   <text x="120" y="410" fill="#746D62" font-family="ui-sans-serif, system-ui, sans-serif" font-size="30" font-weight="450">Personal blog CMS with bilingual posts, feeds, assets, and AI-ready APIs.</text>

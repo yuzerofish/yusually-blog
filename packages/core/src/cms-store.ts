@@ -417,6 +417,7 @@ export function updateSiteSettings(input: Partial<SiteSettings>) {
   Object.assign(state.siteSettings, {
     ...input,
     themePreset: normalizeThemePreset(input.themePreset, state.siteSettings.themePreset),
+    layoutPreset: normalizeLayoutPreset(input.layoutPreset, state.siteSettings.layoutPreset),
     locales: ["en", "zh"],
   });
 
@@ -427,7 +428,18 @@ function normalizeThemePreset(
   value: SiteSettings["themePreset"] | undefined,
   fallback: SiteSettings["themePreset"],
 ) {
-  return value === "apple" || value === "editorial" || value === "claude" ? value : fallback;
+  if (value === "apple" || value === "editorial" || value === "maker") {
+    return value;
+  }
+
+  return value === "claude" ? "maker" : fallback;
+}
+
+function normalizeLayoutPreset(
+  value: SiteSettings["layoutPreset"] | undefined,
+  fallback: SiteSettings["layoutPreset"],
+) {
+  return value === "developer" || value === "journal" || value === "shelf" ? value : fallback;
 }
 
 function clone<TValue>(value: TValue): TValue {

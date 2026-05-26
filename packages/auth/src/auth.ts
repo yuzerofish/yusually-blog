@@ -1,51 +1,121 @@
 import "@tanstack/react-start/server-only";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
-import { db } from "@repo/db";
-import * as schema from "@repo/db/schema";
+import type { AuthDatabase } from "@repo/db";
+import { account, session, user, verification } from "@repo/db/schema";
 import { betterAuth } from "better-auth/minimal";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 
-export const auth = betterAuth({
-  baseURL: process.env.VITE_BASE_URL,
-  secret: process.env.BETTER_AUTH_SECRET,
-  telemetry: {
-    enabled: false,
-  },
-  database: drizzleAdapter(db, {
-    provider: "pg",
-    schema,
-  }),
+export type BlogAuthEnv = {
+  baseURL?: string;
+  githubClientId?: string;
+  githubClientSecret?: string;
+  secret?: string;
+};
 
-  // https://www.better-auth.com/docs/integrations/tanstack#usage-tips
-  plugins: [tanstackStartCookies()],
+const authSchema = {
+  user,
+  session,
+  account,
+  verification,
+};
 
-  // https://www.better-auth.com/docs/concepts/session-management#session-caching
-  session: {
-    cookieCache: {
+export function createBlogAuth(database: AuthDatabase, env: BlogAuthEnv) {
+  const baseURL = normalizeBaseURL(env.baseURL);
+
+  return betterAuth({
+    baseURL,
+    secret: resolveSecret(env.secret, baseURL),
+    telemetry: {
+      enabled: false,
+    },
+    database: drizzleAdapter(database, {
+      provider: "sqlite",
+      schema: authSchema,
+      transaction: false,
+    }),
+
+    user: {
+      additionalFields: {
+        role: {
+          type: "string",
+          input: false,
+          required: true,
+          defaultValue: "reader",
+        },
+      },
+    },
+
+    // https://www.better-auth.com/docs/integrations/tanstack#usage-tips
+    plugins: [tanstackStartCookies()],
+
+    // https://www.better-auth.com/docs/concepts/session-management#session-caching
+    session: {
+      cookieCache: {
+        enabled: true,
+        maxAge: 5 * 60,
+      },
+    },
+
+    socialProviders: getSocialProviders(env),
+
+    // Admin and reader bootstrap go through app-owned routes; the public Better Auth sign-up route stays closed.
+    emailAndPassword: {
       enabled: true,
-      maxAge: 5 * 60, // 5 minutes
+      disableSignUp: true,
+      minPasswordLength: 8,
+      revokeSessionsOnPasswordReset: true,
     },
-  },
 
-  // https://www.better-auth.com/docs/concepts/oauth
-  socialProviders: {
+    experimental: {
+      // https://www.better-auth.com/docs/adapters/drizzle#joins-experimental
+      joins: true,
+    },
+  });
+}
+
+function getSocialProviders(env: BlogAuthEnv) {
+  const githubClientId = env.githubClientId?.trim();
+  const githubClientSecret = env.githubClientSecret?.trim();
+
+  if (!githubClientId || !githubClientSecret) {
+    return undefined;
+  }
+
+  return {
     github: {
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      clientId: githubClientId,
+      clientSecret: githubClientSecret,
     },
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    },
-  },
+  };
+}
 
-  // https://www.better-auth.com/docs/authentication/email-password
-  emailAndPassword: {
-    enabled: true,
-  },
+function normalizeBaseURL(value: string | undefined) {
+  return value?.trim().replace(/\/$/, "") || undefined;
+}
 
-  experimental: {
-    // https://www.better-auth.com/docs/adapters/drizzle#joins-experimental
-    joins: true,
-  },
-});
+function resolveSecret(secret: string | undefined, baseURL: string | undefined) {
+  const value = secret?.trim();
+
+  if (value) {
+    return value;
+  }
+
+  if (isLocalBaseURL(baseURL)) {
+    return "blog-starter-local-dev-better-auth-secret";
+  }
+
+  throw new Error("BETTER_AUTH_SECRET is required for Better Auth");
+}
+
+function isLocalBaseURL(baseURL: string | undefined) {
+  if (!baseURL) {
+    return false;
+  }
+
+  try {
+    const hostname = new URL(baseURL).hostname;
+    return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+  } catch {
+    return false;
+  }
+}

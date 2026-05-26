@@ -1,3 +1,4 @@
+import "@tanstack/react-start/server-only";
 import type { Comment, Post } from "@repo/core";
 import { env } from "cloudflare:workers";
 
@@ -161,7 +162,7 @@ export async function sendPasswordResetEmail(input: {
 
   return sendCmsEmail({
     to: input.email,
-    subject: "Reset your Cloud Blog CMS password",
+    subject: "Reset your 01mvp-blog-starter password",
     text: [
       `Open this link to reset your password: ${resetUrl}`,
       `This link expires in ${input.ttlMinutes} minutes.`,

@@ -13,13 +13,14 @@ The Skill collects:
 - Author name and email
 - Primary language: `en` or `zh`
 - Domain, or workers.dev fallback
-- Theme preset: `claude`, `apple`, or `editorial`
+- Theme preset: `maker`, `apple`, or `editorial`
+- Layout preset: `shelf`, `developer`, or `journal`
 - Comments preference
 - Email Sending preference
 - GitHub Actions preference
 
 English and Chinese remain enabled regardless of the primary language.
-The theme preset is written to site settings and applied through shared UI tokens.
+The theme preset is written to site settings and applied through shared UI tokens. The layout preset is written to site settings and controls the public home page structure.
 
 ## Automation Order
 
