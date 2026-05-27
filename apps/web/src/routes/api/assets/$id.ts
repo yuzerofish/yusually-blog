@@ -1,4 +1,3 @@
-import { deleteAsset } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { jsonResponse } from "#/lib/cms-api";
@@ -28,17 +27,7 @@ export const Route = createFileRoute("/api/assets/$id")({
           });
         }
 
-        const asset = deleteAsset(params.id);
-
-        if (!asset) {
-          return jsonResponse({ error: "Asset not found" }, { status: 404 });
-        }
-
-        return jsonResponse({
-          data: asset,
-          deleted: true,
-          requiredScope: "assets:write",
-        });
+        return jsonResponse({ error: "Asset not found" }, { status: 404 });
       },
     },
   },

@@ -5,6 +5,10 @@ import { getAdminUserByEmail, publicAdminUser, resetAdminPassword } from "#/lib/
 import { jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { sendPasswordResetEmail } from "#/lib/cms-email";
 
+const passwordResetWindowSeconds = 60 * 60;
+const passwordResetIpLimit = 5;
+const passwordResetEmailLimit = 3;
+
 export const Route = createFileRoute("/api/admin/password-reset")({
   server: {
     handlers: {
@@ -27,29 +31,27 @@ export const Route = createFileRoute("/api/admin/password-reset")({
 
 async function requestPasswordReset(email: string | undefined, request: Request) {
   const ttlMinutes = readPasswordResetTtlMinutes();
+  const rateLimited = await isPasswordResetRateLimited(email, request).catch(() => false);
   const user = await getAdminUserByEmail(email).catch(() => null);
-  let emailSent = false;
 
-  if (user) {
+  if (user && !rateLimited) {
     const token = `reset_${crypto.randomUUID().replace(/-/g, "")}`;
     await env.CMS_CACHE.put(passwordResetKey(token), user.email, {
       expirationTtl: ttlMinutes * 60,
     });
 
-    const result = await sendPasswordResetEmail({
+    await sendPasswordResetEmail({
       email: user.email,
       token,
       siteUrl: publicSiteUrl(request),
       ttlMinutes,
     });
-    emailSent = result.sent;
   }
 
   return jsonResponse(
     {
       data: {
         accepted: true,
-        emailSent,
         expiresInMinutes: ttlMinutes,
       },
     },
@@ -95,4 +97,52 @@ function readPasswordResetTtlMinutes() {
   }
 
   return Math.min(Math.floor(value), 120);
+}
+
+async function isPasswordResetRateLimited(email: string | undefined, request: Request) {
+  const normalizedEmail = email?.trim().toLowerCase() ?? "";
+  const ip = getClientIp(request);
+  const [ipLimited, emailLimited] = await Promise.all([
+    consumePasswordResetBucket("ip", ip, passwordResetIpLimit),
+    normalizedEmail
+      ? consumePasswordResetBucket("email", normalizedEmail, passwordResetEmailLimit)
+      : false,
+  ]);
+
+  return ipLimited || emailLimited;
+}
+
+async function consumePasswordResetBucket(kind: string, value: string, limit: number) {
+  const key = `admin-password-reset-rate:${kind}:${await digestText(value)}`;
+  const current = Number(await env.CMS_CACHE.get(key).catch(() => null));
+
+  if (Number.isFinite(current) && current >= limit) {
+    return true;
+  }
+
+  await env.CMS_CACHE.put(key, String((Number.isFinite(current) ? current : 0) + 1), {
+    expirationTtl: passwordResetWindowSeconds,
+  });
+
+  return false;
+}
+
+function getClientIp(request: Request) {
+  const forwardedFor = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+
+  return (
+    request.headers.get("cf-connecting-ip") ??
+    forwardedFor ??
+    request.headers.get("x-real-ip") ??
+    "local"
+  );
+}
+
+async function digestText(value: string) {
+  const data = new TextEncoder().encode(value);
+  const hash = await crypto.subtle.digest("SHA-256", data);
+
+  return Array.from(new Uint8Array(hash))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
 }

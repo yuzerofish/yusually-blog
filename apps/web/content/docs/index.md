@@ -70,25 +70,19 @@ The build compiles Paraglide output, builds TanStack Start, and writes the Cloud
 
 ## Deploy
 
-Template site:
+Production site:
 
 ```sh
 blogcms deploy --target main
 ```
 
-Skill demo site:
-
-```sh
-blogcms deploy --target demo
-```
-
 ## CLI
 
 ```sh
-BLOGCMS_SITE_URL=https://demo.01mvp.com pnpm --filter @repo/cli exec node bin/blogcms.mjs login --email <email> --password <password>
-BLOGCMS_SITE_URL=https://demo.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs site get
-BLOGCMS_SITE_URL=https://demo.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs push "$PWD/skills/cloud-blog-cms/examples/first-post.json"
-BLOGCMS_SITE_URL=https://demo.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs export
+BLOGCMS_SITE_URL=https://blog.01mvp.com pnpm --filter @repo/cli exec node bin/blogcms.mjs login --email <email> --password <password>
+BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs site get
+BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs push "$PWD/skills/cloud-blog-cms/examples/first-post.json"
+BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs export
 ```
 
 ## License

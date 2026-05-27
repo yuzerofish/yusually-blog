@@ -22,7 +22,7 @@ Published posts appear under `/blog`, feeds, archives, tag pages, and the sitema
 Use `blogcms` when you want local or automated publishing:
 
 ```sh
-BLOGCMS_SITE_URL=https://demo.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs push ./post.md
+BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs push ./post.md
 ```
 
 The CLI uses the same authenticated HTTP API as the admin UI.

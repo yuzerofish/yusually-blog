@@ -8,16 +8,10 @@ allowBuilds:
   sharp: true
   workerd: true
 
-# FIXME: Temporary workaround for experimental @better-auth/drizzle-adapter version,
-# which is currently being published via pkg.pr.new in an ongoing pull request:
-# https://github.com/better-auth/better-auth/pull/9489
-# Remove this option once that PR is merged and published to npm.
-blockExoticSubdeps: false
-
 catalog:
   "@babel/core": ^7.29.0
   "@base-ui/react": ^1.5.0
-  "@better-auth/drizzle-adapter": https://pkg.pr.new/@better-auth/drizzle-adapter@9489
+  "@better-auth/drizzle-adapter": ^1.6.11
   "@cloudflare/vite-plugin": ^1.38.0
   "@fontsource-variable/inter": ^5.2.8
   "@icons-pack/react-simple-icons": ^13.13.0
@@ -77,6 +71,7 @@ catalogMode: prefer
 
 overrides:
   "@better-auth/drizzle-adapter": "catalog:"
+  "shadcn>zod": 3.25.76
   vite: "catalog:"
   vitest: "catalog:"
 peerDependencyRules:

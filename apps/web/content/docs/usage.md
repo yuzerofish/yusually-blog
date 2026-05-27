@@ -22,7 +22,7 @@ Published posts appear on `/blog`, tag pages, archive pages, RSS, feeds, and sit
 Use the CLI for local drafts, automation, or AI-assisted publishing:
 
 ```sh
-BLOGCMS_SITE_URL=https://demo.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs push ./post.md
+BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs push ./post.md
 ```
 
 Use `/openapi.json` when connecting external tools or generating API clients.
@@ -61,14 +61,8 @@ Build the web app before shipping:
 pnpm build:web
 ```
 
-Deploy the main template site with:
+Deploy the production site with:
 
 ```sh
 blogcms deploy --target main
-```
-
-Deploy the demo target with:
-
-```sh
-blogcms deploy --target demo
 ```

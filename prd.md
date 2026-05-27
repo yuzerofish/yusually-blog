@@ -16,11 +16,10 @@
 01mvp-blog-starter
 ```
 
-两个最终验收站点：
+唯一最终验收站点：
 
 ```txt
 blog.01mvp.com    # 模板演示站
-demo.01mvp.com   # 由 Skill 生成的示例站
 ```
 
 ### 1.2 一句话定位
@@ -41,8 +40,7 @@ demo.01mvp.com   # 由 Skill 生成的示例站
 ```txt
 1. 一个可复用的 Cloudflare-native 博客 CMS 模板
 2. 一个 AI 可以使用的 Skill，用来自动创建新的博客站点
-3. 一个模板演示站 blog.01mvp.com
-4. 一个通过 Skill 生成的示例站 demo.01mvp.com
+3. 一个统一部署在 blog.01mvp.com 的模板演示站
 ```
 
 ---
@@ -1074,7 +1072,7 @@ API Token
 3. 询问博客描述
 4. 询问作者名称
 5. 询问作者邮箱
-6. 询问域名，默认可先用 workers.dev
+6. 确认部署域名 blog.01mvp.com
 7. 询问主题风格
 8. 询问是否启用评论
 9. 询问是否启用 Email Sending
@@ -1117,13 +1115,13 @@ Cloudflare 账号注册
 
 ## 8.6 Skill 验收
 
-Skill 必须能生成：
+Skill 必须能完成初始化并部署到：
 
 ```txt
-demo.01mvp.com
+blog.01mvp.com
 ```
 
-且该站点必须由 Skill 模拟真实用户流程生成，不能手工搭建后补材料。
+且部署记录必须来自 Skill 模拟真实用户流程，不能手工搭建后补材料。
 
 ---
 
@@ -1276,13 +1274,13 @@ Skill 生成执行日志
 验收站点：
 
 ```txt
-demo.01mvp.com
+blog.01mvp.com
 ```
 
 验收标准：
 
 ```txt
-1. demo.01mvp.com 可访问。
+1. blog.01mvp.com 可访问。
 2. 该站点由 Skill 生成，而不是手工搭建。
 3. 站点名称、作者、描述、主题风格来自模拟用户输入。
 4. 后台可登录。
@@ -1305,15 +1303,14 @@ demo.01mvp.com
 
 ```txt
 1. GitHub 仓库：01mvp-blog-starter
-2. 模板演示站：blog.01mvp.com
-3. Skill 生成示例站：demo.01mvp.com
-4. 完整 PRD：docs/prd.md
-5. 架构文档：docs/specs/architecture.md
-6. 部署文档：docs/specs/deployment.md
-7. API 文档：docs/specs/api.md
-8. Skill 文档：docs/specs/skill.md
-9. 验收文档：docs/specs/acceptance.md
-10. Skill 包：skills/cloud-blog-cms
+2. 统一部署站点：blog.01mvp.com
+3. 完整 PRD：docs/prd.md
+4. 架构文档：docs/specs/architecture.md
+5. 部署文档：docs/specs/deployment.md
+6. API 文档：docs/specs/api.md
+7. Skill 文档：docs/specs/skill.md
+8. 验收文档：docs/specs/acceptance.md
+9. Skill 包：skills/cloud-blog-cms
 ```
 
 最终必须证明两件事：
@@ -1347,9 +1344,7 @@ demo.01mvp.com
 10. 实现 SEO、RSS、sitemap、robots.txt、基础 OG。
 11. 实现导入导出、OpenAPI、API Token、CLI。
 12. 实现 skills/cloud-blog-cms，让 AI 可以自动初始化和部署一个新博客。
-13. 最终交付两个站点：
-    - blog.01mvp.com：模板演示站
-    - demo.01mvp.com：由 Skill 生成的示例站
+13. 最终交付唯一站点：blog.01mvp.com。
 14. 邮件发送基于 Cloudflare Email Service，作为 Phase 3 可选增强，不得阻塞免费核心版。
 15. 所有功能按 Phase 1-4 分阶段实现和验收。
 ```
@@ -1360,8 +1355,7 @@ demo.01mvp.com
 主底座：mugnavo/tanstarter-plus
 博客参考：mohamede1945/tanstack-start-blog
 (以下面这个域名为准）
-模板演示站：blog-starter.01mvp.com （记得这个中需要有文档 或者 README 中说明我们这个仓库）
-Skill 生成站：blog-demo.01mvp.com
+统一部署站点：blog.01mvp.com （站点中需要有文档，README 中也说明这个仓库）
 项目定位：Cloudflare-native Personal Blog CMS + AI Init Skill
 代码放在 github.com/01mvp/blog-starter 中， 开源 MIT
 ```

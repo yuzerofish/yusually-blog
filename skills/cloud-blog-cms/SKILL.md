@@ -17,7 +17,7 @@ Ask for missing values only when they are not already provided:
 - Author name
 - Author email
 - Primary language: `en` or `zh`
-- Domain, or workers.dev fallback
+- Domain
 - Theme preset: `maker`, `apple`, or `editorial`
 - Layout preset: `shelf`, `developer`, or `journal`
 - Comments enabled
@@ -33,8 +33,8 @@ Ask for missing values only when they are not already provided:
 5. Check Cloudflare login with Wrangler.
 6. Create D1, R2 assets, R2 backups, optional KV resources, and optional Email Sending resources.
 7. Write `apps/web/wrangler.jsonc` bindings.
-8. Run `blogcms deploy --target main` for template deployments or `blogcms deploy --target demo` for demo deployments. This applies D1 migrations and deploys the Worker with the generated Cloudflare Vite config.
-9. Verify that the Worker version and custom domain routes match the selected target.
+8. Run `blogcms deploy --target main`. This applies D1 migrations and deploys the Worker with the generated Cloudflare Vite config.
+9. Verify that the Worker version and custom domain route match the selected target.
 10. Create the first admin user with `blogcms admin create`.
 11. Log in with `blogcms login` and store the generated API token securely outside the repository.
 12. Push settings with `blogcms site update --config /absolute/path/to/site.config.json`.
@@ -60,18 +60,12 @@ Ask for missing values only when they are not already provided:
 
 Ask the user to act only for Cloudflare login, account registration, paid-plan confirmation, API token creation, DNS confirmation, domain verification, and email verification.
 
-## Demo Targets
+## Canonical Target
 
-Canonical target:
-
-```txt
-demo.01mvp.com
-```
-
-Alias:
+This repository's production site uses:
 
 ```txt
-blog-demo.01mvp.com
+blog.01mvp.com
 ```
 
 The Skill run must show that the site came from this workflow rather than manual setup. Use `examples/execution-log.md` as the evidence format.

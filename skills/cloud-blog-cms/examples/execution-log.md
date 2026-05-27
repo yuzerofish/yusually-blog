@@ -4,10 +4,9 @@ Run date: 2026-05-25
 
 ## Inputs
 
-- Project: `blog-demo`
-- Site URL: `https://demo.01mvp.com`
-- Alias: `https://blog-demo.01mvp.com`
-- Site name: `01mvp-blog-starter Demo`
+- Project: `blog-starter`
+- Site URL: `https://blog.01mvp.com`
+- Site name: `01mvp-blog-starter`
 - Author: `Demo Author`
 - Primary language: `en`
 - Locales: `en`, `zh`
@@ -16,30 +15,29 @@ Run date: 2026-05-25
 
 ## Cloudflare Resources
 
-- Worker: `blog-demo`
-- D1: `blog-demo-cms`
-- R2 assets: `blog-demo-assets`
-- R2 backups: `blog-demo-backups`
-- KV: `BLOG_DEMO_CMS_CACHE`
-- Current verified demo version: `dda4a2a8-d554-47d8-bcb3-ef942c2484fc`
+- Worker: `blog-starter`
+- D1: `blog-starter-cms`
+- R2 assets: `blog-starter-assets`
+- R2 backups: `blog-starter-backups`
+- KV: `CMS_CACHE`
 
 ## Automated Steps
 
 ```sh
-blogcms deploy --target demo
-BLOGCMS_SITE_URL=https://demo.01mvp.com pnpm --filter @repo/cli exec node bin/blogcms.mjs admin create ...
-BLOGCMS_SITE_URL=https://demo.01mvp.com pnpm --filter @repo/cli exec node bin/blogcms.mjs login ...
-BLOGCMS_SITE_URL=https://demo.01mvp.com BLOGCMS_API_TOKEN=... pnpm --filter @repo/cli exec node bin/blogcms.mjs site update --config /absolute/path/to/site.config.json
-BLOGCMS_SITE_URL=https://demo.01mvp.com BLOGCMS_API_TOKEN=... pnpm --filter @repo/cli exec node bin/blogcms.mjs push /absolute/path/to/first-post.json
-BLOGCMS_SITE_URL=https://demo.01mvp.com BLOGCMS_API_TOKEN=... pnpm --filter @repo/cli exec node bin/blogcms.mjs upload /absolute/path/to/public
-BLOGCMS_SITE_URL=https://demo.01mvp.com BLOGCMS_API_TOKEN=... pnpm --filter @repo/cli exec node bin/blogcms.mjs export
+blogcms deploy --target main
+BLOGCMS_SITE_URL=https://blog.01mvp.com pnpm --filter @repo/cli exec node bin/blogcms.mjs admin create ...
+BLOGCMS_SITE_URL=https://blog.01mvp.com pnpm --filter @repo/cli exec node bin/blogcms.mjs login ...
+BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=... pnpm --filter @repo/cli exec node bin/blogcms.mjs site update --config /absolute/path/to/site.config.json
+BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=... pnpm --filter @repo/cli exec node bin/blogcms.mjs push /absolute/path/to/first-post.json
+BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=... pnpm --filter @repo/cli exec node bin/blogcms.mjs upload /absolute/path/to/public
+BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=... pnpm --filter @repo/cli exec node bin/blogcms.mjs export
 ```
 
 Secrets were stored outside the repository under `/tmp` during the run and are not part of this log.
 
 ## Created Content
 
-- First post: `https://demo.01mvp.com/blog/hello-from-generated-01mvp-blog-starter`
+- First post: `https://blog.01mvp.com/blog/hello-from-generated-01mvp-blog-starter`
 - Chinese API response included `来自 Skill 生成站点的第一篇文章`.
 - Approved comment rendered on the post page: `This comment verifies the generated demo moderation flow.`
 - R2 asset URL matched `/uploads/2026/05/...-og-default.svg`.
@@ -47,8 +45,7 @@ Secrets were stored outside the repository under `/tmp` during the run and are n
 
 ## Verification
 
-- `https://demo.01mvp.com` returned HTTP 200.
-- `https://blog-demo.01mvp.com` returned HTTP 200.
+- `https://blog.01mvp.com` returned HTTP 200.
 - `/rss.xml` included the first generated post.
 - `/sitemap.xml` included the generated post URL.
 - `/sitemap.xml` included the project detail URLs.

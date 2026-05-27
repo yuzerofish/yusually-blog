@@ -32,7 +32,7 @@ Usage:
   blogcms backup
   blogcms site get
   blogcms site update --config <site.config.json>
-  blogcms deploy [--target main|demo] [--skip-build] [--skip-migrations] [--dry-run]
+  blogcms deploy [--target main] [--skip-build] [--skip-migrations] [--dry-run]
   blogcms admin create
   blogcms admin reset-password
   blogcms admin request-password-reset
@@ -42,7 +42,7 @@ Environment:
   BLOGCMS_SITE_URL
   BLOGCMS_API_TOKEN
   BLOGCMS_PRIMARY_LANGUAGE=en|zh
-  BLOGCMS_DEPLOY_TARGET=main|demo
+  BLOGCMS_DEPLOY_TARGET=main
 `);
       },
     },
@@ -741,16 +741,7 @@ function normalizedDeployTarget(value) {
     };
   }
 
-  if (value === "demo" || value === "skill") {
-    return {
-      name: "demo",
-      buildScript: "build:web:demo",
-      config: "wrangler.demo.jsonc",
-      database: "blog-demo-cms",
-    };
-  }
-
-  fail("Deploy target must be `main` or `demo`.");
+  fail("Deploy target must be `main`.");
 }
 
 async function runDeployStep(step) {

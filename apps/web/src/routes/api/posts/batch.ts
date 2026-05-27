@@ -1,7 +1,7 @@
-import { localizePost, updatePost, type ContentStatus, type Post } from "@repo/core";
+import { localizePost, type ContentStatus, type Post } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { findPost, getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
+import { getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { getD1PostByIdOrSlug, updateD1Post } from "#/lib/cms-d1";
 
@@ -45,16 +45,13 @@ export const Route = createFileRoute("/api/posts/batch")({
         const updatedPosts: Post[] = [];
 
         for (const id of body.ids) {
-          const persistedPost = await getD1PostByIdOrSlug(id);
-          const post = persistedPost ?? findPost(id, locale);
+          const post = await getD1PostByIdOrSlug(id);
 
           if (!post) {
             continue;
           }
 
-          const updated = persistedPost
-            ? await updateD1Post(post.id, { status, locale })
-            : updatePost(post.id, { status, locale });
+          const updated = await updateD1Post(post.id, { status, locale });
 
           if (updated) {
             updatedPosts.push(localizePost(updated, locale));

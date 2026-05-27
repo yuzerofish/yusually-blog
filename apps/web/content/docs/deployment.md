@@ -1,25 +1,17 @@
 ---
 title: Deployment
-description: Deploy the CMS template and generated demo to Cloudflare Workers.
+description: Deploy the CMS site to Cloudflare Workers.
 ---
 
 01mvp-blog-starter is designed for Cloudflare Workers, D1, R2, and optional KV.
 
-## Template Site
+## Production Site
 
 ```sh
 blogcms deploy --target main
 ```
 
 This builds the web app, applies D1 migrations, and deploys the Worker using the generated Cloudflare config.
-
-## Demo Site
-
-```sh
-blogcms deploy --target demo
-```
-
-The demo target uses the demo Cloudflare configuration and is useful for validating the template workflow end to end.
 
 ## Runtime Resources
 
@@ -47,7 +39,7 @@ Better Auth tables are created by `0002_better_auth_d1.sql`; comment moderation 
 Local development reads `apps/web/.env`. Cloudflare preview and production read Wrangler vars plus secrets.
 
 ```txt
-CMS_PUBLIC_SITE_URL=https://your-domain.com
+CMS_PUBLIC_SITE_URL=https://blog.01mvp.com
 CMS_BACKUP_RETENTION_DAYS=30
 CMS_EMAIL_SENDING_ENABLED=false
 CMS_TURNSTILE_SECRET_KEY=
@@ -68,7 +60,7 @@ pnpm --filter @repo/web exec wrangler secret put GITHUB_CLIENT_SECRET --config w
 
 Cloudflare Email Sending is disabled by default because outbound email requires Workers Paid. As of Cloudflare's current pricing, Workers Paid includes 3,000 outbound emails per month, then bills additional sending at $0.35 per 1,000 emails. Email Routing for inbound forwarding remains unlimited.
 
-Use Email Sending when you want password reset links, admin notifications, import/export completion notices, backup notices, or an extended email verification-code login flow. If you keep it disabled, the core site still supports admin login, publishing, comments, moderation, imports, exports, and backups.
+Use Email Sending or Resend when you want password reset links, admin notifications, import/export completion notices, backup notices, or admin-enabled email verification for comment accounts. Email verification stays off until an admin enables it in settings, and the core site still supports admin login, publishing, comments, moderation, imports, exports, and backups when outbound email is not configured.
 
 Current Cloudflare limits include:
 
@@ -86,7 +78,7 @@ GitHub OAuth is the recommended reader login method for comments. Create a GitHu
 
 ```txt
 http://localhost:3000/api/auth/callback/github
-https://your-domain.com/api/auth/callback/github
+https://blog.01mvp.com/api/auth/callback/github
 ```
 
 Set `GITHUB_CLIENT_ID` in the matching Wrangler config or Cloudflare dashboard. Email/password reader login still works when GitHub OAuth is not configured.

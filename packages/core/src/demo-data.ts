@@ -319,7 +319,7 @@ export const projects: Project[] = [
       "Agent workflow for initializing a new blog, provisioning Cloudflare resources, deploying, and validating.",
     coverImage:
       "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1600&q=80",
-    projectUrl: "https://demo.01mvp.com",
+    projectUrl: "https://blog.01mvp.com",
     githubUrl: "https://github.com/01mvp/blog-starter/tree/main/skills/cloud-blog-cms",
     contentMarkdown:
       "The 01mvp-blog-starter Skill guides an agent through resource creation, settings, first content, deploy, smoke checks, and backup validation.",

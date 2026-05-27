@@ -12,7 +12,7 @@ The Skill collects:
 - Blog name and description
 - Author name and email
 - Primary language: `en` or `zh`
-- Domain, or workers.dev fallback
+- Domain
 - Theme preset: `maker`, `apple`, or `editorial`
 - Layout preset: `shelf`, `developer`, or `journal`
 - Comments preference
@@ -30,7 +30,7 @@ The theme preset is written to site settings and applied through shared UI token
 4. Verify Cloudflare login.
 5. Create D1, R2 assets, R2 backups, optional KV resources, and optional Email Sending resources.
 6. Write Wrangler bindings.
-7. Run `blogcms deploy --target main` or `blogcms deploy --target demo`, depending on the generated site target. This applies D1 migrations and deploys the Worker with the generated Cloudflare Vite config.
+7. Run `blogcms deploy --target main`. This applies D1 migrations and deploys the Worker with the generated Cloudflare Vite config.
 8. Create the first admin user.
 9. Log in and create a scoped API token.
 10. Push site settings through `blogcms site update`.
@@ -42,16 +42,14 @@ The theme preset is written to site settings and applied through shared UI token
 16. Verify homepage, post page, admin, RSS, sitemap, robots, OpenAPI, OG metadata, localized API responses, JSON export, and ZIP backup.
 17. Save an execution log.
 
-## Demo Evidence
+## Production Evidence
 
-The Skill-generated demo uses:
+The canonical production deployment uses:
 
-- Site: `https://demo.01mvp.com`
-- Alias: `https://blog-demo.01mvp.com`
-- Worker: `blog-demo`
-- Current verified demo version: `dda4a2a8-d554-47d8-bcb3-ef942c2484fc`
+- Site: `https://blog.01mvp.com`
+- Worker: `blog-starter`
 
-The demo run created site settings from `skills/cloud-blog-cms/templates/site.config.json`, published `hello-from-generated-cloud-blog-cms`, uploaded an R2 asset, submitted a pending comment, approved it, generated an R2 export backup, verified scheduled post visibility on the public API, verified comment reply depth, and verified project detail pages in the sitemap.
+The production run should create site settings from `skills/cloud-blog-cms/templates/site.config.json`, publish a first bilingual post, upload an R2 asset, submit and approve a pending comment, generate an R2 export backup, verify scheduled post visibility on the public API, verify comment reply depth, and verify project detail pages in the sitemap.
 
 ## User Intervention Points
 

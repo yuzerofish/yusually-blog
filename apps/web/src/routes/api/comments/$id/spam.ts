@@ -1,4 +1,3 @@
-import { moderateComment } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { jsonResponse } from "#/lib/cms-api";
@@ -15,8 +14,7 @@ export const Route = createFileRoute("/api/comments/$id/spam")({
           return accessError;
         }
 
-        const comment =
-          (await moderateD1Comment(params.id, "spam")) ?? moderateComment(params.id, "spam");
+        const comment = await moderateD1Comment(params.id, "spam");
 
         if (!comment) {
           return jsonResponse({ error: "Comment not found" }, { status: 404 });

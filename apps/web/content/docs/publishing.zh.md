@@ -22,7 +22,7 @@ description: 通过后台、CLI、API 或 Git 文档发布内容。
 需要本地或自动化发布时，使用 `blogcms`：
 
 ```sh
-BLOGCMS_SITE_URL=https://demo.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs push ./post.md
+BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs push ./post.md
 ```
 
 CLI 使用和后台相同的鉴权 HTTP API。

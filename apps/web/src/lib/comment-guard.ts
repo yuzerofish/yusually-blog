@@ -1,3 +1,6 @@
+import "@tanstack/react-start/server-only";
+import { env } from "cloudflare:workers";
+
 const rateLimitWindowMs = 10 * 60 * 1000;
 const perIpLimit = 5;
 const perPostLimit = 3;
@@ -49,7 +52,7 @@ export async function verifyTurnstile({
   token: string | undefined;
   request: Request;
 }): Promise<CommentGuardResult> {
-  const secret = process.env.CMS_TURNSTILE_SECRET_KEY;
+  const secret = env.CMS_TURNSTILE_SECRET_KEY?.trim();
 
   if (!secret) {
     return { ok: true };

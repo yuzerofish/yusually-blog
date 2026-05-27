@@ -1,4 +1,4 @@
-import { comments, createComment, localizeComment, resolveLocale } from "@repo/core";
+import { localizeComment, resolveLocale } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
@@ -20,13 +20,9 @@ export const Route = createFileRoute("/api/comments")({
 
         const locale = getApiLocale(request);
         const persistedComments = await listD1Comments();
-        const persistedIds = new Set(persistedComments.map((comment) => comment.id));
 
         return jsonResponse({
-          data: [
-            ...persistedComments,
-            ...comments.filter((comment) => !persistedIds.has(comment.id)),
-          ].map((comment) => localizeComment(comment, locale)),
+          data: persistedComments.map((comment) => localizeComment(comment, locale)),
           locale,
           requiredScope: "comments:moderate",
         });
@@ -80,12 +76,19 @@ export const Route = createFileRoute("/api/comments")({
           locale: resolveLocale(new URL(request.url).searchParams.get("lang") ?? undefined),
         };
         const persistedPost = await getD1PostBySlug(commentInput.postSlug);
-        const persistedResult = persistedPost ? await createD1Comment(commentInput) : undefined;
-        const result = persistedResult
-          ? "data" in persistedResult
+
+        if (!persistedPost) {
+          return jsonResponse(
+            { error: "Post not found or comments are disabled" },
+            { status: 400 },
+          );
+        }
+
+        const persistedResult = await createD1Comment(commentInput);
+        const result =
+          "data" in persistedResult
             ? { comment: persistedResult.data }
-            : { error: persistedResult.error }
-          : await createComment(commentInput);
+            : { error: persistedResult.error };
 
         if ("error" in result) {
           return jsonResponse({ error: result.error }, { status: 400 });

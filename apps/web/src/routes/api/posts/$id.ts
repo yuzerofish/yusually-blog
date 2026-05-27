@@ -1,4 +1,4 @@
-import { deletePost, localizePost, updatePost } from "@repo/core";
+import { localizePost } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { findPost, getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
@@ -41,16 +41,13 @@ export const Route = createFileRoute("/api/posts/$id")({
         }
 
         const locale = getApiLocale(request);
-        const persistedPost = await getD1PostByIdOrSlug(params.id);
-        const post = persistedPost ?? findPost(params.id, locale);
+        const post = await getD1PostByIdOrSlug(params.id);
 
         if (!post) {
           return jsonResponse({ error: "Post not found" }, { status: 404 });
         }
 
-        const updated = persistedPost
-          ? await updateD1Post(post.id, body)
-          : updatePost(post.id, body);
+        const updated = await updateD1Post(post.id, body);
 
         return jsonResponse({
           data: updated ? localizePost(updated, locale) : post,
@@ -65,13 +62,13 @@ export const Route = createFileRoute("/api/posts/$id")({
         }
 
         const locale = getApiLocale(request);
-        const post = (await getD1PostByIdOrSlug(params.id)) ?? findPost(params.id, locale);
+        const post = await getD1PostByIdOrSlug(params.id);
 
         if (!post) {
           return jsonResponse({ error: "Post not found" }, { status: 404 });
         }
 
-        const deleted = (await deleteD1Post(post.id)) ?? deletePost(post.id);
+        const deleted = await deleteD1Post(post.id);
 
         return jsonResponse({
           data: deleted ? localizePost(deleted, locale) : post,
