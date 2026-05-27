@@ -66,6 +66,7 @@ catalog:
   vitest: npm:@voidzero-dev/vite-plus-test@latest
   wrangler: ^4.94.0
   zod: ^4.4.3
+  "@playwright/test": ^1.60.0
 
 catalogMode: prefer
 

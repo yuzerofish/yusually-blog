@@ -36,3 +36,6 @@ yarn-error.log*
 worker-configuration.d.ts
 .wrangler-dry-run
 .wrangler-dry-run-demo
+
+# Test results
+test-results
