@@ -28,11 +28,6 @@ Feeds and public metadata use current D1 site settings and localized content whe
 - `GET /api/pages/:id`
 - `PATCH /api/pages/:id`
 - `DELETE /api/pages/:id`
-- `GET /api/projects`
-- `POST /api/projects`
-- `GET /api/projects/:id`
-- `PATCH /api/projects/:id`
-- `DELETE /api/projects/:id`
 - `POST /api/import/markdown`
 - `POST /api/import/html`
 - `POST /api/import/zip`
@@ -73,7 +68,7 @@ Feeds and public metadata use current D1 site settings and localized content whe
 
 `POST /api/posts/batch` accepts selected post ids and `action=publish|draft|archive|delete`. Publishing requires `posts:publish`; the other actions require `posts:write`.
 
-`GET /api/pages` and `GET /api/projects` accept `status=all` and `lang=en|zh`, and require `site:read`. Create, update, and delete operations require `site:write`. Pages store Markdown, sanitized HTML, SEO fields, status, and localized fields. Projects store title, excerpt, links, cover image, screenshots, tags, Markdown body, sanitized HTML, status, and localized fields.
+`GET /api/pages` accepts `status=all` and `lang=en|zh`, and requires `site:read`. Create, update, and delete operations require `site:write`. Pages store Markdown, sanitized HTML, SEO fields, status, and localized fields.
 
 `POST /api/import/markdown` accepts `filename`, `contentMarkdown`, optional post fields, and simple frontmatter. It derives title, slug, excerpt, tags, SEO fields, cover image, and status, then creates a D1 post.
 
@@ -87,7 +82,7 @@ Feeds and public metadata use current D1 site settings and localized content whe
 
 `/api/comment-auth/*` is the comment-facing wrapper over Better Auth. Email/password login and signup use Better Auth credential accounts. When email verification is enabled in admin settings and an email provider is configured, signup sends a verification link through `/api/comment-auth/verify-email` and email/password login is blocked until the account is verified. GitHub login starts at `/api/comment-auth/github/start` and returns through Better Auth at `/api/auth/callback/github`.
 
-`GET /api/export` returns JSON data and writes a backup JSON object to R2. `GET /api/export?format=zip` returns a ZIP archive with Markdown posts, HTML posts, Markdown/HTML pages, Markdown/HTML projects, JSON manifests, comments, settings, tags, and bundled R2 assets; the ZIP is also written to the backups bucket.
+`GET /api/export` returns JSON data and writes a backup JSON object to R2. `GET /api/export?format=zip` returns a ZIP archive with Markdown posts, HTML posts, Markdown/HTML pages, JSON manifests, comments, settings, tags, and bundled R2 assets; the ZIP is also written to the backups bucket.
 
 `POST /api/backups` creates a ZIP export backup in R2 and applies the configured backup retention policy. It uses the same `export:read` scope as export.
 

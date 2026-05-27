@@ -1,8 +1,7 @@
-import { SiGithub } from "@icons-pack/react-simple-icons";
-import type { Post, Project, SupportedLocale } from "@repo/core";
+import type { Post, SupportedLocale } from "@repo/core";
 import { formatDate } from "@repo/core";
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRightIcon, CalendarDaysIcon } from "lucide-react";
+import { CalendarDaysIcon } from "lucide-react";
 
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
@@ -52,60 +51,6 @@ export function PostCard({ post, priority = false, locale = getCurrentLocale() }
             >
               {tag.name}
             </Link>
-          ))}
-        </div>
-      </div>
-    </article>
-  );
-}
-
-export function ProjectCard({ project }: { readonly project: Project }) {
-  return (
-    <article className="overflow-hidden rounded-lg border border-border/80 bg-card shadow-xs transition hover:border-ring/45 hover:shadow-sm">
-      <Link to="/projects/$slug" params={{ slug: project.slug }} className="block bg-muted">
-        <img src={project.coverImage} alt="" loading="lazy" className="h-52 w-full object-cover" />
-      </Link>
-      <div className="p-5">
-        <div className="flex items-start justify-between gap-4">
-          <Link to="/projects/$slug" params={{ slug: project.slug }} className="group min-w-0">
-            <h2 className="text-xl font-semibold text-balance group-hover:text-link">
-              {project.title}
-            </h2>
-          </Link>
-          <div className="flex shrink-0 items-center gap-1">
-            {project.githubUrl ? (
-              <a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`${project.title} GitHub`}
-                className="rounded-md p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
-              >
-                <SiGithub className="size-4" />
-              </a>
-            ) : null}
-            {project.projectUrl ? (
-              <a
-                href={project.projectUrl}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`${project.title} website`}
-                className="rounded-md p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
-              >
-                <ArrowUpRightIcon className="size-4" />
-              </a>
-            ) : null}
-          </div>
-        </div>
-        <p className="mt-3 text-sm leading-6 text-muted-foreground">{project.excerpt}</p>
-        <div className="mt-5 flex flex-wrap gap-2">
-          {project.tags.map((tag) => (
-            <span
-              key={tag.slug}
-              className="rounded-sm bg-accent px-2 py-1 text-xs text-accent-foreground"
-            >
-              {tag.name}
-            </span>
           ))}
         </div>
       </div>

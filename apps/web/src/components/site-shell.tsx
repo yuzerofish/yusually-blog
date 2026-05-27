@@ -32,7 +32,6 @@ export function SiteShell({
     { label: "Docs", href: "/docs" },
     { label: m.nav_tags(), href: "/tags" },
     { label: m.nav_archive(), href: "/archive" },
-    { label: m.nav_projects(), href: "/projects" },
     { label: m.nav_about(), href: "/about" },
   ];
 

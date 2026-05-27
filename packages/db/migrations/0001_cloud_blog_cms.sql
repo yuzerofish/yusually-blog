@@ -70,25 +70,6 @@ CREATE TABLE IF NOT EXISTS post_tags (
 
 CREATE UNIQUE INDEX IF NOT EXISTS post_tags_unique_idx ON post_tags (post_id, tag_id);
 
-CREATE TABLE IF NOT EXISTS projects (
-  id TEXT PRIMARY KEY NOT NULL,
-  title TEXT NOT NULL,
-  slug TEXT NOT NULL,
-  excerpt TEXT NOT NULL DEFAULT '',
-  project_url TEXT,
-  github_url TEXT,
-  cover_image TEXT,
-  content_markdown TEXT NOT NULL DEFAULT '',
-  content_html TEXT NOT NULL DEFAULT '',
-  i18n TEXT,
-  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'archived', 'deleted')),
-  published_at TEXT,
-  created_at TEXT NOT NULL,
-  updated_at TEXT NOT NULL
-);
-
-CREATE UNIQUE INDEX IF NOT EXISTS projects_slug_idx ON projects (slug);
-CREATE INDEX IF NOT EXISTS projects_status_idx ON projects (status);
 
 CREATE TABLE IF NOT EXISTS assets (
   id TEXT PRIMARY KEY NOT NULL,

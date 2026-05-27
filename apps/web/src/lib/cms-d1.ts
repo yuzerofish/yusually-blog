@@ -6,7 +6,6 @@ import {
   normalizeCommentBlockedKeywords,
   renderMarkdownToHtml,
   sanitizeHtml,
-  getProjectsForLocale,
   getTagsForLocale,
   localizeSiteSettings,
   siteSettings,
@@ -18,7 +17,6 @@ import {
   type CommentStatus,
   type ContentStatus,
   type Post,
-  type Project,
   type SiteSettings,
   type SupportedLocale,
   type Tag,
@@ -68,22 +66,6 @@ type PageInput = Partial<{
   seoDescription: string;
   locale: SupportedLocale;
   i18n: CmsPage["i18n"];
-}>;
-
-type ProjectInput = Partial<{
-  title: string;
-  slug: string;
-  excerpt: string;
-  projectUrl: string;
-  githubUrl: string;
-  coverImage: string;
-  contentMarkdown: string;
-  contentHtml: string;
-  tags: string[];
-  screenshots: string[];
-  status: Project["status"];
-  locale: SupportedLocale;
-  i18n: Project["i18n"];
 }>;
 
 type CommentInput = {
@@ -189,28 +171,6 @@ function drizzleRowToPage(row: typeof schema.pages.$inferSelect): CmsPage {
   };
 }
 
-function drizzleRowToProject(row: typeof schema.projects.$inferSelect): Project {
-  const tags = (row.tags ?? []) as string[];
-  const screenshots = (row.screenshots ?? []) as string[];
-  return {
-    id: row.id,
-    title: row.title,
-    slug: row.slug,
-    excerpt: row.excerpt,
-    coverImage: row.coverImage ?? "",
-    projectUrl: row.projectUrl ?? "",
-    githubUrl: row.githubUrl ?? "",
-    contentMarkdown: row.contentMarkdown,
-    contentHtml: row.contentHtml,
-    tags: tagsFromNames(tags),
-    screenshots: cleanStringList(screenshots),
-    status: row.status as Project["status"],
-    publishedAt: row.publishedAt ?? row.createdAt,
-    updatedAt: row.updatedAt,
-    i18n: row.i18n as Project["i18n"],
-  };
-}
-
 function drizzleRowToTag(row: typeof schema.tags.$inferSelect): Tag {
   return {
     id: row.id,
@@ -284,7 +244,7 @@ function postVisibilityFilter(includeUnpublished?: boolean) {
 }
 
 function entityVisibilityFilter(
-  table: typeof schema.pages | typeof schema.projects,
+  table: typeof schema.pages,
   includeUnpublished?: boolean,
 ) {
   return includeUnpublished ? ne(table.status, "deleted") : eq(table.status, "published");
@@ -724,50 +684,6 @@ function buildPageI18n(
   return next;
 }
 
-function buildProjectI18n(
-  project: Project,
-  input: ProjectInput,
-  normalized: {
-    contentHtml?: string;
-    contentMarkdown?: string;
-    excerpt?: string;
-    title?: string;
-  },
-) {
-  if (input.i18n) {
-    return input.i18n;
-  }
-
-  if (input.locale !== "zh") {
-    return project.i18n ?? null;
-  }
-
-  const next = { ...project.i18n };
-  const localizedHtml =
-    normalized.contentHtml ??
-    (normalized.contentMarkdown !== undefined
-      ? renderMarkdownToHtml(normalized.contentMarkdown)
-      : undefined);
-
-  if (normalized.title !== undefined) {
-    next.title = { ...next.title, zh: normalized.title };
-  }
-
-  if (normalized.excerpt !== undefined) {
-    next.excerpt = { ...next.excerpt, zh: normalized.excerpt };
-  }
-
-  if (normalized.contentMarkdown !== undefined) {
-    next.contentMarkdown = { ...next.contentMarkdown, zh: normalized.contentMarkdown };
-  }
-
-  if (localizedHtml !== undefined) {
-    next.contentHtml = { ...next.contentHtml, zh: localizedHtml };
-  }
-
-  return next;
-}
-
 export async function deleteD1Post(idOrSlug: string) {
   const post = await getD1PostByIdOrSlug(idOrSlug);
 
@@ -958,201 +874,6 @@ export async function deleteD1Page(idOrSlug: string) {
 
   return {
     ...page,
-    status: "deleted" as const,
-    updatedAt: now,
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Projects
-// ---------------------------------------------------------------------------
-
-export async function listD1Projects({ includeUnpublished = false } = {}) {
-  const db = getCmsDb();
-  const rows = await db
-    .select()
-    .from(schema.projects)
-    .where(entityVisibilityFilter(schema.projects, includeUnpublished))
-    .orderBy(desc(schema.projects.publishedAt), desc(schema.projects.updatedAt));
-
-  return rows.map(drizzleRowToProject);
-}
-
-export async function getD1ProjectByIdOrSlug(idOrSlug: string, includeUnpublished = true) {
-  const db = getCmsDb();
-  const rows = await db
-    .select()
-    .from(schema.projects)
-    .where(
-      and(
-        or(eq(schema.projects.id, idOrSlug), eq(schema.projects.slug, idOrSlug)),
-        entityVisibilityFilter(schema.projects, includeUnpublished),
-      ),
-    )
-    .limit(1);
-
-  return rows[0] ? drizzleRowToProject(rows[0]) : undefined;
-}
-
-export async function createD1Project(input: ProjectInput) {
-  const currentSettings = await getD1SiteSettings();
-  const title = input.title?.trim() || "Untitled project";
-  const slug = await uniqueD1ProjectSlug(input.slug?.trim() || slugify(title));
-  const now = new Date().toISOString();
-  const contentMarkdown = input.contentMarkdown?.trim() || `# ${title}\n`;
-  const contentHtml = input.contentHtml
-    ? sanitizeHtml(input.contentHtml)
-    : renderMarkdownToHtml(contentMarkdown);
-  const status = normalizeContentRecordStatus(input.status, "draft");
-  const coverImage = input.coverImage?.trim() || currentSettings.defaultOgImage;
-  const project: Project = {
-    id: `project_${crypto.randomUUID()}`,
-    title,
-    slug,
-    excerpt: input.excerpt?.trim() || markdownToText(contentMarkdown).slice(0, 180),
-    coverImage,
-    projectUrl: input.projectUrl?.trim() || "",
-    githubUrl: input.githubUrl?.trim() || "",
-    contentMarkdown,
-    contentHtml,
-    tags: tagsFromNames(input.tags ?? []),
-    screenshots: cleanStringList(input.screenshots),
-    status,
-    publishedAt: status === "published" ? now : now,
-    updatedAt: now,
-    i18n: input.i18n,
-  };
-
-  if (input.locale === "zh") {
-    project.i18n = {
-      ...project.i18n,
-      title: { ...project.i18n?.title, zh: title },
-      excerpt: { ...project.i18n?.excerpt, zh: project.excerpt },
-      contentMarkdown: { ...project.i18n?.contentMarkdown, zh: contentMarkdown },
-      contentHtml: { ...project.i18n?.contentHtml, zh: contentHtml },
-    };
-  }
-
-  const db = getCmsDb();
-  await db.insert(schema.projects).values({
-    id: project.id,
-    title: project.title,
-    slug: project.slug,
-    excerpt: project.excerpt,
-    projectUrl: project.projectUrl || null,
-    githubUrl: project.githubUrl || null,
-    coverImage: project.coverImage,
-    contentMarkdown: project.contentMarkdown,
-    contentHtml: project.contentHtml,
-    tags: project.tags.map((tag) => tag.name),
-    screenshots: project.screenshots,
-    i18n: project.i18n ?? null,
-    status: project.status,
-    publishedAt: project.status === "published" ? project.publishedAt : null,
-    createdAt: now,
-    updatedAt: project.updatedAt,
-  });
-
-  return (await getD1ProjectByIdOrSlug(project.id)) ?? project;
-}
-
-export async function updateD1Project(idOrSlug: string, input: ProjectInput) {
-  const currentSettings = await getD1SiteSettings();
-  const project = await getD1ProjectByIdOrSlug(idOrSlug);
-
-  if (!project) {
-    return undefined;
-  }
-
-  const localizedUpdate = input.locale === "zh";
-  const inputTitle = input.title?.trim();
-  const inputExcerpt = input.excerpt?.trim();
-  const inputMarkdown = input.contentMarkdown?.trim();
-  const inputHtml = input.contentHtml !== undefined ? sanitizeHtml(input.contentHtml) : undefined;
-  const title = localizedUpdate ? project.title : inputTitle || project.title;
-  const contentMarkdown = localizedUpdate
-    ? project.contentMarkdown
-    : (inputMarkdown ?? project.contentMarkdown);
-  const contentHtml = localizedUpdate
-    ? project.contentHtml
-    : inputHtml !== undefined
-      ? inputHtml
-      : inputMarkdown !== undefined
-        ? renderMarkdownToHtml(contentMarkdown)
-        : project.contentHtml;
-  const status = normalizeContentRecordStatus(input.status, project.status);
-  const publishedAt =
-    status === "published" && project.status !== "published"
-      ? new Date().toISOString()
-      : project.publishedAt;
-  const i18n = buildProjectI18n(project, input, {
-    contentHtml: inputHtml,
-    contentMarkdown: inputMarkdown,
-    excerpt: inputExcerpt,
-    title: inputTitle,
-  });
-  const now = new Date().toISOString();
-
-  const db = getCmsDb();
-  await db
-    .update(schema.projects)
-    .set({
-      title,
-      excerpt: localizedUpdate
-        ? project.excerpt
-        : inputExcerpt !== undefined
-          ? inputExcerpt
-          : project.excerpt,
-      projectUrl: localizedUpdate
-        ? project.projectUrl || null
-        : input.projectUrl !== undefined
-          ? input.projectUrl.trim() || null
-          : project.projectUrl || null,
-      githubUrl: localizedUpdate
-        ? project.githubUrl || null
-        : input.githubUrl !== undefined
-          ? input.githubUrl.trim() || null
-          : project.githubUrl || null,
-      coverImage: localizedUpdate
-        ? project.coverImage
-        : input.coverImage !== undefined
-          ? input.coverImage.trim() || currentSettings.defaultOgImage
-          : project.coverImage,
-      contentMarkdown,
-      contentHtml,
-      tags:
-        input.tags !== undefined
-          ? cleanStringList(input.tags)
-          : project.tags.map((tag) => tag.name),
-      screenshots:
-        input.screenshots !== undefined ? cleanStringList(input.screenshots) : project.screenshots,
-      i18n: i18n ?? null,
-      status,
-      publishedAt: status === "published" ? publishedAt : null,
-      updatedAt: now,
-    })
-    .where(eq(schema.projects.id, project.id));
-
-  return getD1ProjectByIdOrSlug(project.id);
-}
-
-export async function deleteD1Project(idOrSlug: string) {
-  const project = await getD1ProjectByIdOrSlug(idOrSlug);
-
-  if (!project) {
-    return undefined;
-  }
-
-  const now = new Date().toISOString();
-  const db = getCmsDb();
-
-  await db
-    .update(schema.projects)
-    .set({ status: "deleted", updatedAt: now })
-    .where(eq(schema.projects.id, project.id));
-
-  return {
-    ...project,
     status: "deleted" as const,
     updatedAt: now,
   };
@@ -1440,15 +1161,12 @@ export async function verifyD1ApiToken(secret: string, requiredScope: ApiTokenSc
 // ---------------------------------------------------------------------------
 
 export async function buildD1SiteExport(locale: SupportedLocale) {
-  const [persistedPosts, persistedComments, persistedAssets, persistedPages, persistedProjects] =
-    await Promise.all([
-      listD1Posts({ includeUnpublished: true }),
-      listD1Comments(),
-      listD1Assets(),
-      listD1Pages({ includeUnpublished: true }),
-      listD1Projects({ includeUnpublished: true }),
-    ]);
-  const persistedProjectSlugs = new Set(persistedProjects.map((project) => project.slug));
+  const [persistedPosts, persistedComments, persistedAssets, persistedPages] = await Promise.all([
+    listD1Posts({ includeUnpublished: true }),
+    listD1Comments(),
+    listD1Assets(),
+    listD1Pages({ includeUnpublished: true }),
+  ]);
 
   return {
     exportedAt: new Date().toISOString(),
@@ -1460,10 +1178,6 @@ export async function buildD1SiteExport(locale: SupportedLocale) {
     })),
     tags: getTagsForLocale(locale),
     pages: persistedPages,
-    projects: [
-      ...persistedProjects,
-      ...getProjectsForLocale(locale).filter((project) => !persistedProjectSlugs.has(project.slug)),
-    ],
     assets: persistedAssets,
     comments: persistedComments,
   };
@@ -1697,19 +1411,6 @@ async function uniqueD1PageSlug(base: string) {
   let index = 2;
 
   while (await getD1PageBySlug(candidate, true)) {
-    candidate = `${normalized}-${index}`;
-    index += 1;
-  }
-
-  return candidate;
-}
-
-async function uniqueD1ProjectSlug(base: string) {
-  const normalized = base || "untitled-project";
-  let candidate = normalized;
-  let index = 2;
-
-  while (await getD1ProjectByIdOrSlug(candidate, true)) {
     candidate = `${normalized}-${index}`;
     index += 1;
   }

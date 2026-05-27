@@ -99,34 +99,6 @@ export const postTags = sqliteTable(
   (table) => [uniqueIndex("post_tags_unique_idx").on(table.postId, table.tagId)],
 );
 
-export const projects = sqliteTable(
-  "projects",
-  {
-    id: text("id").primaryKey(),
-    title: text("title").notNull(),
-    slug: text("slug").notNull(),
-    excerpt: text("excerpt").notNull().default(""),
-    projectUrl: text("project_url"),
-    githubUrl: text("github_url"),
-    coverImage: text("cover_image"),
-    contentMarkdown: text("content_markdown").notNull().default(""),
-    contentHtml: text("content_html").notNull().default(""),
-    tags: text("tags", { mode: "json" }).notNull().default("[]"),
-    screenshots: text("screenshots", { mode: "json" }).notNull().default("[]"),
-    i18n: text("i18n", { mode: "json" }),
-    status: text("status", { enum: ["draft", "published", "archived", "deleted"] })
-      .notNull()
-      .default("draft"),
-    publishedAt: text("published_at"),
-    createdAt: text("created_at").notNull(),
-    updatedAt: text("updated_at").notNull(),
-  },
-  (table) => [
-    uniqueIndex("projects_slug_idx").on(table.slug),
-    index("projects_status_idx").on(table.status),
-  ],
-);
-
 export const assets = sqliteTable(
   "assets",
   {

@@ -54,7 +54,7 @@ Ask for missing values only when they are not already provided:
 - The selected theme preset is saved as `themePreset` in site settings and applied through shared UI tokens.
 - The selected layout preset is saved as `layoutPreset` in site settings and applied to the public home page. Use `maker` + `shelf` as the default combination.
 - Public product introduction copy should include both English and Chinese.
-- Blog content records should keep bilingual fields so switching language changes titles, excerpts, body HTML, tags, comments, projects, and metrics.
+- Blog content records should keep bilingual fields so switching language changes titles, excerpts, body HTML, tags, comments, and metrics.
 
 ## User Intervention Points
 

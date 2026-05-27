@@ -52,11 +52,9 @@
 /** @typedef {{}} Admin_Nav_OverviewInputs */
 /** @typedef {{}} Admin_Nav_PagesInputs */
 /** @typedef {{}} Admin_Nav_PostsInputs */
-/** @typedef {{}} Admin_Nav_ProjectsInputs */
 /** @typedef {{}} Admin_Nav_SettingsInputs */
 /** @typedef {{}} Admin_New_PostInputs */
 /** @typedef {{}} Admin_New_PageInputs */
-/** @typedef {{}} Admin_New_ProjectInputs */
 /** @typedef {{}} Admin_Overview_EyebrowInputs */
 /** @typedef {{}} Admin_Overview_TitleInputs */
 /** @typedef {{}} Admin_Pages_DescriptionInputs */
@@ -82,13 +80,6 @@
 /** @typedef {{}} Admin_Posts_TitleInputs */
 /** @typedef {{}} Admin_Posts_UpdatedInputs */
 /** @typedef {{}} Admin_Posts_ViewInputs */
-/** @typedef {{}} Admin_Projects_DescriptionInputs */
-/** @typedef {{}} Admin_Projects_Editor_TitleInputs */
-/** @typedef {{}} Admin_Projects_TitleInputs */
-/** @typedef {{}} Admin_Project_CoverInputs */
-/** @typedef {{}} Admin_Project_Github_UrlInputs */
-/** @typedef {{}} Admin_Project_Live_UrlInputs */
-/** @typedef {{}} Admin_Project_ScreenshotsInputs */
 /** @typedef {{}} Admin_Publish_PostInputs */
 /** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Schedule_PostInputs */
@@ -212,7 +203,6 @@
 /** @typedef {{}} Nav_AboutInputs */
 /** @typedef {{}} Nav_ArchiveInputs */
 /** @typedef {{}} Nav_BlogInputs */
-/** @typedef {{}} Nav_ProjectsInputs */
 /** @typedef {{}} Nav_TagsInputs */
 /** @typedef {{}} Open_CmsInputs */
 /** @typedef {{}} PinnedInputs */
@@ -220,8 +210,6 @@
 /** @typedef {{ current: NonNullable<unknown>, total: NonNullable<unknown> }} Pagination_PageInputs */
 /** @typedef {{}} Pagination_PreviousInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Posts_CountInputs */
-/** @typedef {{}} Projects_EyebrowInputs */
-/** @typedef {{}} Projects_TitleInputs */
 /** @typedef {{ count: NonNullable<unknown> }} Published_CountInputs */
 /** @typedef {{}} Read_Latest_PostsInputs */
 /** @typedef {{}} RelatedInputs */
@@ -459,10 +447,6 @@ export const admin_nav_posts = /** @type {(inputs: Admin_Nav_PostsInputs) => Loc
 	return /** @type {LocalizedString} */ (`Posts`)
 };
 
-export const admin_nav_projects = /** @type {(inputs: Admin_Nav_ProjectsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Projects`)
-};
-
 export const admin_nav_settings = /** @type {(inputs: Admin_Nav_SettingsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Settings`)
 };
@@ -473,10 +457,6 @@ export const admin_new_post = /** @type {(inputs: Admin_New_PostInputs) => Local
 
 export const admin_new_page = /** @type {(inputs: Admin_New_PageInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`New page`)
-};
-
-export const admin_new_project = /** @type {(inputs: Admin_New_ProjectInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`New project`)
 };
 
 export const admin_overview_eyebrow = /** @type {(inputs: Admin_Overview_EyebrowInputs) => LocalizedString} */ () => {
@@ -577,34 +557,6 @@ export const admin_posts_updated = /** @type {(inputs: Admin_Posts_UpdatedInputs
 
 export const admin_posts_view = /** @type {(inputs: Admin_Posts_ViewInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`View`)
-};
-
-export const admin_projects_description = /** @type {(inputs: Admin_Projects_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Manage portfolio entries, links, tags, screenshots, and Markdown notes.`)
-};
-
-export const admin_projects_editor_title = /** @type {(inputs: Admin_Projects_Editor_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Project editor`)
-};
-
-export const admin_projects_title = /** @type {(inputs: Admin_Projects_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Projects`)
-};
-
-export const admin_project_cover = /** @type {(inputs: Admin_Project_CoverInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Cover image`)
-};
-
-export const admin_project_github_url = /** @type {(inputs: Admin_Project_Github_UrlInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`GitHub URL`)
-};
-
-export const admin_project_live_url = /** @type {(inputs: Admin_Project_Live_UrlInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Project URL`)
-};
-
-export const admin_project_screenshots = /** @type {(inputs: Admin_Project_ScreenshotsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Screenshots`)
 };
 
 export const admin_publish_post = /** @type {(inputs: Admin_Publish_PostInputs) => LocalizedString} */ () => {
@@ -1099,10 +1051,6 @@ export const nav_blog = /** @type {(inputs: Nav_BlogInputs) => LocalizedString} 
 	return /** @type {LocalizedString} */ (`Blog`)
 };
 
-export const nav_projects = /** @type {(inputs: Nav_ProjectsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Projects`)
-};
-
 export const nav_tags = /** @type {(inputs: Nav_TagsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Tags`)
 };
@@ -1129,14 +1077,6 @@ export const pagination_previous = /** @type {(inputs: Pagination_PreviousInputs
 
 export const posts_count = /** @type {(inputs: Posts_CountInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`${i?.count} posts`)
-};
-
-export const projects_eyebrow = /** @type {(inputs: Projects_EyebrowInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Projects`)
-};
-
-export const projects_title = /** @type {(inputs: Projects_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Template and Skill deliverables`)
 };
 
 export const published_count = /** @type {(inputs: Published_CountInputs) => LocalizedString} */ (i) => {

@@ -39,7 +39,7 @@ Docs content lives under `apps/web/content/docs`. It is reviewed, versioned, and
 /docs   = Git Markdown/MDX docs
 /admin  = CMS admin only
 RSS     = blog posts only
-sitemap = public pages + blog + docs + projects + tags
+sitemap = public pages + blog + docs + tags
 ```
 
 The admin UI does not edit Git-managed docs. If a site owner wants a docs-only or blog-only template, they can remove the unused route and navigation entry during project customization.

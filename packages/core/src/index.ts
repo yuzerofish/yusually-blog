@@ -3,7 +3,6 @@ import {
   comments,
   dashboardMetrics,
   posts,
-  projects,
   siteSettings,
   tags,
 } from "./cms-store";
@@ -12,7 +11,6 @@ import type {
   Comment,
   DashboardMetric,
   Post,
-  Project,
   SiteSettings,
   SupportedLocale,
   Tag,
@@ -34,7 +32,7 @@ export {
   updatePost,
   updateSiteSettings,
 } from "./cms-store";
-export { assets, comments, dashboardMetrics, posts, projects, siteSettings, tags };
+export { assets, comments, dashboardMetrics, posts, siteSettings, tags };
 export {
   defaultCommentBlockedKeywords,
   findBlockedCommentKeyword,
@@ -68,7 +66,6 @@ export type {
   DashboardMetric,
   LayoutPreset,
   Post,
-  Project,
   SiteSettings,
   SupportedLocale,
   Tag,
@@ -106,17 +103,6 @@ export function localizePost(post: Post, locale: SupportedLocale): Post {
     seoTitle: localizeText(post.seoTitle, post.i18n?.seoTitle, locale),
     seoDescription: localizeText(post.seoDescription, post.i18n?.seoDescription, locale),
     tags: post.tags.map((tag) => localizeTag(tag, locale)),
-  };
-}
-
-export function localizeProject(project: Project, locale: SupportedLocale): Project {
-  return {
-    ...project,
-    title: localizeText(project.title, project.i18n?.title, locale),
-    excerpt: localizeText(project.excerpt, project.i18n?.excerpt, locale),
-    contentMarkdown: localizeText(project.contentMarkdown, project.i18n?.contentMarkdown, locale),
-    contentHtml: localizeText(project.contentHtml, project.i18n?.contentHtml, locale),
-    tags: project.tags.map((tag) => localizeTag(tag, locale)),
   };
 }
 
@@ -210,12 +196,6 @@ export function getRelatedPosts(postId: string) {
     .filter((candidate) => candidate.id !== post.id)
     .filter((candidate) => candidate.tags.some((tag) => postTagSlugs.has(tag.slug)))
     .slice(0, 3);
-}
-
-export function getProjectsForLocale(locale: SupportedLocale) {
-  return projects
-    .filter((project) => project.status === "published")
-    .map((project) => localizeProject(project, locale));
 }
 
 export function getSiteSettingsForLocale(locale: SupportedLocale) {

@@ -127,9 +127,6 @@ function ShelfHome({ posts, featuredPosts, siteSettings, tags, locale }: HomeVie
               {m.read_latest_posts()}
               <ArrowRightIcon />
             </Button>
-            <Button render={<Link to="/projects" />} variant="outline" nativeButton={false}>
-              {m.nav_projects()}
-            </Button>
           </div>
         </section>
 

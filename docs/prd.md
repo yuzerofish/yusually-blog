@@ -493,24 +493,6 @@ Mermaid，可选
 支持 Markdown / HTML
 ```
 
-### 作品集 `/projects`
-
-支持：
-
-```txt
-项目标题
-项目简介
-项目链接
-GitHub 链接
-封面图
-截图集
-项目正文
-标签
-发布时间
-```
-
----
-
 ## 7.2 后台 CMS
 
 后台路径：
@@ -932,7 +914,6 @@ zip 图片包上传
 export/
   posts/
   pages/
-  projects/
   assets/
   comments.json
   site.json

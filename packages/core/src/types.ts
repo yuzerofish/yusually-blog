@@ -57,24 +57,6 @@ export type Tag = {
   i18n?: LocalizedFields<"name" | "description">;
 };
 
-export type Project = {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  coverImage: string;
-  projectUrl: string;
-  githubUrl: string;
-  contentMarkdown: string;
-  contentHtml: string;
-  tags: Tag[];
-  screenshots: string[];
-  status: Exclude<ContentStatus, "scheduled">;
-  publishedAt: string;
-  updatedAt: string;
-  i18n?: LocalizedFields<"title" | "excerpt" | "contentMarkdown" | "contentHtml">;
-};
-
 export type CmsPage = {
   id: string;
   title: string;

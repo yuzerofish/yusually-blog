@@ -14,7 +14,7 @@
 ## Cloudflare Boundary
 
 - Workers run the public site, admin UI, API routes, feeds, sitemap, and robots output.
-- D1 stores posts, comments, site settings, Better Auth identities and sessions, API tokens, pages, projects, tags, and asset metadata.
+- D1 stores posts, comments, site settings, Better Auth identities and sessions, API tokens, pages, tags, and asset metadata.
 - R2 stores uploaded assets, import packages, JSON exports, and full ZIP backups.
 - KV is available as the `CMS_CACHE` binding for cache metadata.
 - Cron Triggers call the custom Worker entry once per day to generate a ZIP backup and prune old backup objects.
@@ -28,18 +28,18 @@
 - `themePreset` is stored in site settings and drives the public site, admin UI, and auth screens through shared CSS tokens. Supported presets are `maker`, `apple`, and `editorial`; legacy `claude` values normalize to `maker`.
 - `layoutPreset` is stored in site settings and controls the public home page structure. Supported presets are `shelf`, `developer`, and `journal`.
 - Public product copy includes English and Chinese on the home page.
-- Content records preserve bilingual fields through `i18n` JSON for posts, pages, tags, projects, comments, site name, site description, author bio, and SEO fields.
+- Content records preserve bilingual fields through `i18n` JSON for posts, pages, tags, comments, site name, site description, author bio, and SEO fields.
 
 ## Public And Admin Surfaces
 
-- Public routes: home, blog list, post detail, tags, archive, projects, about, RSS, feed, sitemap, robots, API docs, and OpenAPI JSON.
-- Admin routes: overview, posts, pages, projects, assets, comments, settings, and scoped API tokens.
+- Public routes: home, blog list, post detail, tags, archive, about, RSS, feed, sitemap, robots, API docs, and OpenAPI JSON.
+- Admin routes: overview, posts, pages, assets, comments, settings, and scoped API tokens.
 - Admin and reader auth use the shared Better Auth tables on D1. The `user.role` column marks admin users; reader accounts can use GitHub OAuth or email/password.
 - Automation tokens are stored hashed in D1 and checked by scope.
 
 ## Automation Flow
 
-The Skill and CLI use the same HTTP API as the admin UI. A generated site can be initialized by provisioning Cloudflare resources, applying D1 migrations, creating the first admin, logging in to mint a scoped token, writing site settings, publishing the first bilingual post, updating static pages and projects, uploading assets, submitting and approving a comment, and exporting a backup.
+The Skill and CLI use the same HTTP API as the admin UI. A generated site can be initialized by provisioning Cloudflare resources, applying D1 migrations, creating the first admin, logging in to mint a scoped token, writing site settings, publishing the first bilingual post, updating static pages, uploading assets, submitting and approving a comment, and exporting a backup.
 
 ## Import Flow
 
@@ -47,7 +47,7 @@ Markdown imports parse simple frontmatter and preserve Markdown as the source of
 
 ## Export And Backup Flow
 
-JSON export remains the lightweight API response for automation. ZIP export packages Markdown, HTML, site settings, posts, pages, comments, assets, tags, projects, and a manifest under `export/`, stores the archive in R2, and rewrites known local asset URLs to relative paths inside the archive. Manual backups use `POST /api/backups`; scheduled backups use the same ZIP builder from the Worker `scheduled` handler.
+JSON export remains the lightweight API response for automation. ZIP export packages Markdown, HTML, site settings, posts, pages, comments, assets, tags, and a manifest under `export/`, stores the archive in R2, and rewrites known local asset URLs to relative paths inside the archive. Manual backups use `POST /api/backups`; scheduled backups use the same ZIP builder from the Worker `scheduled` handler.
 
 ## Email Flow
 

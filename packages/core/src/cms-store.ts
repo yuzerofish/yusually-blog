@@ -4,7 +4,6 @@ import {
   comments as seedComments,
   dashboardMetrics,
   posts as seedPosts,
-  projects as seedProjects,
   siteSettings as seedSiteSettings,
   tags as seedTags,
 } from "./demo-data";
@@ -66,7 +65,6 @@ const state = {
   siteSettings: clone(seedSiteSettings),
   posts: clone(seedPosts),
   tags: clone(seedTags),
-  projects: clone(seedProjects),
   comments: clone(seedComments),
   assets: clone(seedAssets),
   apiTokens: [
@@ -95,7 +93,6 @@ const state = {
 export const siteSettings = state.siteSettings;
 export const posts = state.posts;
 export const tags = state.tags;
-export const projects = state.projects;
 export const comments = state.comments;
 export const assets = state.assets;
 export const apiTokens = state.apiTokens;

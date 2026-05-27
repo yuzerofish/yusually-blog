@@ -6,13 +6,11 @@ import {
   getRelatedPosts,
   getTagBySlug,
   localizePost,
-  projects as seedProjects,
   resolveLocale,
   tags as seedTags,
   type CmsPage,
   type Comment,
   type Post,
-  type Project,
   type SiteSettings,
   type SupportedLocale,
   type Tag,
@@ -71,15 +69,6 @@ export type AboutPageData = {
   page: CmsPage | null;
 };
 
-export type ProjectsPageData = {
-  siteSettings: SiteSettings;
-  projects: Project[];
-};
-
-export type ProjectPageData = {
-  siteSettings: SiteSettings;
-  project: Project;
-};
 
 export const $getBlogPostPage = createServerFn({ method: "GET" })
   .inputValidator((data: { slug: string }) => data)
@@ -228,43 +217,6 @@ export const $getAboutPageData = createServerFn({ method: "GET" }).handler(
   },
 );
 
-export const $getProjectsPageData = createServerFn({ method: "GET" }).handler(
-  async (): Promise<ProjectsPageData> => {
-    const { getD1SiteSettings } = await import("./cms-d1");
-
-    return {
-      siteSettings: await getD1SiteSettings(),
-      projects: await getMergedPublishedProjects(),
-    };
-  },
-);
-
-export const $getProjectPageData = createServerFn({ method: "GET" })
-  .inputValidator((data: { slug: string }) => data)
-  .handler(async ({ data }): Promise<ProjectPageData | null> => {
-    const { getD1ProjectByIdOrSlug, getD1SiteSettings } = await import("./cms-d1");
-    const siteSettings = await getD1SiteSettings();
-    const persistedProject = await getD1ProjectByIdOrSlug(data.slug, false);
-
-    if (persistedProject) {
-      return {
-        siteSettings,
-        project: persistedProject,
-      };
-    }
-
-    const seededProject = seedProjects.find(
-      (project) => project.slug === data.slug && project.status === "published",
-    );
-
-    return seededProject
-      ? {
-          siteSettings,
-          project: seededProject,
-        }
-      : null;
-  });
-
 /** @deprecated Seed data merging — remove after confirming D1 has real content */
 async function getMergedPublishedPosts() {
   const { listD1Posts } = await import("./cms-d1");
@@ -290,20 +242,6 @@ async function getMergedTags(posts: Post[]) {
   }
 
   return Array.from(tagsBySlug.values()).sort((a, b) => a.name.localeCompare(b.name));
-}
-
-/** @deprecated Seed data merging — remove after confirming D1 has real content */
-async function getMergedPublishedProjects() {
-  const { listD1Projects } = await import("./cms-d1");
-  const persistedProjects = await listD1Projects().catch(() => []);
-  const persistedSlugs = new Set(persistedProjects.map((project) => project.slug));
-
-  return [
-    ...persistedProjects,
-    ...seedProjects
-      .filter((project) => project.status === "published")
-      .filter((project) => !persistedSlugs.has(project.slug)),
-  ];
 }
 
 function filterPosts(posts: Post[], { query = "", tagSlug }: { query?: string; tagSlug?: string }) {

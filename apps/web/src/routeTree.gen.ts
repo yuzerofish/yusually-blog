@@ -22,17 +22,14 @@ import { Route as GuestRouteRouteImport } from './routes/_guest/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TagsIndexRouteImport } from './routes/tags/index'
-import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as UploadsSplatRouteImport } from './routes/uploads/$'
 import { Route as TagsSlugRouteImport } from './routes/tags/$slug'
-import { Route as ProjectsSlugRouteImport } from './routes/projects/$slug'
 import { Route as DocsSplatRouteImport } from './routes/docs/$'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as ApiTokensRouteImport } from './routes/api/tokens'
 import { Route as ApiSiteRouteImport } from './routes/api/site'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
-import { Route as ApiProjectsRouteImport } from './routes/api/projects'
 import { Route as ApiPostsRouteImport } from './routes/api/posts'
 import { Route as ApiPagesRouteImport } from './routes/api/pages'
 import { Route as ApiExportRouteImport } from './routes/api/export'
@@ -47,7 +44,6 @@ import { Route as AuthAdminRouteRouteImport } from './routes/_auth/admin/route'
 import { Route as AuthAppIndexRouteImport } from './routes/_auth/app/index'
 import { Route as AuthAdminIndexRouteImport } from './routes/_auth/admin/index'
 import { Route as ZhDocsSplatRouteImport } from './routes/zh/docs/$'
-import { Route as ApiProjectsIdRouteImport } from './routes/api/projects/$id'
 import { Route as ApiPostsBatchRouteImport } from './routes/api/posts/batch'
 import { Route as ApiPostsIdRouteImport } from './routes/api/posts/$id'
 import { Route as ApiPagesIdRouteImport } from './routes/api/pages/$id'
@@ -69,7 +65,6 @@ import { Route as ApiAdminLogoutRouteImport } from './routes/api/admin/logout'
 import { Route as ApiAdminLoginRouteImport } from './routes/api/admin/login'
 import { Route as ApiAdminEmailStatusRouteImport } from './routes/api/admin/email-status'
 import { Route as AuthAdminSettingsRouteImport } from './routes/_auth/admin/settings'
-import { Route as AuthAdminProjectsRouteImport } from './routes/_auth/admin/projects'
 import { Route as AuthAdminPostsRouteImport } from './routes/_auth/admin/posts'
 import { Route as AuthAdminPagesRouteImport } from './routes/_auth/admin/pages'
 import { Route as AuthAdminCommentsRouteImport } from './routes/_auth/admin/comments'
@@ -143,11 +138,6 @@ const TagsIndexRoute = TagsIndexRouteImport.update({
   path: '/tags/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
-  id: '/projects/',
-  path: '/projects/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
@@ -161,11 +151,6 @@ const UploadsSplatRoute = UploadsSplatRouteImport.update({
 const TagsSlugRoute = TagsSlugRouteImport.update({
   id: '/tags/$slug',
   path: '/tags/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProjectsSlugRoute = ProjectsSlugRouteImport.update({
-  id: '/projects/$slug',
-  path: '/projects/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocsSplatRoute = DocsSplatRouteImport.update({
@@ -191,11 +176,6 @@ const ApiSiteRoute = ApiSiteRouteImport.update({
 const ApiSearchRoute = ApiSearchRouteImport.update({
   id: '/api/search',
   path: '/api/search',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiProjectsRoute = ApiProjectsRouteImport.update({
-  id: '/api/projects',
-  path: '/api/projects',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPostsRoute = ApiPostsRouteImport.update({
@@ -267,11 +247,6 @@ const ZhDocsSplatRoute = ZhDocsSplatRouteImport.update({
   id: '/zh/docs/$',
   path: '/zh/docs/$',
   getParentRoute: () => rootRouteImport,
-} as any)
-const ApiProjectsIdRoute = ApiProjectsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => ApiProjectsRoute,
 } as any)
 const ApiPostsBatchRoute = ApiPostsBatchRouteImport.update({
   id: '/batch',
@@ -379,11 +354,6 @@ const AuthAdminSettingsRoute = AuthAdminSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthAdminRouteRoute,
 } as any)
-const AuthAdminProjectsRoute = AuthAdminProjectsRouteImport.update({
-  id: '/projects',
-  path: '/projects',
-  getParentRoute: () => AuthAdminRouteRoute,
-} as any)
 const AuthAdminPostsRoute = AuthAdminPostsRouteImport.update({
   id: '/posts',
   path: '/posts',
@@ -453,23 +423,19 @@ export interface FileRoutesByFullPath {
   '/api/export': typeof ApiExportRoute
   '/api/pages': typeof ApiPagesRouteWithChildren
   '/api/posts': typeof ApiPostsRouteWithChildren
-  '/api/projects': typeof ApiProjectsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/api/site': typeof ApiSiteRoute
   '/api/tokens': typeof ApiTokensRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/docs/$': typeof DocsSplatRoute
-  '/projects/$slug': typeof ProjectsSlugRoute
   '/tags/$slug': typeof TagsSlugRoute
   '/uploads/$': typeof UploadsSplatRoute
   '/blog/': typeof BlogIndexRoute
-  '/projects/': typeof ProjectsIndexRoute
   '/tags/': typeof TagsIndexRoute
   '/admin/assets': typeof AuthAdminAssetsRoute
   '/admin/comments': typeof AuthAdminCommentsRoute
   '/admin/pages': typeof AuthAdminPagesRoute
   '/admin/posts': typeof AuthAdminPostsRoute
-  '/admin/projects': typeof AuthAdminProjectsRoute
   '/admin/settings': typeof AuthAdminSettingsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
@@ -491,7 +457,6 @@ export interface FileRoutesByFullPath {
   '/api/pages/$id': typeof ApiPagesIdRoute
   '/api/posts/$id': typeof ApiPostsIdRoute
   '/api/posts/batch': typeof ApiPostsBatchRoute
-  '/api/projects/$id': typeof ApiProjectsIdRoute
   '/zh/docs/$': typeof ZhDocsSplatRoute
   '/admin/': typeof AuthAdminIndexRoute
   '/app/': typeof AuthAppIndexRoute
@@ -521,23 +486,19 @@ export interface FileRoutesByTo {
   '/api/export': typeof ApiExportRoute
   '/api/pages': typeof ApiPagesRouteWithChildren
   '/api/posts': typeof ApiPostsRouteWithChildren
-  '/api/projects': typeof ApiProjectsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/api/site': typeof ApiSiteRoute
   '/api/tokens': typeof ApiTokensRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/docs/$': typeof DocsSplatRoute
-  '/projects/$slug': typeof ProjectsSlugRoute
   '/tags/$slug': typeof TagsSlugRoute
   '/uploads/$': typeof UploadsSplatRoute
   '/blog': typeof BlogIndexRoute
-  '/projects': typeof ProjectsIndexRoute
   '/tags': typeof TagsIndexRoute
   '/admin/assets': typeof AuthAdminAssetsRoute
   '/admin/comments': typeof AuthAdminCommentsRoute
   '/admin/pages': typeof AuthAdminPagesRoute
   '/admin/posts': typeof AuthAdminPostsRoute
-  '/admin/projects': typeof AuthAdminProjectsRoute
   '/admin/settings': typeof AuthAdminSettingsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
@@ -559,7 +520,6 @@ export interface FileRoutesByTo {
   '/api/pages/$id': typeof ApiPagesIdRoute
   '/api/posts/$id': typeof ApiPostsIdRoute
   '/api/posts/batch': typeof ApiPostsBatchRoute
-  '/api/projects/$id': typeof ApiProjectsIdRoute
   '/zh/docs/$': typeof ZhDocsSplatRoute
   '/admin': typeof AuthAdminIndexRoute
   '/app': typeof AuthAppIndexRoute
@@ -594,23 +554,19 @@ export interface FileRoutesById {
   '/api/export': typeof ApiExportRoute
   '/api/pages': typeof ApiPagesRouteWithChildren
   '/api/posts': typeof ApiPostsRouteWithChildren
-  '/api/projects': typeof ApiProjectsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/api/site': typeof ApiSiteRoute
   '/api/tokens': typeof ApiTokensRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/docs/$': typeof DocsSplatRoute
-  '/projects/$slug': typeof ProjectsSlugRoute
   '/tags/$slug': typeof TagsSlugRoute
   '/uploads/$': typeof UploadsSplatRoute
   '/blog/': typeof BlogIndexRoute
-  '/projects/': typeof ProjectsIndexRoute
   '/tags/': typeof TagsIndexRoute
   '/_auth/admin/assets': typeof AuthAdminAssetsRoute
   '/_auth/admin/comments': typeof AuthAdminCommentsRoute
   '/_auth/admin/pages': typeof AuthAdminPagesRoute
   '/_auth/admin/posts': typeof AuthAdminPostsRoute
-  '/_auth/admin/projects': typeof AuthAdminProjectsRoute
   '/_auth/admin/settings': typeof AuthAdminSettingsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
@@ -632,7 +588,6 @@ export interface FileRoutesById {
   '/api/pages/$id': typeof ApiPagesIdRoute
   '/api/posts/$id': typeof ApiPostsIdRoute
   '/api/posts/batch': typeof ApiPostsBatchRoute
-  '/api/projects/$id': typeof ApiProjectsIdRoute
   '/zh/docs/$': typeof ZhDocsSplatRoute
   '/_auth/admin/': typeof AuthAdminIndexRoute
   '/_auth/app/': typeof AuthAppIndexRoute
@@ -666,23 +621,19 @@ export interface FileRouteTypes {
     | '/api/export'
     | '/api/pages'
     | '/api/posts'
-    | '/api/projects'
     | '/api/search'
     | '/api/site'
     | '/api/tokens'
     | '/blog/$slug'
     | '/docs/$'
-    | '/projects/$slug'
     | '/tags/$slug'
     | '/uploads/$'
     | '/blog/'
-    | '/projects/'
     | '/tags/'
     | '/admin/assets'
     | '/admin/comments'
     | '/admin/pages'
     | '/admin/posts'
-    | '/admin/projects'
     | '/admin/settings'
     | '/api/admin/email-status'
     | '/api/admin/login'
@@ -704,7 +655,6 @@ export interface FileRouteTypes {
     | '/api/pages/$id'
     | '/api/posts/$id'
     | '/api/posts/batch'
-    | '/api/projects/$id'
     | '/zh/docs/$'
     | '/admin/'
     | '/app/'
@@ -734,23 +684,19 @@ export interface FileRouteTypes {
     | '/api/export'
     | '/api/pages'
     | '/api/posts'
-    | '/api/projects'
     | '/api/search'
     | '/api/site'
     | '/api/tokens'
     | '/blog/$slug'
     | '/docs/$'
-    | '/projects/$slug'
     | '/tags/$slug'
     | '/uploads/$'
     | '/blog'
-    | '/projects'
     | '/tags'
     | '/admin/assets'
     | '/admin/comments'
     | '/admin/pages'
     | '/admin/posts'
-    | '/admin/projects'
     | '/admin/settings'
     | '/api/admin/email-status'
     | '/api/admin/login'
@@ -772,7 +718,6 @@ export interface FileRouteTypes {
     | '/api/pages/$id'
     | '/api/posts/$id'
     | '/api/posts/batch'
-    | '/api/projects/$id'
     | '/zh/docs/$'
     | '/admin'
     | '/app'
@@ -806,23 +751,19 @@ export interface FileRouteTypes {
     | '/api/export'
     | '/api/pages'
     | '/api/posts'
-    | '/api/projects'
     | '/api/search'
     | '/api/site'
     | '/api/tokens'
     | '/blog/$slug'
     | '/docs/$'
-    | '/projects/$slug'
     | '/tags/$slug'
     | '/uploads/$'
     | '/blog/'
-    | '/projects/'
     | '/tags/'
     | '/_auth/admin/assets'
     | '/_auth/admin/comments'
     | '/_auth/admin/pages'
     | '/_auth/admin/posts'
-    | '/_auth/admin/projects'
     | '/_auth/admin/settings'
     | '/api/admin/email-status'
     | '/api/admin/login'
@@ -844,7 +785,6 @@ export interface FileRouteTypes {
     | '/api/pages/$id'
     | '/api/posts/$id'
     | '/api/posts/batch'
-    | '/api/projects/$id'
     | '/zh/docs/$'
     | '/_auth/admin/'
     | '/_auth/app/'
@@ -874,17 +814,14 @@ export interface RootRouteChildren {
   ApiExportRoute: typeof ApiExportRoute
   ApiPagesRoute: typeof ApiPagesRouteWithChildren
   ApiPostsRoute: typeof ApiPostsRouteWithChildren
-  ApiProjectsRoute: typeof ApiProjectsRouteWithChildren
   ApiSearchRoute: typeof ApiSearchRoute
   ApiSiteRoute: typeof ApiSiteRoute
   ApiTokensRoute: typeof ApiTokensRouteWithChildren
   BlogSlugRoute: typeof BlogSlugRoute
   DocsSplatRoute: typeof DocsSplatRoute
-  ProjectsSlugRoute: typeof ProjectsSlugRoute
   TagsSlugRoute: typeof TagsSlugRoute
   UploadsSplatRoute: typeof UploadsSplatRoute
   BlogIndexRoute: typeof BlogIndexRoute
-  ProjectsIndexRoute: typeof ProjectsIndexRoute
   TagsIndexRoute: typeof TagsIndexRoute
   ApiAdminEmailStatusRoute: typeof ApiAdminEmailStatusRoute
   ApiAdminLoginRoute: typeof ApiAdminLoginRoute
@@ -999,13 +936,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TagsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/projects/': {
-      id: '/projects/'
-      path: '/projects'
-      fullPath: '/projects/'
-      preLoaderRoute: typeof ProjectsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/blog/': {
       id: '/blog/'
       path: '/blog'
@@ -1025,13 +955,6 @@ declare module '@tanstack/react-router' {
       path: '/tags/$slug'
       fullPath: '/tags/$slug'
       preLoaderRoute: typeof TagsSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/projects/$slug': {
-      id: '/projects/$slug'
-      path: '/projects/$slug'
-      fullPath: '/projects/$slug'
-      preLoaderRoute: typeof ProjectsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/docs/$': {
@@ -1067,13 +990,6 @@ declare module '@tanstack/react-router' {
       path: '/api/search'
       fullPath: '/api/search'
       preLoaderRoute: typeof ApiSearchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/projects': {
-      id: '/api/projects'
-      path: '/api/projects'
-      fullPath: '/api/projects'
-      preLoaderRoute: typeof ApiProjectsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/posts': {
@@ -1173,13 +1089,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/zh/docs/$'
       preLoaderRoute: typeof ZhDocsSplatRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/api/projects/$id': {
-      id: '/api/projects/$id'
-      path: '/$id'
-      fullPath: '/api/projects/$id'
-      preLoaderRoute: typeof ApiProjectsIdRouteImport
-      parentRoute: typeof ApiProjectsRoute
     }
     '/api/posts/batch': {
       id: '/api/posts/batch'
@@ -1328,13 +1237,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAdminSettingsRouteImport
       parentRoute: typeof AuthAdminRouteRoute
     }
-    '/_auth/admin/projects': {
-      id: '/_auth/admin/projects'
-      path: '/projects'
-      fullPath: '/admin/projects'
-      preLoaderRoute: typeof AuthAdminProjectsRouteImport
-      parentRoute: typeof AuthAdminRouteRoute
-    }
     '/_auth/admin/posts': {
       id: '/_auth/admin/posts'
       path: '/posts'
@@ -1406,7 +1308,6 @@ interface AuthAdminRouteRouteChildren {
   AuthAdminCommentsRoute: typeof AuthAdminCommentsRoute
   AuthAdminPagesRoute: typeof AuthAdminPagesRoute
   AuthAdminPostsRoute: typeof AuthAdminPostsRoute
-  AuthAdminProjectsRoute: typeof AuthAdminProjectsRoute
   AuthAdminSettingsRoute: typeof AuthAdminSettingsRoute
   AuthAdminIndexRoute: typeof AuthAdminIndexRoute
 }
@@ -1416,7 +1317,6 @@ const AuthAdminRouteRouteChildren: AuthAdminRouteRouteChildren = {
   AuthAdminCommentsRoute: AuthAdminCommentsRoute,
   AuthAdminPagesRoute: AuthAdminPagesRoute,
   AuthAdminPostsRoute: AuthAdminPostsRoute,
-  AuthAdminProjectsRoute: AuthAdminProjectsRoute,
   AuthAdminSettingsRoute: AuthAdminSettingsRoute,
   AuthAdminIndexRoute: AuthAdminIndexRoute,
 }
@@ -1521,18 +1421,6 @@ const ApiPostsRouteWithChildren = ApiPostsRoute._addFileChildren(
   ApiPostsRouteChildren,
 )
 
-interface ApiProjectsRouteChildren {
-  ApiProjectsIdRoute: typeof ApiProjectsIdRoute
-}
-
-const ApiProjectsRouteChildren: ApiProjectsRouteChildren = {
-  ApiProjectsIdRoute: ApiProjectsIdRoute,
-}
-
-const ApiProjectsRouteWithChildren = ApiProjectsRoute._addFileChildren(
-  ApiProjectsRouteChildren,
-)
-
 interface ApiTokensRouteChildren {
   ApiTokensIdRevokeRoute: typeof ApiTokensIdRevokeRoute
 }
@@ -1564,17 +1452,14 @@ const rootRouteChildren: RootRouteChildren = {
   ApiExportRoute: ApiExportRoute,
   ApiPagesRoute: ApiPagesRouteWithChildren,
   ApiPostsRoute: ApiPostsRouteWithChildren,
-  ApiProjectsRoute: ApiProjectsRouteWithChildren,
   ApiSearchRoute: ApiSearchRoute,
   ApiSiteRoute: ApiSiteRoute,
   ApiTokensRoute: ApiTokensRouteWithChildren,
   BlogSlugRoute: BlogSlugRoute,
   DocsSplatRoute: DocsSplatRoute,
-  ProjectsSlugRoute: ProjectsSlugRoute,
   TagsSlugRoute: TagsSlugRoute,
   UploadsSplatRoute: UploadsSplatRoute,
   BlogIndexRoute: BlogIndexRoute,
-  ProjectsIndexRoute: ProjectsIndexRoute,
   TagsIndexRoute: TagsIndexRoute,
   ApiAdminEmailStatusRoute: ApiAdminEmailStatusRoute,
   ApiAdminLoginRoute: ApiAdminLoginRoute,
@@ -1598,12 +1483,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

@@ -117,52 +117,6 @@ export const Route = createFileRoute("/openapi.json")({
                 responses: { "200": { description: "Page deleted" } },
               },
             },
-            "/api/projects": {
-              get: {
-                summary: "List projects",
-                security: [{ apiToken: ["site:read"] }],
-                parameters: [{ name: "status", in: "query", schema: { enum: ["all"] } }],
-                responses: { "200": { description: "Project list" } },
-              },
-              post: {
-                summary: "Create project",
-                description:
-                  "Creates a portfolio project with links, tags, screenshots, and Markdown body.",
-                security: [{ apiToken: ["site:write"] }],
-                requestBody: {
-                  content: {
-                    "application/json": {
-                      schema: { $ref: "#/components/schemas/ProjectInput" },
-                    },
-                  },
-                },
-                responses: { "201": { description: "Project created" } },
-              },
-            },
-            "/api/projects/{id}": {
-              get: {
-                summary: "Get project",
-                security: [{ apiToken: ["site:read"] }],
-                responses: { "200": { description: "Project detail" } },
-              },
-              patch: {
-                summary: "Update project",
-                security: [{ apiToken: ["site:write"] }],
-                requestBody: {
-                  content: {
-                    "application/json": {
-                      schema: { $ref: "#/components/schemas/ProjectInput" },
-                    },
-                  },
-                },
-                responses: { "200": { description: "Project updated" } },
-              },
-              delete: {
-                summary: "Delete project",
-                security: [{ apiToken: ["site:write"] }],
-                responses: { "200": { description: "Project deleted" } },
-              },
-            },
             "/api/import/markdown": {
               post: {
                 summary: "Import Markdown",
@@ -526,25 +480,6 @@ export const Route = createFileRoute("/openapi.json")({
                   status: { enum: ["draft", "published", "archived"] },
                   seoTitle: { type: "string" },
                   seoDescription: { type: "string" },
-                  locale: { enum: ["en", "zh"] },
-                  i18n: { $ref: "#/components/schemas/LocalizedFields" },
-                },
-                required: ["title", "contentMarkdown"],
-              },
-              ProjectInput: {
-                type: "object",
-                properties: {
-                  title: { type: "string" },
-                  slug: { type: "string" },
-                  excerpt: { type: "string" },
-                  projectUrl: { type: "string" },
-                  githubUrl: { type: "string" },
-                  coverImage: { type: "string" },
-                  contentMarkdown: { type: "string" },
-                  contentHtml: { type: "string" },
-                  tags: { type: "array", items: { type: "string" } },
-                  screenshots: { type: "array", items: { type: "string" } },
-                  status: { enum: ["draft", "published", "archived"] },
                   locale: { enum: ["en", "zh"] },
                   i18n: { $ref: "#/components/schemas/LocalizedFields" },
                 },

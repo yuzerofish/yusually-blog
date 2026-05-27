@@ -37,6 +37,7 @@ The remote databases have applied:
 - `0002_better_auth_d1.sql`
 - `0003_pages_projects_management.sql`
 - `0004_comment_moderation.sql`
+- `0005_drop_projects.sql`
 
 ## Build And Deploy
 

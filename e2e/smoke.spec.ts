@@ -81,9 +81,4 @@ test.describe("Smoke Tests", () => {
     const response = await page.goto("/pages");
     expect(response?.status()).toBeLessThan(500);
   });
-
-  test("projects route loads", async ({ page }) => {
-    const response = await page.goto("/projects");
-    expect(response?.status()).toBeLessThan(500);
-  });
 });
