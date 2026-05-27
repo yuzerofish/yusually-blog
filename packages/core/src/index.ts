@@ -42,6 +42,20 @@ export {
   normalizeCommentBlockedKeywords,
 } from "./comment-moderation";
 export { htmlToText, markdownToText, renderMarkdownToHtml, sanitizeHtml } from "./markdown";
+export {
+  assertPassword,
+  authErrorMessage,
+  cleanStringList,
+  countLinks,
+  digestText,
+  escapeHtml,
+  extractSetCookieHeaders,
+  normalizeDateInput,
+  normalizeEmail,
+  parseJson,
+  slugify,
+  toIsoString,
+} from "./utils";
 export type {
   ApiToken,
   ApiTokenScope,
@@ -159,33 +173,12 @@ export function getPublishedPosts() {
     });
 }
 
-export function getPublishedPostsForLocale(locale: SupportedLocale) {
-  return getPublishedPosts().map((post) => localizePost(post, locale));
-}
-
 export function getFeaturedPosts() {
   return getPublishedPosts().filter((post) => post.featured);
 }
 
-export function getFeaturedPostsForLocale(locale: SupportedLocale) {
-  return getFeaturedPosts().map((post) => localizePost(post, locale));
-}
-
 export function getPostBySlug(slug: string) {
   return getPublishedPosts().find((post) => post.slug === slug);
-}
-
-export function getPostBySlugForLocale(slug: string, locale: SupportedLocale) {
-  const post = getPostBySlug(slug);
-  return post ? localizePost(post, locale) : undefined;
-}
-
-export function getPostsByTag(tagSlug: string) {
-  return getPublishedPosts().filter((post) => post.tags.some((tag) => tag.slug === tagSlug));
-}
-
-export function getPostsByTagForLocale(tagSlug: string, locale: SupportedLocale) {
-  return getPostsByTag(tagSlug).map((post) => localizePost(post, locale));
 }
 
 export function getTagBySlug(slug: string) {
@@ -194,11 +187,6 @@ export function getTagBySlug(slug: string) {
 
 export function getTagsForLocale(locale: SupportedLocale) {
   return tags.map((tag) => localizeTag(tag, locale));
-}
-
-export function getTagBySlugForLocale(slug: string, locale: SupportedLocale) {
-  const tag = getTagBySlug(slug);
-  return tag ? localizeTag(tag, locale) : undefined;
 }
 
 export function getApprovedCommentsForPost(postId: string) {
@@ -222,35 +210,6 @@ export function getRelatedPosts(postId: string) {
     .filter((candidate) => candidate.id !== post.id)
     .filter((candidate) => candidate.tags.some((tag) => postTagSlugs.has(tag.slug)))
     .slice(0, 3);
-}
-
-export function getRelatedPostsForLocale(postId: string, locale: SupportedLocale) {
-  return getRelatedPosts(postId).map((post) => localizePost(post, locale));
-}
-
-export function getArchiveGroups() {
-  const groups = new Map<string, typeof posts>();
-
-  for (const post of getPublishedPosts()) {
-    const date = new Date(post.publishedAt);
-    const key = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
-    const group = groups.get(key) ?? [];
-    group.push(post);
-    groups.set(key, group);
-  }
-
-  return Array.from(groups.entries()).map(([key, groupPosts]) => ({
-    key,
-    label: key.replace("-", " / "),
-    posts: groupPosts,
-  }));
-}
-
-export function getArchiveGroupsForLocale(locale: SupportedLocale) {
-  return getArchiveGroups().map((group) => ({
-    ...group,
-    posts: group.posts.map((post) => localizePost(post, locale)),
-  }));
 }
 
 export function getProjectsForLocale(locale: SupportedLocale) {

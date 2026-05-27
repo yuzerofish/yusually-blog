@@ -377,12 +377,6 @@ export function moderateComment(id: string, status: Exclude<CommentStatus, "pend
   return comment;
 }
 
-export function listApprovedComments(postId: string) {
-  return state.comments.filter(
-    (comment) => comment.postId === postId && comment.status === "approved",
-  );
-}
-
 export function createApiToken(input: ApiTokenInput) {
   const secret = `blogcms_${crypto.randomUUID().replace(/-/g, "")}`;
   const token: ApiToken = {

@@ -1,6 +1,6 @@
 import "@tanstack/react-start/server-only";
 import type { Asset, CmsPage, Post, Project, SupportedLocale } from "@repo/core";
-import { localizePage, localizePost, localizeProject, resolveLocale } from "@repo/core";
+import { escapeHtml, localizePage, localizePost, localizeProject, resolveLocale } from "@repo/core";
 import { env } from "cloudflare:workers";
 
 import { buildD1SiteExport, getD1SiteSettings } from "#/lib/cms-d1";
@@ -302,23 +302,6 @@ function safePathSegment(value: string) {
     .slice(0, 120);
 
   return segment || "untitled";
-}
-
-function escapeHtml(value: string) {
-  return value.replace(/[&<>"']/g, (char) => {
-    switch (char) {
-      case "&":
-        return "&amp;";
-      case "<":
-        return "&lt;";
-      case ">":
-        return "&gt;";
-      case '"':
-        return "&quot;";
-      default:
-        return "&#39;";
-    }
-  });
 }
 
 function readRetentionDays() {

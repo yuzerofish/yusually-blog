@@ -13,8 +13,7 @@
     "db": "drizzle-kit"
   },
   "dependencies": {
-    "drizzle-orm": "catalog:",
-    "nanoid": "catalog:"
+    "drizzle-orm": "catalog:"
   },
   "devDependencies": {
     "@repo/tsconfig": "workspace:*",

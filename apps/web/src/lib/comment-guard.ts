@@ -1,11 +1,9 @@
 import "@tanstack/react-start/server-only";
 import { env } from "cloudflare:workers";
 
-const rateLimitWindowMs = 10 * 60 * 1000;
+const rateLimitWindowSeconds = 10 * 60;
 const perIpLimit = 5;
 const perPostLimit = 3;
-
-const buckets = new Map<string, number[]>();
 
 type CommentGuardResult = { ok: true } | { ok: false; error: string };
 
@@ -20,27 +18,34 @@ export function getClientIp(request: Request) {
   );
 }
 
-export function checkCommentRateLimit({
+export async function checkCommentRateLimit({
   ip,
   postSlug,
 }: {
   ip: string;
   postSlug: string;
-}): CommentGuardResult {
-  const now = Date.now();
-  const ipKey = `ip:${ip}`;
-  const postKey = `post:${postSlug}:${ip}`;
-  const ipEvents = prune(ipKey, now);
-  const postEvents = prune(postKey, now);
+}): Promise<CommentGuardResult> {
+  const ipKey = `ratelimit:ip:${ip}`;
+  const postKey = `ratelimit:post:${postSlug}:${ip}`;
 
-  if (ipEvents.length >= perIpLimit || postEvents.length >= perPostLimit) {
+  const [ipCount, postCount] = await Promise.all([
+    env.CMS_CACHE.get(ipKey, "json").catch(() => 0),
+    env.CMS_CACHE.get(postKey, "json").catch(() => 0),
+  ]);
+
+  if ((ipCount ?? 0) >= perIpLimit || (postCount ?? 0) >= perPostLimit) {
     return { ok: false, error: "Too many comments submitted recently" };
   }
 
-  ipEvents.push(now);
-  postEvents.push(now);
-  buckets.set(ipKey, ipEvents);
-  buckets.set(postKey, postEvents);
+  // Fire-and-forget increment — approximate rate limiting (KV is eventually consistent)
+  await Promise.all([
+    env.CMS_CACHE.put(ipKey, JSON.stringify((ipCount ?? 0) + 1), {
+      expirationTtl: rateLimitWindowSeconds,
+    }),
+    env.CMS_CACHE.put(postKey, JSON.stringify((postCount ?? 0) + 1), {
+      expirationTtl: rateLimitWindowSeconds,
+    }),
+  ]).catch(() => {});
 
   return { ok: true };
 }
@@ -74,9 +79,4 @@ export async function verifyTurnstile({
   const payload = (await response.json()) as { success?: boolean };
 
   return payload.success ? { ok: true } : { ok: false, error: "Turnstile verification failed" };
-}
-
-function prune(key: string, now: number) {
-  const events = buckets.get(key) ?? [];
-  return events.filter((timestamp) => now - timestamp < rateLimitWindowMs);
 }

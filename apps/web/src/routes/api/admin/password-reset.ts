@@ -1,3 +1,4 @@
+import { digestText } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 import { env } from "cloudflare:workers";
 
@@ -136,13 +137,4 @@ function getClientIp(request: Request) {
     request.headers.get("x-real-ip") ??
     "local"
   );
-}
-
-async function digestText(value: string) {
-  const data = new TextEncoder().encode(value);
-  const hash = await crypto.subtle.digest("SHA-256", data);
-
-  return Array.from(new Uint8Array(hash))
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join("");
 }

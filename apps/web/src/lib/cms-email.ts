@@ -1,4 +1,5 @@
 import "@tanstack/react-start/server-only";
+import { escapeHtml } from "@repo/core";
 import type { Comment, Post } from "@repo/core";
 import { env } from "cloudflare:workers";
 
@@ -354,22 +355,5 @@ export async function sendEmailVerificationEmail(input: {
       `<p><a href="${escapeHtml(input.verifyUrl)}">Verify your email address</a></p>`,
       `<p>This link expires in ${input.ttlMinutes} minutes.</p>`,
     ].join(""),
-  });
-}
-
-function escapeHtml(value: string) {
-  return value.replace(/[&<>"']/g, (char) => {
-    switch (char) {
-      case "&":
-        return "&amp;";
-      case "<":
-        return "&lt;";
-      case ">":
-        return "&gt;";
-      case '"':
-        return "&quot;";
-      default:
-        return "&#39;";
-    }
   });
 }

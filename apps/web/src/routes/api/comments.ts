@@ -56,7 +56,7 @@ export const Route = createFileRoute("/api/comments")({
           return jsonResponse({ error: turnstile.error }, { status: 400 });
         }
 
-        const rateLimit = checkCommentRateLimit({
+        const rateLimit = await checkCommentRateLimit({
           ip: getClientIp(request),
           postSlug: body.postSlug ?? "",
         });

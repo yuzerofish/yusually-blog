@@ -265,6 +265,7 @@ export const $getProjectPageData = createServerFn({ method: "GET" })
       : null;
   });
 
+/** @deprecated Seed data merging — remove after confirming D1 has real content */
 async function getMergedPublishedPosts() {
   const { listD1Posts } = await import("./cms-d1");
   const persistedPosts = await listD1Posts().catch(() => []);
@@ -276,6 +277,7 @@ async function getMergedPublishedPosts() {
   ];
 }
 
+/** @deprecated Seed data merging — remove after confirming D1 has real content */
 async function getMergedTags(posts: Post[]) {
   const { listD1Tags } = await import("./cms-d1");
   const persistedTags = await listD1Tags().catch(() => []);
@@ -290,6 +292,7 @@ async function getMergedTags(posts: Post[]) {
   return Array.from(tagsBySlug.values()).sort((a, b) => a.name.localeCompare(b.name));
 }
 
+/** @deprecated Seed data merging — remove after confirming D1 has real content */
 async function getMergedPublishedProjects() {
   const { listD1Projects } = await import("./cms-d1");
   const persistedProjects = await listD1Projects().catch(() => []);

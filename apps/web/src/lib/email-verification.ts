@@ -1,4 +1,5 @@
 import "@tanstack/react-start/server-only";
+import { digestText } from "@repo/core";
 import { env } from "cloudflare:workers";
 
 import { getD1SiteSettings } from "#/lib/cms-d1";
@@ -133,13 +134,4 @@ function publicSiteUrl(request: Request) {
   return (
     env.CMS_PUBLIC_SITE_URL?.replace(/\/$/, "") || env.VITE_BASE_URL || new URL(request.url).origin
   );
-}
-
-async function digestText(value: string) {
-  const data = new TextEncoder().encode(value);
-  const hash = await crypto.subtle.digest("SHA-256", data);
-
-  return Array.from(new Uint8Array(hash))
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join("");
 }

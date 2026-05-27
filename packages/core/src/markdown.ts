@@ -1,3 +1,5 @@
+import { escapeHtml } from "./utils";
+
 const blockTags = new Set(["blockquote", "h1", "h2", "h3", "li", "p", "pre", "ul"]);
 
 export function renderMarkdownToHtml(markdown: string) {
@@ -116,25 +118,6 @@ function inlineMarkdown(value: string) {
       '<a href="$2" rel="noreferrer">$1</a>',
     )
     .replace(/!\[([^\]]*)]\((https?:\/\/[^)\s]+|\/[^)\s]+)\)/g, '<img src="$2" alt="$1" />');
-}
-
-function escapeHtml(value: string) {
-  return value.replace(/[&<>"']/g, (character) => {
-    switch (character) {
-      case "&":
-        return "&amp;";
-      case "<":
-        return "&lt;";
-      case ">":
-        return "&gt;";
-      case '"':
-        return "&quot;";
-      case "'":
-        return "&#39;";
-      default:
-        return character;
-    }
-  });
 }
 
 export function htmlToText(html: string) {

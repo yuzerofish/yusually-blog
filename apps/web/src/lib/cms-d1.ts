@@ -22,114 +22,23 @@ import {
   type SiteSettings,
   type SupportedLocale,
   type Tag,
+  cleanStringList,
+  countLinks,
+  digestText,
+  normalizeDateInput,
+  parseJson,
+  slugify,
 } from "@repo/core";
+import * as schema from "@repo/db/schema/cms";
 import { env } from "cloudflare:workers";
+import { eq, and, or, like, desc, asc, ne, inArray, sql } from "drizzle-orm";
 
-type D1PostRow = {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  cover_image: string | null;
-  content_markdown: string;
-  content_html: string;
-  content_text: string;
-  status: ContentStatus;
-  source: Post["source"];
-  featured: number;
-  pinned: number;
-  comments_enabled: number;
-  seo_title: string | null;
-  seo_description: string | null;
-  i18n: string | null;
-  published_at: string | null;
-  created_at: string;
-  updated_at: string;
-};
+import { cachedGet, invalidateCache } from "./cms-cache";
+import { getCmsDb } from "./cms-db";
 
-type D1CommentRow = {
-  id: string;
-  post_id: string;
-  parent_id: string | null;
-  author_user_id: string | null;
-  author_name: string;
-  author_email_hash: string;
-  author_website: string | null;
-  body: string;
-  i18n: string | null;
-  status: CommentStatus;
-  created_at: string;
-};
-
-type D1PageRow = {
-  id: string;
-  title: string;
-  slug: string;
-  content_markdown: string;
-  content_html: string;
-  status: CmsPage["status"];
-  seo_title: string | null;
-  seo_description: string | null;
-  i18n: string | null;
-  created_at: string;
-  updated_at: string;
-};
-
-type D1ProjectRow = {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  project_url: string | null;
-  github_url: string | null;
-  cover_image: string | null;
-  content_markdown: string;
-  content_html: string;
-  tags: string | null;
-  screenshots: string | null;
-  i18n: string | null;
-  status: Project["status"];
-  published_at: string | null;
-  created_at: string;
-  updated_at: string;
-};
-
-type D1AssetRow = {
-  id: string;
-  key: string;
-  url: string;
-  filename: string;
-  content_type: string;
-  size_bytes: number;
-  attached_post_id: string | null;
-  created_at: string;
-};
-
-type D1TagRow = {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  i18n: string | null;
-  created_at: string;
-};
-
-type D1SiteSettingsRow = {
-  key: string;
-  value: string;
-  updated_at: string;
-};
-
-type D1ApiTokenRow = {
-  id: string;
-  name: string;
-  token_hash: string;
-  scopes: string;
-  expires_at: string | null;
-  last_used_at: string | null;
-  revoked_at: string | null;
-  created_at: string;
-};
+// ---------------------------------------------------------------------------
+// Input / option types (unchanged from original)
+// ---------------------------------------------------------------------------
 
 type PostInput = Partial<{
   title: string;
@@ -232,20 +141,181 @@ type SiteSettingsInput = Partial<
 
 type D1Result<TValue> = { data: TValue } | { error: string };
 
+// ---------------------------------------------------------------------------
+// Helpers to convert Drizzle rows to app types
+// ---------------------------------------------------------------------------
+
+function drizzleRowToPost(
+  row: typeof schema.posts.$inferSelect,
+  currentSettings: SiteSettings = runtimeDefaultSiteSettings(),
+): Post {
+  return {
+    id: row.id,
+    title: row.title,
+    slug: row.slug,
+    excerpt: row.excerpt,
+    coverImage: row.coverImage || currentSettings.defaultOgImage,
+    contentMarkdown: row.contentMarkdown,
+    contentHtml: row.contentHtml,
+    contentText: row.contentText,
+    status: row.status as ContentStatus,
+    source: row.source as Post["source"],
+    featured: row.featured,
+    pinned: row.pinned,
+    commentsEnabled: row.commentsEnabled,
+    publishedAt: row.publishedAt ?? row.createdAt,
+    updatedAt: row.updatedAt,
+    authorName: currentSettings.authorName,
+    tags: [],
+    seoTitle: row.seoTitle ?? row.title,
+    seoDescription: row.seoDescription ?? row.excerpt,
+    i18n: row.i18n as Post["i18n"],
+  };
+}
+
+function drizzleRowToPage(row: typeof schema.pages.$inferSelect): CmsPage {
+  return {
+    id: row.id,
+    title: row.title,
+    slug: row.slug,
+    contentMarkdown: row.contentMarkdown,
+    contentHtml: row.contentHtml,
+    status: row.status as CmsPage["status"],
+    seoTitle: row.seoTitle ?? row.title,
+    seoDescription: row.seoDescription ?? "",
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+    i18n: row.i18n as CmsPage["i18n"],
+  };
+}
+
+function drizzleRowToProject(row: typeof schema.projects.$inferSelect): Project {
+  const tags = (row.tags ?? []) as string[];
+  const screenshots = (row.screenshots ?? []) as string[];
+  return {
+    id: row.id,
+    title: row.title,
+    slug: row.slug,
+    excerpt: row.excerpt,
+    coverImage: row.coverImage ?? "",
+    projectUrl: row.projectUrl ?? "",
+    githubUrl: row.githubUrl ?? "",
+    contentMarkdown: row.contentMarkdown,
+    contentHtml: row.contentHtml,
+    tags: tagsFromNames(tags),
+    screenshots: cleanStringList(screenshots),
+    status: row.status as Project["status"],
+    publishedAt: row.publishedAt ?? row.createdAt,
+    updatedAt: row.updatedAt,
+    i18n: row.i18n as Project["i18n"],
+  };
+}
+
+function drizzleRowToTag(row: typeof schema.tags.$inferSelect): Tag {
+  return {
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    description: row.description,
+    i18n: row.i18n as Tag["i18n"],
+  };
+}
+
+function drizzleRowToComment(row: typeof schema.comments.$inferSelect): Comment {
+  return {
+    id: row.id,
+    postId: row.postId,
+    parentId: row.parentId,
+    authorUserId: row.authorUserId,
+    authorName: row.authorName,
+    authorEmailHash: row.authorEmailHash,
+    authorWebsite: row.authorWebsite,
+    body: row.body,
+    status: row.status as CommentStatus,
+    createdAt: row.createdAt,
+    i18n: row.i18n as Comment["i18n"],
+  };
+}
+
+function drizzleRowToAsset(row: typeof schema.assets.$inferSelect): Asset {
+  return {
+    id: row.id,
+    key: row.key,
+    url: row.url,
+    filename: row.filename,
+    contentType: row.contentType,
+    sizeBytes: row.sizeBytes,
+    attachedPostId: row.attachedPostId,
+    createdAt: row.createdAt,
+  };
+}
+
+function drizzleRowToApiToken(row: typeof schema.apiTokens.$inferSelect): ApiToken {
+  return {
+    id: row.id,
+    name: row.name,
+    tokenPrefix: row.tokenHash.slice(0, 16),
+    scopes: (row.scopes as ApiTokenScope[]) ?? [],
+    expiresAt: row.expiresAt,
+    lastUsedAt: row.lastUsedAt,
+    revokedAt: row.revokedAt,
+    createdAt: row.createdAt,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Published-scope WHERE condition (reused by multiple query builders)
+// ---------------------------------------------------------------------------
+
+function publishedWhereClause() {
+  const now = new Date().toISOString();
+  return or(
+    eq(schema.posts.status, "published"),
+    and(eq(schema.posts.status, "scheduled"), sql`${schema.posts.publishedAt} <= ${now}`),
+  );
+}
+
+function notDeletedWhereClause() {
+  return ne(schema.posts.status, "deleted");
+}
+
+function postVisibilityFilter(includeUnpublished?: boolean) {
+  return includeUnpublished ? notDeletedWhereClause() : publishedWhereClause();
+}
+
+function entityVisibilityFilter(
+  table: typeof schema.pages | typeof schema.projects,
+  includeUnpublished?: boolean,
+) {
+  return includeUnpublished ? ne(table.status, "deleted") : eq(table.status, "published");
+}
+
+// ---------------------------------------------------------------------------
+// Site settings
+// ---------------------------------------------------------------------------
+
 const siteSettingsKey = "site";
 
 export async function getD1SiteSettings(locale?: SupportedLocale) {
-  const settings = await readD1SiteSettings().catch(() => runtimeDefaultSiteSettings());
+  const settings = await cachedGet("site:settings", () =>
+    readD1SiteSettings().catch(() => runtimeDefaultSiteSettings()),
+  );
 
   return locale ? localizeSiteSettings(settings, locale) : settings;
 }
 
 async function readD1SiteSettings() {
-  const row = await env.CMS_DB.prepare("select * from site_settings where key = ? limit 1")
-    .bind(siteSettingsKey)
-    .first<D1SiteSettingsRow>();
+  const db = getCmsDb();
+  const rows = await db
+    .select()
+    .from(schema.siteSettings)
+    .where(eq(schema.siteSettings.key, siteSettingsKey))
+    .limit(1);
+  const row = rows[0];
 
-  return normalizeSiteSettings(parseJson<SiteSettingsInput>(row?.value ?? null) ?? {});
+  return normalizeSiteSettings(
+    parseJson<SiteSettingsInput>((row?.value as string | null) ?? null) ?? {},
+  );
 }
 
 export async function updateD1SiteSettings(input: SiteSettingsInput) {
@@ -253,91 +323,122 @@ export async function updateD1SiteSettings(input: SiteSettingsInput) {
   const settings = normalizeSiteSettings(input, current);
   const now = new Date().toISOString();
 
-  await env.CMS_DB.prepare(
-    "insert into site_settings (key, value, updated_at) values (?, ?, ?) on conflict(key) do update set value = excluded.value, updated_at = excluded.updated_at",
-  )
-    .bind(siteSettingsKey, JSON.stringify(settings), now)
-    .run();
+  const db = getCmsDb();
+  await db
+    .insert(schema.siteSettings)
+    .values({ key: siteSettingsKey, value: settings, updatedAt: now })
+    .onConflictDoUpdate({
+      target: schema.siteSettings.key,
+      set: { value: settings, updatedAt: now },
+    });
+
+  await invalidateCache("site:settings");
 
   return settings;
 }
+
+// ---------------------------------------------------------------------------
+// Posts
+// ---------------------------------------------------------------------------
 
 export async function listD1Posts({
   includeUnpublished = false,
   query = "",
 }: ListPostsOptions = {}) {
-  const normalizedQuery = query.trim().toLowerCase();
-  const where = includeUnpublished
-    ? "status != 'deleted'"
-    : "(status = 'published' or (status = 'scheduled' and published_at <= ?))";
-  const params: string[] = [];
-  let sql = `select * from posts where ${where}`;
-
-  if (!includeUnpublished) {
-    params.push(new Date().toISOString());
+  // Cache the common case: published posts, no search query
+  if (!includeUnpublished && !query) {
+    return cachedGet("posts:published", () =>
+      listD1PostsFromDb({ includeUnpublished: false, query: "" }),
+    );
   }
+
+  return listD1PostsFromDb({ includeUnpublished, query });
+}
+
+async function listD1PostsFromDb({
+  includeUnpublished = false,
+  query = "",
+}: ListPostsOptions = {}) {
+  const db = getCmsDb();
+  const normalizedQuery = query.trim().toLowerCase();
+  const conditions = [postVisibilityFilter(includeUnpublished)];
 
   if (normalizedQuery) {
-    sql +=
-      " and (lower(title) like ? or lower(excerpt) like ? or lower(content_text) like ? or lower(slug) like ?)";
-    const like = `%${normalizedQuery}%`;
-    params.push(like, like, like, like);
+    const pattern = `%${normalizedQuery}%`;
+    conditions.push(
+      or(
+        like(sql`lower(${schema.posts.title})`, pattern),
+        like(sql`lower(${schema.posts.excerpt})`, pattern),
+        like(sql`lower(${schema.posts.contentText})`, pattern),
+        like(sql`lower(${schema.posts.slug})`, pattern),
+      )!,
+    );
   }
 
-  sql += " order by pinned desc, published_at desc, updated_at desc";
+  const rows = await db
+    .select()
+    .from(schema.posts)
+    .where(and(...conditions))
+    .orderBy(
+      desc(schema.posts.pinned),
+      desc(schema.posts.publishedAt),
+      desc(schema.posts.updatedAt),
+    );
 
-  const result = await env.CMS_DB.prepare(sql)
-    .bind(...params)
-    .all<D1PostRow>();
   const currentSettings = await getD1SiteSettings();
 
-  return attachD1Tags(result.results.map((row) => rowToPost(row, currentSettings)));
+  return attachD1Tags(rows.map((row) => drizzleRowToPost(row, currentSettings)));
 }
 
 export async function getD1PostBySlug(slug: string, includeUnpublished = false) {
-  const result = await env.CMS_DB.prepare(
-    `select * from posts where slug = ? and ${
-      includeUnpublished
-        ? "status != 'deleted'"
-        : "(status = 'published' or (status = 'scheduled' and published_at <= ?))"
-    } limit 1`,
-  )
-    .bind(slug, ...(includeUnpublished ? [] : [new Date().toISOString()]))
-    .first<D1PostRow>();
+  const db = getCmsDb();
+  const rows = await db
+    .select()
+    .from(schema.posts)
+    .where(and(eq(schema.posts.slug, slug), postVisibilityFilter(includeUnpublished)))
+    .limit(1);
 
-  if (!result) {
+  const row = rows[0];
+
+  if (!row) {
     return undefined;
   }
 
-  const [post] = await attachD1Tags([rowToPost(result, await getD1SiteSettings())]);
+  const [post] = await attachD1Tags([drizzleRowToPost(row, await getD1SiteSettings())]);
 
   return post;
 }
 
 export async function getD1PostByIdOrSlug(idOrSlug: string, includeUnpublished = true) {
-  const result = await env.CMS_DB.prepare(
-    `select * from posts where (id = ? or slug = ?) and ${
-      includeUnpublished
-        ? "status != 'deleted'"
-        : "(status = 'published' or (status = 'scheduled' and published_at <= ?))"
-    } limit 1`,
-  )
-    .bind(idOrSlug, idOrSlug, ...(includeUnpublished ? [] : [new Date().toISOString()]))
-    .first<D1PostRow>();
+  const db = getCmsDb();
+  const rows = await db
+    .select()
+    .from(schema.posts)
+    .where(
+      and(
+        or(eq(schema.posts.id, idOrSlug), eq(schema.posts.slug, idOrSlug)),
+        postVisibilityFilter(includeUnpublished),
+      ),
+    )
+    .limit(1);
 
-  if (!result) {
+  const row = rows[0];
+
+  if (!row) {
     return undefined;
   }
 
-  const [post] = await attachD1Tags([rowToPost(result, await getD1SiteSettings())]);
+  const [post] = await attachD1Tags([drizzleRowToPost(row, await getD1SiteSettings())]);
 
   return post;
 }
 
 export async function listD1Tags() {
-  const result = await env.CMS_DB.prepare("select * from tags order by name").all<D1TagRow>();
-
-  return result.results.map(rowToTag);
+  return cachedGet("tags:all", async () => {
+    const db = getCmsDb();
+    const rows = await db.select().from(schema.tags).orderBy(asc(schema.tags.name));
+    return rows.map(drizzleRowToTag);
+  });
 }
 
 export async function createD1Post(input: PostInput) {
@@ -353,12 +454,13 @@ export async function createD1Post(input: PostInput) {
   const status = input.status ?? "draft";
   const source = input.source ?? "api";
   const publishedAt = normalizeDateInput(input.publishedAt) ?? now;
+  const coverImage = input.coverImage?.trim() || currentSettings.defaultOgImage;
   const post: Post = {
     id: `post_${crypto.randomUUID()}`,
     title,
     slug,
     excerpt: input.excerpt?.trim() || contentText.slice(0, 180),
-    coverImage: input.coverImage?.trim() || currentSettings.defaultOgImage,
+    coverImage,
     contentMarkdown,
     contentHtml,
     contentText,
@@ -390,37 +492,31 @@ export async function createD1Post(input: PostInput) {
     };
   }
 
-  await env.CMS_DB.prepare(
-    `insert into posts (
-      id, title, slug, excerpt, cover_image, content_markdown, content_html, content_text,
-      status, source, featured, pinned, comments_enabled, seo_title, seo_description,
-      i18n, published_at, created_at, updated_at
-    ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  )
-    .bind(
-      post.id,
-      post.title,
-      post.slug,
-      post.excerpt,
-      input.coverImage?.trim() || currentSettings.defaultOgImage,
-      post.contentMarkdown,
-      post.contentHtml,
-      post.contentText,
-      post.status,
-      post.source,
-      post.featured ? 1 : 0,
-      post.pinned ? 1 : 0,
-      post.commentsEnabled ? 1 : 0,
-      post.seoTitle,
-      post.seoDescription,
-      post.i18n ? JSON.stringify(post.i18n) : null,
-      publishedAt,
-      now,
-      post.updatedAt,
-    )
-    .run();
+  const db = getCmsDb();
+  await db.insert(schema.posts).values({
+    id: post.id,
+    title: post.title,
+    slug: post.slug,
+    excerpt: post.excerpt,
+    coverImage: coverImage,
+    contentMarkdown: post.contentMarkdown,
+    contentHtml: post.contentHtml,
+    contentText: post.contentText,
+    status: post.status,
+    source: post.source,
+    featured: post.featured,
+    pinned: post.pinned,
+    commentsEnabled: post.commentsEnabled,
+    seoTitle: post.seoTitle,
+    seoDescription: post.seoDescription,
+    i18n: post.i18n ?? null,
+    publishedAt,
+    createdAt: now,
+    updatedAt: post.updatedAt,
+  });
 
   await replaceD1PostTags(post.id, input.tags ?? [], input.locale);
+  await invalidateCache("posts:published", "tags:all");
 
   return (await getD1PostByIdOrSlug(post.id)) ?? post;
 }
@@ -484,36 +580,34 @@ export async function updateD1Post(idOrSlug: string, input: PostInput) {
         : post.seoDescription;
   const commentsEnabled = input.commentsEnabled ?? post.commentsEnabled;
 
-  await env.CMS_DB.prepare(
-    `update posts set
-      title = ?, excerpt = ?, cover_image = ?, content_markdown = ?, content_html = ?,
-      content_text = ?, status = ?, comments_enabled = ?, seo_title = ?, seo_description = ?,
-      i18n = ?, published_at = ?, updated_at = ?
-    where id = ?`,
-  )
-    .bind(
+  const db = getCmsDb();
+  await db
+    .update(schema.posts)
+    .set({
       title,
       excerpt,
-      input.coverImage !== undefined
-        ? input.coverImage.trim() || currentSettings.defaultOgImage
-        : post.coverImage,
+      coverImage:
+        input.coverImage !== undefined
+          ? input.coverImage.trim() || currentSettings.defaultOgImage
+          : post.coverImage,
       contentMarkdown,
       contentHtml,
       contentText,
       status,
-      commentsEnabled ? 1 : 0,
+      commentsEnabled,
       seoTitle,
       seoDescription,
-      i18n ? JSON.stringify(i18n) : null,
+      i18n: i18n ?? null,
       publishedAt,
-      now,
-      post.id,
-    )
-    .run();
+      updatedAt: now,
+    })
+    .where(eq(schema.posts.id, post.id));
 
   if (input.tags !== undefined) {
     await replaceD1PostTags(post.id, input.tags, input.locale);
   }
+
+  await invalidateCache("posts:published", "tags:all");
 
   return getD1PostByIdOrSlug(post.id);
 }
@@ -682,10 +776,14 @@ export async function deleteD1Post(idOrSlug: string) {
   }
 
   const now = new Date().toISOString();
+  const db = getCmsDb();
 
-  await env.CMS_DB.prepare("update posts set status = ?, updated_at = ? where id = ?")
-    .bind("deleted", now, post.id)
-    .run();
+  await db
+    .update(schema.posts)
+    .set({ status: "deleted", updatedAt: now })
+    .where(eq(schema.posts.id, post.id));
+
+  await invalidateCache("posts:published");
 
   return {
     ...post,
@@ -694,33 +792,48 @@ export async function deleteD1Post(idOrSlug: string) {
   };
 }
 
-export async function listD1Pages({ includeUnpublished = false } = {}) {
-  const where = includeUnpublished ? "status != 'deleted'" : "status = 'published'";
-  const result = await env.CMS_DB.prepare(
-    `select * from pages where ${where} order by updated_at desc`,
-  ).all<D1PageRow>();
+// ---------------------------------------------------------------------------
+// Pages
+// ---------------------------------------------------------------------------
 
-  return result.results.map(rowToPage);
+export async function listD1Pages({ includeUnpublished = false } = {}) {
+  const db = getCmsDb();
+  const rows = await db
+    .select()
+    .from(schema.pages)
+    .where(entityVisibilityFilter(schema.pages, includeUnpublished))
+    .orderBy(desc(schema.pages.updatedAt));
+
+  return rows.map(drizzleRowToPage);
 }
 
 export async function getD1PageBySlug(slug: string, includeUnpublished = false) {
-  const row = await env.CMS_DB.prepare(
-    `select * from pages where slug = ? and ${includeUnpublished ? "status != 'deleted'" : "status = 'published'"} limit 1`,
-  )
-    .bind(slug)
-    .first<D1PageRow>();
+  const db = getCmsDb();
+  const rows = await db
+    .select()
+    .from(schema.pages)
+    .where(
+      and(eq(schema.pages.slug, slug), entityVisibilityFilter(schema.pages, includeUnpublished)),
+    )
+    .limit(1);
 
-  return row ? rowToPage(row) : undefined;
+  return rows[0] ? drizzleRowToPage(rows[0]) : undefined;
 }
 
 export async function getD1PageByIdOrSlug(idOrSlug: string, includeUnpublished = true) {
-  const row = await env.CMS_DB.prepare(
-    `select * from pages where (id = ? or slug = ?) and ${includeUnpublished ? "status != 'deleted'" : "status = 'published'"} limit 1`,
-  )
-    .bind(idOrSlug, idOrSlug)
-    .first<D1PageRow>();
+  const db = getCmsDb();
+  const rows = await db
+    .select()
+    .from(schema.pages)
+    .where(
+      and(
+        or(eq(schema.pages.id, idOrSlug), eq(schema.pages.slug, idOrSlug)),
+        entityVisibilityFilter(schema.pages, includeUnpublished),
+      ),
+    )
+    .limit(1);
 
-  return row ? rowToPage(row) : undefined;
+  return rows[0] ? drizzleRowToPage(rows[0]) : undefined;
 }
 
 export async function createD1Page(input: PageInput) {
@@ -757,26 +870,20 @@ export async function createD1Page(input: PageInput) {
     };
   }
 
-  await env.CMS_DB.prepare(
-    `insert into pages (
-      id, title, slug, content_markdown, content_html, status,
-      seo_title, seo_description, i18n, created_at, updated_at
-    ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  )
-    .bind(
-      page.id,
-      page.title,
-      page.slug,
-      page.contentMarkdown,
-      page.contentHtml,
-      page.status,
-      page.seoTitle,
-      page.seoDescription,
-      page.i18n ? JSON.stringify(page.i18n) : null,
-      page.createdAt,
-      page.updatedAt,
-    )
-    .run();
+  const db = getCmsDb();
+  await db.insert(schema.pages).values({
+    id: page.id,
+    title: page.title,
+    slug: page.slug,
+    contentMarkdown: page.contentMarkdown,
+    contentHtml: page.contentHtml,
+    status: page.status,
+    seoTitle: page.seoTitle,
+    seoDescription: page.seoDescription,
+    i18n: page.i18n ?? null,
+    createdAt: page.createdAt,
+    updatedAt: page.updatedAt,
+  });
 
   return (await getD1PageByIdOrSlug(page.id)) ?? page;
 }
@@ -816,24 +923,20 @@ export async function updateD1Page(idOrSlug: string, input: PageInput) {
       : page.seoDescription;
   const now = new Date().toISOString();
 
-  await env.CMS_DB.prepare(
-    `update pages set
-      title = ?, content_markdown = ?, content_html = ?, status = ?,
-      seo_title = ?, seo_description = ?, i18n = ?, updated_at = ?
-    where id = ?`,
-  )
-    .bind(
+  const db = getCmsDb();
+  await db
+    .update(schema.pages)
+    .set({
       title,
       contentMarkdown,
       contentHtml,
-      normalizeContentRecordStatus(input.status, page.status),
+      status: normalizeContentRecordStatus(input.status, page.status),
       seoTitle,
       seoDescription,
-      i18n ? JSON.stringify(i18n) : null,
-      now,
-      page.id,
-    )
-    .run();
+      i18n: i18n ?? null,
+      updatedAt: now,
+    })
+    .where(eq(schema.pages.id, page.id));
 
   return getD1PageByIdOrSlug(page.id);
 }
@@ -846,10 +949,12 @@ export async function deleteD1Page(idOrSlug: string) {
   }
 
   const now = new Date().toISOString();
+  const db = getCmsDb();
 
-  await env.CMS_DB.prepare("update pages set status = ?, updated_at = ? where id = ?")
-    .bind("deleted", now, page.id)
-    .run();
+  await db
+    .update(schema.pages)
+    .set({ status: "deleted", updatedAt: now })
+    .where(eq(schema.pages.id, page.id));
 
   return {
     ...page,
@@ -858,23 +963,35 @@ export async function deleteD1Page(idOrSlug: string) {
   };
 }
 
-export async function listD1Projects({ includeUnpublished = false } = {}) {
-  const where = includeUnpublished ? "status != 'deleted'" : "status = 'published'";
-  const result = await env.CMS_DB.prepare(
-    `select * from projects where ${where} order by published_at desc, updated_at desc`,
-  ).all<D1ProjectRow>();
+// ---------------------------------------------------------------------------
+// Projects
+// ---------------------------------------------------------------------------
 
-  return result.results.map(rowToProject);
+export async function listD1Projects({ includeUnpublished = false } = {}) {
+  const db = getCmsDb();
+  const rows = await db
+    .select()
+    .from(schema.projects)
+    .where(entityVisibilityFilter(schema.projects, includeUnpublished))
+    .orderBy(desc(schema.projects.publishedAt), desc(schema.projects.updatedAt));
+
+  return rows.map(drizzleRowToProject);
 }
 
 export async function getD1ProjectByIdOrSlug(idOrSlug: string, includeUnpublished = true) {
-  const row = await env.CMS_DB.prepare(
-    `select * from projects where (id = ? or slug = ?) and ${includeUnpublished ? "status != 'deleted'" : "status = 'published'"} limit 1`,
-  )
-    .bind(idOrSlug, idOrSlug)
-    .first<D1ProjectRow>();
+  const db = getCmsDb();
+  const rows = await db
+    .select()
+    .from(schema.projects)
+    .where(
+      and(
+        or(eq(schema.projects.id, idOrSlug), eq(schema.projects.slug, idOrSlug)),
+        entityVisibilityFilter(schema.projects, includeUnpublished),
+      ),
+    )
+    .limit(1);
 
-  return row ? rowToProject(row) : undefined;
+  return rows[0] ? drizzleRowToProject(rows[0]) : undefined;
 }
 
 export async function createD1Project(input: ProjectInput) {
@@ -887,12 +1004,13 @@ export async function createD1Project(input: ProjectInput) {
     ? sanitizeHtml(input.contentHtml)
     : renderMarkdownToHtml(contentMarkdown);
   const status = normalizeContentRecordStatus(input.status, "draft");
+  const coverImage = input.coverImage?.trim() || currentSettings.defaultOgImage;
   const project: Project = {
     id: `project_${crypto.randomUUID()}`,
     title,
     slug,
     excerpt: input.excerpt?.trim() || markdownToText(contentMarkdown).slice(0, 180),
-    coverImage: input.coverImage?.trim() || currentSettings.defaultOgImage,
+    coverImage,
     projectUrl: input.projectUrl?.trim() || "",
     githubUrl: input.githubUrl?.trim() || "",
     contentMarkdown,
@@ -915,32 +1033,25 @@ export async function createD1Project(input: ProjectInput) {
     };
   }
 
-  await env.CMS_DB.prepare(
-    `insert into projects (
-      id, title, slug, excerpt, project_url, github_url, cover_image,
-      content_markdown, content_html, tags, screenshots, i18n, status,
-      published_at, created_at, updated_at
-    ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  )
-    .bind(
-      project.id,
-      project.title,
-      project.slug,
-      project.excerpt,
-      project.projectUrl || null,
-      project.githubUrl || null,
-      project.coverImage,
-      project.contentMarkdown,
-      project.contentHtml,
-      JSON.stringify(project.tags.map((tag) => tag.name)),
-      JSON.stringify(project.screenshots),
-      project.i18n ? JSON.stringify(project.i18n) : null,
-      project.status,
-      project.status === "published" ? project.publishedAt : null,
-      now,
-      project.updatedAt,
-    )
-    .run();
+  const db = getCmsDb();
+  await db.insert(schema.projects).values({
+    id: project.id,
+    title: project.title,
+    slug: project.slug,
+    excerpt: project.excerpt,
+    projectUrl: project.projectUrl || null,
+    githubUrl: project.githubUrl || null,
+    coverImage: project.coverImage,
+    contentMarkdown: project.contentMarkdown,
+    contentHtml: project.contentHtml,
+    tags: project.tags.map((tag) => tag.name),
+    screenshots: project.screenshots,
+    i18n: project.i18n ?? null,
+    status: project.status,
+    publishedAt: project.status === "published" ? project.publishedAt : null,
+    createdAt: now,
+    updatedAt: project.updatedAt,
+  });
 
   return (await getD1ProjectByIdOrSlug(project.id)) ?? project;
 }
@@ -982,52 +1093,45 @@ export async function updateD1Project(idOrSlug: string, input: ProjectInput) {
   });
   const now = new Date().toISOString();
 
-  await env.CMS_DB.prepare(
-    `update projects set
-      title = ?, excerpt = ?, project_url = ?, github_url = ?, cover_image = ?,
-      content_markdown = ?, content_html = ?, tags = ?, screenshots = ?, i18n = ?,
-      status = ?, published_at = ?, updated_at = ?
-    where id = ?`,
-  )
-    .bind(
+  const db = getCmsDb();
+  await db
+    .update(schema.projects)
+    .set({
       title,
-      localizedUpdate
+      excerpt: localizedUpdate
         ? project.excerpt
         : inputExcerpt !== undefined
           ? inputExcerpt
           : project.excerpt,
-      localizedUpdate
+      projectUrl: localizedUpdate
         ? project.projectUrl || null
         : input.projectUrl !== undefined
           ? input.projectUrl.trim() || null
           : project.projectUrl || null,
-      localizedUpdate
+      githubUrl: localizedUpdate
         ? project.githubUrl || null
         : input.githubUrl !== undefined
           ? input.githubUrl.trim() || null
           : project.githubUrl || null,
-      localizedUpdate
+      coverImage: localizedUpdate
         ? project.coverImage
         : input.coverImage !== undefined
           ? input.coverImage.trim() || currentSettings.defaultOgImage
           : project.coverImage,
       contentMarkdown,
       contentHtml,
-      JSON.stringify(
+      tags:
         input.tags !== undefined
           ? cleanStringList(input.tags)
           : project.tags.map((tag) => tag.name),
-      ),
-      JSON.stringify(
+      screenshots:
         input.screenshots !== undefined ? cleanStringList(input.screenshots) : project.screenshots,
-      ),
-      i18n ? JSON.stringify(i18n) : null,
+      i18n: i18n ?? null,
       status,
-      status === "published" ? publishedAt : null,
-      now,
-      project.id,
-    )
-    .run();
+      publishedAt: status === "published" ? publishedAt : null,
+      updatedAt: now,
+    })
+    .where(eq(schema.projects.id, project.id));
 
   return getD1ProjectByIdOrSlug(project.id);
 }
@@ -1040,10 +1144,12 @@ export async function deleteD1Project(idOrSlug: string) {
   }
 
   const now = new Date().toISOString();
+  const db = getCmsDb();
 
-  await env.CMS_DB.prepare("update projects set status = ?, updated_at = ? where id = ?")
-    .bind("deleted", now, project.id)
-    .run();
+  await db
+    .update(schema.projects)
+    .set({ status: "deleted", updatedAt: now })
+    .where(eq(schema.projects.id, project.id));
 
   return {
     ...project,
@@ -1051,6 +1157,10 @@ export async function deleteD1Project(idOrSlug: string) {
     updatedAt: now,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Comments
+// ---------------------------------------------------------------------------
 
 export async function createD1Comment(input: CommentInput): Promise<D1Result<Comment>> {
   const currentSettings = await getD1SiteSettings();
@@ -1078,19 +1188,28 @@ export async function createD1Comment(input: CommentInput): Promise<D1Result<Com
   }
 
   const parentId = input.parentId ?? null;
+  const db = getCmsDb();
   const parentComment = parentId
-    ? await env.CMS_DB.prepare(
-        "select parent_id from comments where id = ? and post_id = ? and status != 'deleted' limit 1",
-      )
-        .bind(parentId, post.id)
-        .first<{ parent_id: string | null }>()
+    ? (
+        await db
+          .select({ parentId: schema.comments.parentId })
+          .from(schema.comments)
+          .where(
+            and(
+              eq(schema.comments.id, parentId),
+              eq(schema.comments.postId, post.id),
+              ne(schema.comments.status, "deleted"),
+            ),
+          )
+          .limit(1)
+      )[0]
     : null;
 
   if (parentId && !parentComment) {
     return { error: "Reply target not found" };
   }
 
-  if (parentComment?.parent_id) {
+  if (parentComment?.parentId) {
     return { error: "Comment replies are limited to two levels" };
   }
 
@@ -1114,75 +1233,75 @@ export async function createD1Comment(input: CommentInput): Promise<D1Result<Com
     };
   }
 
-  await env.CMS_DB.prepare(
-    `insert into comments (
-      id, post_id, parent_id, author_user_id, author_name, author_email_hash, author_website,
-      body, i18n, status, created_at, updated_at
-    ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  )
-    .bind(
-      comment.id,
-      comment.postId,
-      comment.parentId,
-      comment.authorUserId,
-      comment.authorName,
-      comment.authorEmailHash,
-      comment.authorWebsite,
-      comment.body,
-      comment.i18n ? JSON.stringify(comment.i18n) : null,
-      comment.status,
-      comment.createdAt,
-      now,
-    )
-    .run();
+  await db.insert(schema.comments).values({
+    id: comment.id,
+    postId: comment.postId,
+    parentId: comment.parentId,
+    authorUserId: comment.authorUserId,
+    authorName: comment.authorName,
+    authorEmailHash: comment.authorEmailHash,
+    authorWebsite: comment.authorWebsite,
+    body: comment.body,
+    i18n: comment.i18n ?? null,
+    status: comment.status,
+    createdAt: comment.createdAt,
+    updatedAt: now,
+  });
 
   return { data: comment };
 }
 
 export async function listD1ApprovedComments(postId: string) {
-  const result = await env.CMS_DB.prepare(
-    "select * from comments where post_id = ? and status = 'approved' order by created_at asc",
-  )
-    .bind(postId)
-    .all<D1CommentRow>();
+  const db = getCmsDb();
+  const rows = await db
+    .select()
+    .from(schema.comments)
+    .where(and(eq(schema.comments.postId, postId), eq(schema.comments.status, "approved")))
+    .orderBy(asc(schema.comments.createdAt));
 
-  return result.results.map(rowToComment);
+  return rows.map(drizzleRowToComment);
 }
 
 export async function moderateD1Comment(id: string, status: Exclude<CommentStatus, "pending">) {
-  await env.CMS_DB.prepare("update comments set status = ?, updated_at = ? where id = ?")
-    .bind(status, new Date().toISOString(), id)
-    .run();
+  const db = getCmsDb();
 
-  const row = await env.CMS_DB.prepare("select * from comments where id = ? limit 1")
-    .bind(id)
-    .first<D1CommentRow>();
+  await db
+    .update(schema.comments)
+    .set({ status, updatedAt: new Date().toISOString() })
+    .where(eq(schema.comments.id, id));
 
-  return row ? rowToComment(row) : undefined;
+  const rows = await db.select().from(schema.comments).where(eq(schema.comments.id, id)).limit(1);
+
+  return rows[0] ? drizzleRowToComment(rows[0]) : undefined;
 }
 
 export async function listD1Comments() {
-  const result = await env.CMS_DB.prepare(
-    "select * from comments order by created_at desc",
-  ).all<D1CommentRow>();
+  const db = getCmsDb();
+  const rows = await db.select().from(schema.comments).orderBy(desc(schema.comments.createdAt));
 
-  return result.results.map(rowToComment);
+  return rows.map(drizzleRowToComment);
 }
 
-export async function listD1Assets() {
-  const result = await env.CMS_DB.prepare(
-    "select * from assets order by created_at desc",
-  ).all<D1AssetRow>();
+// ---------------------------------------------------------------------------
+// Assets
+// ---------------------------------------------------------------------------
 
-  return result.results.map(rowToAsset);
+export async function listD1Assets() {
+  const db = getCmsDb();
+  const rows = await db.select().from(schema.assets).orderBy(desc(schema.assets.createdAt));
+
+  return rows.map(drizzleRowToAsset);
 }
 
 export async function getD1AssetById(idOrKey: string) {
-  const row = await env.CMS_DB.prepare("select * from assets where id = ? or key = ? limit 1")
-    .bind(idOrKey, idOrKey)
-    .first<D1AssetRow>();
+  const db = getCmsDb();
+  const rows = await db
+    .select()
+    .from(schema.assets)
+    .where(or(eq(schema.assets.id, idOrKey), eq(schema.assets.key, idOrKey)))
+    .limit(1);
 
-  return row ? rowToAsset(row) : undefined;
+  return rows[0] ? drizzleRowToAsset(rows[0]) : undefined;
 }
 
 export async function createD1Asset(input: AssetInput) {
@@ -1197,22 +1316,17 @@ export async function createD1Asset(input: AssetInput) {
     createdAt: new Date().toISOString(),
   };
 
-  await env.CMS_DB.prepare(
-    `insert into assets (
-      id, key, url, filename, content_type, size_bytes, attached_post_id, created_at
-    ) values (?, ?, ?, ?, ?, ?, ?, ?)`,
-  )
-    .bind(
-      asset.id,
-      asset.key,
-      asset.url,
-      asset.filename,
-      asset.contentType,
-      asset.sizeBytes,
-      asset.attachedPostId,
-      asset.createdAt,
-    )
-    .run();
+  const db = getCmsDb();
+  await db.insert(schema.assets).values({
+    id: asset.id,
+    key: asset.key,
+    url: asset.url,
+    filename: asset.filename,
+    contentType: asset.contentType,
+    sizeBytes: asset.sizeBytes,
+    attachedPostId: asset.attachedPostId,
+    createdAt: asset.createdAt,
+  });
 
   return asset;
 }
@@ -1224,10 +1338,15 @@ export async function deleteD1Asset(idOrKey: string) {
     return undefined;
   }
 
-  await env.CMS_DB.prepare("delete from assets where id = ?").bind(asset.id).run();
+  const db = getCmsDb();
+  await db.delete(schema.assets).where(eq(schema.assets.id, asset.id));
 
   return asset;
 }
+
+// ---------------------------------------------------------------------------
+// API tokens
+// ---------------------------------------------------------------------------
 
 export async function createD1ApiToken(input: {
   name?: string;
@@ -1246,69 +1365,79 @@ export async function createD1ApiToken(input: {
     createdAt: new Date().toISOString(),
   };
 
-  await env.CMS_DB.prepare(
-    "insert into api_tokens (id, name, token_hash, scopes, expires_at, last_used_at, revoked_at, created_at) values (?, ?, ?, ?, ?, ?, ?, ?)",
-  )
-    .bind(
-      token.id,
-      token.name,
-      await digestText(secret),
-      JSON.stringify(token.scopes),
-      token.expiresAt,
-      token.lastUsedAt,
-      token.revokedAt,
-      token.createdAt,
-    )
-    .run();
+  const db = getCmsDb();
+  await db.insert(schema.apiTokens).values({
+    id: token.id,
+    name: token.name,
+    tokenHash: await digestText(secret),
+    scopes: token.scopes,
+    expiresAt: token.expiresAt,
+    lastUsedAt: token.lastUsedAt,
+    revokedAt: token.revokedAt,
+    createdAt: token.createdAt,
+  });
 
   return { token, secret };
 }
 
 export async function listD1ApiTokens() {
-  const result = await env.CMS_DB.prepare(
-    "select * from api_tokens order by created_at desc",
-  ).all<D1ApiTokenRow>();
+  const db = getCmsDb();
+  const rows = await db.select().from(schema.apiTokens).orderBy(desc(schema.apiTokens.createdAt));
 
-  return result.results.map(rowToApiToken);
+  return rows.map(drizzleRowToApiToken);
 }
 
 export async function revokeD1ApiToken(id: string) {
-  await env.CMS_DB.prepare(
-    "update api_tokens set revoked_at = ? where id = ? and revoked_at is null",
-  )
-    .bind(new Date().toISOString(), id)
-    .run();
+  const db = getCmsDb();
 
-  const row = await env.CMS_DB.prepare("select * from api_tokens where id = ? limit 1")
-    .bind(id)
-    .first<D1ApiTokenRow>();
+  await db
+    .update(schema.apiTokens)
+    .set({ revokedAt: new Date().toISOString() })
+    .where(and(eq(schema.apiTokens.id, id), sql`${schema.apiTokens.revokedAt} is null`));
 
-  return row ? rowToApiToken(row) : undefined;
+  const rows = await db.select().from(schema.apiTokens).where(eq(schema.apiTokens.id, id)).limit(1);
+
+  return rows[0] ? drizzleRowToApiToken(rows[0]) : undefined;
 }
 
 export async function verifyD1ApiToken(secret: string, requiredScope: ApiTokenScope) {
-  const row = await env.CMS_DB.prepare(
-    "select * from api_tokens where token_hash = ? and revoked_at is null and (expires_at is null or expires_at > ?) limit 1",
-  )
-    .bind(await digestText(secret), new Date().toISOString())
-    .first<D1ApiTokenRow>();
+  const db = getCmsDb();
+  const now = new Date().toISOString();
+  const rows = await db
+    .select()
+    .from(schema.apiTokens)
+    .where(
+      and(
+        eq(schema.apiTokens.tokenHash, await digestText(secret)),
+        sql`${schema.apiTokens.revokedAt} is null`,
+        or(sql`${schema.apiTokens.expiresAt} is null`, sql`${schema.apiTokens.expiresAt} > ${now}`),
+      ),
+    )
+    .limit(1);
+
+  const row = rows[0];
 
   if (!row) {
     return null;
   }
 
-  const token = rowToApiToken(row);
+  const token = drizzleRowToApiToken(row);
 
   if (!token.scopes.includes(requiredScope)) {
     return null;
   }
 
-  await env.CMS_DB.prepare("update api_tokens set last_used_at = ? where id = ?")
-    .bind(new Date().toISOString(), token.id)
-    .run();
+  await db
+    .update(schema.apiTokens)
+    .set({ lastUsedAt: now })
+    .where(eq(schema.apiTokens.id, token.id));
 
   return token;
 }
+
+// ---------------------------------------------------------------------------
+// Export
+// ---------------------------------------------------------------------------
 
 export async function buildD1SiteExport(locale: SupportedLocale) {
   const [persistedPosts, persistedComments, persistedAssets, persistedPages, persistedProjects] =
@@ -1340,27 +1469,44 @@ export async function buildD1SiteExport(locale: SupportedLocale) {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Tag helpers
+// ---------------------------------------------------------------------------
+
 async function attachD1Tags(posts: Post[]) {
   if (!posts.length) {
     return posts;
   }
 
-  const placeholders = posts.map(() => "?").join(", ");
-  const result = await env.CMS_DB.prepare(
-    `select t.*, pt.post_id
-      from tags t
-      inner join post_tags pt on pt.tag_id = t.id
-      where pt.post_id in (${placeholders})
-      order by t.name`,
-  )
-    .bind(...posts.map((post) => post.id))
-    .all<D1TagRow & { post_id: string }>();
+  const db = getCmsDb();
+  const postIds = posts.map((post) => post.id);
+  const rows = await db
+    .select({
+      tagId: schema.tags.id,
+      tagName: schema.tags.name,
+      tagSlug: schema.tags.slug,
+      tagDescription: schema.tags.description,
+      tagI18n: schema.tags.i18n,
+      postId: schema.postTags.postId,
+    })
+    .from(schema.tags)
+    .innerJoin(schema.postTags, eq(schema.postTags.tagId, schema.tags.id))
+    .where(inArray(schema.postTags.postId, postIds))
+    .orderBy(asc(schema.tags.name));
+
   const tagsByPostId = new Map<string, Tag[]>();
 
-  for (const row of result.results) {
-    const current = tagsByPostId.get(row.post_id) ?? [];
-    current.push(rowToTag(row));
-    tagsByPostId.set(row.post_id, current);
+  for (const row of rows) {
+    const tag: Tag = {
+      id: row.tagId,
+      name: row.tagName,
+      slug: row.tagSlug,
+      description: row.tagDescription,
+      i18n: row.tagI18n as Tag["i18n"],
+    };
+    const current = tagsByPostId.get(row.postId) ?? [];
+    current.push(tag);
+    tagsByPostId.set(row.postId, current);
   }
 
   return posts.map((post) => ({
@@ -1374,7 +1520,8 @@ async function replaceD1PostTags(
   input: string[] | undefined,
   locale?: SupportedLocale,
 ) {
-  await env.CMS_DB.prepare("delete from post_tags where post_id = ?").bind(postId).run();
+  const db = getCmsDb();
+  await db.delete(schema.postTags).where(eq(schema.postTags.postId, postId));
 
   const names = Array.from(new Set((input ?? []).map((name) => name.trim()).filter(Boolean)));
 
@@ -1385,48 +1532,48 @@ async function replaceD1PostTags(
       continue;
     }
 
-    await env.CMS_DB.prepare("insert or ignore into post_tags (post_id, tag_id) values (?, ?)")
-      .bind(postId, tag.id)
-      .run();
+    await db.insert(schema.postTags).values({ postId, tagId: tag.id }).onConflictDoNothing();
   }
 }
 
 async function upsertD1Tag(name: string, locale?: SupportedLocale) {
-  const slug = slugify(name);
+  const tagSlug = slugify(name);
 
-  if (!slug) {
+  if (!tagSlug) {
     return undefined;
   }
 
-  const existing = await env.CMS_DB.prepare("select * from tags where slug = ? limit 1")
-    .bind(slug)
-    .first<D1TagRow>();
+  const db = getCmsDb();
+  const rows = await db.select().from(schema.tags).where(eq(schema.tags.slug, tagSlug)).limit(1);
+  const existing = rows[0];
 
   if (existing) {
     if (locale === "zh") {
+      const existingI18n = existing.i18n as Tag["i18n"];
       const i18n = {
-        ...parseJson<Tag["i18n"]>(existing.i18n),
+        ...existingI18n,
         name: {
-          ...parseJson<Tag["i18n"]>(existing.i18n)?.name,
+          ...existingI18n?.name,
           zh: name,
         },
       };
 
-      await env.CMS_DB.prepare("update tags set i18n = ? where id = ?")
-        .bind(JSON.stringify(i18n), existing.id)
-        .run();
+      await db.update(schema.tags).set({ i18n }).where(eq(schema.tags.id, existing.id));
 
-      return rowToTag({ ...existing, i18n: JSON.stringify(i18n) });
+      return {
+        ...drizzleRowToTag(existing),
+        i18n,
+      };
     }
 
-    return rowToTag(existing);
+    return drizzleRowToTag(existing);
   }
 
   const now = new Date().toISOString();
   const tag: Tag = {
     id: `tag_${crypto.randomUUID()}`,
     name,
-    slug,
+    slug: tagSlug,
     description: "",
     i18n:
       locale === "zh"
@@ -1436,137 +1583,21 @@ async function upsertD1Tag(name: string, locale?: SupportedLocale) {
         : undefined,
   };
 
-  await env.CMS_DB.prepare(
-    "insert into tags (id, name, slug, description, i18n, created_at) values (?, ?, ?, ?, ?, ?)",
-  )
-    .bind(
-      tag.id,
-      tag.name,
-      tag.slug,
-      tag.description,
-      tag.i18n ? JSON.stringify(tag.i18n) : null,
-      now,
-    )
-    .run();
+  await db.insert(schema.tags).values({
+    id: tag.id,
+    name: tag.name,
+    slug: tag.slug,
+    description: tag.description,
+    i18n: tag.i18n ?? null,
+    createdAt: now,
+  });
 
   return tag;
 }
 
-function rowToPost(
-  row: D1PostRow,
-  currentSettings: SiteSettings = runtimeDefaultSiteSettings(),
-): Post {
-  return {
-    id: row.id,
-    title: row.title,
-    slug: row.slug,
-    excerpt: row.excerpt,
-    coverImage: row.cover_image || currentSettings.defaultOgImage,
-    contentMarkdown: row.content_markdown,
-    contentHtml: row.content_html,
-    contentText: row.content_text,
-    status: row.status,
-    source: row.source,
-    featured: Boolean(row.featured),
-    pinned: Boolean(row.pinned),
-    commentsEnabled: Boolean(row.comments_enabled),
-    publishedAt: row.published_at ?? row.created_at,
-    updatedAt: row.updated_at,
-    authorName: currentSettings.authorName,
-    tags: [],
-    seoTitle: row.seo_title ?? row.title,
-    seoDescription: row.seo_description ?? row.excerpt,
-    i18n: parseJson(row.i18n),
-  };
-}
-
-function rowToPage(row: D1PageRow): CmsPage {
-  return {
-    id: row.id,
-    title: row.title,
-    slug: row.slug,
-    contentMarkdown: row.content_markdown,
-    contentHtml: row.content_html,
-    status: row.status,
-    seoTitle: row.seo_title ?? row.title,
-    seoDescription: row.seo_description ?? "",
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
-    i18n: parseJson(row.i18n),
-  };
-}
-
-function rowToProject(row: D1ProjectRow): Project {
-  return {
-    id: row.id,
-    title: row.title,
-    slug: row.slug,
-    excerpt: row.excerpt,
-    coverImage: row.cover_image ?? "",
-    projectUrl: row.project_url ?? "",
-    githubUrl: row.github_url ?? "",
-    contentMarkdown: row.content_markdown,
-    contentHtml: row.content_html,
-    tags: tagsFromNames(parseJson<string[]>(row.tags) ?? []),
-    screenshots: cleanStringList(parseJson<string[]>(row.screenshots) ?? []),
-    status: row.status,
-    publishedAt: row.published_at ?? row.created_at,
-    updatedAt: row.updated_at,
-    i18n: parseJson(row.i18n),
-  };
-}
-
-function rowToTag(row: D1TagRow): Tag {
-  return {
-    id: row.id,
-    name: row.name,
-    slug: row.slug,
-    description: row.description,
-    i18n: parseJson(row.i18n),
-  };
-}
-
-function rowToComment(row: D1CommentRow): Comment {
-  return {
-    id: row.id,
-    postId: row.post_id,
-    parentId: row.parent_id,
-    authorUserId: row.author_user_id,
-    authorName: row.author_name,
-    authorEmailHash: row.author_email_hash,
-    authorWebsite: row.author_website,
-    body: row.body,
-    status: row.status,
-    createdAt: row.created_at,
-    i18n: parseJson(row.i18n),
-  };
-}
-
-function rowToAsset(row: D1AssetRow): Asset {
-  return {
-    id: row.id,
-    key: row.key,
-    url: row.url,
-    filename: row.filename,
-    contentType: row.content_type,
-    sizeBytes: row.size_bytes,
-    attachedPostId: row.attached_post_id,
-    createdAt: row.created_at,
-  };
-}
-
-function rowToApiToken(row: D1ApiTokenRow): ApiToken {
-  return {
-    id: row.id,
-    name: row.name,
-    tokenPrefix: row.token_hash.slice(0, 16),
-    scopes: parseJson<ApiTokenScope[]>(row.scopes) ?? [],
-    expiresAt: row.expires_at,
-    lastUsedAt: row.last_used_at,
-    revokedAt: row.revoked_at,
-    createdAt: row.created_at,
-  };
-}
+// ---------------------------------------------------------------------------
+// Settings normalization
+// ---------------------------------------------------------------------------
 
 function normalizeSiteSettings(
   input: SiteSettingsInput,
@@ -1635,22 +1666,16 @@ function runtimeDefaultSiteSettings(): SiteSettings {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Shared utilities (kept locally to avoid circular deps with @repo/core for now)
+// ---------------------------------------------------------------------------
+
 function cleanString(value: string | undefined, fallback: string) {
   return value?.trim() || fallback;
 }
 
 function cleanUrl(value: string | undefined, fallback: string) {
   return cleanString(value, fallback).replace(/\/$/, "");
-}
-
-function normalizeDateInput(value: string | undefined) {
-  if (!value) {
-    return undefined;
-  }
-
-  const date = new Date(value);
-
-  return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
 }
 
 async function uniqueD1Slug(base: string) {
@@ -1704,10 +1729,6 @@ function normalizeContentRecordStatus(
     : fallback;
 }
 
-function cleanStringList(input: string[] | undefined) {
-  return Array.from(new Set((input ?? []).map((value) => value.trim()).filter(Boolean)));
-}
-
 function tagsFromNames(names: string[]) {
   return cleanStringList(names).map((name) => ({
     id: `tag_${slugify(name) || name.toLowerCase()}`,
@@ -1715,37 +1736,4 @@ function tagsFromNames(names: string[]) {
     slug: slugify(name),
     description: "",
   }));
-}
-
-function parseJson<TValue>(value: string | null): TValue | undefined {
-  if (!value) {
-    return undefined;
-  }
-
-  try {
-    return JSON.parse(value) as TValue;
-  } catch {
-    return undefined;
-  }
-}
-
-function countLinks(value: string) {
-  return (value.match(/https?:\/\//g) ?? []).length;
-}
-
-async function digestText(value: string) {
-  const data = new TextEncoder().encode(value);
-  const hash = await crypto.subtle.digest("SHA-256", data);
-  return Array.from(new Uint8Array(hash))
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join("");
-}
-
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 96);
 }

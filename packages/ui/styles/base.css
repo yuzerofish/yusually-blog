@@ -170,12 +170,6 @@
   --sidebar-ring: oklch(0.46 0.075 28.2);
 }
 
-[data-layout-preset="shelf"] [data-home-layout]:not([data-home-layout="shelf"]),
-[data-layout-preset="developer"] [data-home-layout]:not([data-home-layout="developer"]),
-[data-layout-preset="journal"] [data-home-layout]:not([data-home-layout="journal"]) {
-  display: none;
-}
-
 .dark,
 .dark [data-theme-preset="maker"],
 .dark [data-theme-preset="claude"] {

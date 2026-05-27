@@ -23,17 +23,13 @@
     "@tanstack/react-router": "catalog:",
     "@tanstack/react-router-ssr-query": "catalog:",
     "@tanstack/react-start": "catalog:",
-    "date-fns": "catalog:",
     "drizzle-orm": "catalog:",
     "fumadocs-core": "catalog:",
     "fumadocs-ui": "catalog:",
     "lucide-react": "catalog:",
-    "motion": "catalog:",
-    "nanoid": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "sonner": "catalog:",
-    "zod": "catalog:"
+    "sonner": "catalog:"
   },
   "devDependencies": {
     "@babel/core": "catalog:",

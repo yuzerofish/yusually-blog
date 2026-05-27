@@ -1,4 +1,11 @@
 import "@tanstack/react-start/server-only";
+import {
+  assertPassword,
+  authErrorMessage,
+  extractSetCookieHeaders,
+  normalizeEmail,
+  toIsoString,
+} from "@repo/core";
 import { createAuthDb } from "@repo/db";
 import { user as authUserTable } from "@repo/db/schema";
 import { env } from "cloudflare:workers";
@@ -202,22 +209,6 @@ function toAdminUser(user: BetterAuthUser): AdminUser {
   };
 }
 
-function normalizeEmail(value: string | undefined) {
-  const email = value?.trim().toLowerCase() ?? "";
-
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-    throw new Error("A valid email is required");
-  }
-
-  return email;
-}
-
-function assertPassword(password: string) {
-  if (password.length < 8) {
-    throw new Error("Password must be at least 8 characters");
-  }
-}
-
 async function callAuthEndpoint(path: string, body: object, request: Request) {
   const url = new URL(path, request.url);
   const headers = new Headers(request.headers);
@@ -238,34 +229,4 @@ async function readAuthPayload(response: Response) {
   } catch {
     return null;
   }
-}
-
-function authErrorMessage(payload: AuthUserPayload | null, fallback: string) {
-  return payload?.message || payload?.error || payload?.code || fallback;
-}
-
-function extractSetCookieHeaders(response: Response) {
-  const headers = new Headers();
-  const getSetCookie = (
-    response.headers as Headers & {
-      getSetCookie?: () => string[];
-    }
-  ).getSetCookie;
-  const cookies = getSetCookie ? getSetCookie.call(response.headers) : [];
-  const fallback = response.headers.get("set-cookie");
-
-  for (const cookie of cookies.length ? cookies : fallback ? [fallback] : []) {
-    headers.append("set-cookie", cookie);
-  }
-
-  return headers;
-}
-
-function toIsoString(value: Date | string | number | undefined) {
-  if (!value) {
-    return new Date().toISOString();
-  }
-
-  const date = value instanceof Date ? value : new Date(value);
-  return Number.isNaN(date.getTime()) ? String(value) : date.toISOString();
 }

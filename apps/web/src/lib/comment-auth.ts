@@ -1,4 +1,12 @@
 import "@tanstack/react-start/server-only";
+import {
+  assertPassword,
+  authErrorMessage,
+  digestText,
+  extractSetCookieHeaders,
+  normalizeEmail,
+  toIsoString,
+} from "@repo/core";
 import { createAuthDb } from "@repo/db";
 import { user as authUserTable } from "@repo/db/schema";
 import { env } from "cloudflare:workers";
@@ -258,22 +266,6 @@ async function resolvePrimaryProvider(userId: string): Promise<CommentUser["prov
   return accounts.some((account) => account.providerId === "github") ? "github" : "email";
 }
 
-function normalizeEmail(value: string | undefined) {
-  const email = value?.trim().toLowerCase() ?? "";
-
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-    throw new Error("A valid email is required");
-  }
-
-  return email;
-}
-
-function assertPassword(password: string) {
-  if (password.length < 8) {
-    throw new Error("Password must be at least 8 characters");
-  }
-}
-
 async function callAuthEndpoint(path: string, body: object, request: Request) {
   const url = new URL(path, request.url);
   const headers = new Headers(request.headers);
@@ -299,13 +291,6 @@ async function readAuthPayload<TPayload extends AuthUserPayload | SocialSignInPa
   }
 }
 
-function authErrorMessage(
-  payload: Pick<AuthUserPayload, "code" | "error" | "message"> | null,
-  fallback: string,
-) {
-  return payload?.message || payload?.error || payload?.code || fallback;
-}
-
 function toBetterAuthUser(value: unknown) {
   const record = value as ({ user?: BetterAuthUser } & Partial<BetterAuthUser>) | null;
 
@@ -318,16 +303,6 @@ function toBetterAuthUser(value: unknown) {
   }
 
   return null;
-}
-
-function extractSetCookieHeaders(response: Response) {
-  const headers = new Headers();
-
-  for (const cookie of getSetCookieValues(response.headers)) {
-    headers.append("set-cookie", cookie);
-  }
-
-  return headers;
 }
 
 function getSetCookieValues(headers: Headers) {
@@ -352,22 +327,4 @@ function safeRedirectPath(value: string) {
   }
 
   return value;
-}
-
-async function digestText(value: string) {
-  const data = new TextEncoder().encode(value);
-  const hash = await crypto.subtle.digest("SHA-256", data);
-
-  return Array.from(new Uint8Array(hash))
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join("");
-}
-
-function toIsoString(value: Date | string | number | undefined) {
-  if (!value) {
-    return new Date().toISOString();
-  }
-
-  const date = value instanceof Date ? value : new Date(value);
-  return Number.isNaN(date.getTime()) ? String(value) : date.toISOString();
 }

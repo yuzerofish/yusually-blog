@@ -2,7 +2,7 @@ import type { LayoutPreset, SupportedLocale, ThemePreset } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { PaletteIcon } from "lucide-react";
 
-type StylePresetId = "maker-shelf" | "apple-developer" | "editorial-journal";
+type StylePresetId = "maker-shelf" | "apple-shelf" | "editorial-shelf";
 
 export type StylePresetOption = {
   id: StylePresetId;
@@ -24,18 +24,18 @@ const defaultStylePreset: StylePresetOption = {
 export const stylePresetOptions: StylePresetOption[] = [
   defaultStylePreset,
   {
-    id: "apple-developer",
+    id: "apple-shelf",
     themePreset: "apple",
-    layoutPreset: "developer",
+    layoutPreset: "shelf",
     label: {
       en: "Apple Dev",
       zh: "Apple Dev",
     },
   },
   {
-    id: "editorial-journal",
+    id: "editorial-shelf",
     themePreset: "editorial",
-    layoutPreset: "journal",
+    layoutPreset: "shelf",
     label: {
       en: "Editorial",
       zh: "编辑杂志",
