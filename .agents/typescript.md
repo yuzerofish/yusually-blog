@@ -45,3 +45,21 @@ function withCapability<TArgs extends unknown[], TReturn>(
 ```
 
 Common names: `T`, `TArgs`, `TReturn`, `TData`, `TError`, `TKey`, `TValue`
+
+## Schema Placement
+
+- Keep schemas close to where they are defined and consumed.
+- Shared validation schemas (Zod) live in `packages/core/src/` when used across packages.
+- App-specific schemas can live in `apps/web/src/` near their route or feature.
+
+## Import Boundaries
+
+- Packages must not import from `apps/*`. Dependencies flow downward: `apps/web` → `packages/*` → `tooling/*`.
+- Use `workspace:*` for internal package references.
+- Use `#/*` path alias for app-local imports within `apps/web/src/`.
+
+## File Naming
+
+- Use `lib/` for modules with logic, state, or side effects.
+- Use `utils/` for pure, stateless helper functions.
+- Prefer specific names over generic ones (e.g., `date-helpers.ts` over `utils.ts`).
