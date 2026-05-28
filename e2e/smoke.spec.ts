@@ -39,6 +39,11 @@ test.describe("Smoke Tests", () => {
 
   test("theme preset switcher works", async ({ page }) => {
     await page.goto("/");
+    await page.addStyleTag({
+      content:
+        '[data-testid="tanstack_devtools"]{display:none!important;pointer-events:none!important;}',
+    });
+
     const root = page.locator("body > div[data-theme-preset][data-layout-preset]");
     await expect(root).toBeVisible();
 

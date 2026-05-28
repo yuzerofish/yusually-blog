@@ -1,7 +1,6 @@
 import type { LayoutPreset, SupportedLocale, ThemePreset } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { PaletteIcon } from "lucide-react";
-import type { MouseEvent } from "react";
 
 type StylePresetId = "maker-shelf" | "apple-shelf" | "claude-shelf" | "brutalist-shelf";
 
@@ -68,7 +67,6 @@ export function StylePresetCycleButton({
       variant="ghost"
       size="icon-sm"
       aria-label={label}
-      onClick={(event) => applyNextStylePreset(event, locale)}
       data-style-preset-switcher
     >
       <PaletteIcon className="size-4" />
@@ -91,33 +89,6 @@ function getPresetForAttributes(themePreset?: string, layoutPreset?: string) {
     stylePresetOptions.find((preset) => preset.themePreset === themePreset) ??
     defaultStylePreset
   );
-}
-
-function applyNextStylePreset(event: MouseEvent<HTMLButtonElement>, locale: SupportedLocale) {
-  const button = event.currentTarget;
-  const root = button.closest("[data-theme-preset][data-layout-preset]");
-
-  if (!(root instanceof HTMLElement)) {
-    return;
-  }
-
-  const nextPreset = getNextStylePreset(
-    getPresetForAttributes(root.dataset.themePreset, root.dataset.layoutPreset),
-  );
-  const followingPreset = getNextStylePreset(nextPreset);
-
-  root.dataset.themePreset = nextPreset.themePreset;
-  root.dataset.layoutPreset = nextPreset.layoutPreset;
-
-  document.querySelectorAll("[data-style-preset-switcher]").forEach((switcher) => {
-    switcher.setAttribute("aria-label", getStylePresetSwitchLabel(locale, followingPreset));
-    switcher.removeAttribute("title");
-
-    const visibleLabel = switcher.querySelector("[data-style-preset-label]");
-    if (visibleLabel) {
-      visibleLabel.textContent = followingPreset.label[locale];
-    }
-  });
 }
 
 export function StylePresetRuntimeScript({
@@ -195,6 +166,20 @@ export function StylePresetRuntimeScript({
     activeId = preset.id;
     updateButtons(root);
   }
+
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const button = target.closest("[data-style-preset-switcher]");
+    if (!button) return;
+
+    const root = button.closest("[data-theme-preset][data-layout-preset]");
+    if (!root) return;
+
+    event.preventDefault();
+    applyPreset(root, getNextPreset(getCurrentPreset(root)));
+  });
 
   window.addEventListener("blogcms:site-settings-updated", (event) => {
     const root = document.querySelector("[data-theme-preset][data-layout-preset]");
