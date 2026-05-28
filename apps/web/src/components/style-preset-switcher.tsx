@@ -56,7 +56,7 @@ export function StylePresetCycleButton({
   return (
     <Button
       type="button"
-      variant="outline"
+      variant="ghost"
       size="sm"
       className="px-2.5"
       aria-label={label}
@@ -64,7 +64,7 @@ export function StylePresetCycleButton({
       data-style-preset-switcher
     >
       <PaletteIcon className="size-4" />
-      <span data-style-preset-label className="hidden xl:inline">
+      <span data-style-preset-label className="sr-only">
         {nextPreset.label[locale]}
       </span>
     </Button>

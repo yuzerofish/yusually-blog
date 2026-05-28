@@ -1,9 +1,6 @@
-import {
-  getDashboardMetricsForLocale,
-  getSiteSettingsForLocale,
-  type SiteSettings,
-} from "@repo/core";
+import { getSiteSettingsForLocale, type SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
+import { cn } from "@repo/ui/lib/utils";
 import { Link, Outlet } from "@tanstack/react-router";
 import {
   FileTextIcon,
@@ -17,6 +14,12 @@ import { useEffect, useState } from "react";
 
 import { LanguageToggle } from "#/components/language-toggle";
 import { SignOutButton } from "#/components/sign-out-button";
+import {
+  getNextStylePreset,
+  resolveStylePreset,
+  StylePresetCycleButton,
+  StylePresetRuntimeScript,
+} from "#/components/style-preset-switcher";
 import { ThemeToggle } from "#/components/theme-toggle";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
@@ -33,7 +36,8 @@ const adminNav = [
 export function AdminShell() {
   const locale = getCurrentLocale();
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(getSiteSettingsForLocale(locale));
-  const metrics = getDashboardMetricsForLocale(locale);
+  const preset = resolveStylePreset(siteSettings.themePreset, siteSettings.layoutPreset);
+  const nextPreset = getNextStylePreset(preset);
 
   useEffect(() => {
     let ignore = false;
@@ -65,60 +69,120 @@ export function AdminShell() {
 
   return (
     <div
-      data-theme-preset={siteSettings.themePreset}
-      data-layout-preset={siteSettings.layoutPreset}
-      className="min-h-svh bg-background text-foreground"
+      data-theme-preset={preset.themePreset}
+      data-layout-preset={preset.layoutPreset}
+      className="min-h-svh bg-background text-foreground lg:pl-72"
     >
-      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-4 sm:px-6 lg:grid-cols-[240px_1fr] lg:px-8">
-        <aside className="rounded-lg border border-border/80 bg-card p-3 shadow-xs">
-          <div className="flex items-center justify-between gap-3 px-2 py-2">
-            <Link to="/" className="text-sm font-semibold">
-              {siteSettings.name}
-            </Link>
-            <div className="flex items-center gap-2">
-              <LanguageToggle />
-              <ThemeToggle />
-            </div>
-          </div>
-          <nav className="mt-4 grid gap-1">
-            {adminNav.map((item) => (
-              <Button
-                key={item.href}
-                render={<Link to={item.href} />}
-                variant="ghost"
-                nativeButton={false}
-                className="justify-start rounded-md text-muted-foreground hover:text-foreground"
-              >
-                <item.icon className="size-4" />
-                {item.label()}
-              </Button>
-            ))}
-          </nav>
-          <div className="mt-5 border-t border-border/80 pt-4">
-            <SignOutButton />
-          </div>
-        </aside>
+      <DesktopSidebar locale={locale} nextPreset={nextPreset} siteName={siteSettings.name} />
+      <MobileAdminHeader locale={locale} nextPreset={nextPreset} siteName={siteSettings.name} />
+      <StylePresetRuntimeScript initialPreset={preset} locale={locale} />
 
-        <section className="min-w-0">
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {metrics.map((metric) => (
-              <div
-                key={metric.label}
-                className="rounded-lg border border-border/80 bg-card p-4 shadow-xs"
-              >
-                <p className="text-xs font-medium text-muted-foreground uppercase">
-                  {metric.label}
-                </p>
-                <p className="mt-3 text-3xl font-semibold">{metric.value}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{metric.detail}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-6">
-            <Outlet />
-          </div>
-        </section>
-      </div>
+      <main className="min-w-0 px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
+        <div className="mx-auto max-w-6xl">
+          <Outlet />
+        </div>
+      </main>
     </div>
+  );
+}
+
+function DesktopSidebar({
+  locale,
+  nextPreset,
+  siteName,
+}: {
+  readonly locale: ReturnType<typeof getCurrentLocale>;
+  readonly nextPreset: ReturnType<typeof getNextStylePreset>;
+  readonly siteName: string;
+}) {
+  return (
+    <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground lg:flex">
+      <div className="flex min-h-16 items-center justify-between gap-3 border-b border-sidebar-border px-5">
+        <Link
+          to="/"
+          className="min-w-0 text-base leading-none font-black tracking-tight"
+          title={siteName}
+        >
+          <span className="block truncate">{siteName}</span>
+        </Link>
+        <div className="flex items-center gap-1">
+          <LanguageToggle />
+          <StylePresetCycleButton locale={locale} nextPreset={nextPreset} />
+          <ThemeToggle />
+        </div>
+      </div>
+
+      <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-3 py-4">
+        <AdminNavItems />
+
+        <div className="mt-auto border-t border-sidebar-border pt-4">
+          <SignOutButton className="w-full justify-center" />
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function MobileAdminHeader({
+  locale,
+  nextPreset,
+  siteName,
+}: {
+  readonly locale: ReturnType<typeof getCurrentLocale>;
+  readonly nextPreset: ReturnType<typeof getNextStylePreset>;
+  readonly siteName: string;
+}) {
+  return (
+    <header className="sticky top-0 z-40 border-b border-sidebar-border bg-sidebar/95 text-sidebar-foreground backdrop-blur-xl lg:hidden">
+      <div className="flex min-h-14 items-center justify-between gap-3 px-4">
+        <Link to="/" className="min-w-0 text-base leading-none font-black tracking-tight">
+          <span className="block truncate">{siteName}</span>
+        </Link>
+        <div className="flex shrink-0 items-center gap-1">
+          <LanguageToggle />
+          <StylePresetCycleButton locale={locale} nextPreset={nextPreset} />
+          <ThemeToggle />
+        </div>
+      </div>
+      <div className="overflow-x-auto border-t border-sidebar-border px-3 py-2">
+        <AdminNavItems compact />
+      </div>
+    </header>
+  );
+}
+
+function AdminNavItems({ compact = false }: { readonly compact?: boolean }) {
+  return (
+    <nav className={cn("grid gap-1", compact && "flex min-w-max")}>
+      {adminNav.map((item) => {
+        const Icon = item.icon;
+
+        return (
+          <Button
+            key={item.href}
+            render={
+              <Link
+                to={item.href}
+                activeOptions={{ exact: item.href === "/admin" }}
+                activeProps={{
+                  className: "bg-sidebar-accent text-sidebar-accent-foreground",
+                }}
+                inactiveProps={{
+                  className:
+                    "text-sidebar-foreground/70 hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground",
+                }}
+              />
+            }
+            variant="ghost"
+            size={compact ? "sm" : "default"}
+            nativeButton={false}
+            className={cn("justify-start rounded-md px-3", compact ? "h-9 w-auto" : "h-10 w-full")}
+          >
+            <Icon className="size-4" />
+            <span>{item.label()}</span>
+          </Button>
+        );
+      })}
+    </nav>
   );
 }

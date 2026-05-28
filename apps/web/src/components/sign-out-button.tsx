@@ -1,11 +1,12 @@
 import { authQueryOptions } from "@repo/auth/tanstack/queries";
 import { Button } from "@repo/ui/components/button";
+import { cn } from "@repo/ui/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 
 import { m } from "#/paraglide/messages.js";
 
-export function SignOutButton() {
+export function SignOutButton({ className }: { readonly className?: string }) {
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -17,7 +18,7 @@ export function SignOutButton() {
         await router.invalidate();
       }}
       type="button"
-      className="w-fit"
+      className={cn("w-fit", className)}
       variant="destructive"
       size="lg"
     >
