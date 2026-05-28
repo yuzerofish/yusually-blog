@@ -22,6 +22,11 @@ Feeds and public metadata use current D1 site settings and localized content whe
 - `GET /api/posts/:id`
 - `PATCH /api/posts/:id`
 - `DELETE /api/posts/:id`
+- `GET /api/series`
+- `POST /api/series`
+- `GET /api/series/:id`
+- `PATCH /api/series/:id`
+- `DELETE /api/series/:id`
 - `POST /api/import/markdown`
 - `POST /api/import/html`
 - `POST /api/import/zip`
@@ -54,15 +59,17 @@ Feeds and public metadata use current D1 site settings and localized content whe
 - `POST /api/admin/logout`
 - `GET /api/admin/me`
 
-`GET /api/posts` accepts `q`, `tag`, `status=all`, and `lang=en|zh`. `status=all` requires `posts:read`. Public post lists return only published posts.
+`GET /api/posts` accepts `q`, `tag`, `series`, `status=all`, and `lang=en|zh`. `status=all` requires `posts:read`. Public post lists return only published posts.
 
 `GET /api/site` returns localized site settings when `lang=en|zh` or `Accept-Language` is provided. `PUT /api/site` accepts `themePreset=maker|apple|editorial` and `layoutPreset=shelf|developer|journal` along with title, URL, description, author, language, RSS, comments, comment approval, blocked keywords, auto-blocking, email verification, and indexing settings. Legacy `themePreset=claude` values normalize to `maker`. `emailVerificationEnabled=true` is rejected unless Cloudflare Email Sending or Resend outbound email is configured.
 
-`POST /api/posts` accepts `publishedAt` plus bilingual `i18n` fields for title, excerpt, Markdown, rendered HTML, text, SEO title, and SEO description. When `locale` is `zh`, the primary input is also stored into Chinese localized fields. Creating or updating a `published` or `scheduled` post requires both `posts:write` and `posts:publish`. Scheduled posts become visible in public lists when `publishedAt` is reached.
+`POST /api/posts` accepts `publishedAt`, optional `seriesId`, `seriesSlug`, or `seriesName`, plus bilingual `i18n` fields for title, excerpt, Markdown, rendered HTML, text, SEO title, and SEO description. When `locale` is `zh`, the primary input is also stored into Chinese localized fields. Creating or updating a `published` or `scheduled` post requires both `posts:write` and `posts:publish`. Scheduled posts become visible in public lists when `publishedAt` is reached.
 
 `POST /api/posts/batch` accepts selected post ids and `action=publish|draft|archive|delete`. Publishing requires `posts:publish`; the other actions require `posts:write`.
 
-`POST /api/import/markdown` accepts `filename`, `contentMarkdown`, optional post fields, and simple frontmatter. It derives title, slug, excerpt, tags, SEO fields, cover image, and status, then creates a D1 post.
+`/api/series/*` manages curated post series. Series use the same write scope as posts, can be localized, and are referenced from posts as a single optional relationship.
+
+`POST /api/import/markdown` accepts `filename`, `contentMarkdown`, optional post fields, and simple frontmatter. It derives title, slug, excerpt, tags, series, SEO fields, cover image, and status, then creates a D1 post.
 
 `POST /api/import/html` accepts `filename`, `contentHtml`, and optional post fields. HTML is sanitized before persistence, and the importer extracts `<title>`, first `<h1>`, meta description, and first image where available.
 
@@ -74,7 +81,7 @@ Feeds and public metadata use current D1 site settings and localized content whe
 
 `/api/comment-auth/*` is the comment-facing wrapper over Better Auth. Email/password login and signup use Better Auth credential accounts. When email verification is enabled in admin settings and an email provider is configured, signup sends a verification link through `/api/comment-auth/verify-email` and email/password login is blocked until the account is verified. GitHub login starts at `/api/comment-auth/github/start` and returns through Better Auth at `/api/auth/callback/github`.
 
-`GET /api/export` returns JSON data and writes a backup JSON object to R2. `GET /api/export?format=zip` returns a ZIP archive with Markdown posts, HTML posts, JSON manifests, comments, settings, tags, and bundled R2 assets; the ZIP is also written to the backups bucket.
+`GET /api/export` returns JSON data and writes a backup JSON object to R2. `GET /api/export?format=zip` returns a ZIP archive with Markdown posts, HTML posts, JSON manifests, comments, settings, series, tags, and bundled R2 assets; the ZIP is also written to the backups bucket.
 
 `POST /api/backups` creates a ZIP export backup in R2 and applies the configured backup retention policy. It uses the same `export:read` scope as export.
 

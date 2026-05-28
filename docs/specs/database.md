@@ -11,12 +11,14 @@ The canonical 01mvp-blog-starter schema is in `packages/db/src/schema/cms.sqlite
 - `0005_drop_projects.sql`: removes the legacy portfolio table.
 - `0006_drop_legacy_auth_tables.sql`: removes legacy auth tables after Better Auth unification.
 - `0007_drop_pages.sql`: removes the legacy pages table.
+- `0008_post_series.sql`: adds curated post series and an optional one-series relationship on posts.
 
 ## Core Tables
 
 - `site_settings`: JSON site configuration. The current row key is `site`.
 - `posts`: Markdown-first articles with rendered HTML and plain text search cache.
-- `tags` and `post_tags`: public taxonomy.
+- `series`: curated editorial collections. Each post can belong to one series.
+- `tags` and `post_tags`: flexible many-to-many public taxonomy.
 - `assets`: R2 object metadata and optional post association.
 - `comments`: self-hosted moderation queue.
 - `api_tokens`: hashed automation tokens with scoped permissions and revocation.
@@ -33,7 +35,7 @@ Posts keep three content forms:
 - `content_html`: rendered and sanitized output cache.
 - `content_text`: plain text for simple D1 search.
 
-Localized content is stored in JSON `i18n` columns on `posts`, `tags`, and `comments`. Site-level bilingual settings live inside `site_settings.value`.
+Localized content is stored in JSON `i18n` columns on `posts`, `series`, `tags`, and `comments`. Site-level bilingual settings live inside `site_settings.value`.
 
 ## Security Notes
 
