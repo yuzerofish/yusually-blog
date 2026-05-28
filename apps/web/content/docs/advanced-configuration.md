@@ -9,7 +9,16 @@ After changing Cloudflare vars, secrets, or bindings, redeploy the Worker and re
 
 ## Email Delivery
 
-Email delivery is optional. Configure it when you want password reset links, admin notifications, import/export notices, backup notices, or admin-enabled email verification for comment accounts.
+Email delivery is an advanced optional feature. The blog can publish posts, accept comments, and run the moderation queue without it.
+
+After email delivery is configured, the blog can:
+
+- send an admin email when a reader submits a new comment
+- send password reset links for admin accounts
+- send import, export, and backup completion notices
+- support admin-enabled email verification for email/password comment accounts
+
+Leave email delivery disabled when you do not need outbound email. The core publishing and comment workflows continue to work.
 
 ### Cloudflare Email Service
 
