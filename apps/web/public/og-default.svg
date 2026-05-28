@@ -2,8 +2,12 @@
   <rect width="1200" height="630" fill="#FAF8F2"/>
   <rect x="72" y="64" width="1056" height="502" rx="14" fill="#FFFEFB" stroke="#D9D2C4"/>
   <path d="M120 142H1080" stroke="#E6E0D4"/>
-  <rect x="120" y="104" width="34" height="34" rx="7" fill="#312B25"/>
-  <path d="M130 120.5H144C147.314 120.5 150 123.186 150 126.5V128.5H136C132.686 128.5 130 125.814 130 122.5V120.5Z" fill="#FAF8F2"/>
+  <rect x="120" y="104" width="34" height="34" rx="7" fill="#2C261F"/>
+  <circle cx="128" cy="112" r="3.5" fill="#C6F55E"/>
+  <path d="M130 113H141L147 119V129C147 131.209 145.209 133 143 133H132C129.791 133 128 131.209 128 129V115C128 113.895 128.895 113 130 113Z" fill="#FFF8EA"/>
+  <path d="M141 113V117.5C141 118.328 141.672 119 142.5 119H147L141 113Z" fill="#E8DCC8"/>
+  <path d="M133 123H142" stroke="#2C261F" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M133 127H143" stroke="#2C261F" stroke-width="1.8" stroke-linecap="round" opacity="0.72"/>
   <text x="172" y="128" fill="#312B25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="24" font-weight="650">01mvp-blog-starter</text>
   <text x="120" y="260" fill="#25211D" font-family="ui-sans-serif, system-ui, sans-serif" font-size="70" font-weight="680">Cloudflare-native</text>
   <text x="120" y="340" fill="#25211D" font-family="ui-sans-serif, system-ui, sans-serif" font-size="70" font-weight="680">publishing system</text>

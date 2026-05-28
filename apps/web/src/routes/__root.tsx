@@ -54,11 +54,66 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
           property: "og:image",
           content: "/og-default.svg",
         },
+        {
+          name: "theme-color",
+          content: "#FAF8F2",
+        },
+        {
+          name: "application-name",
+          content: siteSettings.name,
+        },
+        {
+          name: "apple-mobile-web-app-title",
+          content: siteSettings.name,
+        },
+        {
+          name: "apple-mobile-web-app-capable",
+          content: "yes",
+        },
+        {
+          name: "apple-mobile-web-app-status-bar-style",
+          content: "default",
+        },
+        {
+          name: "msapplication-TileColor",
+          content: "#2C261F",
+        },
+        {
+          name: "msapplication-config",
+          content: "/browserconfig.xml",
+        },
       ],
       links: [
         {
           rel: "icon",
-          href: "/og-default.svg",
+          href: "/favicon.ico",
+          sizes: "any",
+        },
+        {
+          rel: "icon",
+          type: "image/svg+xml",
+          href: "/favicon.svg",
+        },
+        {
+          rel: "icon",
+          type: "image/png",
+          sizes: "32x32",
+          href: "/favicon-32x32.png",
+        },
+        {
+          rel: "manifest",
+          type: "application/manifest+json",
+          href: "/manifest.webmanifest",
+        },
+        {
+          rel: "apple-touch-icon",
+          sizes: "180x180",
+          href: "/apple-touch-icon.png",
+        },
+        {
+          rel: "mask-icon",
+          href: "/safari-pinned-tab.svg",
+          color: "#2C261F",
         },
         {
           rel: "alternate",
