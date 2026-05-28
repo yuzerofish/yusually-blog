@@ -897,6 +897,34 @@ export const admin_editor_seo_title: ((inputs?: Admin_Editor_Seo_TitleInputs, op
 /**
 * | output |
 * | --- |
+* | "Series" |
+*
+* @param {Admin_Editor_SeriesInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_editor_series: ((inputs?: Admin_Editor_SeriesInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Editor_SeriesInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "No series" |
+*
+* @param {Admin_Editor_Series_NoneInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_editor_series_none: ((inputs?: Admin_Editor_Series_NoneInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Editor_Series_NoneInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
 * | "Source" |
 *
 * @param {Admin_Editor_Source_ModeInputs} inputs
@@ -1060,6 +1088,20 @@ export const admin_nav_overview: ((inputs?: Admin_Nav_OverviewInputs, options?: 
 export const admin_nav_posts: ((inputs?: Admin_Nav_PostsInputs, options?: {
     locale?: "en" | "zh";
 }) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Nav_PostsInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Series" |
+*
+* @param {Admin_Nav_SeriesInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_nav_series: ((inputs?: Admin_Nav_SeriesInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Nav_SeriesInputs, {
     locale?: "en" | "zh";
 }, {}>;
 /**
@@ -1359,6 +1401,20 @@ export const admin_posts_filter_all_status: ((inputs?: Admin_Posts_Filter_All_St
 /**
 * | output |
 * | --- |
+* | "All series" |
+*
+* @param {Admin_Posts_Filter_All_SeriesInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_posts_filter_all_series: ((inputs?: Admin_Posts_Filter_All_SeriesInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Posts_Filter_All_SeriesInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
 * | "All tags" |
 *
 * @param {Admin_Posts_Filter_All_TagsInputs} inputs
@@ -1368,6 +1424,20 @@ export const admin_posts_filter_all_status: ((inputs?: Admin_Posts_Filter_All_St
 export const admin_posts_filter_all_tags: ((inputs?: Admin_Posts_Filter_All_TagsInputs, options?: {
     locale?: "en" | "zh";
 }) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Posts_Filter_All_TagsInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Filter by series" |
+*
+* @param {Admin_Posts_Filter_SeriesInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_posts_filter_series: ((inputs?: Admin_Posts_Filter_SeriesInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Posts_Filter_SeriesInputs, {
     locale?: "en" | "zh";
 }, {}>;
 /**
@@ -1410,6 +1480,20 @@ export const admin_posts_filter_tag: ((inputs?: Admin_Posts_Filter_TagInputs, op
 export const admin_posts_move_to_draft: ((inputs?: Admin_Posts_Move_To_DraftInputs, options?: {
     locale?: "en" | "zh";
 }) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Posts_Move_To_DraftInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "No series" |
+*
+* @param {Admin_Posts_No_SeriesInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_posts_no_series: ((inputs?: Admin_Posts_No_SeriesInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Posts_No_SeriesInputs, {
     locale?: "en" | "zh";
 }, {}>;
 /**
@@ -1634,6 +1718,160 @@ export const admin_schedule_post: ((inputs?: Admin_Schedule_PostInputs, options?
 export const admin_save_settings: ((inputs?: Admin_Save_SettingsInputs, options?: {
     locale?: "en" | "zh";
 }) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Save_SettingsInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Cancel" |
+*
+* @param {Admin_Series_CancelInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_series_cancel: ((inputs?: Admin_Series_CancelInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Series_CancelInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Create and edit the focused series that posts can belong to." |
+*
+* @param {Admin_Series_DescriptionInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_series_description: ((inputs?: Admin_Series_DescriptionInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Series_DescriptionInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Series could not be saved." |
+*
+* @param {Admin_Series_ErrorInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_series_error: ((inputs?: Admin_Series_ErrorInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Series_ErrorInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Name" |
+*
+* @param {Admin_Series_NameInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_series_name: ((inputs?: Admin_Series_NameInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Series_NameInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "New series" |
+*
+* @param {Admin_Series_NewInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_series_new: ((inputs?: Admin_Series_NewInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Series_NewInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Save series" |
+*
+* @param {Admin_Series_SaveInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_series_save: ((inputs?: Admin_Series_SaveInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Series_SaveInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Series saved." |
+*
+* @param {Admin_Series_SavedInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_series_saved: ((inputs?: Admin_Series_SavedInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Series_SavedInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Slug" |
+*
+* @param {Admin_Series_SlugInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_series_slug: ((inputs?: Admin_Series_SlugInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Series_SlugInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Sort order" |
+*
+* @param {Admin_Series_Sort_OrderInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_series_sort_order: ((inputs?: Admin_Series_Sort_OrderInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Series_Sort_OrderInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Description" |
+*
+* @param {Admin_Series_SummaryInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_series_summary: ((inputs?: Admin_Series_SummaryInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Series_SummaryInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Series" |
+*
+* @param {Admin_Series_TitleInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_series_title: ((inputs?: Admin_Series_TitleInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Series_TitleInputs, {
     locale?: "en" | "zh";
 }, {}>;
 /**
@@ -2628,6 +2866,34 @@ export const blog_search_placeholder: ((inputs?: Blog_Search_PlaceholderInputs, 
 export const blog_search_submit: ((inputs?: Blog_Search_SubmitInputs, options?: {
     locale?: "en" | "zh";
 }) => LocalizedString) & import("../runtime.js").MessageMetadata<Blog_Search_SubmitInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "All series" |
+*
+* @param {Blog_Series_AllInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const blog_series_all: ((inputs?: Blog_Series_AllInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Blog_Series_AllInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Filter posts by series" |
+*
+* @param {Blog_Series_Filter_LabelInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const blog_series_filter_label: ((inputs?: Blog_Series_Filter_LabelInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Blog_Series_Filter_LabelInputs, {
     locale?: "en" | "zh";
 }, {}>;
 /**
@@ -3641,6 +3907,20 @@ export const nav_docs: ((inputs?: Nav_DocsInputs, options?: {
 /**
 * | output |
 * | --- |
+* | "Series" |
+*
+* @param {Nav_SeriesInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const nav_series: ((inputs?: Nav_SeriesInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Nav_SeriesInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
 * | "Tags" |
 *
 * @param {Nav_TagsInputs} inputs
@@ -3790,6 +4070,34 @@ export const related: ((inputs?: RelatedInputs, options?: {
 export const rss_feed: ((inputs?: Rss_FeedInputs, options?: {
     locale?: "en" | "zh";
 }) => LocalizedString) & import("../runtime.js").MessageMetadata<Rss_FeedInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Series" |
+*
+* @param {Series_EyebrowInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const series_eyebrow: ((inputs?: Series_EyebrowInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Series_EyebrowInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Series" |
+*
+* @param {Series_TitleInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const series_title: ((inputs?: Series_TitleInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Series_TitleInputs, {
     locale?: "en" | "zh";
 }, {}>;
 /**
@@ -4199,6 +4507,8 @@ export type Admin_Editor_Rich_ModeInputs = {};
 export type Admin_Editor_SavedInputs = {};
 export type Admin_Editor_Seo_DescriptionInputs = {};
 export type Admin_Editor_Seo_TitleInputs = {};
+export type Admin_Editor_SeriesInputs = {};
+export type Admin_Editor_Series_NoneInputs = {};
 export type Admin_Editor_Source_ModeInputs = {};
 export type Admin_Editor_TagsInputs = {};
 export type Admin_Editor_TitleInputs = {};
@@ -4215,6 +4525,7 @@ export type Admin_Nav_AssetsInputs = {};
 export type Admin_Nav_CommentsInputs = {};
 export type Admin_Nav_OverviewInputs = {};
 export type Admin_Nav_PostsInputs = {};
+export type Admin_Nav_SeriesInputs = {};
 export type Admin_Nav_SettingsInputs = {};
 export type Admin_New_PostInputs = {};
 export type Admin_Overview_EyebrowInputs = {};
@@ -4236,10 +4547,13 @@ export type Admin_Posts_DeleteInputs = {};
 export type Admin_Posts_DescriptionInputs = {};
 export type Admin_Posts_EditInputs = {};
 export type Admin_Posts_Filter_All_StatusInputs = {};
+export type Admin_Posts_Filter_All_SeriesInputs = {};
 export type Admin_Posts_Filter_All_TagsInputs = {};
+export type Admin_Posts_Filter_SeriesInputs = {};
 export type Admin_Posts_Filter_StatusInputs = {};
 export type Admin_Posts_Filter_TagInputs = {};
 export type Admin_Posts_Move_To_DraftInputs = {};
+export type Admin_Posts_No_SeriesInputs = {};
 export type Admin_Posts_Not_PublicInputs = {};
 export type Admin_Posts_Public_UrlInputs = {};
 export type Admin_Posts_SearchInputs = {};
@@ -4260,6 +4574,17 @@ export type Admin_Publish_PostInputs = {};
 export type Admin_Save_DraftInputs = {};
 export type Admin_Schedule_PostInputs = {};
 export type Admin_Save_SettingsInputs = {};
+export type Admin_Series_CancelInputs = {};
+export type Admin_Series_DescriptionInputs = {};
+export type Admin_Series_ErrorInputs = {};
+export type Admin_Series_NameInputs = {};
+export type Admin_Series_NewInputs = {};
+export type Admin_Series_SaveInputs = {};
+export type Admin_Series_SavedInputs = {};
+export type Admin_Series_SlugInputs = {};
+export type Admin_Series_Sort_OrderInputs = {};
+export type Admin_Series_SummaryInputs = {};
+export type Admin_Series_TitleInputs = {};
 export type Admin_Import_Export_TitleInputs = {};
 export type Admin_Import_Export_DescriptionInputs = {};
 export type Admin_Export_TitleInputs = {};
@@ -4335,6 +4660,8 @@ export type Blog_Filter_LabelInputs = {};
 export type Blog_No_ResultsInputs = {};
 export type Blog_Search_PlaceholderInputs = {};
 export type Blog_Search_SubmitInputs = {};
+export type Blog_Series_AllInputs = {};
+export type Blog_Series_Filter_LabelInputs = {};
 export type Blog_TitleInputs = {};
 export type Comment_BodyInputs = {};
 export type Comment_CompanyInputs = {};
@@ -4417,6 +4744,7 @@ export type Password_Reset_TitleInputs = {};
 export type Nav_AboutInputs = {};
 export type Nav_BlogInputs = {};
 export type Nav_DocsInputs = {};
+export type Nav_SeriesInputs = {};
 export type Nav_TagsInputs = {};
 export type Open_AdminInputs = {};
 export type PinnedInputs = {};
@@ -4435,6 +4763,8 @@ export type Published_CountInputs = {
 export type Read_Latest_PostsInputs = {};
 export type RelatedInputs = {};
 export type Rss_FeedInputs = {};
+export type Series_EyebrowInputs = {};
+export type Series_TitleInputs = {};
 export type Site_SubtitleInputs = {};
 export type SignupInputs = {};
 export type Signup_Confirm_PasswordInputs = {};

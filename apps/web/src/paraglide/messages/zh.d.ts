@@ -63,6 +63,8 @@
 /** @typedef {{}} Admin_Editor_SavedInputs */
 /** @typedef {{}} Admin_Editor_Seo_DescriptionInputs */
 /** @typedef {{}} Admin_Editor_Seo_TitleInputs */
+/** @typedef {{}} Admin_Editor_SeriesInputs */
+/** @typedef {{}} Admin_Editor_Series_NoneInputs */
 /** @typedef {{}} Admin_Editor_Source_ModeInputs */
 /** @typedef {{}} Admin_Editor_TagsInputs */
 /** @typedef {{}} Admin_Editor_TitleInputs */
@@ -75,6 +77,7 @@
 /** @typedef {{}} Admin_Nav_CommentsInputs */
 /** @typedef {{}} Admin_Nav_OverviewInputs */
 /** @typedef {{}} Admin_Nav_PostsInputs */
+/** @typedef {{}} Admin_Nav_SeriesInputs */
 /** @typedef {{}} Admin_Nav_SettingsInputs */
 /** @typedef {{}} Admin_New_PostInputs */
 /** @typedef {{}} Admin_Overview_EyebrowInputs */
@@ -96,10 +99,13 @@
 /** @typedef {{}} Admin_Posts_DescriptionInputs */
 /** @typedef {{}} Admin_Posts_EditInputs */
 /** @typedef {{}} Admin_Posts_Filter_All_StatusInputs */
+/** @typedef {{}} Admin_Posts_Filter_All_SeriesInputs */
 /** @typedef {{}} Admin_Posts_Filter_All_TagsInputs */
+/** @typedef {{}} Admin_Posts_Filter_SeriesInputs */
 /** @typedef {{}} Admin_Posts_Filter_StatusInputs */
 /** @typedef {{}} Admin_Posts_Filter_TagInputs */
 /** @typedef {{}} Admin_Posts_Move_To_DraftInputs */
+/** @typedef {{}} Admin_Posts_No_SeriesInputs */
 /** @typedef {{}} Admin_Posts_Not_PublicInputs */
 /** @typedef {{}} Admin_Posts_Public_UrlInputs */
 /** @typedef {{}} Admin_Posts_SearchInputs */
@@ -116,6 +122,17 @@
 /** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Schedule_PostInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
+/** @typedef {{}} Admin_Series_CancelInputs */
+/** @typedef {{}} Admin_Series_DescriptionInputs */
+/** @typedef {{}} Admin_Series_ErrorInputs */
+/** @typedef {{}} Admin_Series_NameInputs */
+/** @typedef {{}} Admin_Series_NewInputs */
+/** @typedef {{}} Admin_Series_SaveInputs */
+/** @typedef {{}} Admin_Series_SavedInputs */
+/** @typedef {{}} Admin_Series_SlugInputs */
+/** @typedef {{}} Admin_Series_Sort_OrderInputs */
+/** @typedef {{}} Admin_Series_SummaryInputs */
+/** @typedef {{}} Admin_Series_TitleInputs */
 /** @typedef {{}} Admin_Import_Export_TitleInputs */
 /** @typedef {{}} Admin_Import_Export_DescriptionInputs */
 /** @typedef {{}} Admin_Export_TitleInputs */
@@ -187,6 +204,8 @@
 /** @typedef {{}} Blog_No_ResultsInputs */
 /** @typedef {{}} Blog_Search_PlaceholderInputs */
 /** @typedef {{}} Blog_Search_SubmitInputs */
+/** @typedef {{}} Blog_Series_AllInputs */
+/** @typedef {{}} Blog_Series_Filter_LabelInputs */
 /** @typedef {{}} Blog_TitleInputs */
 /** @typedef {{}} Comment_BodyInputs */
 /** @typedef {{}} Comment_CompanyInputs */
@@ -259,6 +278,7 @@
 /** @typedef {{}} Nav_AboutInputs */
 /** @typedef {{}} Nav_BlogInputs */
 /** @typedef {{}} Nav_DocsInputs */
+/** @typedef {{}} Nav_SeriesInputs */
 /** @typedef {{}} Nav_TagsInputs */
 /** @typedef {{}} Open_AdminInputs */
 /** @typedef {{}} PinnedInputs */
@@ -270,6 +290,8 @@
 /** @typedef {{}} Read_Latest_PostsInputs */
 /** @typedef {{}} RelatedInputs */
 /** @typedef {{}} Rss_FeedInputs */
+/** @typedef {{}} Series_EyebrowInputs */
+/** @typedef {{}} Series_TitleInputs */
 /** @typedef {{}} Site_SubtitleInputs */
 /** @typedef {{}} SignupInputs */
 /** @typedef {{}} Signup_Confirm_PasswordInputs */
@@ -358,6 +380,8 @@ export const admin_editor_rich_mode: (inputs: Admin_Editor_Rich_ModeInputs) => L
 export const admin_editor_saved: (inputs: Admin_Editor_SavedInputs) => LocalizedString;
 export const admin_editor_seo_description: (inputs: Admin_Editor_Seo_DescriptionInputs) => LocalizedString;
 export const admin_editor_seo_title: (inputs: Admin_Editor_Seo_TitleInputs) => LocalizedString;
+export const admin_editor_series: (inputs: Admin_Editor_SeriesInputs) => LocalizedString;
+export const admin_editor_series_none: (inputs: Admin_Editor_Series_NoneInputs) => LocalizedString;
 export const admin_editor_source_mode: (inputs: Admin_Editor_Source_ModeInputs) => LocalizedString;
 export const admin_editor_tags: (inputs: Admin_Editor_TagsInputs) => LocalizedString;
 export const admin_editor_title: (inputs: Admin_Editor_TitleInputs) => LocalizedString;
@@ -370,6 +394,7 @@ export const admin_nav_assets: (inputs: Admin_Nav_AssetsInputs) => LocalizedStri
 export const admin_nav_comments: (inputs: Admin_Nav_CommentsInputs) => LocalizedString;
 export const admin_nav_overview: (inputs: Admin_Nav_OverviewInputs) => LocalizedString;
 export const admin_nav_posts: (inputs: Admin_Nav_PostsInputs) => LocalizedString;
+export const admin_nav_series: (inputs: Admin_Nav_SeriesInputs) => LocalizedString;
 export const admin_nav_settings: (inputs: Admin_Nav_SettingsInputs) => LocalizedString;
 export const admin_new_post: (inputs: Admin_New_PostInputs) => LocalizedString;
 export const admin_overview_eyebrow: (inputs: Admin_Overview_EyebrowInputs) => LocalizedString;
@@ -391,10 +416,13 @@ export const admin_posts_delete: (inputs: Admin_Posts_DeleteInputs) => Localized
 export const admin_posts_description: (inputs: Admin_Posts_DescriptionInputs) => LocalizedString;
 export const admin_posts_edit: (inputs: Admin_Posts_EditInputs) => LocalizedString;
 export const admin_posts_filter_all_status: (inputs: Admin_Posts_Filter_All_StatusInputs) => LocalizedString;
+export const admin_posts_filter_all_series: (inputs: Admin_Posts_Filter_All_SeriesInputs) => LocalizedString;
 export const admin_posts_filter_all_tags: (inputs: Admin_Posts_Filter_All_TagsInputs) => LocalizedString;
+export const admin_posts_filter_series: (inputs: Admin_Posts_Filter_SeriesInputs) => LocalizedString;
 export const admin_posts_filter_status: (inputs: Admin_Posts_Filter_StatusInputs) => LocalizedString;
 export const admin_posts_filter_tag: (inputs: Admin_Posts_Filter_TagInputs) => LocalizedString;
 export const admin_posts_move_to_draft: (inputs: Admin_Posts_Move_To_DraftInputs) => LocalizedString;
+export const admin_posts_no_series: (inputs: Admin_Posts_No_SeriesInputs) => LocalizedString;
 export const admin_posts_not_public: (inputs: Admin_Posts_Not_PublicInputs) => LocalizedString;
 export const admin_posts_public_url: (inputs: Admin_Posts_Public_UrlInputs) => LocalizedString;
 export const admin_posts_search: (inputs: Admin_Posts_SearchInputs) => LocalizedString;
@@ -411,6 +439,17 @@ export const admin_publish_post: (inputs: Admin_Publish_PostInputs) => Localized
 export const admin_save_draft: (inputs: Admin_Save_DraftInputs) => LocalizedString;
 export const admin_schedule_post: (inputs: Admin_Schedule_PostInputs) => LocalizedString;
 export const admin_save_settings: (inputs: Admin_Save_SettingsInputs) => LocalizedString;
+export const admin_series_cancel: (inputs: Admin_Series_CancelInputs) => LocalizedString;
+export const admin_series_description: (inputs: Admin_Series_DescriptionInputs) => LocalizedString;
+export const admin_series_error: (inputs: Admin_Series_ErrorInputs) => LocalizedString;
+export const admin_series_name: (inputs: Admin_Series_NameInputs) => LocalizedString;
+export const admin_series_new: (inputs: Admin_Series_NewInputs) => LocalizedString;
+export const admin_series_save: (inputs: Admin_Series_SaveInputs) => LocalizedString;
+export const admin_series_saved: (inputs: Admin_Series_SavedInputs) => LocalizedString;
+export const admin_series_slug: (inputs: Admin_Series_SlugInputs) => LocalizedString;
+export const admin_series_sort_order: (inputs: Admin_Series_Sort_OrderInputs) => LocalizedString;
+export const admin_series_summary: (inputs: Admin_Series_SummaryInputs) => LocalizedString;
+export const admin_series_title: (inputs: Admin_Series_TitleInputs) => LocalizedString;
 export const admin_import_export_title: (inputs: Admin_Import_Export_TitleInputs) => LocalizedString;
 export const admin_import_export_description: (inputs: Admin_Import_Export_DescriptionInputs) => LocalizedString;
 export const admin_export_title: (inputs: Admin_Export_TitleInputs) => LocalizedString;
@@ -482,6 +521,8 @@ export const blog_filter_label: (inputs: Blog_Filter_LabelInputs) => LocalizedSt
 export const blog_no_results: (inputs: Blog_No_ResultsInputs) => LocalizedString;
 export const blog_search_placeholder: (inputs: Blog_Search_PlaceholderInputs) => LocalizedString;
 export const blog_search_submit: (inputs: Blog_Search_SubmitInputs) => LocalizedString;
+export const blog_series_all: (inputs: Blog_Series_AllInputs) => LocalizedString;
+export const blog_series_filter_label: (inputs: Blog_Series_Filter_LabelInputs) => LocalizedString;
 export const blog_title: (inputs: Blog_TitleInputs) => LocalizedString;
 export const comment_body: (inputs: Comment_BodyInputs) => LocalizedString;
 export const comment_company: (inputs: Comment_CompanyInputs) => LocalizedString;
@@ -554,6 +595,7 @@ export const password_reset_title: (inputs: Password_Reset_TitleInputs) => Local
 export const nav_about: (inputs: Nav_AboutInputs) => LocalizedString;
 export const nav_blog: (inputs: Nav_BlogInputs) => LocalizedString;
 export const nav_docs: (inputs: Nav_DocsInputs) => LocalizedString;
+export const nav_series: (inputs: Nav_SeriesInputs) => LocalizedString;
 export const nav_tags: (inputs: Nav_TagsInputs) => LocalizedString;
 export const open_admin: (inputs: Open_AdminInputs) => LocalizedString;
 export const pinned: (inputs: PinnedInputs) => LocalizedString;
@@ -565,6 +607,8 @@ export const published_count: (inputs: Published_CountInputs) => LocalizedString
 export const read_latest_posts: (inputs: Read_Latest_PostsInputs) => LocalizedString;
 export const related: (inputs: RelatedInputs) => LocalizedString;
 export const rss_feed: (inputs: Rss_FeedInputs) => LocalizedString;
+export const series_eyebrow: (inputs: Series_EyebrowInputs) => LocalizedString;
+export const series_title: (inputs: Series_TitleInputs) => LocalizedString;
 export const site_subtitle: (inputs: Site_SubtitleInputs) => LocalizedString;
 export const signup: (inputs: SignupInputs) => LocalizedString;
 export const signup_confirm_password: (inputs: Signup_Confirm_PasswordInputs) => LocalizedString;
@@ -660,6 +704,8 @@ export type Admin_Editor_Rich_ModeInputs = {};
 export type Admin_Editor_SavedInputs = {};
 export type Admin_Editor_Seo_DescriptionInputs = {};
 export type Admin_Editor_Seo_TitleInputs = {};
+export type Admin_Editor_SeriesInputs = {};
+export type Admin_Editor_Series_NoneInputs = {};
 export type Admin_Editor_Source_ModeInputs = {};
 export type Admin_Editor_TagsInputs = {};
 export type Admin_Editor_TitleInputs = {};
@@ -676,6 +722,7 @@ export type Admin_Nav_AssetsInputs = {};
 export type Admin_Nav_CommentsInputs = {};
 export type Admin_Nav_OverviewInputs = {};
 export type Admin_Nav_PostsInputs = {};
+export type Admin_Nav_SeriesInputs = {};
 export type Admin_Nav_SettingsInputs = {};
 export type Admin_New_PostInputs = {};
 export type Admin_Overview_EyebrowInputs = {};
@@ -697,10 +744,13 @@ export type Admin_Posts_DeleteInputs = {};
 export type Admin_Posts_DescriptionInputs = {};
 export type Admin_Posts_EditInputs = {};
 export type Admin_Posts_Filter_All_StatusInputs = {};
+export type Admin_Posts_Filter_All_SeriesInputs = {};
 export type Admin_Posts_Filter_All_TagsInputs = {};
+export type Admin_Posts_Filter_SeriesInputs = {};
 export type Admin_Posts_Filter_StatusInputs = {};
 export type Admin_Posts_Filter_TagInputs = {};
 export type Admin_Posts_Move_To_DraftInputs = {};
+export type Admin_Posts_No_SeriesInputs = {};
 export type Admin_Posts_Not_PublicInputs = {};
 export type Admin_Posts_Public_UrlInputs = {};
 export type Admin_Posts_SearchInputs = {};
@@ -721,6 +771,17 @@ export type Admin_Publish_PostInputs = {};
 export type Admin_Save_DraftInputs = {};
 export type Admin_Schedule_PostInputs = {};
 export type Admin_Save_SettingsInputs = {};
+export type Admin_Series_CancelInputs = {};
+export type Admin_Series_DescriptionInputs = {};
+export type Admin_Series_ErrorInputs = {};
+export type Admin_Series_NameInputs = {};
+export type Admin_Series_NewInputs = {};
+export type Admin_Series_SaveInputs = {};
+export type Admin_Series_SavedInputs = {};
+export type Admin_Series_SlugInputs = {};
+export type Admin_Series_Sort_OrderInputs = {};
+export type Admin_Series_SummaryInputs = {};
+export type Admin_Series_TitleInputs = {};
 export type Admin_Import_Export_TitleInputs = {};
 export type Admin_Import_Export_DescriptionInputs = {};
 export type Admin_Export_TitleInputs = {};
@@ -796,6 +857,8 @@ export type Blog_Filter_LabelInputs = {};
 export type Blog_No_ResultsInputs = {};
 export type Blog_Search_PlaceholderInputs = {};
 export type Blog_Search_SubmitInputs = {};
+export type Blog_Series_AllInputs = {};
+export type Blog_Series_Filter_LabelInputs = {};
 export type Blog_TitleInputs = {};
 export type Comment_BodyInputs = {};
 export type Comment_CompanyInputs = {};
@@ -878,6 +941,7 @@ export type Password_Reset_TitleInputs = {};
 export type Nav_AboutInputs = {};
 export type Nav_BlogInputs = {};
 export type Nav_DocsInputs = {};
+export type Nav_SeriesInputs = {};
 export type Nav_TagsInputs = {};
 export type Open_AdminInputs = {};
 export type PinnedInputs = {};
@@ -896,6 +960,8 @@ export type Published_CountInputs = {
 export type Read_Latest_PostsInputs = {};
 export type RelatedInputs = {};
 export type Rss_FeedInputs = {};
+export type Series_EyebrowInputs = {};
+export type Series_TitleInputs = {};
 export type Site_SubtitleInputs = {};
 export type SignupInputs = {};
 export type Signup_Confirm_PasswordInputs = {};

@@ -64,6 +64,8 @@
 /** @typedef {{}} Admin_Editor_SavedInputs */
 /** @typedef {{}} Admin_Editor_Seo_DescriptionInputs */
 /** @typedef {{}} Admin_Editor_Seo_TitleInputs */
+/** @typedef {{}} Admin_Editor_SeriesInputs */
+/** @typedef {{}} Admin_Editor_Series_NoneInputs */
 /** @typedef {{}} Admin_Editor_Source_ModeInputs */
 /** @typedef {{}} Admin_Editor_TagsInputs */
 /** @typedef {{}} Admin_Editor_TitleInputs */
@@ -76,6 +78,7 @@
 /** @typedef {{}} Admin_Nav_CommentsInputs */
 /** @typedef {{}} Admin_Nav_OverviewInputs */
 /** @typedef {{}} Admin_Nav_PostsInputs */
+/** @typedef {{}} Admin_Nav_SeriesInputs */
 /** @typedef {{}} Admin_Nav_SettingsInputs */
 /** @typedef {{}} Admin_New_PostInputs */
 /** @typedef {{}} Admin_Overview_EyebrowInputs */
@@ -97,10 +100,13 @@
 /** @typedef {{}} Admin_Posts_DescriptionInputs */
 /** @typedef {{}} Admin_Posts_EditInputs */
 /** @typedef {{}} Admin_Posts_Filter_All_StatusInputs */
+/** @typedef {{}} Admin_Posts_Filter_All_SeriesInputs */
 /** @typedef {{}} Admin_Posts_Filter_All_TagsInputs */
+/** @typedef {{}} Admin_Posts_Filter_SeriesInputs */
 /** @typedef {{}} Admin_Posts_Filter_StatusInputs */
 /** @typedef {{}} Admin_Posts_Filter_TagInputs */
 /** @typedef {{}} Admin_Posts_Move_To_DraftInputs */
+/** @typedef {{}} Admin_Posts_No_SeriesInputs */
 /** @typedef {{}} Admin_Posts_Not_PublicInputs */
 /** @typedef {{}} Admin_Posts_Public_UrlInputs */
 /** @typedef {{}} Admin_Posts_SearchInputs */
@@ -117,6 +123,17 @@
 /** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Schedule_PostInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
+/** @typedef {{}} Admin_Series_CancelInputs */
+/** @typedef {{}} Admin_Series_DescriptionInputs */
+/** @typedef {{}} Admin_Series_ErrorInputs */
+/** @typedef {{}} Admin_Series_NameInputs */
+/** @typedef {{}} Admin_Series_NewInputs */
+/** @typedef {{}} Admin_Series_SaveInputs */
+/** @typedef {{}} Admin_Series_SavedInputs */
+/** @typedef {{}} Admin_Series_SlugInputs */
+/** @typedef {{}} Admin_Series_Sort_OrderInputs */
+/** @typedef {{}} Admin_Series_SummaryInputs */
+/** @typedef {{}} Admin_Series_TitleInputs */
 /** @typedef {{}} Admin_Import_Export_TitleInputs */
 /** @typedef {{}} Admin_Import_Export_DescriptionInputs */
 /** @typedef {{}} Admin_Export_TitleInputs */
@@ -188,6 +205,8 @@
 /** @typedef {{}} Blog_No_ResultsInputs */
 /** @typedef {{}} Blog_Search_PlaceholderInputs */
 /** @typedef {{}} Blog_Search_SubmitInputs */
+/** @typedef {{}} Blog_Series_AllInputs */
+/** @typedef {{}} Blog_Series_Filter_LabelInputs */
 /** @typedef {{}} Blog_TitleInputs */
 /** @typedef {{}} Comment_BodyInputs */
 /** @typedef {{}} Comment_CompanyInputs */
@@ -260,6 +279,7 @@
 /** @typedef {{}} Nav_AboutInputs */
 /** @typedef {{}} Nav_BlogInputs */
 /** @typedef {{}} Nav_DocsInputs */
+/** @typedef {{}} Nav_SeriesInputs */
 /** @typedef {{}} Nav_TagsInputs */
 /** @typedef {{}} Open_AdminInputs */
 /** @typedef {{}} PinnedInputs */
@@ -271,6 +291,8 @@
 /** @typedef {{}} Read_Latest_PostsInputs */
 /** @typedef {{}} RelatedInputs */
 /** @typedef {{}} Rss_FeedInputs */
+/** @typedef {{}} Series_EyebrowInputs */
+/** @typedef {{}} Series_TitleInputs */
 /** @typedef {{}} Site_SubtitleInputs */
 /** @typedef {{}} SignupInputs */
 /** @typedef {{}} Signup_Confirm_PasswordInputs */
@@ -553,6 +575,14 @@ export const admin_editor_seo_title = /** @type {(inputs: Admin_Editor_Seo_Title
 	return /** @type {LocalizedString} */ (`SEO title`)
 };
 
+export const admin_editor_series = /** @type {(inputs: Admin_Editor_SeriesInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Series`)
+};
+
+export const admin_editor_series_none = /** @type {(inputs: Admin_Editor_Series_NoneInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No series`)
+};
+
 export const admin_editor_source_mode = /** @type {(inputs: Admin_Editor_Source_ModeInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Source`)
 };
@@ -599,6 +629,10 @@ export const admin_nav_overview = /** @type {(inputs: Admin_Nav_OverviewInputs) 
 
 export const admin_nav_posts = /** @type {(inputs: Admin_Nav_PostsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Posts`)
+};
+
+export const admin_nav_series = /** @type {(inputs: Admin_Nav_SeriesInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Series`)
 };
 
 export const admin_nav_settings = /** @type {(inputs: Admin_Nav_SettingsInputs) => LocalizedString} */ () => {
@@ -685,8 +719,16 @@ export const admin_posts_filter_all_status = /** @type {(inputs: Admin_Posts_Fil
 	return /** @type {LocalizedString} */ (`All statuses`)
 };
 
+export const admin_posts_filter_all_series = /** @type {(inputs: Admin_Posts_Filter_All_SeriesInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`All series`)
+};
+
 export const admin_posts_filter_all_tags = /** @type {(inputs: Admin_Posts_Filter_All_TagsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`All tags`)
+};
+
+export const admin_posts_filter_series = /** @type {(inputs: Admin_Posts_Filter_SeriesInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Filter by series`)
 };
 
 export const admin_posts_filter_status = /** @type {(inputs: Admin_Posts_Filter_StatusInputs) => LocalizedString} */ () => {
@@ -699,6 +741,10 @@ export const admin_posts_filter_tag = /** @type {(inputs: Admin_Posts_Filter_Tag
 
 export const admin_posts_move_to_draft = /** @type {(inputs: Admin_Posts_Move_To_DraftInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Move to draft`)
+};
+
+export const admin_posts_no_series = /** @type {(inputs: Admin_Posts_No_SeriesInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`No series`)
 };
 
 export const admin_posts_not_public = /** @type {(inputs: Admin_Posts_Not_PublicInputs) => LocalizedString} */ () => {
@@ -763,6 +809,50 @@ export const admin_schedule_post = /** @type {(inputs: Admin_Schedule_PostInputs
 
 export const admin_save_settings = /** @type {(inputs: Admin_Save_SettingsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Save settings`)
+};
+
+export const admin_series_cancel = /** @type {(inputs: Admin_Series_CancelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Cancel`)
+};
+
+export const admin_series_description = /** @type {(inputs: Admin_Series_DescriptionInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Create and edit the focused series that posts can belong to.`)
+};
+
+export const admin_series_error = /** @type {(inputs: Admin_Series_ErrorInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Series could not be saved.`)
+};
+
+export const admin_series_name = /** @type {(inputs: Admin_Series_NameInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Name`)
+};
+
+export const admin_series_new = /** @type {(inputs: Admin_Series_NewInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`New series`)
+};
+
+export const admin_series_save = /** @type {(inputs: Admin_Series_SaveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Save series`)
+};
+
+export const admin_series_saved = /** @type {(inputs: Admin_Series_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Series saved.`)
+};
+
+export const admin_series_slug = /** @type {(inputs: Admin_Series_SlugInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Slug`)
+};
+
+export const admin_series_sort_order = /** @type {(inputs: Admin_Series_Sort_OrderInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Sort order`)
+};
+
+export const admin_series_summary = /** @type {(inputs: Admin_Series_SummaryInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Description`)
+};
+
+export const admin_series_title = /** @type {(inputs: Admin_Series_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Series`)
 };
 
 export const admin_import_export_title = /** @type {(inputs: Admin_Import_Export_TitleInputs) => LocalizedString} */ () => {
@@ -1047,6 +1137,14 @@ export const blog_search_placeholder = /** @type {(inputs: Blog_Search_Placehold
 
 export const blog_search_submit = /** @type {(inputs: Blog_Search_SubmitInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Search`)
+};
+
+export const blog_series_all = /** @type {(inputs: Blog_Series_AllInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`All series`)
+};
+
+export const blog_series_filter_label = /** @type {(inputs: Blog_Series_Filter_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Filter posts by series`)
 };
 
 export const blog_title = /** @type {(inputs: Blog_TitleInputs) => LocalizedString} */ () => {
@@ -1337,6 +1435,10 @@ export const nav_docs = /** @type {(inputs: Nav_DocsInputs) => LocalizedString} 
 	return /** @type {LocalizedString} */ (`Docs`)
 };
 
+export const nav_series = /** @type {(inputs: Nav_SeriesInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Series`)
+};
+
 export const nav_tags = /** @type {(inputs: Nav_TagsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Tags`)
 };
@@ -1379,6 +1481,14 @@ export const related = /** @type {(inputs: RelatedInputs) => LocalizedString} */
 
 export const rss_feed = /** @type {(inputs: Rss_FeedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`RSS feed`)
+};
+
+export const series_eyebrow = /** @type {(inputs: Series_EyebrowInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Series`)
+};
+
+export const series_title = /** @type {(inputs: Series_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Series`)
 };
 
 export const site_subtitle = /** @type {(inputs: Site_SubtitleInputs) => LocalizedString} */ () => {
