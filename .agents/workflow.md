@@ -61,3 +61,4 @@ Oxfmt (via Vite+) is configured for consistent code formatting via `vp fmt`. It 
 ## Commits
 
 Use conventional commit format when committing.
+After a scoped change passes the appropriate validation, commit it directly unless the user explicitly asks not to. Keep each commit coherent, inspect staged paths before committing in a dirty worktree, and leave unrelated local changes unstaged.

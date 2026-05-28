@@ -32,7 +32,7 @@ Opinionated full-stack TypeScript monorepo: TanStack Start + Drizzle + Better Au
 ## Always Apply
 
 - [Toolchain](.agents/toolchain.md) for Vite Plus, `vp`/`vpx`, and workspace command syntax.
-- [Workflow](.agents/workflow.md) for validation timing, focused checks, and migration workflow.
+- [Workflow](.agents/workflow.md) for validation timing, direct-commit policy, focused checks, and migration workflow.
 - [Testing](.agents/testing.md) before creating, modifying, or running tests.
 
 ## Topic Index
