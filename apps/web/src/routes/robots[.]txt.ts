@@ -14,7 +14,6 @@ Disallow: /admin
 
 Sitemap: ${siteSettings.url}/sitemap.xml
 Sitemap: ${siteSettings.url}/sitemap-posts.xml
-Sitemap: ${siteSettings.url}/sitemap-pages.xml
 `
           : `User-agent: *
 Disallow: /

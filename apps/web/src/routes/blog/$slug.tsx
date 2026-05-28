@@ -1,13 +1,15 @@
+import { useAuth } from "@repo/auth/tanstack/hooks";
 import {
   formatDate,
   localizeComment,
   localizePost,
   localizeSiteSettings,
+  slugify,
   type Comment,
 } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { MessageSquareIcon, RssIcon } from "lucide-react";
+import { MessageSquareIcon, PencilLineIcon, RssIcon } from "lucide-react";
 import { useState } from "react";
 
 import { CommentForm } from "#/components/comment-form";
@@ -99,6 +101,7 @@ export const Route = createFileRoute("/blog/$slug")({
 
 function BlogPostPage() {
   const { comments, post, relatedPosts, siteSettings }: BlogPostPageData = Route.useLoaderData();
+  const { user } = useAuth();
   const [replyTarget, setReplyTarget] = useState<Comment | null>(null);
   const locale = getCurrentLocale();
   const localizedPost = localizePost(post, locale);
@@ -108,78 +111,136 @@ function BlogPostPage() {
     localizePost(relatedPost, locale),
   );
   const commentsEnabled = localizedSiteSettings.commentsEnabled && localizedPost.commentsEnabled;
+  const articleBody = buildArticleBody(localizedPost.contentHtml);
+  const editLabel = locale === "zh" ? "编辑文章" : m.admin_posts_edit();
 
   return (
     <SiteShell siteSettings={localizedSiteSettings}>
       <article>
-        <header className="border-b border-border/80 bg-muted/35">
-          <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-            <div className="flex flex-col justify-center">
-              <div className="flex flex-wrap gap-2">
+        <header className="relative isolate flex min-h-[calc(100svh-3.5rem)] items-end overflow-hidden bg-foreground text-white">
+          <img
+            src={localizedPost.coverImage}
+            alt=""
+            className="absolute inset-0 -z-20 size-full object-cover"
+          />
+          <div className="absolute inset-0 -z-10 bg-linear-to-t from-black/85 via-black/40 to-black/20" />
+
+          {user?.role === "admin" ? (
+            <Link
+              to="/admin/posts/$postId"
+              params={{ postId: localizedPost.id }}
+              className="absolute top-5 right-4 z-10 inline-flex items-center gap-2 text-sm font-semibold text-white underline-offset-4 drop-shadow-md hover:underline sm:right-6 lg:right-8"
+              aria-label={editLabel}
+            >
+              <PencilLineIcon className="size-4" />
+              {editLabel}
+            </Link>
+          ) : null}
+
+          <div className="mx-auto w-full max-w-5xl px-4 pt-24 pb-14 sm:px-6 sm:pb-20 lg:px-8">
+            <div className="max-w-4xl">
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
                 {localizedPost.tags.map((tag) => (
                   <Link
                     key={tag.slug}
                     to="/tags/$slug"
                     params={{ slug: tag.slug }}
-                    className="rounded-sm border border-border bg-card px-2 py-1 text-xs font-medium text-link shadow-xs"
+                    className="text-xs font-semibold tracking-[0.18em] text-white/80 uppercase underline-offset-4 drop-shadow-md hover:text-white hover:underline"
                   >
                     {tag.name}
                   </Link>
                 ))}
               </div>
-              <h1 className="mt-5 text-4xl leading-tight font-semibold text-balance sm:text-5xl">
+              <h1 className="mt-6 max-w-4xl text-4xl leading-tight font-semibold text-balance drop-shadow-lg sm:text-6xl">
                 {localizedPost.title}
               </h1>
-              <p className="mt-5 text-lg leading-8 text-muted-foreground">
+              <p className="mt-6 max-w-3xl text-lg leading-8 text-white/85 drop-shadow-md sm:text-xl">
                 {localizedPost.excerpt}
               </p>
-              <p className="mt-5 text-sm text-muted-foreground">
+              <p className="mt-7 text-sm font-medium tracking-wide text-white/75 drop-shadow-md">
                 {formatDate(localizedPost.publishedAt, locale)} · {m.updated()}{" "}
                 {formatDate(localizedPost.updatedAt, locale)} · {localizedPost.authorName}
               </p>
             </div>
-            <img
-              src={localizedPost.coverImage}
-              alt=""
-              className="h-full min-h-80 rounded-lg border border-border/70 object-cover shadow-xs"
-            />
           </div>
         </header>
 
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[220px_minmax(0,760px)_1fr] lg:px-8">
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[12rem_minmax(0,48rem)] lg:px-8 xl:grid-cols-[12rem_minmax(0,48rem)_12rem]">
           <aside className="hidden lg:block">
-            <div className="sticky top-24 rounded-lg border border-border/80 bg-card p-4 text-sm shadow-xs">
-              <p className="font-semibold">{m.contents()}</p>
-              {commentsEnabled || localizedComments.length ? (
-                <a
-                  href="#comments"
-                  className="mt-3 flex items-center gap-2 text-muted-foreground hover:text-link"
-                >
-                  <MessageSquareIcon className="size-4" />
-                  {m.comments()}
-                </a>
+            <nav aria-label={m.contents()} className="sticky top-24 text-sm">
+              <p className="text-xs font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+                {m.contents()}
+              </p>
+              {articleBody.tocItems.length ? (
+                <ol className="mt-4 grid gap-3">
+                  {articleBody.tocItems.map((item) => (
+                    <li key={item.id}>
+                      <a
+                        href={`#${item.id}`}
+                        className={`block leading-5 text-muted-foreground underline-offset-4 hover:text-link hover:underline ${
+                          item.level === 3 ? "pl-4 text-xs" : ""
+                        }`}
+                      >
+                        {item.text}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
               ) : null}
-              <a
-                href="/rss.xml"
-                className="mt-2 flex items-center gap-2 text-muted-foreground hover:text-link"
-              >
-                <RssIcon className="size-4" />
-                {m.rss_feed()}
-              </a>
-            </div>
+              <div className="mt-7 grid gap-3 border-t border-border/70 pt-4">
+                {commentsEnabled || localizedComments.length ? (
+                  <a
+                    href="#comments"
+                    className="flex items-center gap-2 text-muted-foreground underline-offset-4 hover:text-link hover:underline"
+                  >
+                    <MessageSquareIcon className="size-4" />
+                    {m.comments()}
+                  </a>
+                ) : null}
+                <a
+                  href="/rss.xml"
+                  className="flex items-center gap-2 text-muted-foreground underline-offset-4 hover:text-link hover:underline"
+                >
+                  <RssIcon className="size-4" />
+                  {m.rss_feed()}
+                </a>
+              </div>
+            </nav>
           </aside>
 
           <div className="min-w-0">
+            {articleBody.tocItems.length ? (
+              <nav
+                aria-label={m.contents()}
+                className="mb-10 border-b border-border/70 pb-6 lg:hidden"
+              >
+                <p className="text-xs font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+                  {m.contents()}
+                </p>
+                <ol className="mt-4 grid gap-3">
+                  {articleBody.tocItems.map((item) => (
+                    <li key={item.id}>
+                      <a
+                        href={`#${item.id}`}
+                        className={`block leading-5 text-muted-foreground underline-offset-4 hover:text-link hover:underline ${
+                          item.level === 3 ? "pl-4 text-xs" : ""
+                        }`}
+                      >
+                        {item.text}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            ) : null}
+
             <div
-              className="prose prose-neutral prose-a:text-link prose-headings:font-semibold dark:prose-invert max-w-none rounded-lg border border-border/80 bg-card p-6 leading-8 shadow-xs"
-              dangerouslySetInnerHTML={{ __html: localizedPost.contentHtml }}
+              className="prose prose-neutral prose-a:text-link prose-headings:scroll-mt-24 prose-headings:font-semibold dark:prose-invert max-w-none leading-8 [&>h1:first-child]:hidden"
+              dangerouslySetInnerHTML={{ __html: articleBody.html }}
             />
 
             {commentsEnabled || localizedComments.length ? (
-              <section
-                id="comments"
-                className="mt-8 rounded-lg border border-border/80 bg-card p-6 shadow-xs"
-              >
+              <section id="comments" className="mt-16 border-t border-border/70 pt-10">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <h2 className="text-2xl font-semibold">{m.comments()}</h2>
@@ -194,9 +255,7 @@ function BlogPostPage() {
                     onCancelReply={() => setReplyTarget(null)}
                   />
                 ) : (
-                  <p className="mt-6 rounded-md border border-border bg-muted/35 p-4 text-sm text-muted-foreground">
-                    {m.comments_disabled()}
-                  </p>
+                  <p className="mt-6 text-sm text-muted-foreground">{m.comments_disabled()}</p>
                 )}
                 <div className="mt-6 grid gap-4">
                   <CommentList comments={localizedComments} onReply={setReplyTarget} />
@@ -205,22 +264,26 @@ function BlogPostPage() {
             ) : null}
           </div>
 
-          <aside className="min-w-0">
-            <div className="rounded-lg border border-border/80 bg-card p-4 shadow-xs">
-              <p className="text-sm font-semibold">{m.related()}</p>
-              <div className="mt-3 grid gap-3">
-                {localizedRelatedPosts.map((relatedPost) => (
-                  <Link
-                    key={relatedPost.id}
-                    to="/blog/$slug"
-                    params={{ slug: relatedPost.slug }}
-                    className="rounded-md bg-muted/55 p-3 text-sm font-medium transition hover:bg-muted hover:text-link"
-                  >
-                    {relatedPost.title}
-                  </Link>
-                ))}
+          <aside className="hidden min-w-0 xl:block">
+            {localizedRelatedPosts.length ? (
+              <div className="sticky top-24 text-sm">
+                <p className="text-xs font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+                  {m.related()}
+                </p>
+                <div className="mt-3 grid gap-3">
+                  {localizedRelatedPosts.map((relatedPost) => (
+                    <Link
+                      key={relatedPost.id}
+                      to="/blog/$slug"
+                      params={{ slug: relatedPost.slug }}
+                      className="leading-5 font-medium text-muted-foreground underline-offset-4 transition hover:text-link hover:underline"
+                    >
+                      {relatedPost.title}
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
+            ) : null}
           </aside>
         </div>
       </article>
@@ -250,7 +313,7 @@ function CommentList({ comments, depth = 0, onReply, parentId = null }: CommentL
       {children.map((comment) => (
         <div key={comment.id} className="grid gap-3">
           <div
-            className="rounded-md border border-border bg-muted/55 p-4"
+            className="border-l border-border/80 py-1 pl-4"
             style={{ marginLeft: depth ? Math.min(depth, 3) * 16 : 0 }}
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -283,4 +346,59 @@ function absoluteUrl(value: string, siteUrl: string) {
   }
 
   return new URL(value, siteUrl).toString();
+}
+
+type TocItem = {
+  id: string;
+  level: 2 | 3;
+  text: string;
+};
+
+function buildArticleBody(contentHtml: string): { html: string; tocItems: TocItem[] } {
+  const usedIds = new Map<string, number>();
+  const tocItems: TocItem[] = [];
+  const html = contentHtml.replace(
+    /<h([23])([^>]*)>([\s\S]*?)<\/h\1>/gi,
+    (match, levelValue: string, attrs: string, children: string) => {
+      const text = decodeHtml(stripTags(children)).trim();
+
+      if (!text) {
+        return match;
+      }
+
+      const id = uniqueHeadingId(text, usedIds);
+      const level = Number(levelValue) === 3 ? 3 : 2;
+      tocItems.push({ id, level, text });
+
+      return `<h${level}${removeIdAttribute(attrs)} id="${id}">${children}</h${level}>`;
+    },
+  );
+
+  return { html, tocItems };
+}
+
+function uniqueHeadingId(text: string, usedIds: Map<string, number>) {
+  const baseId = slugify(text) || "section";
+  const count = usedIds.get(baseId) ?? 0;
+  usedIds.set(baseId, count + 1);
+
+  return count ? `${baseId}-${count + 1}` : baseId;
+}
+
+function removeIdAttribute(attrs: string) {
+  return attrs.replace(/\s+id=(?:"[^"]*"|'[^']*'|[^\s>]*)/i, "");
+}
+
+function stripTags(value: string) {
+  return value.replace(/<[^>]*>/g, "");
+}
+
+function decodeHtml(value: string) {
+  return value
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
 }

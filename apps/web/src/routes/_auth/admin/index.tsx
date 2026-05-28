@@ -2,7 +2,6 @@ import {
   localizeSiteSettings,
   type ApiToken,
   type Asset,
-  type CmsPage,
   type Comment,
   type Post,
   type SiteSettings,
@@ -17,7 +16,6 @@ import {
   ImageIcon,
   KeyRoundIcon,
   MessageSquareIcon,
-  NotebookTabsIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -63,28 +61,24 @@ function AdminOverviewPage() {
       fetch(`/api/site?lang=${locale}`).then((r) => (r.ok ? r.json() : undefined)),
       fetch(`/api/posts?status=all&lang=${locale}`).then((r) => (r.ok ? r.json() : undefined)),
       fetch(`/api/comments?lang=${locale}`).then((r) => (r.ok ? r.json() : undefined)),
-      fetch(`/api/pages?status=all&lang=${locale}`).then((r) => (r.ok ? r.json() : undefined)),
       fetch("/api/assets").then((r) => (r.ok ? r.json() : undefined)),
       fetch("/api/tokens").then((r) => (r.ok ? r.json() : undefined)),
-    ]).then(
-      ([sitePayload, postPayload, commentPayload, pagePayload, assetPayload, tokenPayload]) => {
-        const settings = (sitePayload as { data?: SiteSettings } | undefined)?.data;
-        const posts = (postPayload as { data?: Post[] } | undefined)?.data ?? [];
-        const comments = (commentPayload as { data?: Comment[] } | undefined)?.data ?? [];
-        const pages = (pagePayload as { data?: CmsPage[] } | undefined)?.data ?? [];
-        const assets = (assetPayload as { data?: Asset[] } | undefined)?.data ?? [];
-        const tokens = (tokenPayload as { data?: ApiToken[] } | undefined)?.data ?? [];
+    ]).then(([sitePayload, postPayload, commentPayload, assetPayload, tokenPayload]) => {
+      const settings = (sitePayload as { data?: SiteSettings } | undefined)?.data;
+      const posts = (postPayload as { data?: Post[] } | undefined)?.data ?? [];
+      const comments = (commentPayload as { data?: Comment[] } | undefined)?.data ?? [];
+      const assets = (assetPayload as { data?: Asset[] } | undefined)?.data ?? [];
+      const tokens = (tokenPayload as { data?: ApiToken[] } | undefined)?.data ?? [];
 
-        if (ignore) {
-          return;
-        }
+      if (ignore) {
+        return;
+      }
 
-        if (settings) {
-          setSiteSettings(localizeSiteSettings(settings, locale));
-        }
-        setStats(getOverviewStats({ assets, comments, pages, posts, tokens }));
-      },
-    );
+      if (settings) {
+        setSiteSettings(localizeSiteSettings(settings, locale));
+      }
+      setStats(getOverviewStats({ assets, comments, posts, tokens }));
+    });
 
     return () => {
       ignore = true;
@@ -110,12 +104,6 @@ function AdminOverviewPage() {
       label: m.admin_assets_title(),
       value: stats.assets.total,
       detail: copy.assetsDetail(stats.assets),
-    },
-    {
-      icon: NotebookTabsIcon,
-      label: m.admin_pages_title(),
-      value: stats.pages.total,
-      detail: copy.pagesDetail(stats.pages),
     },
     {
       icon: KeyRoundIcon,
@@ -187,10 +175,6 @@ type OverviewStats = {
     sizeBytes: number;
     total: number;
   };
-  pages: {
-    published: number;
-    total: number;
-  };
   tokens: {
     active: number;
     total: number;
@@ -204,7 +188,6 @@ type OverviewStats = {
 const emptyOverviewStats: OverviewStats = {
   assets: { sizeBytes: 0, total: 0 },
   comments: { approved: 0, pending: 0, spam: 0, total: 0 },
-  pages: { published: 0, total: 0 },
   posts: { archived: 0, draft: 0, published: 0, scheduled: 0, total: 0 },
   records: { content: 0, total: 0 },
   tokens: { active: 0, total: 0 },
@@ -213,13 +196,11 @@ const emptyOverviewStats: OverviewStats = {
 function getOverviewStats({
   assets,
   comments,
-  pages,
   posts,
   tokens,
 }: {
   readonly assets: Asset[];
   readonly comments: Comment[];
-  readonly pages: CmsPage[];
   readonly posts: Post[];
   readonly tokens: ApiToken[];
 }): OverviewStats {
@@ -234,10 +215,6 @@ function getOverviewStats({
       spam: comments.filter((comment) => comment.status === "spam").length,
       total: comments.length,
     },
-    pages: {
-      published: pages.filter((page) => page.status === "published").length,
-      total: pages.length,
-    },
     posts: {
       archived: posts.filter((post) => post.status === "archived").length,
       draft: posts.filter((post) => post.status === "draft").length,
@@ -246,8 +223,8 @@ function getOverviewStats({
       total: posts.length,
     },
     records: {
-      content: posts.length + pages.length,
-      total: posts.length + pages.length + comments.length + assets.length,
+      content: posts.length,
+      total: posts.length + comments.length + assets.length,
     },
     tokens: {
       active: tokens.filter((token) => !token.revokedAt).length,
@@ -263,8 +240,6 @@ function getOverviewCopy(locale: SupportedLocale) {
         `${formatBytes(assets.sizeBytes)} 已上传资源。`,
       commentsDetail: (comments: OverviewStats["comments"]) =>
         `${comments.pending} 条待审，${comments.approved} 条已通过，${comments.spam} 条垃圾评论。`,
-      pagesDetail: (pages: OverviewStats["pages"]) =>
-        `${pages.published} 个已发布页面，共 ${pages.total} 个页面。`,
       postsDetail: (posts: OverviewStats["posts"]) =>
         `${posts.published} 篇已发布，${posts.draft} 篇草稿，${posts.scheduled} 篇定时，${posts.archived} 篇归档。`,
       recordsDetail: (records: OverviewStats["records"]) =>
@@ -279,8 +254,6 @@ function getOverviewCopy(locale: SupportedLocale) {
     assetsDetail: (assets: OverviewStats["assets"]) => `${formatBytes(assets.sizeBytes)} uploaded.`,
     commentsDetail: (comments: OverviewStats["comments"]) =>
       `${comments.pending} pending, ${comments.approved} approved, ${comments.spam} spam.`,
-    pagesDetail: (pages: OverviewStats["pages"]) =>
-      `${pages.published} published pages, ${pages.total} pages total.`,
     postsDetail: (posts: OverviewStats["posts"]) =>
       `${posts.published} published, ${posts.draft} drafts, ${posts.scheduled} scheduled, ${posts.archived} archived.`,
     recordsDetail: (records: OverviewStats["records"]) =>

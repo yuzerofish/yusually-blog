@@ -56,7 +56,7 @@ export async function readAssetUpload(request: Request): Promise<AssetUploadInpu
 
 export async function uploadAssetToR2(input: AssetUploadInput) {
   const filename = safeFilename(input.filename);
-  const key = objectKey("uploads", filename);
+  const key = uploadObjectKey(filename);
   const url = `/uploads/${key.replace(/^uploads\//, "")}`;
   const sizeBytes = await byteLength(input.data);
 
@@ -179,20 +179,36 @@ export async function pruneExportBackups(retentionDays: number) {
   return { deletedKeys, retentionDays };
 }
 
-function objectKey(prefix: "uploads" | "imports" | "exports", filename: string) {
+function objectKey(prefix: "imports" | "exports", filename: string) {
   const now = new Date();
   const yyyy = String(now.getUTCFullYear());
   const mm = String(now.getUTCMonth() + 1).padStart(2, "0");
   return `${prefix}/${yyyy}/${mm}/${crypto.randomUUID()}-${filename}`;
 }
 
+function uploadObjectKey(filename: string) {
+  const now = new Date();
+  const yyyy = String(now.getUTCFullYear());
+  const mm = String(now.getUTCMonth() + 1).padStart(2, "0");
+  const extension = extensionForFilename(filename);
+  const assetId = crypto.randomUUID().replace(/-/g, "").slice(0, 16);
+
+  return `uploads/${yyyy}/${mm}/${assetId}${extension}`;
+}
+
+function extensionForFilename(filename: string) {
+  return /\.[a-z0-9]{1,12}$/i.exec(filename)?.[0].toLowerCase() ?? "";
+}
+
 function safeFilename(filename: string) {
   const lastSegment = filename.split(/[\\/]/).pop() || "upload.bin";
-  return lastSegment
+  const safeName = lastSegment
     .normalize("NFKD")
     .replace(/[^\w.-]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 120);
+
+  return safeName || "upload.bin";
 }
 
 function parseDataUrl(value: string) {

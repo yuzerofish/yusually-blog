@@ -27,14 +27,24 @@ import {
 } from "@mdxeditor/editor";
 
 import "@mdxeditor/editor/style.css";
+import { cn } from "@repo/ui/lib/utils";
 import { useMemo, useSyncExternalStore } from "react";
 
 type MdxEditorSurfaceProps = {
   readonly value: string;
   readonly onChange: (value: string) => void;
+  readonly className?: string;
+  readonly editorClassName?: string;
+  readonly contentEditableClassName?: string;
 };
 
-export function MdxEditorSurface({ value, onChange }: MdxEditorSurfaceProps) {
+export function MdxEditorSurface({
+  value,
+  onChange,
+  className,
+  editorClassName,
+  contentEditableClassName,
+}: MdxEditorSurfaceProps) {
   const mounted = useClientMounted();
   const plugins = useMemo(
     () => [
@@ -107,13 +117,21 @@ export function MdxEditorSurface({ value, onChange }: MdxEditorSurfaceProps) {
   }
 
   return (
-    <div className="overflow-hidden rounded-md border border-border bg-background shadow-xs">
+    <div
+      className={cn(
+        "overflow-hidden rounded-md border border-border bg-background shadow-xs",
+        className,
+      )}
+    >
       <MDXEditor
         markdown={value}
         onChange={(nextValue) => onChange(nextValue)}
         plugins={plugins}
-        className="min-h-[360px]"
-        contentEditableClassName="prose prose-neutral prose-a:text-link dark:prose-invert min-h-[280px] max-w-none px-4 py-3 leading-7"
+        className={cn("min-h-[360px]", editorClassName)}
+        contentEditableClassName={cn(
+          "prose prose-neutral prose-a:text-link dark:prose-invert min-h-[280px] max-w-none px-4 py-3 leading-7",
+          contentEditableClassName,
+        )}
       />
     </div>
   );

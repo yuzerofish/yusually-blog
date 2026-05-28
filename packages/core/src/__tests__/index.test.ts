@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { posts, tags } from "../cms-store";
+import { posts, tags } from "../demo-data";
 import { formatDate } from "../index";
 
 // Helpers that match the removed index.ts wrappers, kept for test purposes only

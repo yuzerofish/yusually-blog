@@ -26,7 +26,7 @@ Unit tests:
 
 End-to-end tests:
 
-- `**/__e2e__/**/*.spec.ts`
+- `e2e/*.spec.ts`
 
 ## Vitest Setup Rule
 

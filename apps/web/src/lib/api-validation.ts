@@ -18,32 +18,6 @@ export const CreateCommentSchema = z.object({
   turnstileToken: z.string().min(1, "Turnstile token is required"),
 });
 
-export type CreateCommentInput = z.infer<typeof CreateCommentSchema>;
-
-/**
- * Schema for POST /api/posts — post creation body.
- *
- * Matches the fields accepted by `createPostPreview()` in cms-api.ts.
- */
-export const CreatePostSchema = z.object({
-  title: z.string().min(1).max(500),
-  slug: z.string().min(1).max(300).optional(),
-  excerpt: z.string().max(2000).optional(),
-  coverImage: z.string().max(1000).optional(),
-  contentMarkdown: z.string().optional(),
-  status: z.enum(["draft", "published", "scheduled"]).optional(),
-  featured: z.boolean().optional(),
-  pinned: z.boolean().optional(),
-  commentsEnabled: z.boolean().optional(),
-  seoTitle: z.string().max(200).optional(),
-  seoDescription: z.string().max(500).optional(),
-  tags: z.array(z.string()).optional(),
-  publishedAt: z.string().optional(),
-  locale: z.string().optional(),
-});
-
-export type CreatePostInput = z.infer<typeof CreatePostSchema>;
-
 /**
  * Run a zod parse and return either the validated data or a 400 Response.
  * Returns `[data, null]` on success or `[null, errorResponse]` on failure.

@@ -1,6 +1,6 @@
 import "@tanstack/react-start/server-only";
-import type { Asset, CmsPage, Post, SupportedLocale } from "@repo/core";
-import { escapeHtml, localizePage, localizePost, resolveLocale } from "@repo/core";
+import type { Asset, Post, SupportedLocale } from "@repo/core";
+import { escapeHtml, localizePost, resolveLocale } from "@repo/core";
 import { env } from "cloudflare:workers";
 
 import { buildD1SiteExport, getD1SiteSettings } from "#/lib/cms-d1";
@@ -29,7 +29,6 @@ export async function buildExportZipBundle(locale: SupportedLocale): Promise<Exp
     format: "cloud-blog-cms-export-v1",
     counts: {
       posts: data.posts.length,
-      pages: data.pages.length,
       comments: data.comments.length,
       assets: data.assets.length,
       bundledAssets: assetEntries.entries.length,
@@ -41,12 +40,10 @@ export async function buildExportZipBundle(locale: SupportedLocale): Promise<Exp
     textEntry("export/manifest.json", manifest),
     textEntry("export/site.json", data.site),
     textEntry("export/posts.json", data.posts),
-    textEntry("export/pages.json", data.pages),
     textEntry("export/comments.json", data.comments),
     textEntry("export/assets.json", data.assets),
     textEntry("export/tags.json", data.tags),
     ...postEntries(data.posts, data.locale, data.site.url, assetEntries.replacements),
-    ...pageEntries(data.pages, data.locale, data.site.url, assetEntries.replacements),
     ...assetEntries.entries,
   ];
 
@@ -57,29 +54,6 @@ export async function buildExportZipBundle(locale: SupportedLocale): Promise<Exp
     assetCount: assetEntries.entries.length,
     missingAssetKeys: assetEntries.missingKeys,
   };
-}
-
-function pageEntries(
-  pages: CmsPage[],
-  locale: SupportedLocale,
-  siteUrl: string,
-  replacements: Map<string, string>,
-): ZipEntryInput[] {
-  return pages.flatMap((page) => {
-    const localizedPage = localizePage(page, locale);
-    const baseName = safePathSegment(page.slug);
-
-    return [
-      {
-        path: `export/pages/${baseName}.md`,
-        data: rewriteAssetReferences(localizedPage.contentMarkdown, siteUrl, replacements),
-      },
-      {
-        path: `export/pages/${baseName}.html`,
-        data: rewriteAssetReferences(localizedPage.contentHtml, siteUrl, replacements),
-      },
-    ];
-  });
 }
 
 export async function createScheduledBackup(input: { trigger: "manual" | "cron"; cron?: string }) {

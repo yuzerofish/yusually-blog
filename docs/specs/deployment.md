@@ -38,6 +38,8 @@ The remote databases have applied:
 - `0003_pages_projects_management.sql`
 - `0004_comment_moderation.sql`
 - `0005_drop_projects.sql`
+- `0006_drop_legacy_auth_tables.sql`
+- `0007_drop_pages.sql`
 
 ## Build And Deploy
 

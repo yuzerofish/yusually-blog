@@ -3,9 +3,6 @@
   "compilerOptions": {
     "types": ["node", "vite/client"],
     "paths": {
-      // See:
-      // https://github.com/mugnavo/tanstarter/pull/77
-      // https://github.com/mugnavo/tanstarter/pull/76
       "#/*": ["./src/*"],
       "collections/*": ["./.source/*"],
 

@@ -3,22 +3,19 @@
     "**/routeTree.gen.ts": true,
     "**/.tanstack/**/*": true,
     "**/worker-configuration.d.ts": true,
-    "pnpm-lock.yaml": true,
-    "bun.lock": true
+    "pnpm-lock.yaml": true
   },
   "files.watcherExclude": {
     "**/routeTree.gen.ts": true,
     "**/.tanstack/**/*": true,
     "**/worker-configuration.d.ts": true,
-    "pnpm-lock.yaml": true,
-    "bun.lock": true
+    "pnpm-lock.yaml": true
   },
   "search.exclude": {
     "**/routeTree.gen.ts": true,
     "**/.tanstack/**/*": true,
     "**/worker-configuration.d.ts": true,
-    "pnpm-lock.yaml": true,
-    "bun.lock": true
+    "pnpm-lock.yaml": true
   },
 
   // use LF line endings

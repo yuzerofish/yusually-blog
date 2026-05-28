@@ -10,3 +10,48 @@
   --font-heading: var(--font-sans);
   --font-sans: "Inter Variable", sans-serif;
 }
+
+@layer components {
+  [data-docs-surface] .prose figure.shiki {
+    width: 100%;
+    max-width: 100%;
+    margin-block: 1.25rem;
+    border-color: color-mix(in oklch, var(--border), transparent 15%) !important;
+    border-radius: 0.5rem !important;
+    background-color: color-mix(in oklch, var(--muted), var(--background) 42%) !important;
+    box-shadow: none !important;
+  }
+
+  [data-docs-surface] .prose figure.shiki > div[role="region"] {
+    max-width: 100%;
+    max-height: min(34rem, 70vh);
+    scrollbar-gutter: stable;
+  }
+
+  [data-docs-surface] .prose figure.shiki pre {
+    padding-inline: 1rem 3rem;
+    line-height: 1.7;
+    tab-size: 2;
+  }
+
+  [data-docs-surface] .prose figure.shiki pre > code {
+    font-variant-ligatures: none;
+  }
+
+  [data-docs-surface] .prose figure.shiki pre:has(> code.language-txt) {
+    width: 100% !important;
+    min-width: 100% !important;
+    white-space: pre-wrap !important;
+  }
+
+  [data-docs-surface] .prose figure.shiki pre > code.language-txt {
+    white-space: pre-wrap !important;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  [data-docs-surface] .prose figure.shiki button {
+    background-color: color-mix(in oklch, var(--background), transparent 18%);
+    border-color: color-mix(in oklch, var(--border), transparent 20%);
+  }
+}

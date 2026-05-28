@@ -72,51 +72,6 @@ export const Route = createFileRoute("/openapi.json")({
                 responses: { "200": { description: "Post deleted" } },
               },
             },
-            "/api/pages": {
-              get: {
-                summary: "List pages",
-                security: [{ apiToken: ["site:read"] }],
-                parameters: [{ name: "status", in: "query", schema: { enum: ["all"] } }],
-                responses: { "200": { description: "Page list" } },
-              },
-              post: {
-                summary: "Create page",
-                description: "Creates a Markdown-backed static page such as About.",
-                security: [{ apiToken: ["site:write"] }],
-                requestBody: {
-                  content: {
-                    "application/json": {
-                      schema: { $ref: "#/components/schemas/PageInput" },
-                    },
-                  },
-                },
-                responses: { "201": { description: "Page created" } },
-              },
-            },
-            "/api/pages/{id}": {
-              get: {
-                summary: "Get page",
-                security: [{ apiToken: ["site:read"] }],
-                responses: { "200": { description: "Page detail" } },
-              },
-              patch: {
-                summary: "Update page",
-                security: [{ apiToken: ["site:write"] }],
-                requestBody: {
-                  content: {
-                    "application/json": {
-                      schema: { $ref: "#/components/schemas/PageInput" },
-                    },
-                  },
-                },
-                responses: { "200": { description: "Page updated" } },
-              },
-              delete: {
-                summary: "Delete page",
-                security: [{ apiToken: ["site:write"] }],
-                responses: { "200": { description: "Page deleted" } },
-              },
-            },
             "/api/import/markdown": {
               post: {
                 summary: "Import Markdown",
@@ -490,21 +445,6 @@ export const Route = createFileRoute("/openapi.json")({
                   locale: { enum: ["en", "zh"] },
                   i18n: { $ref: "#/components/schemas/LocalizedFields" },
                 },
-              },
-              PageInput: {
-                type: "object",
-                properties: {
-                  title: { type: "string" },
-                  slug: { type: "string" },
-                  contentMarkdown: { type: "string" },
-                  contentHtml: { type: "string" },
-                  status: { enum: ["draft", "published", "archived"] },
-                  seoTitle: { type: "string" },
-                  seoDescription: { type: "string" },
-                  locale: { enum: ["en", "zh"] },
-                  i18n: { $ref: "#/components/schemas/LocalizedFields" },
-                },
-                required: ["title", "contentMarkdown"],
               },
               MarkdownImportRequest: {
                 allOf: [

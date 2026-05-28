@@ -1,20 +1,7 @@
-import { dashboardMetrics, siteSettings } from "./cms-store";
-import type {
-  CmsPage,
-  Comment,
-  DashboardMetric,
-  Post,
-  SiteSettings,
-  SupportedLocale,
-  Tag,
-} from "./types";
+import { siteSettings } from "./demo-data";
+import type { Comment, Post, SiteSettings, SupportedLocale, Tag } from "./types";
 
-export {
-  defaultCommentBlockedKeywords,
-  findBlockedCommentKeyword,
-  getCommentInitialStatus,
-  normalizeCommentBlockedKeywords,
-} from "./comment-moderation";
+export { getCommentInitialStatus, normalizeCommentBlockedKeywords } from "./comment-moderation";
 export { htmlToText, markdownToText, renderMarkdownToHtml, sanitizeHtml } from "./markdown";
 export {
   assertPassword,
@@ -34,11 +21,9 @@ export type {
   ApiToken,
   ApiTokenScope,
   Asset,
-  CmsPage,
   Comment,
   CommentStatus,
   ContentStatus,
-  DashboardMetric,
   LayoutPreset,
   Post,
   SiteSettings,
@@ -81,17 +66,6 @@ export function localizePost(post: Post, locale: SupportedLocale): Post {
   };
 }
 
-export function localizePage(page: CmsPage, locale: SupportedLocale): CmsPage {
-  return {
-    ...page,
-    title: localizeText(page.title, page.i18n?.title, locale),
-    contentMarkdown: localizeText(page.contentMarkdown, page.i18n?.contentMarkdown, locale),
-    contentHtml: localizeText(page.contentHtml, page.i18n?.contentHtml, locale),
-    seoTitle: localizeText(page.seoTitle, page.i18n?.seoTitle, locale),
-    seoDescription: localizeText(page.seoDescription, page.i18n?.seoDescription, locale),
-  };
-}
-
 export function localizeComment(comment: Comment, locale: SupportedLocale): Comment {
   return {
     ...comment,
@@ -108,7 +82,46 @@ export function localizeSiteSettings(
     name: localizeText(settings.name, settings.i18n?.name, locale),
     description: localizeText(settings.description, settings.i18n?.description, locale),
     authorBio: localizeText(settings.authorBio, settings.i18n?.authorBio, locale),
+    navigation: settings.navigation.map((item) => ({
+      ...item,
+      label: localizeNavigationLabel(item, locale),
+    })),
   };
+}
+
+const defaultNavigationLabels: Record<SupportedLocale, Record<string, string>> = {
+  en: {
+    "/blog": "Blog",
+    "/docs": "Docs",
+    "/tags": "Tags",
+    "/about": "About",
+  },
+  zh: {
+    "/blog": "博客",
+    "/docs": "文档",
+    "/tags": "标签",
+    "/about": "关于",
+  },
+};
+
+function localizeNavigationLabel(
+  item: SiteSettings["navigation"][number],
+  locale: SupportedLocale,
+) {
+  const localizedLabel = localizeText(item.label, item.i18n?.label, locale);
+
+  if (item.i18n?.label?.[locale]) {
+    return localizedLabel;
+  }
+
+  const fallbackLabel = defaultNavigationLabels[locale][item.href];
+  const knownDefaultLabels = new Set(
+    Object.values(defaultNavigationLabels)
+      .map((labels) => labels[item.href])
+      .filter(Boolean),
+  );
+
+  return fallbackLabel && knownDefaultLabels.has(item.label) ? fallbackLabel : localizedLabel;
 }
 
 export function formatDate(date: string, locale: SupportedLocale = "en") {
@@ -124,19 +137,4 @@ export { siteSettings };
 
 export function getSiteSettingsForLocale(locale: SupportedLocale) {
   return localizeSiteSettings(siteSettings, locale);
-}
-
-function localizeDashboardMetric(
-  metric: DashboardMetric,
-  locale: SupportedLocale,
-): DashboardMetric {
-  return {
-    ...metric,
-    label: localizeText(metric.label, metric.i18n?.label, locale),
-    detail: localizeText(metric.detail, metric.i18n?.detail, locale),
-  };
-}
-
-export function getDashboardMetricsForLocale(locale: SupportedLocale) {
-  return dashboardMetrics.map((metric) => localizeDashboardMetric(metric, locale));
 }

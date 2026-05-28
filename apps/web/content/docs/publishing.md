@@ -25,7 +25,7 @@ The CLI uses the same authenticated HTTP API as the admin UI.
 
 ## Import And Export
 
-The API supports Markdown, HTML, ZIP, and folder imports. Exports include posts, pages, comments, assets, tags, site settings, and a manifest.
+The API supports Markdown, HTML, ZIP, and folder imports. Exports include posts, comments, assets, tags, site settings, and a manifest.
 
 Backups are written to R2 so a generated site can be restored or moved later.
 

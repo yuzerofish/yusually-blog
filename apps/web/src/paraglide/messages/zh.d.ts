@@ -74,16 +74,11 @@
 /** @typedef {{}} Admin_Nav_AssetsInputs */
 /** @typedef {{}} Admin_Nav_CommentsInputs */
 /** @typedef {{}} Admin_Nav_OverviewInputs */
-/** @typedef {{}} Admin_Nav_PagesInputs */
 /** @typedef {{}} Admin_Nav_PostsInputs */
 /** @typedef {{}} Admin_Nav_SettingsInputs */
 /** @typedef {{}} Admin_New_PostInputs */
-/** @typedef {{}} Admin_New_PageInputs */
 /** @typedef {{}} Admin_Overview_EyebrowInputs */
 /** @typedef {{}} Admin_Overview_TitleInputs */
-/** @typedef {{}} Admin_Pages_DescriptionInputs */
-/** @typedef {{}} Admin_Pages_Editor_TitleInputs */
-/** @typedef {{}} Admin_Pages_TitleInputs */
 /** @typedef {{}} Admin_Post_Status_Archived_DescriptionInputs */
 /** @typedef {{}} Admin_Post_Status_Archived_LabelInputs */
 /** @typedef {{}} Admin_Post_Status_Deleted_DescriptionInputs */
@@ -263,6 +258,7 @@
 /** @typedef {{}} Password_Reset_TitleInputs */
 /** @typedef {{}} Nav_AboutInputs */
 /** @typedef {{}} Nav_BlogInputs */
+/** @typedef {{}} Nav_DocsInputs */
 /** @typedef {{}} Nav_TagsInputs */
 /** @typedef {{}} Open_AdminInputs */
 /** @typedef {{}} PinnedInputs */
@@ -373,16 +369,11 @@ export const admin_moderation_queue_detail: (inputs: Admin_Moderation_Queue_Deta
 export const admin_nav_assets: (inputs: Admin_Nav_AssetsInputs) => LocalizedString;
 export const admin_nav_comments: (inputs: Admin_Nav_CommentsInputs) => LocalizedString;
 export const admin_nav_overview: (inputs: Admin_Nav_OverviewInputs) => LocalizedString;
-export const admin_nav_pages: (inputs: Admin_Nav_PagesInputs) => LocalizedString;
 export const admin_nav_posts: (inputs: Admin_Nav_PostsInputs) => LocalizedString;
 export const admin_nav_settings: (inputs: Admin_Nav_SettingsInputs) => LocalizedString;
 export const admin_new_post: (inputs: Admin_New_PostInputs) => LocalizedString;
-export const admin_new_page: (inputs: Admin_New_PageInputs) => LocalizedString;
 export const admin_overview_eyebrow: (inputs: Admin_Overview_EyebrowInputs) => LocalizedString;
 export const admin_overview_title: (inputs: Admin_Overview_TitleInputs) => LocalizedString;
-export const admin_pages_description: (inputs: Admin_Pages_DescriptionInputs) => LocalizedString;
-export const admin_pages_editor_title: (inputs: Admin_Pages_Editor_TitleInputs) => LocalizedString;
-export const admin_pages_title: (inputs: Admin_Pages_TitleInputs) => LocalizedString;
 export const admin_post_status_archived_description: (inputs: Admin_Post_Status_Archived_DescriptionInputs) => LocalizedString;
 export const admin_post_status_archived_label: (inputs: Admin_Post_Status_Archived_LabelInputs) => LocalizedString;
 export const admin_post_status_deleted_description: (inputs: Admin_Post_Status_Deleted_DescriptionInputs) => LocalizedString;
@@ -562,6 +553,7 @@ export const password_reset_request_success: (inputs: Password_Reset_Request_Suc
 export const password_reset_title: (inputs: Password_Reset_TitleInputs) => LocalizedString;
 export const nav_about: (inputs: Nav_AboutInputs) => LocalizedString;
 export const nav_blog: (inputs: Nav_BlogInputs) => LocalizedString;
+export const nav_docs: (inputs: Nav_DocsInputs) => LocalizedString;
 export const nav_tags: (inputs: Nav_TagsInputs) => LocalizedString;
 export const open_admin: (inputs: Open_AdminInputs) => LocalizedString;
 export const pinned: (inputs: PinnedInputs) => LocalizedString;
@@ -683,16 +675,11 @@ export type Admin_Moderation_Queue_DetailInputs = {
 export type Admin_Nav_AssetsInputs = {};
 export type Admin_Nav_CommentsInputs = {};
 export type Admin_Nav_OverviewInputs = {};
-export type Admin_Nav_PagesInputs = {};
 export type Admin_Nav_PostsInputs = {};
 export type Admin_Nav_SettingsInputs = {};
 export type Admin_New_PostInputs = {};
-export type Admin_New_PageInputs = {};
 export type Admin_Overview_EyebrowInputs = {};
 export type Admin_Overview_TitleInputs = {};
-export type Admin_Pages_DescriptionInputs = {};
-export type Admin_Pages_Editor_TitleInputs = {};
-export type Admin_Pages_TitleInputs = {};
 export type Admin_Post_Status_Archived_DescriptionInputs = {};
 export type Admin_Post_Status_Archived_LabelInputs = {};
 export type Admin_Post_Status_Deleted_DescriptionInputs = {};
@@ -890,6 +877,7 @@ export type Password_Reset_Request_SuccessInputs = {};
 export type Password_Reset_TitleInputs = {};
 export type Nav_AboutInputs = {};
 export type Nav_BlogInputs = {};
+export type Nav_DocsInputs = {};
 export type Nav_TagsInputs = {};
 export type Open_AdminInputs = {};
 export type PinnedInputs = {};

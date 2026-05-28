@@ -46,7 +46,7 @@ Docs live in `apps/web/content/docs`. English pages use `*.md` or `*.mdx`; Chine
 /docs   = Git-managed Markdown/MDX docs
 /admin  = publishing admin UI
 RSS     = blog posts only
-sitemap = pages + blog + docs + tags
+sitemap = home + blog + docs + tags + about
 ```
 
 Keep frequently edited articles in the publishing backend. Keep durable product or developer references in docs.

@@ -34,7 +34,7 @@ This builds the web app, applies D1 migrations, and deploys the Worker using the
 
 ```txt
 Workers: public site, admin, API routes, feeds, sitemap, robots
-D1: posts, pages, comments, settings, users, sessions, tokens
+D1: posts, comments, settings, users, sessions, tokens
 R2: assets, import packages, exports, backups
 KV: cache metadata and optional short-lived records
 ```

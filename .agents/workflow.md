@@ -29,7 +29,7 @@ Run focused checks first, then broaden to the root tasks when the changed surfac
 
 1. Edit schemas in `packages/db/src/schema/`
 2. Run `pnpm -F @repo/db db generate` to create migration files
-3. **Check `DATABASE_URL`** — must point to localhost/127.0.0.1. If it looks like a production URL, **stop and warn the user**.
+3. **Check Wrangler environment** — ensure you're targeting the local/dev D1 database, not production. If Wrangler is configured for a production binding, **stop and warn the user**.
 4. Run `pnpm -F @repo/db db migrate` to apply. Features will silently fail without applied migrations.
 
 ## Other DB Commands

@@ -57,22 +57,6 @@ export type Tag = {
   i18n?: LocalizedFields<"name" | "description">;
 };
 
-export type CmsPage = {
-  id: string;
-  title: string;
-  slug: string;
-  contentMarkdown: string;
-  contentHtml: string;
-  status: Exclude<ContentStatus, "scheduled">;
-  seoTitle: string;
-  seoDescription: string;
-  createdAt: string;
-  updatedAt: string;
-  i18n?: LocalizedFields<
-    "title" | "contentMarkdown" | "contentHtml" | "seoTitle" | "seoDescription"
-  >;
-};
-
 export type CommentStatus = "pending" | "approved" | "spam" | "deleted";
 
 export type Comment = {
@@ -115,6 +99,7 @@ export type SiteSettings = {
   navigation: Array<{
     label: string;
     href: string;
+    i18n?: LocalizedFields<"label">;
   }>;
   rssEnabled: boolean;
   commentsEnabled: boolean;
@@ -128,13 +113,6 @@ export type SiteSettings = {
   locales: SupportedLocale[];
   primaryLanguage: SupportedLocale;
   i18n?: LocalizedFields<"name" | "description" | "authorBio">;
-};
-
-export type DashboardMetric = {
-  label: string;
-  value: string;
-  detail: string;
-  i18n?: LocalizedFields<"label" | "detail">;
 };
 
 export type ApiTokenScope =

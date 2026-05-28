@@ -1,4 +1,4 @@
-import { localizePage, localizeSiteSettings } from "@repo/core";
+import { localizeSiteSettings } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { SiteShell } from "#/components/site-shell";
@@ -15,7 +15,6 @@ function AboutPage() {
   const data = Route.useLoaderData();
   const locale = getCurrentLocale();
   const siteSettings = localizeSiteSettings(data.siteSettings, locale);
-  const page = data.page ? localizePage(data.page, locale) : null;
 
   return (
     <SiteShell siteSettings={siteSettings}>
@@ -27,22 +26,15 @@ function AboutPage() {
             className="size-20 rounded-md border border-border object-cover"
           />
           <h1 className="mt-6 text-4xl font-semibold">
-            {page?.title ?? `${m.nav_about()} ${siteSettings.authorName}`}
+            {m.nav_about()} {siteSettings.authorName}
           </h1>
         </div>
 
-        {page ? (
-          <article
-            className="prose prose-neutral prose-a:text-link dark:prose-invert mt-8 max-w-none"
-            dangerouslySetInnerHTML={{ __html: page.contentHtml }}
-          />
-        ) : (
-          <div className="mt-8 grid gap-4 text-base leading-7 text-muted-foreground">
-            <p>{siteSettings.authorBio}</p>
-            <p>{m.home_bilingual_intro_en()}</p>
-            <p>{m.home_bilingual_intro_zh()}</p>
-          </div>
-        )}
+        <div className="mt-8 grid gap-4 text-base leading-7 text-muted-foreground">
+          <p>{siteSettings.authorBio}</p>
+          <p>{m.home_bilingual_intro_en()}</p>
+          <p>{m.home_bilingual_intro_zh()}</p>
+        </div>
       </section>
     </SiteShell>
   );

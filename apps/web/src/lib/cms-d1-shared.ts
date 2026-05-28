@@ -4,7 +4,6 @@ import {
   type ApiToken,
   type ApiTokenScope,
   type Asset,
-  type CmsPage,
   type Comment,
   type CommentStatus,
   type ContentStatus,
@@ -12,8 +11,6 @@ import {
   type SiteSettings,
   type SupportedLocale,
   type Tag,
-  cleanStringList,
-  slugify,
 } from "@repo/core";
 import * as schema from "@repo/db/schema/cms";
 import { env } from "cloudflare:workers";
@@ -50,18 +47,6 @@ export type PostInput = Partial<{
   publishedAt: string;
   locale: SupportedLocale;
   i18n: Post["i18n"];
-}>;
-
-export type PageInput = Partial<{
-  title: string;
-  slug: string;
-  contentMarkdown: string;
-  contentHtml: string;
-  status: CmsPage["status"];
-  seoTitle: string;
-  seoDescription: string;
-  locale: SupportedLocale;
-  i18n: CmsPage["i18n"];
 }>;
 
 export type CommentInput = {
@@ -151,22 +136,6 @@ export function drizzleRowToPost(
   };
 }
 
-export function drizzleRowToPage(row: typeof schema.pages.$inferSelect): CmsPage {
-  return {
-    id: row.id,
-    title: row.title,
-    slug: row.slug,
-    contentMarkdown: row.contentMarkdown,
-    contentHtml: row.contentHtml,
-    status: row.status as CmsPage["status"],
-    seoTitle: row.seoTitle ?? row.title,
-    seoDescription: row.seoDescription ?? "",
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
-    i18n: row.i18n as CmsPage["i18n"],
-  };
-}
-
 export function drizzleRowToTag(row: typeof schema.tags.$inferSelect): Tag {
   return {
     id: row.id,
@@ -239,10 +208,6 @@ function notDeletedWhereClause() {
 
 export function postVisibilityFilter(includeUnpublished?: boolean) {
   return includeUnpublished ? notDeletedWhereClause() : publishedWhereClause();
-}
-
-export function entityVisibilityFilter(table: typeof schema.pages, includeUnpublished?: boolean) {
-  return includeUnpublished ? ne(table.status, "deleted") : eq(table.status, "published");
 }
 
 // ---------------------------------------------------------------------------
@@ -323,25 +288,4 @@ function cleanString(value: string | undefined, fallback: string) {
 
 function cleanUrl(value: string | undefined, fallback: string) {
   return cleanString(value, fallback).replace(/\/$/, "");
-}
-
-export function normalizeContentRecordStatus(
-  status: CmsPage["status"] | undefined,
-  fallback: CmsPage["status"],
-) {
-  return status === "published" ||
-    status === "archived" ||
-    status === "deleted" ||
-    status === "draft"
-    ? status
-    : fallback;
-}
-
-export function tagsFromNames(names: string[]) {
-  return cleanStringList(names).map((name) => ({
-    id: `tag_${slugify(name) || name.toLowerCase()}`,
-    name,
-    slug: slugify(name),
-    description: "",
-  }));
 }

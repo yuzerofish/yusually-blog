@@ -32,7 +32,7 @@ export function SiteShell({
     ? siteSettings.navigation
     : [
         { label: m.nav_blog(), href: "/blog" },
-        { label: "Docs", href: "/docs" },
+        { label: m.nav_docs(), href: "/docs" },
         { label: m.nav_tags(), href: "/tags" },
         { label: m.nav_about(), href: "/about" },
       ];

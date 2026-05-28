@@ -34,7 +34,7 @@ pnpm deploy:web
 
 ```txt
 Workers: 公开站点、后台、API 路由、feeds、sitemap、robots
-D1: 文章、页面、项目、评论、设置、用户、会话、tokens
+D1: 文章、评论、设置、用户、会话、tokens
 R2: 资产、导入包、导出包、备份
 KV: 缓存元数据和可选短期记录
 ```

@@ -49,7 +49,7 @@ The canonical production deployment uses:
 - Site: `https://blog.01mvp.com`
 - Worker: `blog-starter`
 
-The production run should create site settings from `skills/cloud-blog-cms/templates/site.config.json`, publish a first bilingual post, upload an R2 asset, submit and approve a pending comment, generate an R2 export backup, verify scheduled post visibility on the public API, verify comment reply depth, and verify project detail pages in the sitemap.
+The production run should create site settings from `skills/cloud-blog-cms/templates/site.config.json`, publish a first bilingual post, upload an R2 asset, submit and approve a pending comment, generate an R2 export backup, verify scheduled post visibility on the public API, verify comment reply depth, and verify sitemap entries for home, posts, tags, docs, and about.
 
 ## User Intervention Points
 

@@ -5,7 +5,7 @@ import type { MouseEvent } from "react";
 
 type StylePresetId = "maker-shelf" | "apple-shelf" | "claude-shelf" | "brutalist-shelf";
 
-export type StylePresetOption = {
+type StylePresetOption = {
   id: StylePresetId;
   themePreset: ThemePreset;
   layoutPreset: LayoutPreset;

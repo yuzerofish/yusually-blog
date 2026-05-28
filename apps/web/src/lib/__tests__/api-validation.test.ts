@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { CreateCommentSchema, CreatePostSchema, validateBody } from "../api-validation";
+import { CreateCommentSchema, validateBody } from "../api-validation";
 
 describe("CreateCommentSchema", () => {
   const validComment = {
@@ -83,40 +83,6 @@ describe("CreateCommentSchema", () => {
       authorWebsite: "",
     });
     expect(result.success).toBe(true);
-  });
-});
-
-describe("CreatePostSchema", () => {
-  it("accepts a valid minimal post", () => {
-    const result = CreatePostSchema.safeParse({ title: "My Post" });
-    expect(result.success).toBe(true);
-  });
-
-  it("accepts a fully populated post", () => {
-    const result = CreatePostSchema.safeParse({
-      title: "Full Post",
-      slug: "full-post",
-      excerpt: "An excerpt",
-      contentMarkdown: "# Hello",
-      status: "published",
-      commentsEnabled: true,
-      seoTitle: "SEO Title",
-      seoDescription: "SEO Desc",
-      tags: ["tag1", "tag2"],
-      publishedAt: "2024-01-15T00:00:00Z",
-      locale: "en",
-    });
-    expect(result.success).toBe(true);
-  });
-
-  it("rejects when title is missing", () => {
-    const result = CreatePostSchema.safeParse({});
-    expect(result.success).toBe(false);
-  });
-
-  it("rejects invalid status value", () => {
-    const result = CreatePostSchema.safeParse({ title: "t", status: "archived" });
-    expect(result.success).toBe(false);
   });
 });
 

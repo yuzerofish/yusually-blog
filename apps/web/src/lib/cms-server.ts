@@ -1,4 +1,4 @@
-import { type CmsPage, type Comment, type Post, type SiteSettings, type Tag } from "@repo/core";
+import { type Comment, type Post, type SiteSettings, type Tag } from "@repo/core";
 import { createServerFn } from "@tanstack/react-start";
 
 export type BlogPostPageData = {
@@ -39,7 +39,6 @@ export type SiteSettingsPageData = {
 
 export type AboutPageData = {
   siteSettings: SiteSettings;
-  page: CmsPage | null;
 };
 
 export const $getBlogPostPage = createServerFn({ method: "GET" })
@@ -154,11 +153,10 @@ export const $getSiteSettingsPageData = createServerFn({ method: "GET" }).handle
 
 export const $getAboutPageData = createServerFn({ method: "GET" }).handler(
   async (): Promise<AboutPageData> => {
-    const { getD1PageBySlug, getD1SiteSettings } = await import("./cms-d1");
+    const { getD1SiteSettings } = await import("./cms-d1");
 
     return {
       siteSettings: await getD1SiteSettings(),
-      page: (await getD1PageBySlug("about").catch(() => undefined)) ?? null,
     };
   },
 );

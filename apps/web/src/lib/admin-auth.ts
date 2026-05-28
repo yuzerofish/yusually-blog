@@ -35,7 +35,7 @@ async function readAuthPayload<TPayload>(response: Response) {
   }
 }
 
-export type AdminUser = {
+type AdminUser = {
   id: string;
   name: string;
   email: string;

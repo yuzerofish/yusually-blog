@@ -77,16 +77,11 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Admin_Nav_AssetsInputs */
 /** @typedef {{}} Admin_Nav_CommentsInputs */
 /** @typedef {{}} Admin_Nav_OverviewInputs */
-/** @typedef {{}} Admin_Nav_PagesInputs */
 /** @typedef {{}} Admin_Nav_PostsInputs */
 /** @typedef {{}} Admin_Nav_SettingsInputs */
 /** @typedef {{}} Admin_New_PostInputs */
-/** @typedef {{}} Admin_New_PageInputs */
 /** @typedef {{}} Admin_Overview_EyebrowInputs */
 /** @typedef {{}} Admin_Overview_TitleInputs */
-/** @typedef {{}} Admin_Pages_DescriptionInputs */
-/** @typedef {{}} Admin_Pages_Editor_TitleInputs */
-/** @typedef {{}} Admin_Pages_TitleInputs */
 /** @typedef {{}} Admin_Post_Status_Archived_DescriptionInputs */
 /** @typedef {{}} Admin_Post_Status_Archived_LabelInputs */
 /** @typedef {{}} Admin_Post_Status_Deleted_DescriptionInputs */
@@ -266,6 +261,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Password_Reset_TitleInputs */
 /** @typedef {{}} Nav_AboutInputs */
 /** @typedef {{}} Nav_BlogInputs */
+/** @typedef {{}} Nav_DocsInputs */
 /** @typedef {{}} Nav_TagsInputs */
 /** @typedef {{}} Open_AdminInputs */
 /** @typedef {{}} PinnedInputs */
@@ -1356,20 +1352,6 @@ export const admin_nav_overview = /** @type {((inputs?: Admin_Nav_OverviewInputs
 /**
 * | output |
 * | --- |
-* | "Pages" |
-*
-* @param {Admin_Nav_PagesInputs} inputs
-* @param {{ locale?: "en" | "zh" }} options
-* @returns {LocalizedString}
-*/
-export const admin_nav_pages = /** @type {((inputs?: Admin_Nav_PagesInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Nav_PagesInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
-	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
-	if (locale === "en") return __en.admin_nav_pages(inputs)
-	return __zh.admin_nav_pages(inputs)
-});
-/**
-* | output |
-* | --- |
 * | "Posts" |
 *
 * @param {Admin_Nav_PostsInputs} inputs
@@ -1412,20 +1394,6 @@ export const admin_new_post = /** @type {((inputs?: Admin_New_PostInputs, option
 /**
 * | output |
 * | --- |
-* | "New page" |
-*
-* @param {Admin_New_PageInputs} inputs
-* @param {{ locale?: "en" | "zh" }} options
-* @returns {LocalizedString}
-*/
-export const admin_new_page = /** @type {((inputs?: Admin_New_PageInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_New_PageInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
-	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
-	if (locale === "en") return __en.admin_new_page(inputs)
-	return __zh.admin_new_page(inputs)
-});
-/**
-* | output |
-* | --- |
 * | "Admin" |
 *
 * @param {Admin_Overview_EyebrowInputs} inputs
@@ -1450,48 +1418,6 @@ export const admin_overview_title = /** @type {((inputs?: Admin_Overview_TitleIn
 	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
 	if (locale === "en") return __en.admin_overview_title(inputs)
 	return __zh.admin_overview_title(inputs)
-});
-/**
-* | output |
-* | --- |
-* | "Edit static Markdown pages such as About." |
-*
-* @param {Admin_Pages_DescriptionInputs} inputs
-* @param {{ locale?: "en" | "zh" }} options
-* @returns {LocalizedString}
-*/
-export const admin_pages_description = /** @type {((inputs?: Admin_Pages_DescriptionInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Pages_DescriptionInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
-	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
-	if (locale === "en") return __en.admin_pages_description(inputs)
-	return __zh.admin_pages_description(inputs)
-});
-/**
-* | output |
-* | --- |
-* | "Page editor" |
-*
-* @param {Admin_Pages_Editor_TitleInputs} inputs
-* @param {{ locale?: "en" | "zh" }} options
-* @returns {LocalizedString}
-*/
-export const admin_pages_editor_title = /** @type {((inputs?: Admin_Pages_Editor_TitleInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Pages_Editor_TitleInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
-	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
-	if (locale === "en") return __en.admin_pages_editor_title(inputs)
-	return __zh.admin_pages_editor_title(inputs)
-});
-/**
-* | output |
-* | --- |
-* | "Pages" |
-*
-* @param {Admin_Pages_TitleInputs} inputs
-* @param {{ locale?: "en" | "zh" }} options
-* @returns {LocalizedString}
-*/
-export const admin_pages_title = /** @type {((inputs?: Admin_Pages_TitleInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Admin_Pages_TitleInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
-	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
-	if (locale === "en") return __en.admin_pages_title(inputs)
-	return __zh.admin_pages_title(inputs)
 });
 /**
 * | output |
@@ -3998,6 +3924,20 @@ export const nav_blog = /** @type {((inputs?: Nav_BlogInputs, options?: { locale
 	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
 	if (locale === "en") return __en.nav_blog(inputs)
 	return __zh.nav_blog(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Docs" |
+*
+* @param {Nav_DocsInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const nav_docs = /** @type {((inputs?: Nav_DocsInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Nav_DocsInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "en") return __en.nav_docs(inputs)
+	return __zh.nav_docs(inputs)
 });
 /**
 * | output |

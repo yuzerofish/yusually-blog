@@ -46,7 +46,7 @@ Docs 内容放在 `apps/web/content/docs`。英文页面使用 `*.md` 或 `*.mdx
 /docs   = Git 管理的 Markdown/MDX 文档
 /admin  = 发布管理后台
 RSS     = 只包含博客文章
-sitemap = 公开页面 + 博客 + 文档 + 项目 + 标签
+sitemap = 首页 + 博客 + 文档 + 标签 + 关于
 ```
 
 经常编辑、需要后台管理的文章放在发布后台。长期稳定的产品说明、开发者参考和模板指南放在 docs。

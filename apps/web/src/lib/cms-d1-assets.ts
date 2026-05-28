@@ -227,19 +227,16 @@ export async function verifyD1ApiToken(secret: string, requiredScope: ApiTokenSc
 // ---------------------------------------------------------------------------
 
 import { listD1Comments } from "./cms-d1-comments";
-import { listD1Pages } from "./cms-d1-pages";
 import { listD1Posts } from "./cms-d1-posts";
 import { listD1Tags } from "./cms-d1-tags";
 
 export async function buildD1SiteExport(locale: SupportedLocale) {
-  const [persistedPosts, persistedComments, persistedAssets, persistedPages, persistedTags] =
-    await Promise.all([
-      listD1Posts({ includeUnpublished: true }),
-      listD1Comments(),
-      listD1Assets(),
-      listD1Pages({ includeUnpublished: true }),
-      listD1Tags(),
-    ]);
+  const [persistedPosts, persistedComments, persistedAssets, persistedTags] = await Promise.all([
+    listD1Posts({ includeUnpublished: true }),
+    listD1Comments(),
+    listD1Assets(),
+    listD1Tags(),
+  ]);
 
   return {
     exportedAt: new Date().toISOString(),
@@ -250,7 +247,6 @@ export async function buildD1SiteExport(locale: SupportedLocale) {
       comments: persistedComments.filter((comment) => comment.postId === post.id),
     })),
     tags: persistedTags.map((tag) => localizeTag(tag, locale)),
-    pages: persistedPages,
     assets: persistedAssets,
     comments: persistedComments,
   };

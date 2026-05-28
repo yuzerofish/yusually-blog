@@ -1,4 +1,4 @@
-import type { Asset, Comment, DashboardMetric, Post, SiteSettings, Tag } from "./types";
+import type { Asset, Comment, Post, SiteSettings, Tag } from "./types";
 
 export const siteSettings: SiteSettings = {
   name: "01MVP Blog Starter",
@@ -15,10 +15,10 @@ export const siteSettings: SiteSettings = {
     { label: "RSS", href: "/rss.xml" },
   ],
   navigation: [
-    { label: "Blog", href: "/blog" },
-    { label: "Docs", href: "/docs" },
-    { label: "Tags", href: "/tags" },
-    { label: "About", href: "/about" },
+    { label: "Blog", href: "/blog", i18n: { label: { zh: "博客" } } },
+    { label: "Docs", href: "/docs", i18n: { label: { zh: "文档" } } },
+    { label: "Tags", href: "/tags", i18n: { label: { zh: "标签" } } },
+    { label: "About", href: "/about", i18n: { label: { zh: "关于" } } },
   ],
   rssEnabled: true,
   commentsEnabled: true,
@@ -100,7 +100,7 @@ export const posts: Post[] = [
       "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=80",
     contentMarkdown: `# Designing a permanent personal CMS on Cloudflare
 
-01mvp-blog-starter treats the database as the source of truth and Markdown as the durable content format. Posts, pages, comments, settings, and API tokens live in D1. Images, attachments, import packages, and backups live in R2.
+01mvp-blog-starter treats the database as the source of truth and Markdown as the durable content format. Posts, comments, settings, and API tokens live in D1. Images, attachments, import packages, and backups live in R2.
 
 The first release focuses on a reliable loop: sign in, write, upload, publish, render, comment, review, and export. Paid features such as email notifications stay optional so the free core remains usable.
 
@@ -115,7 +115,7 @@ The first release focuses on a reliable loop: sign in, write, upload, publish, r
     contentHtml:
       "<p>01mvp-blog-starter treats the database as the source of truth and Markdown as the durable content format.</p><p>The first release focuses on a reliable loop: sign in, write, upload, publish, render, comment, review, and export.</p>",
     contentText:
-      "01mvp-blog-starter stores posts pages comments settings and API tokens in D1 and stores assets imports and backups in R2.",
+      "01mvp-blog-starter stores posts comments settings and API tokens in D1 and stores assets imports and backups in R2.",
     status: "published",
     source: "editor",
     featured: true,
@@ -230,12 +230,12 @@ Manual steps are reserved for login, token creation, paid-plan confirmation, DNS
       "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80",
     contentMarkdown: `# A portable content model for Markdown, HTML, and ZIP backups
 
-01mvp-blog-starter keeps export paths boring on purpose. A complete export contains posts, pages, assets, comments, and site settings. Markdown stays readable by other static blogs.
+01mvp-blog-starter keeps export paths boring on purpose. A complete export contains posts, assets, comments, and site settings. Markdown stays readable by other static blogs.
 
 HTML import has two modes: sanitized HTML for normal use and trusted iframe rendering for admin-only legacy content.
 `,
     contentHtml:
-      "<p>01mvp-blog-starter keeps export paths boring on purpose. A complete export contains posts, pages, assets, comments, and site settings.</p>",
+      "<p>01mvp-blog-starter keeps export paths boring on purpose. A complete export contains posts, assets, comments, and site settings.</p>",
     contentText:
       "Imports normalize Markdown HTML and image ZIP bundles and exports produce portable Markdown HTML assets comments and settings.",
     status: "published",
@@ -258,13 +258,13 @@ HTML import has two modes: sanitized HTML for normal use and trusted iframe rend
       contentMarkdown: {
         zh: `# 适配 Markdown、HTML 和 ZIP 备份的可迁移内容模型
 
-01mvp-blog-starter 刻意让导出路径保持简单。一次完整导出包含文章、页面、资源、评论和站点设置，Markdown 依旧能被其他静态博客读取。
+01mvp-blog-starter 刻意让导出路径保持简单。一次完整导出包含文章、资源、评论和站点设置，Markdown 依旧能被其他静态博客读取。
 
 HTML 导入提供两种模式：普通使用场景下的安全清洗 HTML，以及只在管理后台使用的可信 iframe 渲染。
 `,
       },
       contentHtml: {
-        zh: "<p>01mvp-blog-starter 刻意让导出路径保持简单。一次完整导出包含文章、页面、资源、评论和站点设置。</p>",
+        zh: "<p>01mvp-blog-starter 刻意让导出路径保持简单。一次完整导出包含文章、资源、评论和站点设置。</p>",
       },
       contentText: {
         zh: "导入流程规范化 Markdown、HTML 和图片 ZIP，导出流程生成可迁移的 Markdown、HTML、资源、评论和设置。",
@@ -328,32 +328,5 @@ export const assets: Asset[] = [
     sizeBytes: 184320,
     createdAt: "2026-05-20T09:10:00.000Z",
     attachedPostId: "post-edge-cms",
-  },
-];
-
-export const dashboardMetrics: DashboardMetric[] = [
-  {
-    label: "Published posts",
-    value: "3",
-    detail: "2 featured, 1 pinned",
-    i18n: { label: { zh: "已发布文章" }, detail: { zh: "2 篇精选，1 篇置顶" } },
-  },
-  {
-    label: "Pending comments",
-    value: "1",
-    detail: "Default moderation queue",
-    i18n: { label: { zh: "待审评论" }, detail: { zh: "默认审核队列" } },
-  },
-  {
-    label: "R2 assets",
-    value: "2",
-    detail: "Site OG plus one cover image",
-    i18n: { label: { zh: "R2 资源" }, detail: { zh: "站点 OG 图和一张封面图" } },
-  },
-  {
-    label: "Automation scopes",
-    value: "8",
-    detail: "API token permissions planned",
-    i18n: { label: { zh: "自动化权限" }, detail: { zh: "计划中的 API Token 权限" } },
   },
 ];

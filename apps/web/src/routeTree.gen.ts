@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SitemapPostsDotxmlRouteImport } from './routes/sitemap-posts[.]xml'
-import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
 import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as OpenapiDotjsonRouteImport } from './routes/openapi[.]json'
@@ -30,7 +29,6 @@ import { Route as ApiTokensRouteImport } from './routes/api/tokens'
 import { Route as ApiSiteRouteImport } from './routes/api/site'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
 import { Route as ApiPostsRouteImport } from './routes/api/posts'
-import { Route as ApiPagesRouteImport } from './routes/api/pages'
 import { Route as ApiExportRouteImport } from './routes/api/export'
 import { Route as ApiCommentsRouteImport } from './routes/api/comments'
 import { Route as ApiBackupsRouteImport } from './routes/api/backups'
@@ -45,7 +43,6 @@ import { Route as AuthAdminIndexRouteImport } from './routes/_auth/admin/index'
 import { Route as ZhDocsSplatRouteImport } from './routes/zh/docs/$'
 import { Route as ApiPostsBatchRouteImport } from './routes/api/posts/batch'
 import { Route as ApiPostsIdRouteImport } from './routes/api/posts/$id'
-import { Route as ApiPagesIdRouteImport } from './routes/api/pages/$id'
 import { Route as ApiImportZipRouteImport } from './routes/api/import/zip'
 import { Route as ApiImportMarkdownRouteImport } from './routes/api/import/markdown'
 import { Route as ApiImportHtmlRouteImport } from './routes/api/import/html'
@@ -65,7 +62,6 @@ import { Route as ApiAdminLoginRouteImport } from './routes/api/admin/login'
 import { Route as ApiAdminEmailStatusRouteImport } from './routes/api/admin/email-status'
 import { Route as AuthAdminSettingsRouteImport } from './routes/_auth/admin/settings'
 import { Route as AuthAdminPostsRouteImport } from './routes/_auth/admin/posts'
-import { Route as AuthAdminPagesRouteImport } from './routes/_auth/admin/pages'
 import { Route as AuthAdminCommentsRouteImport } from './routes/_auth/admin/comments'
 import { Route as AuthAdminAssetsRouteImport } from './routes/_auth/admin/assets'
 import { Route as AuthAdminPostsIndexRouteImport } from './routes/_auth/admin/posts/index'
@@ -85,11 +81,6 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const SitemapPostsDotxmlRoute = SitemapPostsDotxmlRouteImport.update({
   id: '/sitemap-posts.xml',
   path: '/sitemap-posts.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapPagesDotxmlRoute = SitemapPagesDotxmlRouteImport.update({
-  id: '/sitemap-pages.xml',
-  path: '/sitemap-pages.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RssDotxmlRoute = RssDotxmlRouteImport.update({
@@ -180,11 +171,6 @@ const ApiPostsRoute = ApiPostsRouteImport.update({
   path: '/api/posts',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPagesRoute = ApiPagesRouteImport.update({
-  id: '/api/pages',
-  path: '/api/pages',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiExportRoute = ApiExportRouteImport.update({
   id: '/api/export',
   path: '/api/export',
@@ -254,11 +240,6 @@ const ApiPostsIdRoute = ApiPostsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => ApiPostsRoute,
-} as any)
-const ApiPagesIdRoute = ApiPagesIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => ApiPagesRoute,
 } as any)
 const ApiImportZipRoute = ApiImportZipRouteImport.update({
   id: '/api/import/zip',
@@ -356,11 +337,6 @@ const AuthAdminPostsRoute = AuthAdminPostsRouteImport.update({
   path: '/posts',
   getParentRoute: () => AuthAdminRouteRoute,
 } as any)
-const AuthAdminPagesRoute = AuthAdminPagesRouteImport.update({
-  id: '/pages',
-  path: '/pages',
-  getParentRoute: () => AuthAdminRouteRoute,
-} as any)
 const AuthAdminCommentsRoute = AuthAdminCommentsRouteImport.update({
   id: '/comments',
   path: '/comments',
@@ -420,7 +396,6 @@ export interface FileRoutesByFullPath {
   '/openapi.json': typeof OpenapiDotjsonRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/rss.xml': typeof RssDotxmlRoute
-  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap-posts.xml': typeof SitemapPostsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthAdminRouteRouteWithChildren
@@ -432,7 +407,6 @@ export interface FileRoutesByFullPath {
   '/api/backups': typeof ApiBackupsRoute
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
-  '/api/pages': typeof ApiPagesRouteWithChildren
   '/api/posts': typeof ApiPostsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/api/site': typeof ApiSiteRoute
@@ -445,7 +419,6 @@ export interface FileRoutesByFullPath {
   '/tags/': typeof TagsIndexRoute
   '/admin/assets': typeof AuthAdminAssetsRoute
   '/admin/comments': typeof AuthAdminCommentsRoute
-  '/admin/pages': typeof AuthAdminPagesRoute
   '/admin/posts': typeof AuthAdminPostsRouteWithChildren
   '/admin/settings': typeof AuthAdminSettingsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
@@ -465,7 +438,6 @@ export interface FileRoutesByFullPath {
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
   '/api/import/zip': typeof ApiImportZipRoute
-  '/api/pages/$id': typeof ApiPagesIdRoute
   '/api/posts/$id': typeof ApiPostsIdRoute
   '/api/posts/batch': typeof ApiPostsBatchRoute
   '/zh/docs/$': typeof ZhDocsSplatRoute
@@ -487,7 +459,6 @@ export interface FileRoutesByTo {
   '/openapi.json': typeof OpenapiDotjsonRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/rss.xml': typeof RssDotxmlRoute
-  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap-posts.xml': typeof SitemapPostsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/login': typeof GuestLoginRoute
@@ -497,7 +468,6 @@ export interface FileRoutesByTo {
   '/api/backups': typeof ApiBackupsRoute
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
-  '/api/pages': typeof ApiPagesRouteWithChildren
   '/api/posts': typeof ApiPostsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/api/site': typeof ApiSiteRoute
@@ -510,7 +480,6 @@ export interface FileRoutesByTo {
   '/tags': typeof TagsIndexRoute
   '/admin/assets': typeof AuthAdminAssetsRoute
   '/admin/comments': typeof AuthAdminCommentsRoute
-  '/admin/pages': typeof AuthAdminPagesRoute
   '/admin/settings': typeof AuthAdminSettingsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
@@ -529,7 +498,6 @@ export interface FileRoutesByTo {
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
   '/api/import/zip': typeof ApiImportZipRoute
-  '/api/pages/$id': typeof ApiPagesIdRoute
   '/api/posts/$id': typeof ApiPostsIdRoute
   '/api/posts/batch': typeof ApiPostsBatchRoute
   '/zh/docs/$': typeof ZhDocsSplatRoute
@@ -554,7 +522,6 @@ export interface FileRoutesById {
   '/openapi.json': typeof OpenapiDotjsonRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/rss.xml': typeof RssDotxmlRoute
-  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap-posts.xml': typeof SitemapPostsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_auth/admin': typeof AuthAdminRouteRouteWithChildren
@@ -566,7 +533,6 @@ export interface FileRoutesById {
   '/api/backups': typeof ApiBackupsRoute
   '/api/comments': typeof ApiCommentsRouteWithChildren
   '/api/export': typeof ApiExportRoute
-  '/api/pages': typeof ApiPagesRouteWithChildren
   '/api/posts': typeof ApiPostsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
   '/api/site': typeof ApiSiteRoute
@@ -579,7 +545,6 @@ export interface FileRoutesById {
   '/tags/': typeof TagsIndexRoute
   '/_auth/admin/assets': typeof AuthAdminAssetsRoute
   '/_auth/admin/comments': typeof AuthAdminCommentsRoute
-  '/_auth/admin/pages': typeof AuthAdminPagesRoute
   '/_auth/admin/posts': typeof AuthAdminPostsRouteWithChildren
   '/_auth/admin/settings': typeof AuthAdminSettingsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
@@ -599,7 +564,6 @@ export interface FileRoutesById {
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
   '/api/import/zip': typeof ApiImportZipRoute
-  '/api/pages/$id': typeof ApiPagesIdRoute
   '/api/posts/$id': typeof ApiPostsIdRoute
   '/api/posts/batch': typeof ApiPostsBatchRoute
   '/zh/docs/$': typeof ZhDocsSplatRoute
@@ -623,7 +587,6 @@ export interface FileRouteTypes {
     | '/openapi.json'
     | '/robots.txt'
     | '/rss.xml'
-    | '/sitemap-pages.xml'
     | '/sitemap-posts.xml'
     | '/sitemap.xml'
     | '/admin'
@@ -635,7 +598,6 @@ export interface FileRouteTypes {
     | '/api/backups'
     | '/api/comments'
     | '/api/export'
-    | '/api/pages'
     | '/api/posts'
     | '/api/search'
     | '/api/site'
@@ -648,7 +610,6 @@ export interface FileRouteTypes {
     | '/tags/'
     | '/admin/assets'
     | '/admin/comments'
-    | '/admin/pages'
     | '/admin/posts'
     | '/admin/settings'
     | '/api/admin/email-status'
@@ -668,7 +629,6 @@ export interface FileRouteTypes {
     | '/api/import/html'
     | '/api/import/markdown'
     | '/api/import/zip'
-    | '/api/pages/$id'
     | '/api/posts/$id'
     | '/api/posts/batch'
     | '/zh/docs/$'
@@ -690,7 +650,6 @@ export interface FileRouteTypes {
     | '/openapi.json'
     | '/robots.txt'
     | '/rss.xml'
-    | '/sitemap-pages.xml'
     | '/sitemap-posts.xml'
     | '/sitemap.xml'
     | '/login'
@@ -700,7 +659,6 @@ export interface FileRouteTypes {
     | '/api/backups'
     | '/api/comments'
     | '/api/export'
-    | '/api/pages'
     | '/api/posts'
     | '/api/search'
     | '/api/site'
@@ -713,7 +671,6 @@ export interface FileRouteTypes {
     | '/tags'
     | '/admin/assets'
     | '/admin/comments'
-    | '/admin/pages'
     | '/admin/settings'
     | '/api/admin/email-status'
     | '/api/admin/login'
@@ -732,7 +689,6 @@ export interface FileRouteTypes {
     | '/api/import/html'
     | '/api/import/markdown'
     | '/api/import/zip'
-    | '/api/pages/$id'
     | '/api/posts/$id'
     | '/api/posts/batch'
     | '/zh/docs/$'
@@ -756,7 +712,6 @@ export interface FileRouteTypes {
     | '/openapi.json'
     | '/robots.txt'
     | '/rss.xml'
-    | '/sitemap-pages.xml'
     | '/sitemap-posts.xml'
     | '/sitemap.xml'
     | '/_auth/admin'
@@ -768,7 +723,6 @@ export interface FileRouteTypes {
     | '/api/backups'
     | '/api/comments'
     | '/api/export'
-    | '/api/pages'
     | '/api/posts'
     | '/api/search'
     | '/api/site'
@@ -781,7 +735,6 @@ export interface FileRouteTypes {
     | '/tags/'
     | '/_auth/admin/assets'
     | '/_auth/admin/comments'
-    | '/_auth/admin/pages'
     | '/_auth/admin/posts'
     | '/_auth/admin/settings'
     | '/api/admin/email-status'
@@ -801,7 +754,6 @@ export interface FileRouteTypes {
     | '/api/import/html'
     | '/api/import/markdown'
     | '/api/import/zip'
-    | '/api/pages/$id'
     | '/api/posts/$id'
     | '/api/posts/batch'
     | '/zh/docs/$'
@@ -826,14 +778,12 @@ export interface RootRouteChildren {
   OpenapiDotjsonRoute: typeof OpenapiDotjsonRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   RssDotxmlRoute: typeof RssDotxmlRoute
-  SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
   SitemapPostsDotxmlRoute: typeof SitemapPostsDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiAssetsRoute: typeof ApiAssetsRouteWithChildren
   ApiBackupsRoute: typeof ApiBackupsRoute
   ApiCommentsRoute: typeof ApiCommentsRouteWithChildren
   ApiExportRoute: typeof ApiExportRoute
-  ApiPagesRoute: typeof ApiPagesRouteWithChildren
   ApiPostsRoute: typeof ApiPostsRouteWithChildren
   ApiSearchRoute: typeof ApiSearchRoute
   ApiSiteRoute: typeof ApiSiteRoute
@@ -878,13 +828,6 @@ declare module '@tanstack/react-router' {
       path: '/sitemap-posts.xml'
       fullPath: '/sitemap-posts.xml'
       preLoaderRoute: typeof SitemapPostsDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-pages.xml': {
-      id: '/sitemap-pages.xml'
-      path: '/sitemap-pages.xml'
-      fullPath: '/sitemap-pages.xml'
-      preLoaderRoute: typeof SitemapPagesDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rss.xml': {
@@ -1013,13 +956,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPostsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/pages': {
-      id: '/api/pages'
-      path: '/api/pages'
-      fullPath: '/api/pages'
-      preLoaderRoute: typeof ApiPagesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/export': {
       id: '/api/export'
       path: '/api/export'
@@ -1117,13 +1053,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/posts/$id'
       preLoaderRoute: typeof ApiPostsIdRouteImport
       parentRoute: typeof ApiPostsRoute
-    }
-    '/api/pages/$id': {
-      id: '/api/pages/$id'
-      path: '/$id'
-      fullPath: '/api/pages/$id'
-      preLoaderRoute: typeof ApiPagesIdRouteImport
-      parentRoute: typeof ApiPagesRoute
     }
     '/api/import/zip': {
       id: '/api/import/zip'
@@ -1258,13 +1187,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAdminPostsRouteImport
       parentRoute: typeof AuthAdminRouteRoute
     }
-    '/_auth/admin/pages': {
-      id: '/_auth/admin/pages'
-      path: '/pages'
-      fullPath: '/admin/pages'
-      preLoaderRoute: typeof AuthAdminPagesRouteImport
-      parentRoute: typeof AuthAdminRouteRoute
-    }
     '/_auth/admin/comments': {
       id: '/_auth/admin/comments'
       path: '/comments'
@@ -1357,7 +1279,6 @@ const AuthAdminPostsRouteWithChildren = AuthAdminPostsRoute._addFileChildren(
 interface AuthAdminRouteRouteChildren {
   AuthAdminAssetsRoute: typeof AuthAdminAssetsRoute
   AuthAdminCommentsRoute: typeof AuthAdminCommentsRoute
-  AuthAdminPagesRoute: typeof AuthAdminPagesRoute
   AuthAdminPostsRoute: typeof AuthAdminPostsRouteWithChildren
   AuthAdminSettingsRoute: typeof AuthAdminSettingsRoute
   AuthAdminIndexRoute: typeof AuthAdminIndexRoute
@@ -1366,7 +1287,6 @@ interface AuthAdminRouteRouteChildren {
 const AuthAdminRouteRouteChildren: AuthAdminRouteRouteChildren = {
   AuthAdminAssetsRoute: AuthAdminAssetsRoute,
   AuthAdminCommentsRoute: AuthAdminCommentsRoute,
-  AuthAdminPagesRoute: AuthAdminPagesRoute,
   AuthAdminPostsRoute: AuthAdminPostsRouteWithChildren,
   AuthAdminSettingsRoute: AuthAdminSettingsRoute,
   AuthAdminIndexRoute: AuthAdminIndexRoute,
@@ -1446,18 +1366,6 @@ const ApiCommentsRouteWithChildren = ApiCommentsRoute._addFileChildren(
   ApiCommentsRouteChildren,
 )
 
-interface ApiPagesRouteChildren {
-  ApiPagesIdRoute: typeof ApiPagesIdRoute
-}
-
-const ApiPagesRouteChildren: ApiPagesRouteChildren = {
-  ApiPagesIdRoute: ApiPagesIdRoute,
-}
-
-const ApiPagesRouteWithChildren = ApiPagesRoute._addFileChildren(
-  ApiPagesRouteChildren,
-)
-
 interface ApiPostsRouteChildren {
   ApiPostsIdRoute: typeof ApiPostsIdRoute
   ApiPostsBatchRoute: typeof ApiPostsBatchRoute
@@ -1493,14 +1401,12 @@ const rootRouteChildren: RootRouteChildren = {
   OpenapiDotjsonRoute: OpenapiDotjsonRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   RssDotxmlRoute: RssDotxmlRoute,
-  SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
   SitemapPostsDotxmlRoute: SitemapPostsDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiAssetsRoute: ApiAssetsRouteWithChildren,
   ApiBackupsRoute: ApiBackupsRoute,
   ApiCommentsRoute: ApiCommentsRouteWithChildren,
   ApiExportRoute: ApiExportRoute,
-  ApiPagesRoute: ApiPagesRouteWithChildren,
   ApiPostsRoute: ApiPostsRouteWithChildren,
   ApiSearchRoute: ApiSearchRoute,
   ApiSiteRoute: ApiSiteRoute,

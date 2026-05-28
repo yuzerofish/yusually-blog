@@ -129,7 +129,7 @@ export function CommentForm({ onCancelReply, parentId, postSlug, replyingTo }: C
 
   if (authLoading) {
     return (
-      <div className="mt-6 flex items-center gap-2 rounded-md border border-border bg-muted/45 px-3 py-2 text-sm text-muted-foreground">
+      <div className="mt-6 flex items-center gap-2 text-sm text-muted-foreground">
         <LoaderCircleIcon className="size-4 animate-spin" />
         {m.comment_auth_loading()}
       </div>
@@ -138,13 +138,13 @@ export function CommentForm({ onCancelReply, parentId, postSlug, replyingTo }: C
 
   if (!user) {
     return (
-      <div className="mt-6 rounded-md border border-border bg-muted/35 p-4">
+      <div className="mt-6 grid gap-4">
         <div>
           <h3 className="font-semibold">{m.comment_login_required()}</h3>
           <p className="mt-1 text-sm text-muted-foreground">{m.comment_login_description()}</p>
         </div>
 
-        <div className="mt-4 grid gap-3">
+        <div className="grid gap-3">
           <a
             href={githubLoginHref(postSlug)}
             className={buttonVariants({ variant: "secondary", className: "w-full justify-center" })}
@@ -212,7 +212,7 @@ export function CommentForm({ onCancelReply, parentId, postSlug, replyingTo }: C
 
   return (
     <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-muted/45 px-3 py-2 text-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 pb-3 text-sm">
         <span className="text-muted-foreground">{m.comment_signed_in_as({ name: user.name })}</span>
         <button
           type="button"
@@ -224,7 +224,7 @@ export function CommentForm({ onCancelReply, parentId, postSlug, replyingTo }: C
         </button>
       </div>
       {replyingTo ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-muted/55 px-3 py-2 text-sm text-muted-foreground">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 pb-3 text-sm text-muted-foreground">
           <span>{m.comment_replying_to({ name: replyingTo })}</span>
           <button
             type="button"

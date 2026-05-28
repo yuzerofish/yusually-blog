@@ -40,6 +40,7 @@ export function DocsRouteView({ data }: { readonly data: DocsRouteData }) {
 
   return (
     <div
+      data-docs-surface=""
       data-theme-preset={preset.themePreset}
       data-layout-preset={preset.layoutPreset}
       className="min-h-svh bg-background text-foreground"

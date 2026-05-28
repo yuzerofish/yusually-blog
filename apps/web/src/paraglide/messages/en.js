@@ -75,16 +75,11 @@
 /** @typedef {{}} Admin_Nav_AssetsInputs */
 /** @typedef {{}} Admin_Nav_CommentsInputs */
 /** @typedef {{}} Admin_Nav_OverviewInputs */
-/** @typedef {{}} Admin_Nav_PagesInputs */
 /** @typedef {{}} Admin_Nav_PostsInputs */
 /** @typedef {{}} Admin_Nav_SettingsInputs */
 /** @typedef {{}} Admin_New_PostInputs */
-/** @typedef {{}} Admin_New_PageInputs */
 /** @typedef {{}} Admin_Overview_EyebrowInputs */
 /** @typedef {{}} Admin_Overview_TitleInputs */
-/** @typedef {{}} Admin_Pages_DescriptionInputs */
-/** @typedef {{}} Admin_Pages_Editor_TitleInputs */
-/** @typedef {{}} Admin_Pages_TitleInputs */
 /** @typedef {{}} Admin_Post_Status_Archived_DescriptionInputs */
 /** @typedef {{}} Admin_Post_Status_Archived_LabelInputs */
 /** @typedef {{}} Admin_Post_Status_Deleted_DescriptionInputs */
@@ -264,6 +259,7 @@
 /** @typedef {{}} Password_Reset_TitleInputs */
 /** @typedef {{}} Nav_AboutInputs */
 /** @typedef {{}} Nav_BlogInputs */
+/** @typedef {{}} Nav_DocsInputs */
 /** @typedef {{}} Nav_TagsInputs */
 /** @typedef {{}} Open_AdminInputs */
 /** @typedef {{}} PinnedInputs */
@@ -601,10 +597,6 @@ export const admin_nav_overview = /** @type {(inputs: Admin_Nav_OverviewInputs) 
 	return /** @type {LocalizedString} */ (`Overview`)
 };
 
-export const admin_nav_pages = /** @type {(inputs: Admin_Nav_PagesInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Pages`)
-};
-
 export const admin_nav_posts = /** @type {(inputs: Admin_Nav_PostsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Posts`)
 };
@@ -617,28 +609,12 @@ export const admin_new_post = /** @type {(inputs: Admin_New_PostInputs) => Local
 	return /** @type {LocalizedString} */ (`New post`)
 };
 
-export const admin_new_page = /** @type {(inputs: Admin_New_PageInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`New page`)
-};
-
 export const admin_overview_eyebrow = /** @type {(inputs: Admin_Overview_EyebrowInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Admin`)
 };
 
 export const admin_overview_title = /** @type {(inputs: Admin_Overview_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Publishing overview`)
-};
-
-export const admin_pages_description = /** @type {(inputs: Admin_Pages_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Edit static Markdown pages such as About.`)
-};
-
-export const admin_pages_editor_title = /** @type {(inputs: Admin_Pages_Editor_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Page editor`)
-};
-
-export const admin_pages_title = /** @type {(inputs: Admin_Pages_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Pages`)
 };
 
 export const admin_post_status_archived_description = /** @type {(inputs: Admin_Post_Status_Archived_DescriptionInputs) => LocalizedString} */ () => {
@@ -1355,6 +1331,10 @@ export const nav_about = /** @type {(inputs: Nav_AboutInputs) => LocalizedString
 
 export const nav_blog = /** @type {(inputs: Nav_BlogInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`Blog`)
+};
+
+export const nav_docs = /** @type {(inputs: Nav_DocsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Docs`)
 };
 
 export const nav_tags = /** @type {(inputs: Nav_TagsInputs) => LocalizedString} */ () => {

@@ -1051,20 +1051,6 @@ export const admin_nav_overview: ((inputs?: Admin_Nav_OverviewInputs, options?: 
 /**
 * | output |
 * | --- |
-* | "Pages" |
-*
-* @param {Admin_Nav_PagesInputs} inputs
-* @param {{ locale?: "en" | "zh" }} options
-* @returns {LocalizedString}
-*/
-export const admin_nav_pages: ((inputs?: Admin_Nav_PagesInputs, options?: {
-    locale?: "en" | "zh";
-}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Nav_PagesInputs, {
-    locale?: "en" | "zh";
-}, {}>;
-/**
-* | output |
-* | --- |
 * | "Posts" |
 *
 * @param {Admin_Nav_PostsInputs} inputs
@@ -1107,20 +1093,6 @@ export const admin_new_post: ((inputs?: Admin_New_PostInputs, options?: {
 /**
 * | output |
 * | --- |
-* | "New page" |
-*
-* @param {Admin_New_PageInputs} inputs
-* @param {{ locale?: "en" | "zh" }} options
-* @returns {LocalizedString}
-*/
-export const admin_new_page: ((inputs?: Admin_New_PageInputs, options?: {
-    locale?: "en" | "zh";
-}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_New_PageInputs, {
-    locale?: "en" | "zh";
-}, {}>;
-/**
-* | output |
-* | --- |
 * | "Admin" |
 *
 * @param {Admin_Overview_EyebrowInputs} inputs
@@ -1144,48 +1116,6 @@ export const admin_overview_eyebrow: ((inputs?: Admin_Overview_EyebrowInputs, op
 export const admin_overview_title: ((inputs?: Admin_Overview_TitleInputs, options?: {
     locale?: "en" | "zh";
 }) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Overview_TitleInputs, {
-    locale?: "en" | "zh";
-}, {}>;
-/**
-* | output |
-* | --- |
-* | "Edit static Markdown pages such as About." |
-*
-* @param {Admin_Pages_DescriptionInputs} inputs
-* @param {{ locale?: "en" | "zh" }} options
-* @returns {LocalizedString}
-*/
-export const admin_pages_description: ((inputs?: Admin_Pages_DescriptionInputs, options?: {
-    locale?: "en" | "zh";
-}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Pages_DescriptionInputs, {
-    locale?: "en" | "zh";
-}, {}>;
-/**
-* | output |
-* | --- |
-* | "Page editor" |
-*
-* @param {Admin_Pages_Editor_TitleInputs} inputs
-* @param {{ locale?: "en" | "zh" }} options
-* @returns {LocalizedString}
-*/
-export const admin_pages_editor_title: ((inputs?: Admin_Pages_Editor_TitleInputs, options?: {
-    locale?: "en" | "zh";
-}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Pages_Editor_TitleInputs, {
-    locale?: "en" | "zh";
-}, {}>;
-/**
-* | output |
-* | --- |
-* | "Pages" |
-*
-* @param {Admin_Pages_TitleInputs} inputs
-* @param {{ locale?: "en" | "zh" }} options
-* @returns {LocalizedString}
-*/
-export const admin_pages_title: ((inputs?: Admin_Pages_TitleInputs, options?: {
-    locale?: "en" | "zh";
-}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Pages_TitleInputs, {
     locale?: "en" | "zh";
 }, {}>;
 /**
@@ -3697,6 +3627,20 @@ export const nav_blog: ((inputs?: Nav_BlogInputs, options?: {
 /**
 * | output |
 * | --- |
+* | "Docs" |
+*
+* @param {Nav_DocsInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const nav_docs: ((inputs?: Nav_DocsInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Nav_DocsInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
 * | "Tags" |
 *
 * @param {Nav_TagsInputs} inputs
@@ -4270,16 +4214,11 @@ export type Admin_Moderation_Queue_DetailInputs = {
 export type Admin_Nav_AssetsInputs = {};
 export type Admin_Nav_CommentsInputs = {};
 export type Admin_Nav_OverviewInputs = {};
-export type Admin_Nav_PagesInputs = {};
 export type Admin_Nav_PostsInputs = {};
 export type Admin_Nav_SettingsInputs = {};
 export type Admin_New_PostInputs = {};
-export type Admin_New_PageInputs = {};
 export type Admin_Overview_EyebrowInputs = {};
 export type Admin_Overview_TitleInputs = {};
-export type Admin_Pages_DescriptionInputs = {};
-export type Admin_Pages_Editor_TitleInputs = {};
-export type Admin_Pages_TitleInputs = {};
 export type Admin_Post_Status_Archived_DescriptionInputs = {};
 export type Admin_Post_Status_Archived_LabelInputs = {};
 export type Admin_Post_Status_Deleted_DescriptionInputs = {};
@@ -4477,6 +4416,7 @@ export type Password_Reset_Request_SuccessInputs = {};
 export type Password_Reset_TitleInputs = {};
 export type Nav_AboutInputs = {};
 export type Nav_BlogInputs = {};
+export type Nav_DocsInputs = {};
 export type Nav_TagsInputs = {};
 export type Open_AdminInputs = {};
 export type PinnedInputs = {};

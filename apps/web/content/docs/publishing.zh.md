@@ -25,7 +25,7 @@ CLI 使用和后台相同的鉴权 HTTP API。
 
 ## 导入和导出
 
-API 支持 Markdown、HTML、ZIP 和文件夹导入。导出内容包含文章、页面、评论、资产、标签、项目、站点设置和 manifest。
+API 支持 Markdown、HTML、ZIP 和文件夹导入。导出内容包含文章、评论、资产、标签、站点设置和 manifest。
 
 备份会写入 R2，便于后续恢复或迁移站点。
 

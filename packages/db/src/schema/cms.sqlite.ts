@@ -50,29 +50,6 @@ export const posts = sqliteTable(
   ],
 );
 
-export const pages = sqliteTable(
-  "pages",
-  {
-    id: text("id").primaryKey(),
-    title: text("title").notNull(),
-    slug: text("slug").notNull(),
-    contentMarkdown: text("content_markdown").notNull(),
-    contentHtml: text("content_html").notNull(),
-    status: text("status", { enum: ["draft", "published", "archived", "deleted"] })
-      .notNull()
-      .default("draft"),
-    seoTitle: text("seo_title"),
-    seoDescription: text("seo_description"),
-    i18n: text("i18n", { mode: "json" }),
-    createdAt: text("created_at").notNull(),
-    updatedAt: text("updated_at").notNull(),
-  },
-  (table) => [
-    uniqueIndex("pages_slug_idx").on(table.slug),
-    index("pages_status_idx").on(table.status),
-  ],
-);
-
 export const tags = sqliteTable(
   "tags",
   {

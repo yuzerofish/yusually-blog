@@ -3,7 +3,6 @@ import "@tanstack/react-start/server-only";
 // Re-export all types from shared module
 export type {
   PostInput,
-  PageInput,
   CommentInput,
   ListPostsOptions,
   AssetInput,
@@ -20,16 +19,6 @@ export {
   updateD1Post,
   deleteD1Post,
 } from "./cms-d1-posts";
-
-// Re-export pages
-export {
-  listD1Pages,
-  getD1PageBySlug,
-  getD1PageByIdOrSlug,
-  createD1Page,
-  updateD1Page,
-  deleteD1Page,
-} from "./cms-d1-pages";
 
 // Re-export comments
 export {

@@ -164,7 +164,7 @@ Cloudflare 官方仍将 Wrangler 定义为 Cloudflare Developer Platform 的 CLI
 内容主格式是 Markdown，但主存储是 D1。
 
 ```txt
-D1：文章、页面、作品集、评论、设置、用户、API Token
+D1：文章、作品集、评论、设置、用户、API Token
 R2：图片、附件、HTML 包、ZIP 导入包、备份包
 Markdown：主内容格式
 HTML：兼容导入格式
@@ -235,7 +235,6 @@ Cloudflare Email Sending 等能力作为增强模块。Cloudflare Email Service 
 
 ```txt
 管理文章
-管理页面
 管理作品集
 管理图片
 管理评论
@@ -782,14 +781,12 @@ JSON-LD
 ```txt
 /sitemap.xml
 /sitemap-posts.xml
-/sitemap-pages.xml
 ```
 
 包含：
 
 ```txt
 文章
-页面
 标签
 作品集
 ```
@@ -891,7 +888,6 @@ zip 图片包上传
 
 ```txt
 全部文章 Markdown
-全部页面 Markdown
 全部 HTML
 全部图片资源
 站点设置 JSON
@@ -904,7 +900,6 @@ zip 图片包上传
 ```txt
 export/
   posts/
-  pages/
   assets/
   comments.json
   site.json
