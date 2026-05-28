@@ -8,7 +8,7 @@ description: API and automation surfaces for 01mvp-blog-starter.
 The API is used by:
 
 - the admin UI
-- the `blogcms` CLI
+- the CLI
 - AI initialization workflows
 - custom automation scripts
 

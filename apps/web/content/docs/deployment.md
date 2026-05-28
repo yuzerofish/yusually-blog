@@ -1,6 +1,6 @@
 ---
 title: Deployment
-description: Deploy the CMS site to Cloudflare Workers.
+description: Deploy the blog site to Cloudflare Workers.
 ---
 
 01mvp-blog-starter is designed for Cloudflare Workers, D1, R2, and optional KV.
@@ -25,7 +25,7 @@ This command writes only to the local D1 database under `.wrangler/state`. It do
 ## Production Site
 
 ```sh
-blogcms deploy --target main
+pnpm deploy:web
 ```
 
 This builds the web app, applies D1 migrations, and deploys the Worker using the generated Cloudflare config.
@@ -46,7 +46,7 @@ Turnstile and Cloudflare Email Sending are optional. Empty optional bindings sho
 Apply D1 migrations before deploying a site that accepts reader comments:
 
 ```sh
-pnpm --filter @repo/web exec wrangler d1 migrations apply blog-starter-cms --remote --config wrangler.jsonc
+pnpm --filter @repo/web exec wrangler d1 migrations apply <d1-database-name> --remote --config wrangler.jsonc
 ```
 
 Better Auth tables are created by `0002_better_auth_d1.sql`; comment moderation linkage is created by `0004_comment_moderation.sql`.
@@ -55,16 +55,7 @@ Better Auth tables are created by `0002_better_auth_d1.sql`; comment moderation 
 
 Local development reads `apps/web/.env`. Cloudflare preview and production read Wrangler vars plus secrets.
 
-```txt
-CMS_PUBLIC_SITE_URL=https://blog.01mvp.com
-CMS_BACKUP_RETENTION_DAYS=30
-CMS_EMAIL_SENDING_ENABLED=false
-CMS_TURNSTILE_SECRET_KEY=
-VITE_TURNSTILE_SITE_KEY=
-BETTER_AUTH_SECRET=
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
-```
+Keep the public site URL, backup retention, email delivery, Turnstile, auth secret, and GitHub OAuth values in Wrangler vars and secrets. Use `apps/web/wrangler.jsonc` as the source of truth for exact variable names.
 
 Set `BETTER_AUTH_SECRET` and `GITHUB_CLIENT_SECRET` as Wrangler secrets in production:
 

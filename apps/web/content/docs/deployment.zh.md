@@ -1,6 +1,6 @@
 ---
 title: 部署
-description: 将 CMS 站点部署到 Cloudflare Workers。
+description: 将博客站点部署到 Cloudflare Workers。
 ---
 
 01mvp-blog-starter 面向 Cloudflare Workers、D1、R2 和可选 KV 设计。
@@ -25,7 +25,7 @@ password: 1
 ## 生产站点
 
 ```sh
-blogcms deploy --target main
+pnpm deploy:web
 ```
 
 这会构建 Web 应用、应用 D1 migrations，并使用生成的 Cloudflare 配置部署 Worker。
@@ -46,7 +46,7 @@ Turnstile 和 Cloudflare Email Sending 是可选能力。未配置可选 binding
 启用读者评论前，先应用 D1 migrations：
 
 ```sh
-pnpm --filter @repo/web exec wrangler d1 migrations apply blog-starter-cms --remote --config wrangler.jsonc
+pnpm --filter @repo/web exec wrangler d1 migrations apply <d1-database-name> --remote --config wrangler.jsonc
 ```
 
 Better Auth 表由 `0002_better_auth_d1.sql` 创建；评论作者关联由 `0004_comment_moderation.sql` 创建。
@@ -55,16 +55,7 @@ Better Auth 表由 `0002_better_auth_d1.sql` 创建；评论作者关联由 `000
 
 本地开发读取 `apps/web/.env`。Cloudflare preview 和 production 读取 Wrangler vars 与 secrets。
 
-```txt
-CMS_PUBLIC_SITE_URL=https://blog.01mvp.com
-CMS_BACKUP_RETENTION_DAYS=30
-CMS_EMAIL_SENDING_ENABLED=false
-CMS_TURNSTILE_SECRET_KEY=
-VITE_TURNSTILE_SITE_KEY=
-BETTER_AUTH_SECRET=
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
-```
+公开站点地址、备份保留时间、邮件发送、Turnstile、鉴权密钥和 GitHub OAuth 都放在 Wrangler vars 与 secrets 里。变量名以 `apps/web/wrangler.jsonc` 为准。
 
 生产环境把 `BETTER_AUTH_SECRET` 和 `GITHUB_CLIENT_SECRET` 写成 Wrangler secret：
 

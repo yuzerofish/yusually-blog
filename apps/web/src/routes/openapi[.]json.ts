@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { apiTokenScopes } from "#/lib/cms-api";
+import { apiTokenScopes } from "#/lib/cms-api-utils";
 
 export const Route = createFileRoute("/openapi.json")({
   server: {
@@ -208,8 +208,29 @@ export const Route = createFileRoute("/openapi.json")({
                           description: { type: "string" },
                           authorName: { type: "string" },
                           authorBio: { type: "string" },
+                          avatarUrl: { type: "string" },
                           defaultOgImage: { type: "string" },
-                          themePreset: { enum: ["maker", "apple", "editorial"] },
+                          socialLinks: {
+                            type: "array",
+                            items: {
+                              type: "object",
+                              properties: {
+                                label: { type: "string" },
+                                href: { type: "string" },
+                              },
+                            },
+                          },
+                          navigation: {
+                            type: "array",
+                            items: {
+                              type: "object",
+                              properties: {
+                                label: { type: "string" },
+                                href: { type: "string" },
+                              },
+                            },
+                          },
+                          themePreset: { enum: ["maker", "apple", "claude", "brutalist"] },
                           layoutPreset: { enum: ["shelf", "developer", "journal"] },
                           primaryLanguage: { enum: ["en", "zh"] },
                           rssEnabled: { type: "boolean" },

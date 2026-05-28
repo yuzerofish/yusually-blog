@@ -7,7 +7,7 @@ Use `/blog` for articles and `/docs` for long-lived documentation. Both systems 
 
 ## Write Blog Posts
 
-Use the CMS admin when you want a normal writing workflow:
+Use the admin UI when you want a normal writing workflow:
 
 - write Markdown in the browser
 - save drafts
@@ -15,15 +15,13 @@ Use the CMS admin when you want a normal writing workflow:
 - publish immediately or schedule a post
 - review comments
 
-Published posts appear on `/blog`, tag pages, archive pages, RSS, feeds, and sitemap output.
+Published posts appear on `/blog`, tag pages, RSS, feeds, and sitemap output.
 
 ## Publish With CLI Or API
 
 Use the CLI for local drafts, automation, or AI-assisted publishing:
 
-```sh
-BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs push ./post.md
-```
+Use the publishing command from `apps/cli`, with the site URL and API token configured in your shell.
 
 Use `/openapi.json` when connecting external tools or generating API clients.
 
@@ -44,14 +42,14 @@ Docs live in `apps/web/content/docs`. English pages use `*.md` or `*.mdx`; Chine
 ## Choose A Content System
 
 ```txt
-/blog   = CMS-managed posts
+/blog   = admin-managed posts
 /docs   = Git-managed Markdown/MDX docs
-/admin  = CMS management UI
+/admin  = publishing admin UI
 RSS     = blog posts only
 sitemap = pages + blog + docs + tags
 ```
 
-Keep frequently edited articles in the CMS. Keep durable product or developer references in docs.
+Keep frequently edited articles in the publishing backend. Keep durable product or developer references in docs.
 
 ## Deploy
 
@@ -64,5 +62,5 @@ pnpm build:web
 Deploy the production site with:
 
 ```sh
-blogcms deploy --target main
+pnpm deploy:web
 ```

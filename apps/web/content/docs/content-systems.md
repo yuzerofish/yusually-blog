@@ -1,13 +1,13 @@
 ---
 title: Content Systems
-description: How the CMS blog and Fumadocs documentation system divide ownership.
+description: How the blog backend and Fumadocs documentation system divide ownership.
 ---
 
 The template enables both content systems by default. They are intentionally separate.
 
-## `/blog`: CMS Content
+## `/blog`: Blog Content
 
-Use the CMS for content that benefits from runtime management:
+Use the publishing backend for content that benefits from runtime management:
 
 - public posts
 - drafts, scheduled posts, and archived posts
@@ -18,7 +18,7 @@ Use the CMS for content that benefits from runtime management:
 - API and CLI publishing
 - imports, exports, and backups
 
-CMS content is stored in D1. Markdown remains the authoring format, and rendered HTML is cached for public pages.
+Blog content is stored in D1. Markdown remains the authoring format, and rendered HTML is cached for public pages.
 
 ## `/docs`: Git Markdown/MDX
 
@@ -35,9 +35,9 @@ Docs content lives under `apps/web/content/docs`. It is reviewed, versioned, and
 ## Boundary
 
 ```txt
-/blog   = CMS content
+/blog   = blog content
 /docs   = Git Markdown/MDX docs
-/admin  = CMS admin only
+/admin  = admin UI only
 RSS     = blog posts only
 sitemap = public pages + blog + docs + tags
 ```

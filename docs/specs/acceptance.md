@@ -21,7 +21,7 @@ This document records the current evidence for the PRD acceptance scope. Dates a
 
 ## Verification Scope
 
-- Verify `/`, `/blog`, `/tags`, `/archive`, `/about`, `/docs/api`, `/rss.xml`, `/feed.xml`, `/sitemap.xml`, `/sitemap-pages.xml`, `/sitemap-posts.xml`, `/robots.txt`, `/openapi.json`, and `/reset-password` on `blog.01mvp.com`.
+- Verify `/`, `/blog`, `/tags`, `/about`, `/docs/api`, `/rss.xml`, `/feed.xml`, `/sitemap.xml`, `/sitemap-pages.xml`, `/sitemap-posts.xml`, `/robots.txt`, `/openapi.json`, and `/reset-password` on `blog.01mvp.com`.
 - Verify blog post pages on `blog.01mvp.com` at desktop and mobile widths with no console errors and no horizontal overflow.
 - Verify scheduled posts stay hidden from the public API until publish time.
 - Verify top-level comments and one reply level return HTTP 201, while a reply to a reply returns HTTP 400.

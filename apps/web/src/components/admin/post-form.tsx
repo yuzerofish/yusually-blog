@@ -3,9 +3,18 @@ import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { CalendarClockIcon } from "lucide-react";
-import { lazy, Suspense, useEffect, useMemo, useState, type ComponentProps } from "react";
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+  type ComponentProps,
+} from "react";
 
 import {
+  adminInputClassName,
   adminPanelClassName,
   adminSelectClassName,
   adminTextareaClassName,
@@ -41,6 +50,7 @@ export function PostForm({
 }: PostFormProps) {
   const [assetRows, setAssetRows] = useState<Asset[]>([]);
   const [coverImage, setCoverImage] = useState(editingPost?.coverImage ?? "");
+  const mounted = useClientMounted();
   const previewHtml = useMemo(() => renderMarkdownToHtml(markdown), [markdown]);
   const imageAssets = useMemo(
     () => assetRows.filter((asset) => asset.contentType.startsWith("image/")),
@@ -115,12 +125,13 @@ export function PostForm({
           </div>
           <div className="grid gap-2">
             <Label htmlFor="editor-cover-image">{m.admin_editor_cover_image()}</Label>
-            <Input
+            <input
               id="editor-cover-image"
               name="coverImage"
               value={coverImage}
               onChange={(event) => setCoverImage(event.currentTarget.value)}
               placeholder="/uploads/cover.jpg"
+              className={adminInputClassName}
             />
           </div>
           {imageAssets.length ? (
@@ -236,7 +247,11 @@ export function PostForm({
           ) : null}
         </div>
 
-        {editorMode === "editor" ? (
+        {editorMode === "editor" && !mounted ? (
+          <div className="h-96 animate-pulse rounded-md border border-border bg-muted/55" />
+        ) : null}
+
+        {editorMode === "editor" && mounted ? (
           <Suspense fallback={<div className="h-64 animate-pulse rounded bg-muted" />}>
             <MdxEditorSurface value={markdown} onChange={onMarkdownChange} />
           </Suspense>
@@ -269,4 +284,12 @@ function toDatetimeLocal(value: string) {
   }
 
   return new Date(date.getTime() - date.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
+}
+
+function useClientMounted() {
+  return useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false,
+  );
 }

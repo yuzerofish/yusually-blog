@@ -43,8 +43,8 @@ catalog:
   class-variance-authority: ^0.7.1
   clsx: ^2.1.1
   date-fns: ^4.2.1
-  drizzle-kit: rc
-  drizzle-orm: rc
+  drizzle-kit: ^0.31.10
+  drizzle-orm: ^0.45.2
   eslint-plugin-react-hooks: ^7.1.1
   fumadocs-core: ^16.9.1
   fumadocs-mdx: ^15.0.8

@@ -17,7 +17,10 @@ export const docsServerLoader = createServerFn({ method: "GET" })
       throw notFound();
     }
 
-    const { source } = await import("#/lib/source");
+    const [{ source }, { getD1SiteSettings }] = await Promise.all([
+      import("#/lib/source"),
+      import("./cms-d1"),
+    ]);
     const page = source.getPage(data.slugs, locale);
 
     if (!page) {
@@ -29,5 +32,6 @@ export const docsServerLoader = createServerFn({ method: "GET" })
       path: page.path,
       slugs: page.slugs,
       pageTree: await source.serializePageTree(source.getPageTree(locale)),
+      siteSettings: await getD1SiteSettings(locale),
     };
   });

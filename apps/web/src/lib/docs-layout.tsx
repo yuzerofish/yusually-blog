@@ -1,35 +1,24 @@
+import { cn } from "@repo/ui/lib/utils";
+import FumadocsLink from "fumadocs-core/link";
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
+import type { ComponentProps } from "react";
 
-import { getDocsUrl, type DocsLocale } from "#/lib/docs-i18n";
+import { siteBrandLinkClassName, SiteBrandText } from "#/components/site-brand";
 
-export function getDocsLayoutOptions(
-  locale: DocsLocale = "en",
-  slugs: string[] = [],
-): BaseLayoutProps {
+export function getDocsLayoutOptions(siteTitle = "01mvp-blog-starter"): BaseLayoutProps {
   return {
     nav: {
-      title: "01mvp-blog-starter",
-      url: getDocsUrl([], locale),
+      title: ({ className, href = "/", ...props }: ComponentProps<"a">) => (
+        <FumadocsLink
+          href={href}
+          {...props}
+          className={cn(siteBrandLinkClassName, "inline-flex max-w-full items-center", className)}
+        >
+          <SiteBrandText name={siteTitle} />
+        </FumadocsLink>
+      ),
+      url: "/",
     },
-    links: [
-      {
-        text: locale === "en" ? "中文" : "English",
-        url: getDocsUrl(slugs, locale === "en" ? "zh" : "en"),
-      },
-      {
-        text: "Blog",
-        url: "/blog",
-        active: "nested-url",
-      },
-      {
-        text: "OpenAPI",
-        url: "/openapi.json",
-      },
-      {
-        text: "GitHub",
-        url: "https://github.com/01mvp/blog-starter",
-        external: true,
-      },
-    ],
+    githubUrl: "https://github.com/01mvp/blog-starter",
   };
 }

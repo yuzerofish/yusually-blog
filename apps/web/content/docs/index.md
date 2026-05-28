@@ -1,16 +1,16 @@
 ---
 title: 01mvp-blog-starter
-description: A Cloudflare-native personal blog CMS with a Git-managed documentation system.
+description: A Cloudflare-native personal blog with a Git-managed documentation system.
 ---
 
-01mvp-blog-starter is a Cloudflare-native personal blog CMS and AI initialization workflow for `github.com/01mvp/blog-starter`.
+01mvp-blog-starter is a Cloudflare-native personal blog and AI initialization workflow for `github.com/01mvp/blog-starter`.
 
 It ships with two content surfaces by default:
 
-- `/blog` is powered by the CMS. It is for public posts, visual admin writing, comments, RSS, CLI publishing, imports, exports, and backups.
+- `/blog` is powered by the publishing backend. It is for public posts, visual admin writing, comments, RSS, CLI publishing, imports, exports, and backups.
 - `/docs` is powered by Fumadocs and GitHub Markdown/MDX. It is for product docs, developer docs, API guides, and template usage notes.
 
-中文简介：01mvp-blog-starter 是一个基于 Cloudflare Workers、D1、R2 的个人永久博客 CMS。默认同时提供 CMS 博客系统和 Git 管理的 Fumadocs 文档系统。
+中文简介：01mvp-blog-starter 是一个基于 Cloudflare Workers、D1、R2 的个人长期博客系统。默认同时提供博客发布系统和 Git 管理的 Fumadocs 文档系统。
 
 ## Stack
 
@@ -22,17 +22,17 @@ It ships with two content surfaces by default:
 - Cloudflare Workers runtime through `@cloudflare/vite-plugin`
 - Cloudflare D1 for posts, comments, settings, users, sessions, and API tokens
 - Cloudflare R2 for assets, imports, exports, and backups
-- `blogcms` CLI for API and Skill automation
+- CLI for API and Skill automation
 
 ## Workspace
 
 ```txt
-apps/web                 TanStack Start app, admin CMS, public site, docs, API routes
-apps/cli                 blogcms CLI
+apps/web                 TanStack Start app, admin UI, public site, docs, API routes
+apps/cli                 command-line publishing tool
 packages/core            content types, demo data, Markdown and i18n helpers
 packages/db              Drizzle schema and D1 migrations
 packages/ui              shared UI primitives
-skills/cloud-blog-cms    AI initialization Skill
+skills                   AI initialization Skill
 apps/web/content/docs    public Fumadocs source, mirrored at docs/site
 docs/specs               project specifications and implementation records
 ```
@@ -73,17 +73,12 @@ The build compiles Paraglide output, builds TanStack Start, and writes the Cloud
 Production site:
 
 ```sh
-blogcms deploy --target main
+pnpm deploy:web
 ```
 
 ## CLI
 
-```sh
-BLOGCMS_SITE_URL=https://blog.01mvp.com pnpm --filter @repo/cli exec node bin/blogcms.mjs login --email <email> --password <password>
-BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs site get
-BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs push "$PWD/skills/cloud-blog-cms/examples/first-post.json"
-BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs export
-```
+Use the CLI in `apps/cli` for login, site inspection, post publishing, and export workflows. Set the site URL and API token in your shell before running authenticated commands.
 
 ## License
 

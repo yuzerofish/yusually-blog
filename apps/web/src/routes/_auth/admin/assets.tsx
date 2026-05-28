@@ -6,7 +6,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CheckIcon, CopyIcon, FileTextIcon, Trash2Icon, UploadIcon } from "lucide-react";
 import { useEffect, useState, type ComponentProps, type DragEventHandler } from "react";
 
-import { AdminPageHeader, AdminPanel, adminPanelClassName } from "#/components/admin/admin-ui";
+import {
+  AdminPageHeader,
+  AdminPanel,
+  adminInputClassName,
+  adminPanelClassName,
+} from "#/components/admin/admin-ui";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/_auth/admin/assets")({
@@ -166,11 +171,12 @@ function AdminAssetsPage() {
       <AdminPanel>
         <div className="mb-4 grid gap-2 md:max-w-xs">
           <Label htmlFor="asset-search">{m.admin_assets_search()}</Label>
-          <Input
+          <input
             id="asset-search"
             value={query}
             onChange={(event) => setQuery(event.currentTarget.value)}
             placeholder={m.admin_assets_search_placeholder()}
+            className={adminInputClassName}
           />
         </div>
 

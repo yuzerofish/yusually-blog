@@ -5,7 +5,7 @@ description: 通过后台、CLI、API 或 Git 文档发布内容。
 
 01mvp-blog-starter 支持多种发布路径。
 
-## CMS 文章
+## 博客文章
 
 需要正常写作工作流时，使用后台：
 
@@ -15,15 +15,11 @@ description: 通过后台、CLI、API 或 Git 文档发布内容。
 - 发布或定时发布文章
 - 审核评论
 
-发布后的文章会出现在 `/blog`、feeds、归档页、标签页和 sitemap 中。
+发布后的文章会出现在 `/blog`、feeds、标签页和 sitemap 中。
 
 ## CLI 发布
 
-需要本地或自动化发布时，使用 `blogcms`：
-
-```sh
-BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs push ./post.md
-```
+需要本地或自动化发布时，使用 `apps/cli` 里的 CLI。运行需要鉴权的命令前，先在 shell 中配置站点地址和 API Token。
 
 CLI 使用和后台相同的鉴权 HTTP API。
 

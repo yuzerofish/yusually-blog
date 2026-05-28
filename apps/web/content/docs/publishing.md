@@ -5,7 +5,7 @@ description: Publish through the admin UI, CLI, API, or Git-managed docs.
 
 01mvp-blog-starter supports several publishing paths.
 
-## CMS Posts
+## Blog Posts
 
 Use the admin UI when you want a normal writing workflow:
 
@@ -15,15 +15,11 @@ Use the admin UI when you want a normal writing workflow:
 - publish or schedule posts
 - moderate comments
 
-Published posts appear under `/blog`, feeds, archives, tag pages, and the sitemap.
+Published posts appear under `/blog`, feeds, tag pages, and the sitemap.
 
 ## CLI Publishing
 
-Use `blogcms` when you want local or automated publishing:
-
-```sh
-BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=<token> pnpm --filter @repo/cli exec node bin/blogcms.mjs push ./post.md
-```
+Use the CLI in `apps/cli` when you want local or automated publishing. Configure the site URL and API token in your shell before running authenticated commands.
 
 The CLI uses the same authenticated HTTP API as the admin UI.
 

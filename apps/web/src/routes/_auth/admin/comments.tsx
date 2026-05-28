@@ -1,12 +1,16 @@
 import { type Comment, type Post } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
-import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { CheckIcon, SearchIcon, ShieldAlertIcon, Trash2Icon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-import { AdminPageHeader, AdminPanel, adminSelectClassName } from "#/components/admin/admin-ui";
+import {
+  AdminPageHeader,
+  AdminPanel,
+  adminInputClassName,
+  adminSelectClassName,
+} from "#/components/admin/admin-ui";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
@@ -207,11 +211,11 @@ function AdminCommentsPage() {
             <Label htmlFor="comment-search">{m.admin_comments_search()}</Label>
             <div className="relative">
               <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
+              <input
                 id="comment-search"
                 value={query}
                 onChange={(event) => setQuery(event.currentTarget.value)}
-                className="pl-9"
+                className={`${adminInputClassName} pl-9`}
                 placeholder={m.admin_comments_search_placeholder()}
               />
             </div>

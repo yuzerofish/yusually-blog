@@ -27,7 +27,7 @@ import {
 } from "@mdxeditor/editor";
 
 import "@mdxeditor/editor/style.css";
-import { useMemo } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 
 type MdxEditorSurfaceProps = {
   readonly value: string;
@@ -35,6 +35,7 @@ type MdxEditorSurfaceProps = {
 };
 
 export function MdxEditorSurface({ value, onChange }: MdxEditorSurfaceProps) {
+  const mounted = useClientMounted();
   const plugins = useMemo(
     () => [
       headingsPlugin(),
@@ -101,6 +102,10 @@ export function MdxEditorSurface({ value, onChange }: MdxEditorSurfaceProps) {
     [],
   );
 
+  if (!mounted) {
+    return <div className="h-96 animate-pulse rounded-md border border-border bg-muted/55" />;
+  }
+
   return (
     <div className="overflow-hidden rounded-md border border-border bg-background shadow-xs">
       <MDXEditor
@@ -111,5 +116,13 @@ export function MdxEditorSurface({ value, onChange }: MdxEditorSurfaceProps) {
         contentEditableClassName="prose prose-neutral prose-a:text-link dark:prose-invert min-h-[280px] max-w-none px-4 py-3 leading-7"
       />
     </div>
+  );
+}
+
+function useClientMounted() {
+  return useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false,
   );
 }
