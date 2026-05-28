@@ -12,7 +12,7 @@ import { z } from "zod";
 export const CreateCommentSchema = z.object({
   postSlug: z.string().min(1).max(200),
   body: z.string().min(2).max(4000),
-  parentId: z.string().optional(),
+  parentId: z.string().nullish(),
   honeypot: z.string().optional().default(""),
   turnstileToken: z.preprocess(
     (value) => (value === null ? undefined : value),

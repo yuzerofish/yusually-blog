@@ -71,7 +71,8 @@ export function CommentForm({
     if (state === "submitting") return;
 
     setState("submitting");
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     const turnstileToken = turnstileSiteKey ? formData.get("cf-turnstile-response") : undefined;
 
     const response = await fetch("/api/comments", {
@@ -80,7 +81,7 @@ export function CommentForm({
       body: JSON.stringify({
         postSlug,
         body: formData.get("body"),
-        parentId,
+        ...(parentId ? { parentId } : {}),
         honeypot: formData.get("company"),
         turnstileToken,
       }),
@@ -88,7 +89,7 @@ export function CommentForm({
 
     setState(response.ok ? "success" : "error");
     if (response.ok) {
-      event.currentTarget.reset();
+      form.reset();
       onCancelReply?.();
     }
   };
@@ -98,7 +99,8 @@ export function CommentForm({
     if (authState === "submitting") return;
 
     setAuthState("submitting");
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     const response = await fetch(`/api/comment-auth/${authMode}`, {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -115,7 +117,7 @@ export function CommentForm({
 
     if (payload.verificationRequired) {
       setAuthState("verification");
-      event.currentTarget.reset();
+      form.reset();
       return;
     }
 
@@ -126,7 +128,7 @@ export function CommentForm({
 
     setUser(payload.data);
     setAuthState("idle");
-    event.currentTarget.reset();
+    form.reset();
   };
 
   const handleLogout = async () => {
