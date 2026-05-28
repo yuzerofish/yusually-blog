@@ -602,7 +602,7 @@ function getHomeCopy(locale: SupportedLocale) {
   if (locale === "zh") {
     return {
       eyebrow: "个人博客 CMS · Cloudflare 托管 · AI 一键部署",
-      heroTitle: "把个人博客部署到真正属于你的站点。",
+      heroTitle: "搭建你的永久精神家园",
       heroBody:
         "01mvp-blog-starter 是一套 Cloudflare 原生的个人博客 CMS。后台、评论、图床、RSS 开箱即用，配合 AI Init Skill 可以从初始化到上线自动完成。",
       primaryCta: "查看示例内容",
@@ -650,15 +650,14 @@ function getHomeCopy(locale: SupportedLocale) {
         },
         {
           icon: Share2Icon,
-          title: "博客是原点，平台是出口",
-          description:
-            "在博客写完，用 multipost 等工具分发到各平台，或让 AI 按平台风格改写后再发。",
+          title: "一次写作，多平台同步",
+          description: "在博客写完，用 multipost 等工具分发到各平台，文章永不失联",
         },
       ] as { title: string; description: string; icon: LucideIcon }[],
 
       // ── Core Features ──
       featuresEyebrow: "核心功能",
-      featuresTitle: "完整动态 CMS，不是静态博客。",
+      featuresTitle: "全功能站点，不止步于静态页面。",
       featuresBody:
         "真正的数据库、真正的后台，评论和媒体管理全部内置，运行在 Cloudflare 免费额度上。",
       features: [
@@ -757,8 +756,8 @@ function getHomeCopy(locale: SupportedLocale) {
 
       // ── Theme ──
       themeEyebrow: "内置风格",
-      themeTitle: "四套预设，随时用 AI 改造。",
-      themeBody: "默认黑白极简。其余三套一键切换，或用 AI 工具改成任意风格。",
+      themeTitle: "四套预设主题，随时用 AI 改造。",
+      themeBody: "默认黑白极简。风格一键切换，或用 AI 工具改成任意风格。",
       themePreviews: [
         {
           themePreset: "maker",
@@ -792,7 +791,7 @@ function getHomeCopy(locale: SupportedLocale) {
   // ── English ──
   return {
     eyebrow: "Personal blog CMS · Cloudflare-hosted · AI deployment",
-    heroTitle: "Deploy your blog to a site you actually own.",
+    heroTitle: "Build your permanent home on the internet",
     heroBody:
       "01mvp-blog-starter is a Cloudflare-native personal blog CMS. Writing dashboard, comments, image hosting, and RSS ship out of the box, and the AI Init Skill can take it from setup to live deploy.",
     primaryCta: "View sample content",

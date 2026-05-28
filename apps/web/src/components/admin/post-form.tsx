@@ -24,6 +24,7 @@ import {
   type ComponentProps,
   type DragEventHandler,
 } from "react";
+import { toast } from "sonner";
 
 import {
   adminPanelClassName,
@@ -69,6 +70,7 @@ export function PostForm({
   const [coverUploadState, setCoverUploadState] = useState<"idle" | "uploading" | "error">("idle");
   const [isCoverDragging, setIsCoverDragging] = useState(false);
   const mounted = useClientMounted();
+  const saving = editorState === "saving";
   const previewHtml = useMemo(() => renderMarkdownToHtml(markdown), [markdown]);
   const imageAssets = useMemo(
     () => assetRows.filter((asset) => asset.contentType.startsWith("image/")),
@@ -105,6 +107,7 @@ export function PostForm({
   const uploadCoverFile = async (file: File | undefined) => {
     if (!file || !file.type.startsWith("image/")) {
       setCoverUploadState("error");
+      toast.error(copy.coverInvalid);
       return;
     }
 
@@ -124,6 +127,7 @@ export function PostForm({
 
     if (!response?.ok) {
       setCoverUploadState("error");
+      toast.error(m.admin_assets_error());
       return;
     }
 
@@ -131,6 +135,7 @@ export function PostForm({
 
     if (!payload?.data?.url) {
       setCoverUploadState("error");
+      toast.error(m.admin_assets_error());
       return;
     }
 
@@ -144,6 +149,7 @@ export function PostForm({
       coverFileInputRef.current.value = "";
     }
     setCoverUploadState("idle");
+    toast.success(copy.coverUploaded);
   };
 
   const handleCoverDragOver: DragEventHandler<HTMLDivElement> = (event) => {
@@ -189,14 +195,14 @@ export function PostForm({
           </div>
         </div>
         <div className="flex flex-wrap gap-2 xl:justify-end">
-          <Button type="submit" name="status" value="draft" variant="outline">
+          <Button type="submit" name="status" value="draft" variant="outline" disabled={saving}>
             {m.admin_save_draft()}
           </Button>
-          <Button type="submit" name="status" value="scheduled" variant="outline">
+          <Button type="submit" name="status" value="scheduled" variant="outline" disabled={saving}>
             <CalendarClockIcon />
             {m.admin_schedule_post()}
           </Button>
-          <Button type="submit" name="status" value="published">
+          <Button type="submit" name="status" value="published" disabled={saving}>
             {m.admin_publish_post()}
           </Button>
         </div>
@@ -379,8 +385,11 @@ export function PostForm({
             </Button>
           </div>
           <div className="min-h-5 text-sm">
-            {editorState === "saved" ? (
-              <p className="text-success">{m.admin_editor_saved()}</p>
+            {editorState === "saving" ? (
+              <p className="inline-flex items-center gap-2 text-muted-foreground">
+                <Loader2Icon className="size-4 animate-spin" />
+                {copy.saving}
+              </p>
             ) : null}
             {editorState === "error" ? (
               <p className="text-destructive">{m.admin_editor_error()}</p>
@@ -449,14 +458,20 @@ function getPostFormCopy(locale: "en" | "zh") {
   if (locale === "zh") {
     return {
       clearCover: "清空封面",
+      coverInvalid: "请选择图片文件。",
+      coverUploaded: "封面已上传",
       emptyCover: "拖入一张图片，或从本机选择图片作为封面。",
+      saving: "正在保存...",
       uploadCover: "上传封面",
     };
   }
 
   return {
     clearCover: "Clear cover",
+    coverInvalid: "Choose an image file.",
+    coverUploaded: "Cover uploaded",
     emptyCover: "Drop an image here, or choose one from your device.",
+    saving: "Saving...",
     uploadCover: "Upload cover",
   };
 }

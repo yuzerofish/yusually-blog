@@ -4,6 +4,7 @@ import { Label } from "@repo/ui/components/label";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { CheckIcon, SearchIcon, ShieldAlertIcon, Trash2Icon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import {
   AdminPageHeader,
@@ -11,6 +12,7 @@ import {
   adminInputClassName,
   adminSelectClassName,
 } from "#/components/admin/admin-ui";
+import { getResponseErrorMessage } from "#/lib/admin-notifications";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
@@ -24,6 +26,7 @@ const commentStatuses: Array<Comment["status"]> = ["pending", "approved", "spam"
 
 function AdminCommentsPage() {
   const locale = getCurrentLocale();
+  const copy = getCommentsActionCopy(locale);
   const [rows, setRows] = useState<Comment[]>([]);
   const [postRows, setPostRows] = useState<Post[]>([]);
   const [statusFilter, setStatusFilter] = useState<Comment["status"] | "all">("pending");
@@ -75,10 +78,23 @@ function AdminCommentsPage() {
     [rows],
   );
 
-  const moderate = async (id: string, action: ModerationAction) => {
-    const response = await fetch(`/api/comments/${id}/${action}`, { method: "POST" });
+  const moderate = async (
+    id: string,
+    action: ModerationAction,
+    options: { silent?: boolean } = {},
+  ) => {
+    const response = await fetch(`/api/comments/${id}/${action}`, { method: "POST" }).catch(
+      () => null,
+    );
 
-    if (!response.ok) {
+    if (!response?.ok) {
+      if (!options.silent) {
+        toast.error(copy.actionError(action), {
+          description: response
+            ? await getResponseErrorMessage(response, copy.actionError(action))
+            : copy.networkError,
+        });
+      }
       return false;
     }
 
@@ -87,6 +103,9 @@ function AdminCommentsPage() {
     };
 
     setRows((current) => current.map((comment) => (comment.id === id ? payload.data : comment)));
+    if (!options.silent) {
+      toast.success(copy.actionSuccess(action));
+    }
     return true;
   };
 
@@ -129,12 +148,21 @@ function AdminCommentsPage() {
 
   const applyBatchAction = async (action: ModerationAction) => {
     const targetIds = selectedCommentIds.filter((id) => visibleCommentIdSet.has(id));
+    let successCount = 0;
 
     for (const id of targetIds) {
-      await moderate(id, action);
+      if (await moderate(id, action, { silent: true })) {
+        successCount += 1;
+      }
     }
 
     setSelectedCommentIds((current) => current.filter((id) => !targetIds.includes(id)));
+    if (successCount === targetIds.length) {
+      toast.success(copy.batchSuccess(action, successCount));
+      return;
+    }
+
+    toast.error(copy.batchPartial(action, successCount, targetIds.length));
   };
 
   return (
@@ -362,4 +390,44 @@ function commentStatusLabel(status: Comment["status"]) {
     case "spam":
       return m.admin_comments_status_spam();
   }
+}
+
+function getCommentsActionCopy(locale: "en" | "zh") {
+  if (locale === "zh") {
+    return {
+      actionError: (action: ModerationAction) =>
+        action === "approve" ? "评论通过失败" : action === "spam" ? "评论标记失败" : "评论删除失败",
+      actionSuccess: (action: ModerationAction) =>
+        action === "approve" ? "评论已通过" : action === "spam" ? "评论已标记为垃圾" : "评论已删除",
+      batchPartial: (action: ModerationAction, successCount: number, total: number) =>
+        `${successCount}/${total} 条评论处理成功：${action === "approve" ? "通过" : action === "spam" ? "标记垃圾" : "删除"}`,
+      batchSuccess: (action: ModerationAction, count: number) =>
+        `${count} 条评论已${action === "approve" ? "通过" : action === "spam" ? "标记为垃圾" : "删除"}`,
+      networkError: "网络异常，请稍后再试。",
+    };
+  }
+
+  return {
+    actionError: (action: ModerationAction) =>
+      action === "approve"
+        ? "Comment could not be approved"
+        : action === "spam"
+          ? "Comment could not be marked as spam"
+          : "Comment could not be deleted",
+    actionSuccess: (action: ModerationAction) =>
+      action === "approve"
+        ? "Comment approved"
+        : action === "spam"
+          ? "Comment marked as spam"
+          : "Comment deleted",
+    batchPartial: (action: ModerationAction, successCount: number, total: number) =>
+      `${successCount}/${total} comments updated: ${
+        action === "approve" ? "approve" : action === "spam" ? "mark spam" : "delete"
+      }`,
+    batchSuccess: (action: ModerationAction, count: number) =>
+      `${count} comments ${
+        action === "approve" ? "approved" : action === "spam" ? "marked as spam" : "deleted"
+      }`,
+    networkError: "Network error. Try again in a moment.",
+  };
 }

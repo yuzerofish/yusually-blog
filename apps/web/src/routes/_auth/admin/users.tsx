@@ -11,6 +11,7 @@ import {
   VolumeXIcon,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import {
   AdminPageHeader,
@@ -18,6 +19,7 @@ import {
   adminInputClassName,
   adminSelectClassName,
 } from "#/components/admin/admin-ui";
+import { getResponseErrorMessage } from "#/lib/admin-notifications";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
@@ -30,6 +32,7 @@ type CommentStatusFilter = CommentUserStatus | "all";
 
 function AdminUsersPage() {
   const locale = getCurrentLocale();
+  const copy = getUsersActionCopy(locale);
   const [rows, setRows] = useState<CmsUser[]>([]);
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");
   const [statusFilter, setStatusFilter] = useState<CommentStatusFilter>("all");
@@ -87,12 +90,17 @@ function AdminUsersPage() {
       method: "PATCH",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ commentStatus }),
-    });
+    }).catch(() => null);
 
     setPendingUserId(null);
 
-    if (!response.ok) {
+    if (!response?.ok) {
       setActionStatus("error");
+      toast.error(copy.updateError, {
+        description: response
+          ? await getResponseErrorMessage(response, copy.updateError)
+          : copy.networkError,
+      });
       return;
     }
 
@@ -101,6 +109,7 @@ function AdminUsersPage() {
       current.map((currentUser) => (currentUser.id === user.id ? payload.data : currentUser)),
     );
     setActionStatus("saved");
+    toast.success(copy.updateSuccess(payload.data.name, payload.data.commentStatus));
   };
 
   return (
@@ -333,6 +342,24 @@ function providerLabel(providers: CmsUser["providers"]) {
   });
 
   return labels.join(" · ");
+}
+
+function getUsersActionCopy(locale: "en" | "zh") {
+  if (locale === "zh") {
+    return {
+      networkError: "网络异常，请稍后再试。",
+      updateError: "用户状态更新失败",
+      updateSuccess: (name: string, status: CommentUserStatus) =>
+        status === "muted" ? `“${name}”已禁言` : `“${name}”已恢复评论`,
+    };
+  }
+
+  return {
+    networkError: "Network error. Try again in a moment.",
+    updateError: "User status could not be updated",
+    updateSuccess: (name: string, status: CommentUserStatus) =>
+      status === "muted" ? `"${name}" muted` : `"${name}" can comment again`,
+  };
 }
 
 function formatDate(value: string, locale: ReturnType<typeof getCurrentLocale>) {

@@ -5,6 +5,7 @@ import { Label } from "@repo/ui/components/label";
 import { createFileRoute } from "@tanstack/react-router";
 import { PencilIcon, PlusIcon, SaveIcon, Trash2Icon, XIcon } from "lucide-react";
 import { useEffect, useMemo, useState, type ComponentProps } from "react";
+import { toast } from "sonner";
 
 import {
   AdminPageHeader,
@@ -12,6 +13,7 @@ import {
   AdminTableFrame,
   adminTextareaClassName,
 } from "#/components/admin/admin-ui";
+import { getResponseErrorMessage } from "#/lib/admin-notifications";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
@@ -23,6 +25,7 @@ type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
 
 function AdminSeriesPage() {
   const locale = getCurrentLocale();
+  const copy = getSeriesActionCopy(locale);
   const [rows, setRows] = useState<Series[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "saved" | "error">("idle");
@@ -68,10 +71,15 @@ function AdminSeriesPage() {
           locale,
         }),
       },
-    );
+    ).catch(() => null);
 
-    if (!response.ok) {
+    if (!response?.ok) {
       setStatus("error");
+      toast.error(copy.saveError, {
+        description: response
+          ? await getResponseErrorMessage(response, copy.saveError)
+          : copy.networkError,
+      });
       return;
     }
 
@@ -88,19 +96,28 @@ function AdminSeriesPage() {
     });
     setEditingId(payload.data.id);
     setStatus("saved");
+    toast.success(copy.saveSuccess(payload.data.name));
   };
 
   const deleteSeries = async (series: Series) => {
-    const response = await fetch(`/api/series/${series.id}?lang=${locale}`, { method: "DELETE" });
+    const response = await fetch(`/api/series/${series.id}?lang=${locale}`, {
+      method: "DELETE",
+    }).catch(() => null);
 
-    if (!response.ok) {
+    if (!response?.ok) {
       setStatus("error");
+      toast.error(copy.deleteError, {
+        description: response
+          ? await getResponseErrorMessage(response, copy.deleteError)
+          : copy.networkError,
+      });
       return;
     }
 
     setRows((current) => current.filter((item) => item.id !== series.id));
     setEditingId((current) => (current === series.id ? null : current));
     setStatus("saved");
+    toast.success(copy.deleteSuccess(series.name));
   };
 
   return (
@@ -242,4 +259,24 @@ function AdminSeriesPage() {
 
 function sortSeries(a: Series, b: Series) {
   return a.sortOrder - b.sortOrder || a.name.localeCompare(b.name);
+}
+
+function getSeriesActionCopy(locale: "en" | "zh") {
+  if (locale === "zh") {
+    return {
+      deleteError: "专栏删除失败",
+      deleteSuccess: (name: string) => `“${name}”已删除`,
+      networkError: "网络异常，请稍后再试。",
+      saveError: "专栏保存失败",
+      saveSuccess: (name: string) => `“${name}”已保存`,
+    };
+  }
+
+  return {
+    deleteError: "Series could not be deleted",
+    deleteSuccess: (name: string) => `"${name}" deleted`,
+    networkError: "Network error. Try again in a moment.",
+    saveError: "Series could not be saved",
+    saveSuccess: (name: string) => `"${name}" saved`,
+  };
 }

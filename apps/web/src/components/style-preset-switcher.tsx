@@ -55,9 +55,11 @@ export const stylePresetOptions: StylePresetOption[] = [
 export function StylePresetCycleButton({
   locale,
   nextPreset,
+  onSelect,
 }: {
   readonly locale: SupportedLocale;
   readonly nextPreset: StylePresetOption;
+  readonly onSelect?: (preset: StylePresetOption) => void;
 }) {
   const label = getStylePresetSwitchLabel(locale, nextPreset);
 
@@ -68,6 +70,7 @@ export function StylePresetCycleButton({
       size="icon-sm"
       aria-label={label}
       data-style-preset-switcher
+      onClick={() => onSelect?.(nextPreset)}
     >
       <PaletteIcon className="size-4" />
       <span data-style-preset-label className="sr-only">

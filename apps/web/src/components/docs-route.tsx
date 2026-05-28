@@ -7,7 +7,7 @@ import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/layouts/docs/page";
 import { Suspense, useEffect } from "react";
 
-import { useMDXComponents } from "#/components/mdx";
+import { DocsMDXProvider, useMDXComponents } from "#/components/mdx";
 import { resolveStylePreset, StylePresetRuntimeScript } from "#/components/style-preset-switcher";
 import { getDocsI18nProvider, getDocsUrl } from "#/lib/docs-i18n";
 import { getDocsLayoutOptions } from "#/lib/docs-layout";
@@ -50,27 +50,29 @@ export function DocsRouteView({ data }: { readonly data: DocsRouteData }) {
       data-layout-preset={preset.layoutPreset}
       className="min-h-svh bg-background text-foreground"
     >
-      <I18nProvider
-        {...getDocsI18nProvider(data.locale)}
-        onLocaleChange={(locale) => {
-          const nextLocale = locale === "zh" ? "zh" : "en";
+      <DocsMDXProvider locale={data.locale} slugs={data.slugs}>
+        <I18nProvider
+          {...getDocsI18nProvider(data.locale)}
+          onLocaleChange={(locale) => {
+            const nextLocale = locale === "zh" ? "zh" : "en";
 
-          void Promise.resolve(setCurrentLocale(nextLocale, { reload: false })).finally(() => {
-            window.location.href = getDocsUrl(data.slugs, nextLocale);
-          });
-        }}
-      >
-        <DocsLayout
-          {...getDocsLayoutOptions({
-            locale: data.locale,
-            siteSettings: data.siteSettings,
-            slugs: data.slugs,
-          })}
-          tree={loaderData.pageTree}
+            void Promise.resolve(setCurrentLocale(nextLocale, { reload: false })).finally(() => {
+              window.location.href = getDocsUrl(data.slugs, nextLocale);
+            });
+          }}
         >
-          <Suspense>{docsClientLoader.useContent(data.path)}</Suspense>
-        </DocsLayout>
-      </I18nProvider>
+          <DocsLayout
+            {...getDocsLayoutOptions({
+              locale: data.locale,
+              siteSettings: data.siteSettings,
+              slugs: data.slugs,
+            })}
+            tree={loaderData.pageTree}
+          >
+            <Suspense>{docsClientLoader.useContent(data.path)}</Suspense>
+          </DocsLayout>
+        </I18nProvider>
+      </DocsMDXProvider>
       <StylePresetRuntimeScript initialPreset={preset} locale={data.locale} />
     </div>
   );

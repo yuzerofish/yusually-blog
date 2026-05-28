@@ -3,7 +3,7 @@ import { getSiteSettingsForLocale, type SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Link, useLocation } from "@tanstack/react-router";
 import { Loader2Icon, SearchIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { LanguageToggle } from "#/components/language-toggle";
 import { siteBrandLinkClassName, SiteBrandText } from "#/components/site-brand";
@@ -27,7 +27,9 @@ export function SiteShell({
 }) {
   const locale = getCurrentLocale();
   const siteSettings = providedSiteSettings ?? getSiteSettingsForLocale(locale);
-  const preset = resolveStylePreset(siteSettings.themePreset, siteSettings.layoutPreset);
+  const settingsPreset = resolveStylePreset(siteSettings.themePreset, siteSettings.layoutPreset);
+  const [presetOverride, setPresetOverride] = useState<typeof settingsPreset | null>(null);
+  const preset = presetOverride ?? settingsPreset;
   const nextPreset = getNextStylePreset(preset);
   const searchLabel = locale === "zh" ? "搜索" : "Search";
   const navigation = siteSettings.navigation.length
@@ -105,7 +107,11 @@ export function SiteShell({
                 {link.label}
               </a>
             ))}
-            <StylePresetCycleButton locale={locale} nextPreset={nextPreset} />
+            <StylePresetCycleButton
+              locale={locale}
+              nextPreset={nextPreset}
+              onSelect={setPresetOverride}
+            />
           </div>
         </div>
       </footer>

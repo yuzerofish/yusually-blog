@@ -24,6 +24,7 @@ export function createBlogAuth(database: AuthDatabase, env: BlogAuthEnv) {
 
   return betterAuth({
     baseURL,
+    trustedOrigins: getTrustedOrigins(baseURL),
     secret: resolveSecret(env.secret, baseURL),
     telemetry: {
       enabled: false,
@@ -106,6 +107,14 @@ function resolveSecret(secret: string | undefined, baseURL: string | undefined) 
   }
 
   throw new Error("BETTER_AUTH_SECRET is required for Better Auth");
+}
+
+function getTrustedOrigins(baseURL: string | undefined) {
+  if (!isLocalBaseURL(baseURL)) {
+    return undefined;
+  }
+
+  return ["http://localhost:*", "http://127.0.0.1:*", "http://[::1]:*"];
 }
 
 function isLocalBaseURL(baseURL: string | undefined) {

@@ -6,6 +6,7 @@ import { Label } from "@repo/ui/components/label";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { BookOpenIcon, LoaderCircleIcon } from "lucide-react";
+import { useSyncExternalStore } from "react";
 import { toast } from "sonner";
 
 import { getCurrentLocale } from "#/lib/i18n";
@@ -20,6 +21,7 @@ function LoginForm() {
   const siteSettings = getSiteSettingsForLocale(getCurrentLocale());
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const isHydrated = useIsHydrated();
 
   const { mutate: emailLoginMutate, isPending } = useMutation({
     mutationFn: async (data: { email: string; password: string }) => {
@@ -45,7 +47,7 @@ function LoginForm() {
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isPending) return;
+    if (!isHydrated || isPending) return;
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
@@ -77,7 +79,7 @@ function LoginForm() {
                 name="email"
                 type="email"
                 placeholder="hello@example.com"
-                readOnly={isPending}
+                disabled={!isHydrated || isPending}
                 required
               />
             </div>
@@ -93,11 +95,16 @@ function LoginForm() {
                 name="password"
                 type="password"
                 placeholder={m.login_password_placeholder()}
-                readOnly={isPending}
+                disabled={!isHydrated || isPending}
                 required
               />
             </div>
-            <Button type="submit" className="mt-2 w-full" size="lg" disabled={isPending}>
+            <Button
+              type="submit"
+              className="mt-2 w-full"
+              size="lg"
+              disabled={!isHydrated || isPending}
+            >
               {isPending && <LoaderCircleIcon className="animate-spin" />}
               {isPending ? m.login_pending() : m.login()}
             </Button>
@@ -112,5 +119,13 @@ function LoginForm() {
         </Link>
       </div>
     </div>
+  );
+}
+
+function useIsHydrated() {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
   );
 }

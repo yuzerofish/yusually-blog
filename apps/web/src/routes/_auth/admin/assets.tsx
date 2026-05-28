@@ -23,9 +23,10 @@ import {
   useEffect,
   useRef,
   useState,
-  type ComponentProps,
   type DragEventHandler,
+  type ReactNode,
 } from "react";
+import { toast } from "sonner";
 
 import {
   AdminPageHeader,
@@ -35,6 +36,7 @@ import {
   adminPanelClassName,
   adminSelectClassName,
 } from "#/components/admin/admin-ui";
+import { getResponseErrorMessage } from "#/lib/admin-notifications";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
@@ -42,7 +44,6 @@ export const Route = createFileRoute("/_auth/admin/assets")({
   component: AdminAssetsPage,
 });
 
-type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
 type AssetKindFilter = "all" | "image" | "document" | "archive" | "other";
 type AssetSort = "newest" | "oldest" | "largest" | "smallest" | "name";
 type AssetViewMode = "list" | "grid";
@@ -81,7 +82,6 @@ function AdminAssetsPage() {
   const [kindFilter, setKindFilter] = useState<AssetKindFilter>("all");
   const [sortBy, setSortBy] = useState<AssetSort>("newest");
   const [viewMode, setViewMode] = useState<AssetViewMode>("list");
-  const [pendingFiles, setPendingFiles] = useState<File[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [statusMessage, setStatusMessage] = useState("");
   const [copiedAsset, setCopiedAsset] = useState<{
@@ -126,17 +126,14 @@ function AdminAssetsPage() {
     };
   }, []);
 
-  const handleSubmit: FormSubmitHandler = async (event) => {
-    event.preventDefault();
-    await uploadFiles(pendingFiles);
-  };
-
   const uploadFiles = async (files: File[]) => {
     const validFiles = files.filter(isUploadFile);
 
     if (!validFiles.length) {
       setStatusMessage(copy.emptySelection);
       setUploadState("error");
+      resetFileInput(fileInputRef);
+      toast.error(copy.emptySelection);
       return;
     }
 
@@ -151,10 +148,10 @@ function AdminAssetsPage() {
       const response = await fetch("/api/assets", {
         method: "POST",
         body: formData,
-      });
+      }).catch(() => null);
 
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => undefined)) as
+      if (!response?.ok) {
+        const payload = (await response?.json().catch(() => undefined)) as
           | (AssetListPayload & { error?: string })
           | undefined;
 
@@ -164,6 +161,8 @@ function AdminAssetsPage() {
 
         setStatusMessage(payload?.error ?? copy.uploadError);
         setUploadState("error");
+        resetFileInput(fileInputRef);
+        toast.error(copy.uploadError, { description: payload?.error ?? copy.networkError });
         return;
       }
 
@@ -172,20 +171,18 @@ function AdminAssetsPage() {
     }
 
     setRows((current) => [...uploadedAssets, ...current]);
-    setPendingFiles([]);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    resetFileInput(fileInputRef);
     setStatusMessage(copy.uploaded(validFiles.length));
     setUploadState("uploaded");
+    toast.success(copy.uploaded(validFiles.length));
   };
 
-  const handleDragOver: DragEventHandler<HTMLFormElement> = (event) => {
+  const handleDragOver: DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     setIsDragging(true);
   };
 
-  const handleDrop: DragEventHandler<HTMLFormElement> = (event) => {
+  const handleDrop: DragEventHandler<HTMLDivElement> = (event) => {
     event.preventDefault();
     setIsDragging(false);
 
@@ -200,8 +197,18 @@ function AdminAssetsPage() {
           ? asset.key
           : getAbsoluteAssetUrl(asset.url);
 
-    await navigator.clipboard.writeText(text).catch(() => undefined);
+    const copied = await navigator.clipboard.writeText(text).then(
+      () => true,
+      () => false,
+    );
+
+    if (!copied) {
+      toast.error(copy.copyError);
+      return;
+    }
+
     setCopiedAsset({ id: asset.id, type });
+    toast.success(copy.copySuccess(type));
   };
 
   const copySelected = async (type: Extract<CopyTarget, "selected-markdown" | "selected-url">) => {
@@ -214,14 +221,29 @@ function AdminAssetsPage() {
       )
       .join("\n");
 
-    await navigator.clipboard.writeText(text).catch(() => undefined);
+    const copied = await navigator.clipboard.writeText(text).then(
+      () => true,
+      () => false,
+    );
+
+    if (!copied) {
+      toast.error(copy.copyError);
+      return;
+    }
+
     setCopiedAsset({ id: "selected", type });
+    toast.success(copy.copySuccess(type));
   };
 
   const deleteAsset = async (asset: Asset) => {
-    const response = await fetch(`/api/assets/${asset.id}`, { method: "DELETE" });
+    const response = await fetch(`/api/assets/${asset.id}`, { method: "DELETE" }).catch(() => null);
 
-    if (!response.ok) {
+    if (!response?.ok) {
+      toast.error(copy.deleteError, {
+        description: response
+          ? await getResponseErrorMessage(response, copy.deleteError)
+          : copy.networkError,
+      });
       return;
     }
 
@@ -231,6 +253,7 @@ function AdminAssetsPage() {
       next.delete(asset.id);
       return next;
     });
+    toast.success(copy.deleteSuccess(asset.filename));
   };
 
   const deleteSelectedAssets = async () => {
@@ -243,15 +266,23 @@ function AdminAssetsPage() {
     const deletedIds = new Set<string>();
 
     for (const asset of selectedRows) {
-      const response = await fetch(`/api/assets/${asset.id}`, { method: "DELETE" });
+      const response = await fetch(`/api/assets/${asset.id}`, { method: "DELETE" }).catch(
+        () => null,
+      );
 
-      if (response.ok) {
+      if (response?.ok) {
         deletedIds.add(asset.id);
       }
     }
 
     setRows((current) => current.filter((asset) => !deletedIds.has(asset.id)));
     setSelectedIds(new Set());
+    if (deletedIds.size === selectedRows.length) {
+      toast.success(copy.deleteSelectedSuccess(deletedIds.size));
+      return;
+    }
+
+    toast.error(copy.deleteSelectedPartial(deletedIds.size, selectedRows.length));
   };
 
   const toggleSelected = (assetId: string) => {
@@ -294,8 +325,7 @@ function AdminAssetsPage() {
         }
       />
 
-      <form
-        onSubmit={handleSubmit}
+      <div
         onDragOver={handleDragOver}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
@@ -323,56 +353,34 @@ function AdminAssetsPage() {
           <div className="flex flex-wrap gap-2 lg:justify-end">
             <StatusBadge ready={storageReady} unknown={!storage} copy={copy} />
             <Button
-              type="submit"
-              disabled={
-                pendingFiles.length === 0 ||
-                uploadState === "uploading" ||
-                storageBucket?.status === "unavailable"
-              }
-            >
-              <UploadIcon />
-              {uploadState === "uploading" ? m.admin_assets_uploading() : copy.uploadSelected}
-            </Button>
-          </div>
-        </div>
-
-        <div className="mt-4 grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-          <div className="grid gap-2">
-            <Label htmlFor="asset-filename">{m.admin_assets_filename()}</Label>
-            <input
-              ref={fileInputRef}
-              id="asset-filename"
-              name="file"
-              type="file"
-              multiple
-              onChange={(event) =>
-                setPendingFiles(Array.from(event.currentTarget.files ?? []).filter(isUploadFile))
-              }
-              className={adminInputClassName}
-              suppressHydrationWarning
-            />
-          </div>
-          {pendingFiles.length > 0 ? (
-            <Button
               type="button"
-              variant="outline"
+              disabled={uploadState === "uploading" || storageBucket?.status === "unavailable"}
               onClick={() => {
-                setPendingFiles([]);
-                if (fileInputRef.current) {
-                  fileInputRef.current.value = "";
-                }
+                setStatusMessage("");
+                fileInputRef.current?.click();
               }}
             >
-              {copy.clearSelection}
+              <UploadIcon />
+              {uploadState === "uploading" ? m.admin_assets_uploading() : copy.uploadFiles}
             </Button>
-          ) : null}
+          </div>
         </div>
 
-        {pendingFiles.length > 0 ? (
-          <p className="mt-2 text-xs text-muted-foreground">
-            {copy.pendingFiles(pendingFiles.length, totalFileSize(pendingFiles))}
-          </p>
-        ) : null}
+        <input
+          ref={fileInputRef}
+          id="asset-file-upload"
+          name="file"
+          type="file"
+          multiple
+          tabIndex={-1}
+          aria-hidden="true"
+          onChange={(event) =>
+            void uploadFiles(Array.from(event.currentTarget.files ?? []).filter(isUploadFile))
+          }
+          className="sr-only"
+          suppressHydrationWarning
+        />
+
         {uploadState === "uploaded" ? (
           <p className="mt-3 text-sm text-success">{statusMessage}</p>
         ) : null}
@@ -381,7 +389,7 @@ function AdminAssetsPage() {
         ) : null}
 
         <StorageConfigDetails bucket={storageBucket} copy={copy} storage={storage} />
-      </form>
+      </div>
 
       <AdminPanel>
         <div className="grid gap-4">
@@ -823,6 +831,23 @@ function AssetPreview({
   );
 }
 
+function ActionTooltip({
+  children,
+  label,
+}: {
+  readonly children: ReactNode;
+  readonly label: string;
+}) {
+  return (
+    <span className="group/action relative inline-flex">
+      {children}
+      <span className="pointer-events-none absolute bottom-[calc(100%+6px)] left-1/2 z-20 -translate-x-1/2 rounded-md border border-border bg-popover px-2 py-1 text-xs font-medium whitespace-nowrap text-popover-foreground opacity-0 shadow-md transition-opacity group-focus-within/action:opacity-100 group-hover/action:opacity-100">
+        {label}
+      </span>
+    </span>
+  );
+}
+
 function AssetActions({
   asset,
   className,
@@ -843,59 +868,81 @@ function AssetActions({
 
   return (
     <div className={cn("flex flex-wrap gap-2", className)}>
-      <Button
-        type="button"
-        size="icon-sm"
-        variant="outline"
-        title={copy.copyUrl}
-        onClick={() => onCopy(asset, "url")}
-      >
-        <UrlCopyIcon />
-      </Button>
-      <Button
-        type="button"
-        size="icon-sm"
-        variant="outline"
-        title={copy.copyMarkdown}
-        onClick={() => onCopy(asset, "markdown")}
-      >
-        {copiedAsset?.id === asset.id && copiedAsset.type === "markdown" ? (
-          <CheckIcon />
-        ) : (
-          <FileTextIcon />
-        )}
-      </Button>
-      <Button
-        type="button"
-        size="icon-sm"
-        variant="outline"
-        title={copy.copyKey}
-        onClick={() => onCopy(asset, "key")}
-      >
-        {copiedAsset?.id === asset.id && copiedAsset.type === "key" ? (
-          <CheckIcon />
-        ) : (
-          <DatabaseIcon />
-        )}
-      </Button>
-      <Button
-        size="icon-sm"
-        variant="outline"
-        title={copy.openAsset}
-        nativeButton={false}
-        render={<a href={asset.url} target="_blank" rel="noreferrer" aria-label={copy.openAsset} />}
-      >
-        <ExternalLinkIcon />
-      </Button>
-      <Button
-        type="button"
-        size="icon-sm"
-        variant="destructive"
-        title={m.admin_assets_delete()}
-        onClick={() => onDelete(asset)}
-      >
-        <Trash2Icon />
-      </Button>
+      <ActionTooltip label={copy.copyUrl}>
+        <Button
+          type="button"
+          size="icon-sm"
+          variant="outline"
+          title={copy.copyUrl}
+          aria-label={copy.copyUrl}
+          onClick={() => onCopy(asset, "url")}
+        >
+          <UrlCopyIcon />
+        </Button>
+      </ActionTooltip>
+      <ActionTooltip label={copy.copyMarkdown}>
+        <Button
+          type="button"
+          size="icon-sm"
+          variant="outline"
+          title={copy.copyMarkdown}
+          aria-label={copy.copyMarkdown}
+          onClick={() => onCopy(asset, "markdown")}
+        >
+          {copiedAsset?.id === asset.id && copiedAsset.type === "markdown" ? (
+            <CheckIcon />
+          ) : (
+            <FileTextIcon />
+          )}
+        </Button>
+      </ActionTooltip>
+      <ActionTooltip label={copy.copyKey}>
+        <Button
+          type="button"
+          size="icon-sm"
+          variant="outline"
+          title={copy.copyKey}
+          aria-label={copy.copyKey}
+          onClick={() => onCopy(asset, "key")}
+        >
+          {copiedAsset?.id === asset.id && copiedAsset.type === "key" ? (
+            <CheckIcon />
+          ) : (
+            <DatabaseIcon />
+          )}
+        </Button>
+      </ActionTooltip>
+      <ActionTooltip label={copy.openAsset}>
+        <Button
+          size="icon-sm"
+          variant="outline"
+          title={copy.openAsset}
+          nativeButton={false}
+          render={
+            <a
+              href={asset.url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={copy.openAsset}
+              title={copy.openAsset}
+            />
+          }
+        >
+          <ExternalLinkIcon />
+        </Button>
+      </ActionTooltip>
+      <ActionTooltip label={copy.deleteAsset}>
+        <Button
+          type="button"
+          size="icon-sm"
+          variant="destructive"
+          title={copy.deleteAsset}
+          aria-label={copy.deleteAsset}
+          onClick={() => onDelete(asset)}
+        >
+          <Trash2Icon />
+        </Button>
+      </ActionTooltip>
     </div>
   );
 }
@@ -998,8 +1045,10 @@ function getAbsoluteAssetUrl(url: string) {
   return new URL(url, window.location.origin).toString();
 }
 
-function totalFileSize(files: File[]) {
-  return files.reduce((total, file) => total + file.size, 0);
+function resetFileInput(ref: { current: HTMLInputElement | null }) {
+  if (ref.current) {
+    ref.current.value = "";
+  }
 }
 
 function formatBytes(value: number) {
@@ -1037,15 +1086,27 @@ function getAssetsCopy(locale: SupportedLocale) {
       actions: "操作",
       asset: "资源",
       checking: "检查中",
-      clearSelection: "清空选择",
       copyKey: "复制对象 Key",
       copyMarkdown: "复制 Markdown",
+      copyError: "复制失败",
       copySelectedMarkdown: "复制所选 Markdown",
       copySelectedUrls: "复制所选 URL",
+      copySuccess: (type: CopyTarget) =>
+        type === "markdown" || type === "selected-markdown"
+          ? "Markdown 已复制"
+          : type === "key"
+            ? "对象 Key 已复制"
+            : "URL 已复制",
       copyUrl: "复制 URL",
       created: "创建时间",
+      deleteError: "资源删除失败",
+      deleteAsset: "删除资源",
+      deleteSelectedPartial: (deleted: number, total: number) =>
+        `${deleted}/${total} 个资源删除成功。`,
+      deleteSelectedSuccess: (count: number) => `${count} 个资源已删除。`,
       deleteSelected: "删除所选",
       deleteSelectedConfirm: (count: number) => `确定删除 ${count} 个资源吗？`,
+      deleteSuccess: (filename: string) => `“${filename}”已删除`,
       emptySelection: "请选择至少一个文件。",
       key: "对象 Key",
       kindAll: "全部类型",
@@ -1058,8 +1119,8 @@ function getAssetsCopy(locale: SupportedLocale) {
       loadError: "资源列表加载失败。",
       loading: "正在加载资源...",
       needsAttention: "需要处理",
+      networkError: "网络异常，请稍后再试。",
       openAsset: "打开资源",
-      pendingFiles: (count: number, size: number) => `${count} 个文件，合计 ${formatBytes(size)}。`,
       prefix: "对象前缀",
       ready: "正常",
       refresh: "刷新",
@@ -1084,9 +1145,9 @@ function getAssetsCopy(locale: SupportedLocale) {
       typeFilter: "类型",
       unavailable: "不可用",
       uploadError: "资源上传失败。",
+      uploadFiles: "上传文件",
       uploaded: (count: number) => `${count} 个资源已上传。`,
       uploading: (count: number) => `正在上传 ${count} 个文件...`,
-      uploadSelected: "上传所选",
       viewGrid: "方块",
       viewList: "列表",
       viewMode: "视图",
@@ -1099,15 +1160,27 @@ function getAssetsCopy(locale: SupportedLocale) {
     actions: "Actions",
     asset: "Asset",
     checking: "Checking",
-    clearSelection: "Clear selection",
     copyKey: "Copy object key",
     copyMarkdown: "Copy Markdown",
+    copyError: "Copy failed",
     copySelectedMarkdown: "Copy selected Markdown",
     copySelectedUrls: "Copy selected URLs",
+    copySuccess: (type: CopyTarget) =>
+      type === "markdown" || type === "selected-markdown"
+        ? "Markdown copied"
+        : type === "key"
+          ? "Object key copied"
+          : "URL copied",
     copyUrl: "Copy URL",
     created: "Created",
+    deleteError: "Asset could not be deleted",
+    deleteAsset: "Delete asset",
+    deleteSelectedPartial: (deleted: number, total: number) =>
+      `${deleted}/${total} assets deleted.`,
+    deleteSelectedSuccess: (count: number) => `${count} assets deleted.`,
     deleteSelected: "Delete selected",
     deleteSelectedConfirm: (count: number) => `Delete ${count} selected assets?`,
+    deleteSuccess: (filename: string) => `"${filename}" deleted`,
     emptySelection: "Select at least one file.",
     key: "Object key",
     kindAll: "All types",
@@ -1120,8 +1193,8 @@ function getAssetsCopy(locale: SupportedLocale) {
     loadError: "Assets could not be loaded.",
     loading: "Loading assets...",
     needsAttention: "Needs attention",
+    networkError: "Network error. Try again in a moment.",
     openAsset: "Open asset",
-    pendingFiles: (count: number, size: number) => `${count} files, ${formatBytes(size)} total.`,
     prefix: "Object prefixes",
     ready: "Ready",
     refresh: "Refresh",
@@ -1147,9 +1220,9 @@ function getAssetsCopy(locale: SupportedLocale) {
     typeFilter: "Type",
     unavailable: "Unavailable",
     uploadError: "Asset upload failed.",
+    uploadFiles: "Upload files",
     uploaded: (count: number) => `${count} assets uploaded.`,
     uploading: (count: number) => `Uploading ${count} files...`,
-    uploadSelected: "Upload selected",
     viewGrid: "Grid",
     viewList: "List",
     viewMode: "View",

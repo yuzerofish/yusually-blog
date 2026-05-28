@@ -1,11 +1,13 @@
 import { type ContentStatus, type Post } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { ArrowLeftIcon } from "lucide-react";
 import { useEffect, useState, type ComponentProps } from "react";
+import { toast } from "sonner";
 
 import { AdminPageHeader, adminPanelClassName } from "#/components/admin/admin-ui";
 import { PostForm } from "#/components/admin/post-form";
+import { getResponseErrorMessage } from "#/lib/admin-notifications";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
@@ -23,7 +25,9 @@ type PostLoadResult =
 
 export function PostEditorPage({ postId }: PostEditorPageProps) {
   const locale = getCurrentLocale();
+  const copy = getPostEditorCopy(locale);
   const navigate = useNavigate();
+  const router = useRouter();
   const [loadResult, setLoadResult] = useState<PostLoadResult | null>(null);
   const [editorMode, setEditorMode] = useState<"editor" | "source" | "preview">("editor");
   const [editorState, setEditorState] = useState<"idle" | "saving" | "saved" | "error">("idle");
@@ -92,6 +96,12 @@ export function PostEditorPage({ postId }: PostEditorPageProps) {
       : `/api/posts?lang=${locale}`;
     const tagsValue = formData.get("tags");
     const publishedAtValue = formData.get("publishedAt");
+    const publishedAt =
+      status === "published"
+        ? new Date().toISOString()
+        : typeof publishedAtValue === "string"
+          ? datetimeLocalToIso(publishedAtValue)
+          : undefined;
 
     const response = await fetch(endpoint, {
       method: editingPost ? "PATCH" : "POST",
@@ -102,8 +112,7 @@ export function PostEditorPage({ postId }: PostEditorPageProps) {
         coverImage: formData.get("coverImage"),
         contentMarkdown: markdown,
         status,
-        publishedAt:
-          typeof publishedAtValue === "string" ? datetimeLocalToIso(publishedAtValue) : undefined,
+        publishedAt,
         featured: formData.get("featured") === "on",
         pinned: formData.get("pinned") === "on",
         commentsEnabled: formData.get("commentsEnabled") === "on",
@@ -111,10 +120,15 @@ export function PostEditorPage({ postId }: PostEditorPageProps) {
         tags: parseTagNames(typeof tagsValue === "string" ? tagsValue : ""),
         locale,
       }),
-    });
+    }).catch(() => null);
 
-    if (!response.ok) {
+    if (!response?.ok) {
       setEditorState("error");
+      toast.error(copy.failed(status), {
+        description: response
+          ? await getResponseErrorMessage(response, copy.failed(status))
+          : copy.networkError,
+      });
       return;
     }
 
@@ -122,10 +136,24 @@ export function PostEditorPage({ postId }: PostEditorPageProps) {
 
     setMarkdown(payload.data.contentMarkdown);
     setEditorState("saved");
+    await router.invalidate();
 
     if (postId) {
       setLoadResult({ postId, state: "ready", post: payload.data });
-    } else {
+    }
+
+    if (status === "published") {
+      toast.success(copy.published, { description: copy.openingPost });
+      void navigate({
+        to: "/blog/$slug",
+        params: { slug: payload.data.slug },
+      });
+      return;
+    }
+
+    toast.success(copy.saved(status));
+
+    if (!postId) {
       void navigate({
         to: "/admin/posts/$postId",
         params: { postId: payload.data.id },
@@ -209,4 +237,34 @@ function datetimeLocalToIso(value: string) {
   const date = new Date(value);
 
   return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+}
+
+function getPostEditorCopy(locale: "en" | "zh") {
+  if (locale === "zh") {
+    return {
+      failed: (status: ContentStatus) =>
+        status === "published"
+          ? "文章发布失败"
+          : status === "scheduled"
+            ? "定时发布失败"
+            : "草稿保存失败",
+      networkError: "网络异常，请稍后再试。",
+      openingPost: "正在打开公开文章。",
+      published: "文章已发布",
+      saved: (status: ContentStatus) => (status === "scheduled" ? "文章已定时发布" : "草稿已保存"),
+    };
+  }
+
+  return {
+    failed: (status: ContentStatus) =>
+      status === "published"
+        ? "Post could not be published"
+        : status === "scheduled"
+          ? "Post could not be scheduled"
+          : "Draft could not be saved",
+    networkError: "Network error. Try again in a moment.",
+    openingPost: "Opening the public post.",
+    published: "Post published",
+    saved: (status: ContentStatus) => (status === "scheduled" ? "Post scheduled" : "Draft saved"),
+  };
 }

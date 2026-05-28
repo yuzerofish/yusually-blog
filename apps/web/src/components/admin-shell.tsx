@@ -39,7 +39,9 @@ const adminNav = [
 export function AdminShell() {
   const locale = getCurrentLocale();
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(getSiteSettingsForLocale(locale));
-  const preset = resolveStylePreset(siteSettings.themePreset, siteSettings.layoutPreset);
+  const settingsPreset = resolveStylePreset(siteSettings.themePreset, siteSettings.layoutPreset);
+  const [presetOverride, setPresetOverride] = useState<typeof settingsPreset | null>(null);
+  const preset = presetOverride ?? settingsPreset;
   const nextPreset = getNextStylePreset(preset);
 
   useEffect(() => {
@@ -48,6 +50,7 @@ export function AdminShell() {
       const nextSettings = (event as CustomEvent<SiteSettings>).detail;
 
       if (nextSettings) {
+        setPresetOverride(null);
         setSiteSettings(nextSettings);
       }
     };
@@ -58,6 +61,7 @@ export function AdminShell() {
         const data = (payload as { data?: SiteSettings } | undefined)?.data;
 
         if (!ignore && data) {
+          setPresetOverride(null);
           setSiteSettings(data);
         }
       });
@@ -76,8 +80,18 @@ export function AdminShell() {
       data-layout-preset={preset.layoutPreset}
       className="min-h-svh bg-background text-foreground lg:pl-72"
     >
-      <DesktopSidebar locale={locale} nextPreset={nextPreset} siteName={siteSettings.name} />
-      <MobileAdminHeader locale={locale} nextPreset={nextPreset} siteName={siteSettings.name} />
+      <DesktopSidebar
+        locale={locale}
+        nextPreset={nextPreset}
+        onPresetSelect={setPresetOverride}
+        siteName={siteSettings.name}
+      />
+      <MobileAdminHeader
+        locale={locale}
+        nextPreset={nextPreset}
+        onPresetSelect={setPresetOverride}
+        siteName={siteSettings.name}
+      />
       <StylePresetRuntimeScript initialPreset={preset} locale={locale} />
 
       <main className="min-w-0 px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
@@ -92,10 +106,12 @@ export function AdminShell() {
 function DesktopSidebar({
   locale,
   nextPreset,
+  onPresetSelect,
   siteName,
 }: {
   readonly locale: ReturnType<typeof getCurrentLocale>;
   readonly nextPreset: ReturnType<typeof getNextStylePreset>;
+  readonly onPresetSelect: (preset: ReturnType<typeof getNextStylePreset>) => void;
   readonly siteName: string;
 }) {
   return (
@@ -106,7 +122,11 @@ function DesktopSidebar({
         </Link>
         <div className="mt-3 flex items-center gap-1">
           <LanguageToggle />
-          <StylePresetCycleButton locale={locale} nextPreset={nextPreset} />
+          <StylePresetCycleButton
+            locale={locale}
+            nextPreset={nextPreset}
+            onSelect={onPresetSelect}
+          />
           <ThemeToggle />
         </div>
       </div>
@@ -125,10 +145,12 @@ function DesktopSidebar({
 function MobileAdminHeader({
   locale,
   nextPreset,
+  onPresetSelect,
   siteName,
 }: {
   readonly locale: ReturnType<typeof getCurrentLocale>;
   readonly nextPreset: ReturnType<typeof getNextStylePreset>;
+  readonly onPresetSelect: (preset: ReturnType<typeof getNextStylePreset>) => void;
   readonly siteName: string;
 }) {
   return (
@@ -139,7 +161,11 @@ function MobileAdminHeader({
         </Link>
         <div className="flex shrink-0 items-center gap-1">
           <LanguageToggle />
-          <StylePresetCycleButton locale={locale} nextPreset={nextPreset} />
+          <StylePresetCycleButton
+            locale={locale}
+            nextPreset={nextPreset}
+            onSelect={onPresetSelect}
+          />
           <ThemeToggle />
         </div>
       </div>

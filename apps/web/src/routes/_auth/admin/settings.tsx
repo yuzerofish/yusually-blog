@@ -19,6 +19,7 @@ import {
   UserRoundIcon,
 } from "lucide-react";
 import { useEffect, useState, type ComponentProps, type ComponentType } from "react";
+import { toast } from "sonner";
 
 import {
   AdminPageHeader,
@@ -27,6 +28,7 @@ import {
   adminSelectClassName,
   adminTextareaClassName,
 } from "#/components/admin/admin-ui";
+import { getResponseErrorMessage } from "#/lib/admin-notifications";
 import { apiTokenScopes } from "#/lib/cms-api-utils";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
@@ -100,6 +102,7 @@ const defaultAdvancedConfigStatus: AdvancedConfigStatus = {
 
 function AdminSettingsPage() {
   const locale = getCurrentLocale();
+  const actionCopy = getSettingsActionCopy(locale);
   const defaultSettings: SiteSettings = {
     name: "",
     description: "",
@@ -211,10 +214,15 @@ function AdminSettingsPage() {
         indexingEnabled: formData.get("indexingEnabled") === "on",
         layoutPreset: formData.get("layoutPreset"),
       }),
-    });
+    }).catch(() => null);
 
-    if (!response.ok) {
+    if (!response?.ok) {
       setSettingsStatus("error");
+      toast.error(actionCopy.settingsError, {
+        description: response
+          ? await getResponseErrorMessage(response, actionCopy.settingsError)
+          : actionCopy.networkError,
+      });
       return;
     }
 
@@ -224,6 +232,7 @@ function AdminSettingsPage() {
       new CustomEvent("blogcms:site-settings-updated", { detail: payload.data }),
     );
     setSettingsStatus("saved");
+    toast.success(actionCopy.settingsSaved);
   };
 
   const createToken: FormSubmitHandler = async (event) => {
@@ -236,9 +245,14 @@ function AdminSettingsPage() {
         name: formData.get("tokenName"),
         scopes: formData.getAll("scopes") as ApiTokenScope[],
       }),
-    });
+    }).catch(() => null);
 
-    if (!response.ok) {
+    if (!response?.ok) {
+      toast.error(actionCopy.tokenCreateError, {
+        description: response
+          ? await getResponseErrorMessage(response, actionCopy.tokenCreateError)
+          : actionCopy.networkError,
+      });
       return;
     }
 
@@ -246,17 +260,24 @@ function AdminSettingsPage() {
     setTokens((current) => [payload.data, ...current]);
     setSecret(payload.secret);
     event.currentTarget.reset();
+    toast.success(actionCopy.tokenCreated);
   };
 
   const revokeToken = async (id: string) => {
-    const response = await fetch(`/api/tokens/${id}/revoke`, { method: "POST" });
+    const response = await fetch(`/api/tokens/${id}/revoke`, { method: "POST" }).catch(() => null);
 
-    if (!response.ok) {
+    if (!response?.ok) {
+      toast.error(actionCopy.tokenRevokeError, {
+        description: response
+          ? await getResponseErrorMessage(response, actionCopy.tokenRevokeError)
+          : actionCopy.networkError,
+      });
       return;
     }
 
     const payload = (await response.json()) as { data: ApiToken };
     setTokens((current) => current.map((token) => (token.id === id ? payload.data : token)));
+    toast.success(actionCopy.tokenRevoked);
   };
 
   const downloadExport = async (format: "json" | "zip") => {
@@ -264,10 +285,15 @@ function AdminSettingsPage() {
 
     const response = await fetch(
       `/api/export?lang=${locale}${format === "zip" ? "&format=zip" : ""}`,
-    );
+    ).catch(() => null);
 
-    if (!response.ok) {
+    if (!response?.ok) {
       setPortabilityStatus({ tone: "error", message: m.admin_export_error() });
+      toast.error(actionCopy.exportError, {
+        description: response
+          ? await getResponseErrorMessage(response, actionCopy.exportError)
+          : actionCopy.networkError,
+      });
       return;
     }
 
@@ -275,6 +301,7 @@ function AdminSettingsPage() {
       const blob = await response.blob();
       downloadBlob(blob, responseFilename(response) ?? exportFilename("zip"));
       setPortabilityStatus({ tone: "success", message: m.admin_export_started() });
+      toast.success(actionCopy.exportStarted);
       return;
     }
 
@@ -284,18 +311,25 @@ function AdminSettingsPage() {
     });
     downloadBlob(blob, exportFilename("json"));
     setPortabilityStatus({ tone: "success", message: m.admin_export_started() });
+    toast.success(actionCopy.exportStarted);
   };
 
   const createBackup = async () => {
     setPortabilityStatus(null);
-    const response = await fetch("/api/backups", { method: "POST" });
+    const response = await fetch("/api/backups", { method: "POST" }).catch(() => null);
 
-    if (!response.ok) {
+    if (!response?.ok) {
       setPortabilityStatus({ tone: "error", message: m.admin_backup_error() });
+      toast.error(actionCopy.backupError, {
+        description: response
+          ? await getResponseErrorMessage(response, actionCopy.backupError)
+          : actionCopy.networkError,
+      });
       return;
     }
 
     setPortabilityStatus({ tone: "success", message: m.admin_backup_created() });
+    toast.success(actionCopy.backupCreated);
   };
 
   const importContent: FormSubmitHandler = async (event) => {
@@ -346,13 +380,16 @@ function AdminSettingsPage() {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(request.body),
-    });
-    const payload = (await response.json().catch(() => ({}))) as ImportPayload;
+    }).catch(() => null);
+    const payload = ((await response?.json().catch(() => ({}))) ?? {}) as ImportPayload;
 
-    if (!response.ok) {
+    if (!response?.ok) {
       setPortabilityStatus({
         tone: "error",
         message: payload.error || m.admin_import_error(),
+      });
+      toast.error(actionCopy.importError, {
+        description: payload.error || actionCopy.networkError,
       });
       return;
     }
@@ -364,6 +401,7 @@ function AdminSettingsPage() {
         title: payload.data?.post?.title || file.name,
       }),
     });
+    toast.success(actionCopy.importSuccess(payload.data?.post?.title || file.name));
   };
 
   const emailProviderLabel =
@@ -896,6 +934,42 @@ function getAdvancedConfigItems(
       title: copy.turnstileTitle,
     },
   ];
+}
+
+function getSettingsActionCopy(locale: "en" | "zh") {
+  if (locale === "zh") {
+    return {
+      backupCreated: "备份已创建",
+      backupError: "备份创建失败",
+      exportError: "导出失败",
+      exportStarted: "导出已开始",
+      importError: "导入失败",
+      importSuccess: (title: string) => `“${title}”已导入`,
+      networkError: "网络异常，请稍后再试。",
+      settingsError: "设置保存失败",
+      settingsSaved: "设置已保存",
+      tokenCreateError: "Token 创建失败",
+      tokenCreated: "Token 已创建，请立即保存密钥。",
+      tokenRevokeError: "Token 撤销失败",
+      tokenRevoked: "Token 已撤销",
+    };
+  }
+
+  return {
+    backupCreated: "Backup created",
+    backupError: "Backup could not be created",
+    exportError: "Export failed",
+    exportStarted: "Export started",
+    importError: "Import failed",
+    importSuccess: (title: string) => `"${title}" imported`,
+    networkError: "Network error. Try again in a moment.",
+    settingsError: "Settings could not be saved",
+    settingsSaved: "Settings saved",
+    tokenCreateError: "Token could not be created",
+    tokenCreated: "Token created. Save the secret now.",
+    tokenRevokeError: "Token could not be revoked",
+    tokenRevoked: "Token revoked",
+  };
 }
 
 function getAdvancedConfigCopy(locale: ReturnType<typeof getCurrentLocale>) {
