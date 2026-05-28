@@ -217,6 +217,7 @@ function AdminCommentsPage() {
                 onChange={(event) => setQuery(event.currentTarget.value)}
                 className={`${adminInputClassName} pl-9`}
                 placeholder={m.admin_comments_search_placeholder()}
+                suppressHydrationWarning
               />
             </div>
           </div>

@@ -1,6 +1,5 @@
 import type { Asset } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
-import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { createFileRoute } from "@tanstack/react-router";
 import { CheckIcon, CopyIcon, FileTextIcon, Trash2Icon, UploadIcon } from "lucide-react";
@@ -157,7 +156,15 @@ function AdminAssetsPage() {
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div className="grid gap-2">
             <Label htmlFor="asset-filename">{m.admin_assets_filename()}</Label>
-            <Input id="asset-filename" name="file" type="file" accept="image/*" multiple />
+            <input
+              id="asset-filename"
+              name="file"
+              type="file"
+              accept="image/*"
+              multiple
+              className={adminInputClassName}
+              suppressHydrationWarning
+            />
           </div>
         </div>
         {state === "uploaded" ? (
@@ -177,6 +184,7 @@ function AdminAssetsPage() {
             onChange={(event) => setQuery(event.currentTarget.value)}
             placeholder={m.admin_assets_search_placeholder()}
             className={adminInputClassName}
+            suppressHydrationWarning
           />
         </div>
 

@@ -132,6 +132,7 @@ export function PostForm({
               onChange={(event) => setCoverImage(event.currentTarget.value)}
               placeholder="/uploads/cover.jpg"
               className={adminInputClassName}
+              suppressHydrationWarning
             />
           </div>
           {imageAssets.length ? (
