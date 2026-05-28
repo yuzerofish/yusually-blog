@@ -134,4 +134,4 @@ Operational limits to account for before enabling production email:
 - one email can be up to 5 MiB including attachments
 - Workers binding sends are also constrained by standard Workers CPU, subrequest, and memory limits
 
-The latest production deployment includes the Email Sending variables, but `CMS_EMAIL_SENDING_ENABLED` remains `false` until a verified sender and `CMS_EMAIL` binding are configured.
+The `blog.01mvp.com` deployment uses Cloudflare Email Sending with `CMS_EMAIL_FROM=noreply@01mvp.com`, `CMS_EMAIL_TO=contact@01mvp.com`, and a `CMS_EMAIL` binding restricted to that sender.

@@ -56,6 +56,15 @@
       "CMS_DB": {
         "description": "D1 database for posts, comments, settings, users, sessions, and API tokens."
       },
+      "CMS_EMAIL": {
+        "description": "Optional Cloudflare Email Service binding for outbound notifications and password reset email."
+      },
+      "CMS_EMAIL_FROM": {
+        "description": "Verified sender address used by the optional outbound email path."
+      },
+      "CMS_EMAIL_TO": {
+        "description": "Default recipient for admin notifications when an email does not provide a more specific recipient."
+      },
       "CMS_STORAGE": {
         "description": "R2 bucket for uploaded assets, import packages, exports, and backups."
       },
