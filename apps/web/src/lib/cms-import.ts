@@ -26,6 +26,9 @@ export type ImportPostInput = Partial<{
   seoTitle: string;
   seoDescription: string;
   tags: string[];
+  seriesId: string | null;
+  seriesSlug: string | null;
+  seriesName: string | null;
   publishedAt: string;
   locale: SupportedLocale;
   i18n: Post["i18n"];
@@ -99,6 +102,10 @@ export function parseMarkdownImport(input: ImportPostInput): ImportPostInput {
       metadataString(metadata, ["seoDescription", "seo_description"]) ??
       excerpt,
     tags: normalizeTags(input.tags ?? metadataValue(metadata, ["tags", "tag"])),
+    seriesId: cleanString(input.seriesId),
+    seriesSlug:
+      cleanString(input.seriesSlug) ?? metadataString(metadata, ["seriesSlug", "series_slug"]),
+    seriesName: cleanString(input.seriesName) ?? metadataString(metadata, ["series", "collection"]),
     publishedAt:
       cleanString(input.publishedAt) ??
       metadataString(metadata, ["publishedAt", "published_at", "date"]),
@@ -133,6 +140,9 @@ export function parseHtmlImport(input: ImportPostInput): ImportPostInput {
     seoTitle: cleanString(input.seoTitle) ?? title,
     seoDescription: cleanString(input.seoDescription) ?? excerpt,
     tags: normalizeTags(input.tags),
+    seriesId: cleanString(input.seriesId),
+    seriesSlug: cleanString(input.seriesSlug),
+    seriesName: cleanString(input.seriesName),
     publishedAt: cleanString(input.publishedAt),
     locale: input.locale,
     i18n: input.i18n,

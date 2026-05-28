@@ -31,6 +31,15 @@ export {
 // Re-export tags
 export { listD1Tags, upsertD1Tag, replaceD1PostTags } from "./cms-d1-tags";
 
+// Re-export series
+export {
+  listD1Series,
+  getD1SeriesByIdOrSlug,
+  createD1Series,
+  updateD1Series,
+  deleteD1Series,
+} from "./cms-d1-series";
+
 // Re-export assets, API tokens, settings, and export
 export {
   getD1SiteSettings,

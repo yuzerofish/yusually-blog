@@ -1,6 +1,7 @@
 import "@tanstack/react-start/server-only";
 import {
   localizeSiteSettings,
+  localizeSeries,
   localizeTag,
   type ApiTokenScope,
   type Asset,
@@ -228,15 +229,18 @@ export async function verifyD1ApiToken(secret: string, requiredScope: ApiTokenSc
 
 import { listD1Comments } from "./cms-d1-comments";
 import { listD1Posts } from "./cms-d1-posts";
+import { listD1Series } from "./cms-d1-series";
 import { listD1Tags } from "./cms-d1-tags";
 
 export async function buildD1SiteExport(locale: SupportedLocale) {
-  const [persistedPosts, persistedComments, persistedAssets, persistedTags] = await Promise.all([
-    listD1Posts({ includeUnpublished: true }),
-    listD1Comments(),
-    listD1Assets(),
-    listD1Tags(),
-  ]);
+  const [persistedPosts, persistedComments, persistedAssets, persistedTags, persistedSeries] =
+    await Promise.all([
+      listD1Posts({ includeUnpublished: true }),
+      listD1Comments(),
+      listD1Assets(),
+      listD1Tags(),
+      listD1Series(),
+    ]);
 
   return {
     exportedAt: new Date().toISOString(),
@@ -246,6 +250,7 @@ export async function buildD1SiteExport(locale: SupportedLocale) {
       ...post,
       comments: persistedComments.filter((comment) => comment.postId === post.id),
     })),
+    series: persistedSeries.map((series) => localizeSeries(series, locale)),
     tags: persistedTags.map((tag) => localizeTag(tag, locale)),
     assets: persistedAssets,
     comments: persistedComments,

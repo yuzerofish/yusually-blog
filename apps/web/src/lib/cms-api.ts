@@ -22,6 +22,9 @@ export function createPostPreview(
     seoTitle: string;
     seoDescription: string;
     tags: string[];
+    seriesId: string | null;
+    seriesSlug: string | null;
+    seriesName: string | null;
     publishedAt: string;
     locale: SupportedLocale;
     i18n: Post["i18n"];
@@ -46,6 +49,7 @@ export function createPostPreview(
     publishedAt: body.publishedAt ?? now,
     updatedAt: now,
     authorName: "",
+    series: null,
     tags: [],
     seoTitle: body.seoTitle?.trim() || title,
     seoDescription: body.seoDescription?.trim() || "",

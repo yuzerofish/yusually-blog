@@ -14,12 +14,14 @@ import { eq, and, or, like, desc, asc, inArray, sql } from "drizzle-orm";
 
 import { cachedGet, invalidateCache } from "./cms-cache";
 import { getD1SiteSettings } from "./cms-d1-assets";
+import { hasSeriesInput, resolveD1SeriesId } from "./cms-d1-series";
 import {
   MAX_EXCERPT_LENGTH,
   MAX_SEO_DESCRIPTION_LENGTH,
   type PostInput,
   type ListPostsOptions,
   drizzleRowToPost,
+  drizzleRowToSeries,
   postVisibilityFilter,
 } from "./cms-d1-shared";
 import { replaceD1PostTags } from "./cms-d1-tags";
@@ -75,7 +77,7 @@ async function listD1PostsFromDb({
 
   const currentSettings = await getD1SiteSettings();
 
-  return attachD1Tags(rows.map((row) => drizzleRowToPost(row, currentSettings)));
+  return attachD1Relations(rows, currentSettings);
 }
 
 export async function getD1PostBySlug(slug: string, includeUnpublished = false) {
@@ -92,7 +94,7 @@ export async function getD1PostBySlug(slug: string, includeUnpublished = false) 
     return undefined;
   }
 
-  const [post] = await attachD1Tags([drizzleRowToPost(row, await getD1SiteSettings())]);
+  const [post] = await attachD1Relations([row], await getD1SiteSettings());
 
   return post;
 }
@@ -116,7 +118,7 @@ export async function getD1PostByIdOrSlug(idOrSlug: string, includeUnpublished =
     return undefined;
   }
 
-  const [post] = await attachD1Tags([drizzleRowToPost(row, await getD1SiteSettings())]);
+  const [post] = await attachD1Relations([row], await getD1SiteSettings());
 
   return post;
 }
@@ -135,6 +137,7 @@ export async function createD1Post(input: PostInput) {
   const source = input.source ?? "api";
   const publishedAt = normalizeDateInput(input.publishedAt) ?? now;
   const coverImage = input.coverImage?.trim() || currentSettings.defaultOgImage;
+  const seriesId = (await resolveD1SeriesId(input)) ?? null;
   const post: Post = {
     id: `post_${crypto.randomUUID()}`,
     title,
@@ -152,6 +155,7 @@ export async function createD1Post(input: PostInput) {
     publishedAt,
     updatedAt: now,
     authorName: currentSettings.authorName,
+    series: null,
     tags: [],
     seoTitle: input.seoTitle?.trim() || title,
     seoDescription:
@@ -195,6 +199,7 @@ export async function createD1Post(input: PostInput) {
     publishedAt,
     createdAt: now,
     updatedAt: post.updatedAt,
+    seriesId,
   });
 
   await replaceD1PostTags(post.id, input.tags ?? [], input.locale);
@@ -263,6 +268,7 @@ export async function updateD1Post(idOrSlug: string, input: PostInput) {
   const commentsEnabled = input.commentsEnabled ?? post.commentsEnabled;
   const featured = input.featured ?? post.featured;
   const pinned = input.pinned ?? post.pinned;
+  const nextSeriesId = await resolveD1SeriesId(input);
 
   const db = getCmsDb();
   await db
@@ -286,6 +292,7 @@ export async function updateD1Post(idOrSlug: string, input: PostInput) {
       i18n: i18n ?? null,
       publishedAt,
       updatedAt: now,
+      ...(hasSeriesInput(input) ? { seriesId: nextSeriesId ?? null } : {}),
     })
     .where(eq(schema.posts.id, post.id));
 
@@ -376,33 +383,46 @@ export async function deleteD1Post(idOrSlug: string) {
 }
 
 // ---------------------------------------------------------------------------
-// Tag attachment (private helper for posts)
+// Relation attachment (private helper for posts)
 // ---------------------------------------------------------------------------
 
-async function attachD1Tags(posts: Post[]) {
-  if (!posts.length) {
-    return posts;
+async function attachD1Relations(
+  rows: Array<typeof schema.posts.$inferSelect>,
+  currentSettings: Awaited<ReturnType<typeof getD1SiteSettings>>,
+) {
+  if (!rows.length) {
+    return [];
   }
 
   const db = getCmsDb();
+  const posts = rows.map((row) => drizzleRowToPost(row, currentSettings));
   const postIds = posts.map((post) => post.id);
-  const rows = await db
-    .select({
-      tagId: schema.tags.id,
-      tagName: schema.tags.name,
-      tagSlug: schema.tags.slug,
-      tagDescription: schema.tags.description,
-      tagI18n: schema.tags.i18n,
-      postId: schema.postTags.postId,
-    })
-    .from(schema.tags)
-    .innerJoin(schema.postTags, eq(schema.postTags.tagId, schema.tags.id))
-    .where(inArray(schema.postTags.postId, postIds))
-    .orderBy(asc(schema.tags.name));
+  const seriesIds = Array.from(
+    new Set(rows.map((row) => row.seriesId).filter((id): id is string => Boolean(id))),
+  );
+  const [tagRows, seriesRows] = await Promise.all([
+    db
+      .select({
+        tagId: schema.tags.id,
+        tagName: schema.tags.name,
+        tagSlug: schema.tags.slug,
+        tagDescription: schema.tags.description,
+        tagI18n: schema.tags.i18n,
+        postId: schema.postTags.postId,
+      })
+      .from(schema.tags)
+      .innerJoin(schema.postTags, eq(schema.postTags.tagId, schema.tags.id))
+      .where(inArray(schema.postTags.postId, postIds))
+      .orderBy(asc(schema.tags.name)),
+    seriesIds.length
+      ? db.select().from(schema.series).where(inArray(schema.series.id, seriesIds))
+      : Promise.resolve([]),
+  ]);
 
+  const seriesById = new Map(seriesRows.map((row) => [row.id, drizzleRowToSeries(row)]));
   const tagsByPostId = new Map<string, Tag[]>();
 
-  for (const row of rows) {
+  for (const row of tagRows) {
     const tag: Tag = {
       id: row.tagId,
       name: row.tagName,
@@ -415,8 +435,9 @@ async function attachD1Tags(posts: Post[]) {
     tagsByPostId.set(row.postId, current);
   }
 
-  return posts.map((post) => ({
+  return posts.map((post, index) => ({
     ...post,
+    series: rows[index].seriesId ? (seriesById.get(rows[index].seriesId) ?? null) : null,
     tags: tagsByPostId.get(post.id) ?? [],
   }));
 }

@@ -8,6 +8,7 @@ import {
   type CommentStatus,
   type ContentStatus,
   type Post,
+  type Series,
   type SiteSettings,
   type SupportedLocale,
   type Tag,
@@ -44,6 +45,9 @@ export type PostInput = Partial<{
   seoTitle: string;
   seoDescription: string;
   tags: string[];
+  seriesId: string | null;
+  seriesSlug: string | null;
+  seriesName: string | null;
   publishedAt: string;
   locale: SupportedLocale;
   i18n: Post["i18n"];
@@ -129,10 +133,22 @@ export function drizzleRowToPost(
     publishedAt: row.publishedAt ?? row.createdAt,
     updatedAt: row.updatedAt,
     authorName: currentSettings.authorName,
+    series: null,
     tags: [],
     seoTitle: row.seoTitle ?? row.title,
     seoDescription: row.seoDescription ?? row.excerpt,
     i18n: row.i18n as Post["i18n"],
+  };
+}
+
+export function drizzleRowToSeries(row: typeof schema.series.$inferSelect): Series {
+  return {
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    description: row.description,
+    sortOrder: row.sortOrder,
+    i18n: row.i18n as Series["i18n"],
   };
 }
 
