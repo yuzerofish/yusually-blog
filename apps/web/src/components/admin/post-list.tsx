@@ -23,10 +23,13 @@ interface PostListProps {
   allVisibleSelected: boolean;
   query: string;
   statusFilter: "all" | ContentStatus;
+  seriesFilter: string;
   tagFilter: string;
+  seriesOptions: Array<{ slug: string; name: string }>;
   tagOptions: Array<{ slug: string; name: string }>;
   onQueryChange: (query: string) => void;
   onStatusFilterChange: (status: "all" | ContentStatus) => void;
+  onSeriesFilterChange: (slug: string) => void;
   onTagFilterChange: (slug: string) => void;
   onToggleAll: (checked: boolean) => void;
   onTogglePost: (postId: string, checked: boolean) => void;
@@ -41,10 +44,13 @@ export function PostList({
   allVisibleSelected,
   query,
   statusFilter,
+  seriesFilter,
   tagFilter,
+  seriesOptions,
   tagOptions,
   onQueryChange,
   onStatusFilterChange,
+  onSeriesFilterChange,
   onTagFilterChange,
   onToggleAll,
   onTogglePost,
@@ -61,7 +67,7 @@ export function PostList({
 
   return (
     <AdminPanel>
-      <div className="grid gap-3 lg:grid-cols-[minmax(260px,1fr)_420px] lg:items-end">
+      <div className="grid gap-3 lg:grid-cols-[minmax(260px,1fr)_640px] lg:items-end">
         <div className="flex h-9 items-center gap-2 rounded-md border border-input bg-background px-3 shadow-xs">
           <SearchIcon className="size-4 text-muted-foreground" />
           <Input
@@ -71,7 +77,7 @@ export function PostList({
             className="h-8 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
           />
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-3">
           <div className="grid gap-1.5">
             <Label htmlFor="post-status-filter">{m.admin_posts_filter_status()}</Label>
             <select
@@ -87,6 +93,22 @@ export function PostList({
                   {status === "all"
                     ? m.admin_posts_filter_all_status()
                     : getPostStatusCopy(status).label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="post-series-filter">{m.admin_posts_filter_series()}</Label>
+            <select
+              id="post-series-filter"
+              value={seriesFilter}
+              onChange={(event) => onSeriesFilterChange(event.currentTarget.value)}
+              className={adminSelectClassName}
+            >
+              <option value="all">{m.admin_posts_filter_all_series()}</option>
+              {seriesOptions.map((item) => (
+                <option key={item.slug} value={item.slug}>
+                  {item.name}
                 </option>
               ))}
             </select>
@@ -125,7 +147,7 @@ export function PostList({
       <PostBatchActions selectedCount={selectedPostIds.length} onAction={onBatchAction} />
 
       <AdminTableFrame className="mt-4">
-        <table className="w-full min-w-[940px] text-left text-sm">
+        <table className="w-full min-w-[1040px] text-left text-sm">
           <thead className="bg-muted/55 text-xs text-muted-foreground uppercase">
             <tr>
               <th className="px-3 py-2.5">
@@ -139,6 +161,7 @@ export function PostList({
               </th>
               <th className="px-3 py-2.5">{m.admin_posts_column_title()}</th>
               <th className="px-3 py-2.5">{m.admin_posts_status()}</th>
+              <th className="px-3 py-2.5">{m.admin_series_title()}</th>
               <th className="px-3 py-2.5">{m.admin_posts_source()}</th>
               <th className="px-3 py-2.5">{m.admin_posts_updated()}</th>
               <th className="px-3 py-2.5">{m.admin_posts_public_url()}</th>
@@ -187,6 +210,9 @@ export function PostList({
                     >
                       {statusCopy.label}
                     </span>
+                  </td>
+                  <td className="px-3 py-3 text-muted-foreground">
+                    {post.series?.name ?? m.admin_posts_no_series()}
                   </td>
                   <td className="px-3 py-3 text-muted-foreground">{post.source}</td>
                   <td className="px-3 py-3 text-muted-foreground">{post.updatedAt.slice(0, 10)}</td>

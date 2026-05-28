@@ -19,6 +19,7 @@ function AdminPostsPage() {
   const [rows, setRows] = useState<Post[]>([]);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | ContentStatus>("all");
+  const [seriesFilter, setSeriesFilter] = useState("all");
   const [tagFilter, setTagFilter] = useState("all");
   const [selectedPostIds, setSelectedPostIds] = useState<string[]>([]);
 
@@ -28,14 +29,34 @@ function AdminPostsPage() {
     return rows.filter(
       (post) =>
         (statusFilter === "all" || post.status === statusFilter) &&
+        (seriesFilter === "all" || post.series?.slug === seriesFilter) &&
         (tagFilter === "all" || post.tags.some((tag) => tag.slug === tagFilter)) &&
         (!normalizedQuery ||
-          [post.title, post.excerpt, post.status, post.source, ...post.tags.map((tag) => tag.name)]
+          [
+            post.title,
+            post.excerpt,
+            post.status,
+            post.source,
+            post.series?.name ?? "",
+            ...post.tags.map((tag) => tag.name),
+          ]
             .join(" ")
             .toLowerCase()
             .includes(normalizedQuery)),
     );
-  }, [rows, query, statusFilter, tagFilter]);
+  }, [rows, query, statusFilter, seriesFilter, tagFilter]);
+
+  const seriesOptions = useMemo(() => {
+    const seriesBySlug = new Map<string, NonNullable<Post["series"]>>();
+
+    for (const post of rows) {
+      if (post.series) {
+        seriesBySlug.set(post.series.slug, post.series);
+      }
+    }
+
+    return Array.from(seriesBySlug.values()).sort((a, b) => a.name.localeCompare(b.name));
+  }, [rows]);
 
   const tagOptions = useMemo(() => {
     const tagsBySlug = new Map<string, Post["tags"][number]>();
@@ -164,10 +185,13 @@ function AdminPostsPage() {
         allVisibleSelected={allVisibleSelected}
         query={query}
         statusFilter={statusFilter}
+        seriesFilter={seriesFilter}
         tagFilter={tagFilter}
+        seriesOptions={seriesOptions}
         tagOptions={tagOptions}
         onQueryChange={setQuery}
         onStatusFilterChange={setStatusFilter}
+        onSeriesFilterChange={setSeriesFilter}
         onTagFilterChange={setTagFilter}
         onToggleAll={toggleAllVisiblePosts}
         onTogglePost={togglePostSelection}

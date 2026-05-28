@@ -1,4 +1,4 @@
-import { type Asset, type Post, renderMarkdownToHtml } from "@repo/core";
+import { type Asset, type Post, type Series, renderMarkdownToHtml } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
@@ -49,6 +49,7 @@ export function PostForm({
   onSubmit,
 }: PostFormProps) {
   const [assetRows, setAssetRows] = useState<Asset[]>([]);
+  const [seriesRows, setSeriesRows] = useState<Series[]>([]);
   const [coverImage, setCoverImage] = useState(editingPost?.coverImage ?? "");
   const mounted = useClientMounted();
   const previewHtml = useMemo(() => renderMarkdownToHtml(markdown), [markdown]);
@@ -60,13 +61,20 @@ export function PostForm({
   useEffect(() => {
     let ignore = false;
 
-    void fetch("/api/assets")
-      .then((response) => (response.ok ? response.json() : undefined))
-      .then((payload) => {
-        const data = (payload as { data?: Asset[] } | undefined)?.data;
+    void Promise.all([
+      fetch("/api/assets").then((response) => (response.ok ? response.json() : undefined)),
+      fetch("/api/series").then((response) => (response.ok ? response.json() : undefined)),
+    ])
+      .then(([assetPayload, seriesPayload]) => {
+        const assets = (assetPayload as { data?: Asset[] } | undefined)?.data;
+        const series = (seriesPayload as { data?: Series[] } | undefined)?.data;
 
-        if (!ignore && data) {
-          setAssetRows(data);
+        if (!ignore && assets) {
+          setAssetRows(assets);
+        }
+
+        if (!ignore && series) {
+          setSeriesRows(series);
         }
       })
       .catch(() => undefined);
@@ -236,6 +244,22 @@ export function PostForm({
             name="seoDescription"
             defaultValue={editingPost?.seoDescription}
           />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="editor-series">{m.admin_editor_series()}</Label>
+          <select
+            id="editor-series"
+            name="seriesId"
+            defaultValue={editingPost?.series?.id ?? ""}
+            className={adminSelectClassName}
+          >
+            <option value="">{m.admin_editor_series_none()}</option>
+            {seriesRows.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="grid gap-2">
           <Label htmlFor="editor-tags">{m.admin_editor_tags()}</Label>

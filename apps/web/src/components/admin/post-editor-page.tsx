@@ -109,6 +109,7 @@ export function PostEditorPage({ postId }: PostEditorPageProps) {
         featured: formData.get("featured") === "on",
         pinned: formData.get("pinned") === "on",
         commentsEnabled: formData.get("commentsEnabled") === "on",
+        seriesId: formData.get("seriesId") || null,
         tags: parseTagNames(typeof tagsValue === "string" ? tagsValue : ""),
         locale,
       }),
