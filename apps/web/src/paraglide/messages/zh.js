@@ -1087,7 +1087,7 @@ export const admin_token_secret_once = /** @type {(inputs: Admin_Token_Secret_On
 };
 
 export const admin_tokens_description = /** @type {(inputs: Admin_Tokens_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`为 CLI、OpenAPI 和 AI 发布工作流创建受限自动化 Token。`)
+	return /** @type {LocalizedString} */ (`为 OpenAPI 和 AI 发布工作流创建受限自动化 Token。`)
 };
 
 export const admin_tokens_title = /** @type {(inputs: Admin_Tokens_TitleInputs) => LocalizedString} */ () => {
@@ -1403,7 +1403,7 @@ export const contents = /** @type {(inputs: ContentsInputs) => LocalizedString} 
 };
 
 export const feature_api_title = /** @type {(inputs: Feature_Api_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`CLI + API`)
+	return /** @type {LocalizedString} */ (`OpenAPI`)
 };
 
 export const feature_api_body = /** @type {(inputs: Feature_Api_BodyInputs) => LocalizedString} */ () => {

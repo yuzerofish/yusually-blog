@@ -73,9 +73,9 @@ Feeds and public metadata use current D1 site settings and localized content whe
 
 `POST /api/import/html` accepts `filename`, `contentHtml`, and optional post fields. HTML is sanitized before persistence, and the importer extracts `<title>`, first `<h1>`, meta description, and first image where available.
 
-`POST /api/import/zip` accepts either `contentBase64` for a ZIP archive or a CLI `files` manifest. The importer selects Markdown first, then HTML, then image-gallery fallback; image entries are uploaded to R2 and local Markdown/HTML image references are rewritten to uploaded asset URLs.
+`POST /api/import/zip` accepts either `contentBase64` for a ZIP archive or an automation `files` manifest. The importer selects Markdown first, then HTML, then image-gallery fallback; image entries are uploaded to R2 and local Markdown/HTML image references are rewritten to uploaded asset URLs.
 
-`POST /api/assets` accepts multipart uploads from the admin UI and JSON/base64 uploads from CLI automation. `DELETE /api/assets/:id` removes the D1 record and deletes the matching R2 object when present.
+`POST /api/assets` accepts multipart uploads from the admin UI and JSON/base64 uploads from OpenAPI automation. `DELETE /api/assets/:id` removes the D1 record and deletes the matching R2 object when present.
 
 `GET /api/comments` returns the moderation queue and requires `comments:moderate`. `POST /api/comments` requires a comment-user session, accepts optional `parentId` for replies, applies honeypot, Turnstile when configured, per-IP rate limits, body length limits, link limits, and sets the initial status from site moderation settings. Keyword matches are marked `spam`; otherwise comments are `pending` when manual approval is enabled or `approved` when it is disabled.
 

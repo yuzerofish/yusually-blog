@@ -7,7 +7,7 @@ description: A Cloudflare-native personal blog with a Git-managed documentation 
 
 It ships with two content surfaces by default:
 
-- `/blog` is powered by the publishing backend. It is for public posts, visual admin writing, comments, RSS, CLI publishing, imports, exports, and backups.
+- `/blog` is powered by the publishing backend. It is for public posts, visual admin writing, comments, RSS, OpenAPI publishing, imports, exports, and backups.
 - `/docs` is powered by Fumadocs and GitHub Markdown/MDX. It is for product docs, developer docs, API guides, and template usage notes.
 
 中文简介：01mvp-blog-starter 是一个基于 Cloudflare Workers、D1、R2 的个人长期博客系统。默认同时提供博客发布系统和 Git 管理的 Fumadocs 文档系统。
@@ -22,17 +22,16 @@ It ships with two content surfaces by default:
 - Cloudflare Workers runtime through `@cloudflare/vite-plugin`
 - Cloudflare D1 for posts, comments, settings, users, sessions, and API tokens
 - Cloudflare R2 for assets, imports, exports, and backups
-- CLI for API and Skill automation
+- OpenAPI for API and Skill automation
 
 ## Workspace
 
 ```txt
 apps/web                 TanStack Start app, admin UI, public site, docs, API routes
-apps/cli                 command-line publishing tool
 packages/core            content types, demo data, Markdown and i18n helpers
 packages/db              Drizzle schema and D1 migrations
 packages/ui              shared UI primitives
-skills                   AI initialization Skill
+skills                   AI initialization and OpenAPI maintenance Skill
 apps/web/content/docs    public Fumadocs source, mirrored at docs/site
 docs/specs               project specifications and implementation records
 ```
@@ -77,9 +76,9 @@ Production site:
 pnpm deploy:web
 ```
 
-## CLI
+## Automation
 
-Use the CLI in `apps/cli` for login, site inspection, post publishing, and export workflows. Set the site URL and API token in your shell before running authenticated commands.
+Use the `01mvp-blog` Skill in `skills/01mvp-blog` for site creation and OpenAPI-based maintenance. Generated sites expose `/openapi.json`; create scoped API tokens in the admin settings before connecting external automation.
 
 ## License
 

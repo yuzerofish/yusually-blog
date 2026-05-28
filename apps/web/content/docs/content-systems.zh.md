@@ -15,7 +15,7 @@ description: 博客后台与 Fumadocs 文档系统的职责边界。
 - 评论和审核
 - 媒体上传到 R2
 - RSS 和 feed 输出
-- API 与 CLI 发布
+- OpenAPI 与 Skill 发布
 - 导入、导出和备份
 
 博客内容存储在 D1 中。作者仍然可以用 Markdown 写作，公开页面使用渲染后的 HTML。

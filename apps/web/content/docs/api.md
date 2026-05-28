@@ -8,8 +8,7 @@ description: API and automation surfaces for 01mvp-blog-starter.
 The API is used by:
 
 - the admin UI
-- the CLI
-- AI initialization workflows
+- AI initialization and maintenance workflows
 - custom automation scripts
 
 ## Main Endpoints
@@ -45,6 +44,8 @@ GET    /api/admin/email-status
 ```
 
 API tokens are scoped. Publishing requires write permissions, and publishing or scheduling posts also requires publish permissions.
+
+Create API tokens from the admin settings. Use the smallest scope set that fits the automation task: posts need `posts:read`, `posts:write`, and sometimes `posts:publish`; comment moderation needs `comments:moderate`; exports need `export:read`; site settings need `site:read` or `site:write`.
 
 ## Comments And Reader Auth
 

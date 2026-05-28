@@ -9,7 +9,7 @@
 
 It ships with two content surfaces:
 
-- `/blog` is powered by the CMS backend for posts, admin writing, comments, RSS, CLI publishing, imports, exports, and backups.
+- `/blog` is powered by the CMS backend for posts, admin writing, comments, RSS, OpenAPI publishing, imports, exports, and backups.
 - `/docs` is powered by Fumadocs and GitHub Markdown/MDX for product docs, developer docs, API guides, and template notes.
 
 ## Stack
@@ -97,11 +97,10 @@ This checks the required R2 bucket, builds the web app, applies remote D1 migrat
 
 ```txt
 apps/web                 TanStack Start app, admin UI, public site, docs, API routes
-apps/cli                 command-line publishing tool
 packages/core            content types, demo data, Markdown and i18n helpers
 packages/db              Drizzle schema and D1 migrations
 packages/ui              shared UI primitives
-skills                   AI initialization Skill
+skills                   AI initialization and OpenAPI maintenance Skill
 apps/web/content/docs    public Fumadocs source, mirrored at docs/site
 docs/specs               project specifications and implementation records
 ```
@@ -119,9 +118,9 @@ Start with these guides:
 
 The root `docs/specs` folder is for project specifications, deployment records, acceptance notes, and implementation evidence. It is intentionally separate from the public Fumadocs source.
 
-## CLI
+## Automation
 
-Use the CLI in `apps/cli` for login, site inspection, post publishing, and export workflows. Set the site URL and API token in your shell before running authenticated commands.
+Use the `01mvp-blog` Skill in `skills/01mvp-blog` for site creation and OpenAPI-based maintenance. Generated sites expose `/openapi.json`; create scoped API tokens in the admin settings before wiring external automation.
 
 ## License
 

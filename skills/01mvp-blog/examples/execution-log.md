@@ -1,4 +1,4 @@
-# 01mvp-blog-starter Skill Execution Log
+# 01mvp-blog Skill Execution Log
 
 Run date: 2026-05-25
 
@@ -23,13 +23,15 @@ Run date: 2026-05-25
 ## Automated Steps
 
 ```sh
-blogcms deploy --target main
-BLOGCMS_SITE_URL=https://blog.01mvp.com pnpm --filter @repo/cli exec node bin/blogcms.mjs admin create ...
-BLOGCMS_SITE_URL=https://blog.01mvp.com pnpm --filter @repo/cli exec node bin/blogcms.mjs login ...
-BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=... pnpm --filter @repo/cli exec node bin/blogcms.mjs site update --config /absolute/path/to/site.config.json
-BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=... pnpm --filter @repo/cli exec node bin/blogcms.mjs push /absolute/path/to/first-post.json
-BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=... pnpm --filter @repo/cli exec node bin/blogcms.mjs upload /absolute/path/to/public
-BLOGCMS_SITE_URL=https://blog.01mvp.com BLOGCMS_API_TOKEN=... pnpm --filter @repo/cli exec node bin/blogcms.mjs export
+Loaded Cloudflare deployment skills for account, resource, binding, and deploy work.
+Fetched https://blog.01mvp.com/openapi.json.
+Created the first admin user through POST /api/admin/users.
+Created a scoped API token from the admin settings/API.
+Updated site settings through PUT /api/site.
+Published the first bilingual post through POST /api/posts.
+Uploaded the verification asset through POST /api/assets.
+Exported site JSON through GET /api/export.
+Created a ZIP backup through POST /api/backups.
 ```
 
 Secrets were stored outside the repository under `/tmp` during the run and are not part of this log.
@@ -53,11 +55,11 @@ Secrets were stored outside the repository under `/tmp` during the run and are n
 - The project detail page returned HTTP 200 and included canonical and Twitter Card metadata.
 - `POST /api/comments` created a pending comment.
 - `POST /api/comments/:id/approve` approved that comment.
-- `blogcms push` accepted a JSON bilingual payload and `DELETE /api/posts/:id` returned `deleted` for a temporary verification post.
-- `blogcms export` returned posts, comments, assets, and a backup key.
+- `POST /api/posts` accepted a JSON bilingual payload and `DELETE /api/posts/:id` returned `deleted` for a temporary verification post.
+- `GET /api/export` returned posts, comments, assets, and a backup key.
 - A temporary scheduled-post check confirmed future scheduled posts remain hidden from the public API and past scheduled posts are returned, then removed the test rows.
 - A temporary comment-depth check confirmed top-level comments and one reply level are accepted, while replies to replies return HTTP 400, then removed the test rows.
 
 ## User Intervention
 
-No Dashboard operation was required during this run beyond using an already authenticated Wrangler session. Future fresh accounts may still require Cloudflare login, domain verification, paid-plan confirmation, or API token creation.
+No Dashboard operation was required during this run beyond existing Cloudflare authentication. Future fresh accounts may still require Cloudflare login, domain verification, paid-plan confirmation, or API token creation.

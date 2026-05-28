@@ -24,7 +24,7 @@ blog.01mvp.com    # 模板演示站
 
 ### 1.2 一句话定位
 
-**01mvp-blog-starter 是一个基于 Cloudflare 全家桶的个人永久博客 CMS，既支持小白用户通过后台可视化写作，也支持 AI / CLI / OpenAPI 自动化发布和维护。**
+**01mvp-blog-starter 是一个基于 Cloudflare 全家桶的个人永久博客 CMS，既支持小白用户通过后台可视化写作，也支持 AI Skill / OpenAPI 自动化发布和维护。**
 
 ### 1.3 项目本质
 
@@ -113,7 +113,7 @@ TanStack Start + Cloudflare Workers + D1 + R2
 
 ```txt
 1. 小白用户通过后台写文章、传图片、发布内容。
-2. 开发者通过 Markdown / HTML / CLI / OpenAPI 自动发布。
+2. 开发者通过 Markdown / HTML / OpenAPI 自动发布。
 3. AI Agent 可以通过 Skill 初始化、部署、维护博客。
 4. 内容长期可迁移、可备份、可导出，不被某个编辑器锁死。
 5. 前台具备现代博客基础能力：SEO、OG、RSS、sitemap、标签、搜索、评论。
@@ -154,10 +154,10 @@ TanStack Start + Cloudflare Workers + D1 + R2
 定时任务：Cron Triggers
 队列：Cloudflare Queues，可选
 邮件：Cloudflare Email Service，可选增强
-部署：Wrangler / cf CLI / Cloudflare API
+部署：Wrangler / Cloudflare API / Cloudflare Skill
 ```
 
-Cloudflare 官方仍将 Wrangler 定义为 Cloudflare Developer Platform 的 CLI，用于 Workers 项目的开发、部署和配置。([Cloudflare Docs][2])
+Cloudflare 官方仍将 Wrangler 定义为 Cloudflare Developer Platform 的命令行工具，用于 Workers 项目的开发、部署和配置。([Cloudflare Docs][2])
 
 ## 4.2 Markdown-first，但 CMS-first
 
@@ -186,7 +186,7 @@ Skill 是给 AI 用的，不是给用户看的普通教程。
 
 ```txt
 1. AI 自动执行
-2. AI 使用 cf CLI / Wrangler / Cloudflare API / MCP 操作
+2. AI 优先使用 Cloudflare 对应 Skill，必要时再使用 Wrangler / Cloudflare API / MCP 操作
 3. AI 引导用户授权登录
 4. AI 引导用户创建最小权限 API Token
 5. 只有实在无法自动操作时，才让用户手动进 Dashboard
@@ -220,7 +220,7 @@ Skill 是给 AI 用的，不是给用户看的普通教程。
 RSS
 sitemap
 导入导出
-API / CLI 基础操作
+OpenAPI 基础操作
 ```
 
 Cloudflare Email Sending 等能力作为增强模块。Cloudflare Email Service 的文档显示 Email Sending 属于 public beta，并支持 Workers binding / REST API 等方式发送事务邮件；因此本项目将其设计为可选增强，而不是核心依赖。([Cloudflare Docs][3])
@@ -260,7 +260,7 @@ Cloudflare Email Sending 等能力作为增强模块。Cloudflare Email Service 
 
 ## 5.3 API Client / AI Agent
 
-通过 API Token、OpenAPI 或 CLI 操作系统：
+通过 API Token 和 OpenAPI 操作系统：
 
 ```txt
 创建文章
@@ -312,8 +312,7 @@ Code Highlight：Shiki
 HTML Safety：sanitize-html / rehype-sanitize / iframe sandbox
 Anti-spam：Cloudflare Turnstile
 API：OpenAPI + API Token
-CLI：blogcms
-Skill：skills/cloud-blog-cms
+Skill：skills/01mvp-blog
 ```
 
 ## 6.2 仓库结构
@@ -323,9 +322,6 @@ Skill：skills/cloud-blog-cms
   apps/
     web/
       # CMS 模板站：TanStack Start + Cloudflare Workers
-
-    cli/
-      # blogcms CLI：本地/远程管理博客
 
   packages/
     ui/
@@ -353,7 +349,7 @@ Skill：skills/cloud-blog-cms
       # tsconfig / eslint / tailwind preset
 
   skills/
-    cloud-blog-cms/
+    01mvp-blog/
       SKILL.md
       scripts/
       templates/
@@ -515,8 +511,8 @@ Session Cookie
 
 ```txt
 后台正常登录
-CLI 重置管理员密码
-CLI 创建管理员
+后台或 OpenAPI 重置管理员密码
+后台或 OpenAPI 创建管理员
 ```
 
 ### 文章管理 `/admin/posts`
@@ -554,7 +550,6 @@ editor
 markdown_upload
 html_upload
 api
-cli
 ai
 import
 ```
@@ -964,36 +959,37 @@ export:read
 
 ---
 
-## 7.8 CLI
+## 7.8 OpenAPI 自动化
 
-CLI 名称：
+主路径：
 
 ```txt
-blogcms
+OpenAPI + API Token + Skill
 ```
 
-基础命令：
+基础接口：
 
-```bash
-blogcms login
-blogcms push ./post.md
-blogcms push ./post-folder
-blogcms import ./site.zip
-blogcms upload ./images
-blogcms export
-blogcms deploy
-blogcms admin reset-password
-blogcms admin create
+```txt
+GET /openapi.json
+POST /api/posts
+PATCH /api/posts/:id
+POST /api/import/markdown
+POST /api/import/html
+POST /api/import/zip
+POST /api/assets
+GET /api/export
+POST /api/backups
+POST /api/comments/:id/approve
 ```
 
 AI 使用场景：
 
 ```txt
-AI 通过 CLI 发布文章
-AI 通过 CLI 导入 Markdown
-AI 通过 CLI 导出备份
-AI 通过 CLI 重置管理员
-AI 通过 CLI 验证站点状态
+AI 通过 OpenAPI 发布文章
+AI 通过 OpenAPI 导入 Markdown
+AI 通过 OpenAPI 导出备份
+AI 通过 OpenAPI 处理评论审核
+AI 通过 OpenAPI 验证站点状态
 ```
 
 ---
@@ -1003,7 +999,7 @@ AI 通过 CLI 验证站点状态
 ## 8.1 Skill 名称
 
 ```txt
-cloud-blog-cms
+01mvp-blog
 ```
 
 ## 8.2 Skill 目标
@@ -1021,10 +1017,8 @@ AI 自动执行优先
 优先使用：
 
 ```txt
-cf CLI
-Wrangler
-Cloudflare API
-Cloudflare MCP，如果可用
+Cloudflare 官方 Skill / Agent Skill
+Wrangler 或 Cloudflare API，由 Cloudflare Skill 负责
 Computer Use，如果需要操作 Dashboard
 API Token
 ```
@@ -1044,24 +1038,24 @@ API Token
 8. 询问是否启用评论
 9. 询问是否启用 Email Sending
 10. 询问是否启用 GitHub Actions / CI
-11. 检查本地 Node / pnpm / vp / wrangler / cf CLI
+11. 检查本地 Node / pnpm / vp，并建议安装 Cloudflare 对应 Skill
 12. 克隆模板或使用 create 命令初始化
 13. 写入站点配置
 14. 生成 Tailwind theme preset
-15. 检查 Cloudflare 登录状态
-16. 创建 D1
-17. 创建 R2
-18. 创建 KV，可选
-19. 创建 Turnstile 配置，若 API/CLI 支持
-20. 写入 wrangler 配置
-21. 执行数据库迁移
-22. 创建 Admin 用户
-23. 部署 Worker
+15. 通过 Cloudflare Skill 处理登录、资源、DNS 和部署
+16. 写入 wrangler 配置
+17. 执行数据库迁移
+18. 部署 Worker
+19. 创建 Admin 用户
+20. 创建或引导创建 API Token
+21. 通过 /openapi.json 验证自动化接口
+22. 通过 OpenAPI 写入站点设置
+23. 通过 OpenAPI 创建第一篇文章、上传资源、导出备份
 24. 验证前台访问
 25. 验证后台登录
-26. 创建第一篇示例文章
+26. 验证第一篇示例文章
 27. 验证 RSS / sitemap / OG
-28. 输出维护命令
+28. 输出 OpenAPI 维护说明
 ```
 
 ## 8.5 Skill 人工介入点
@@ -1151,7 +1145,7 @@ robots.txt
 
 ---
 
-## Phase 2：导入导出 + API/CLI 自动化
+## Phase 2：导入导出 + OpenAPI 自动化
 
 目标：内容可迁移，AI 可自动化操作。
 
@@ -1165,12 +1159,11 @@ ZIP 导入：Markdown + 图片
 API Token
 OpenAPI JSON
 API 文档页
-CLI login
-CLI push
-CLI import
-CLI export
-CLI deploy
-CLI reset-password
+OpenAPI 发布
+OpenAPI 导入
+OpenAPI 导出
+OpenAPI 备份
+OpenAPI 评论审核
 内容校验
 ```
 
@@ -1184,9 +1177,9 @@ CLI reset-password
 5. 导出的 Markdown 可被其他静态博客读取。
 6. /openapi.json 可访问。
 7. API Token 可创建和撤销。
-8. CLI 可发布一篇文章。
-9. CLI 可导出内容。
-10. AI 可通过 CLI 完成“创建文章 -> 发布 -> 返回 URL”。
+8. OpenAPI 可发布一篇文章。
+9. OpenAPI 可导出内容。
+10. AI 可通过 OpenAPI 完成“创建文章 -> 发布 -> 返回 URL”。
 ```
 
 ---
@@ -1231,8 +1224,8 @@ Cron Triggers
 Skill 安装
 Skill 初始化
 Skill 自动配置项目
-Skill 自动调用 CLI / API
-Skill 配置 Cloudflare 资源
+Skill 自动调用 OpenAPI
+Skill 推荐使用 Cloudflare Skill 处理资源与部署
 Skill 部署站点
 Skill 创建第一篇文章
 Skill 生成执行日志
@@ -1277,7 +1270,7 @@ blog.01mvp.com
 6. API 文档：docs/specs/api.md
 7. Skill 文档：docs/specs/skill.md
 8. 验收文档：docs/specs/acceptance.md
-9. Skill 包：skills/cloud-blog-cms
+9. Skill 包：skills/01mvp-blog
 ```
 
 最终必须证明两件事：
@@ -1309,8 +1302,8 @@ blog.01mvp.com
 8. 实现前台博客：首页、文章列表、文章详情、标签、关于页、作品集。
 9. 实现评论系统：匿名昵称 + 邮箱 + 内容，默认 pending，后台审核，Turnstile 防垃圾。
 10. 实现 SEO、RSS、sitemap、robots.txt、基础 OG。
-11. 实现导入导出、OpenAPI、API Token、CLI。
-12. 实现 skills/cloud-blog-cms，让 AI 可以自动初始化和部署一个新博客。
+11. 实现导入导出、OpenAPI、API Token 和 Skill 自动化。
+12. 实现 skills/01mvp-blog，让 AI 可以自动初始化、部署和维护一个新博客。
 13. 最终交付唯一站点：blog.01mvp.com。
 14. 邮件发送基于 Cloudflare Email Service，作为 Phase 3 可选增强，不得阻塞免费核心版。
 15. 所有功能按 Phase 1-4 分阶段实现和验收。

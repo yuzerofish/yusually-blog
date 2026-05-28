@@ -1,8 +1,8 @@
 # Skill
 
-The `cloud-blog-cms` Skill lives at `skills/cloud-blog-cms/SKILL.md`.
+The `01mvp-blog` Skill lives at `skills/01mvp-blog/SKILL.md`.
 
-Its job is to let an AI agent initialize a new blog from this template, configure Cloudflare resources, deploy the Worker, create the first admin, publish a bilingual first post, upload media, verify comments and feeds, and record an execution log.
+Its job is to let an AI agent initialize a new blog from this template, coordinate Cloudflare provisioning through Cloudflare-specific skills, create the first admin, publish a bilingual first post, upload media, verify comments and feeds, record an execution log, and maintain existing sites through `/openapi.json`.
 
 ## Required Inputs
 
@@ -27,20 +27,18 @@ The theme preset is written to site settings and applied through shared UI token
 1. Check local prerequisites with `scripts/check-prereqs.sh`.
 2. Create or clone the project.
 3. Write site config from `templates/site.config.json`.
-4. Verify Cloudflare login.
-5. Create D1, one R2 storage bucket, optional KV resources, and optional Email Sending resources.
-6. Write Wrangler bindings.
-7. Run `blogcms deploy --target main`. This applies D1 migrations and deploys the Worker with the generated Cloudflare Vite config.
-8. Create the first admin user.
-9. Log in and create a scoped API token.
-10. Push site settings through `blogcms site update`.
-11. Publish the first bilingual post through `blogcms push`.
-12. Upload a media asset through `blogcms upload`.
-13. Submit and approve a comment.
-14. If Email Sending is enabled, request a password reset email.
-15. Export JSON through `blogcms export` and create a ZIP backup through `blogcms backup`.
-16. Verify homepage, post page, admin, RSS, sitemap, robots, OpenAPI, OG metadata, localized API responses, JSON export, and ZIP backup.
-17. Save an execution log.
+4. Recommend loading the relevant Cloudflare skills for account, resource, DNS, binding, and deploy work.
+5. Create the first admin user.
+6. Create or guide the user to create a scoped API token.
+7. Fetch `/openapi.json` from the deployed site.
+8. Push site settings through `PUT /api/site`.
+9. Publish the first bilingual post through `POST /api/posts`.
+10. Upload a media asset through `POST /api/assets`.
+11. Submit and approve a comment.
+12. If Email Sending is enabled, request a password reset email.
+13. Export JSON through `GET /api/export` and create a ZIP backup through `POST /api/backups`.
+14. Verify homepage, post page, admin, RSS, sitemap, robots, OpenAPI, OG metadata, localized API responses, JSON export, and ZIP backup.
+15. Save an execution log.
 
 ## Production Evidence
 
@@ -49,7 +47,7 @@ The canonical production deployment uses:
 - Site: `https://blog.01mvp.com`
 - Worker: `blog-starter`
 
-The production run should create site settings from `skills/cloud-blog-cms/templates/site.config.json`, publish a first bilingual post, upload an R2 asset, submit and approve a pending comment, generate an R2 export backup, verify scheduled post visibility on the public API, verify comment reply depth, and verify sitemap entries for home, posts, tags, docs, and about.
+The production run should create site settings from `skills/01mvp-blog/templates/site.config.json`, publish a first bilingual post, upload an R2 asset, submit and approve a pending comment, generate an R2 export backup, verify scheduled post visibility on the public API, verify comment reply depth, and verify sitemap entries for home, posts, tags, docs, and about.
 
 ## User Intervention Points
 

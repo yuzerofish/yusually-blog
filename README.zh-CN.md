@@ -9,7 +9,7 @@
 
 默认提供两套内容系统：
 
-- `/blog` 由 CMS 后端驱动，适合公开文章、后台写作、评论、RSS、CLI 发布、导入、导出和备份。
+- `/blog` 由 CMS 后端驱动，适合公开文章、后台写作、评论、RSS、OpenAPI 发布、导入、导出和备份。
 - `/docs` 由 Fumadocs 与 GitHub Markdown/MDX 驱动，适合产品文档、开发者文档、API 指南和模板说明。
 
 ## 技术栈
@@ -97,11 +97,10 @@ pnpm deploy:web
 
 ```txt
 apps/web                 TanStack Start 应用、管理后台、公开站点、文档和 API 路由
-apps/cli                 命令行发布工具
 packages/core            内容类型、演示数据、Markdown 与 i18n helper
 packages/db              Drizzle schema 与 D1 migrations
 packages/ui              共享 UI primitives
-skills                   AI 初始化 Skill
+skills                   AI 初始化与 OpenAPI 维护 Skill
 apps/web/content/docs    公开 Fumadocs 文档源，docs/site 指向这里
 docs/specs               项目规格、部署记录和实现记录
 ```
@@ -119,9 +118,9 @@ docs/specs               项目规格、部署记录和实现记录
 
 根目录下的 `docs/specs` 用于项目规格、部署记录、验收记录和实现证据，不作为公开 Fumadocs 内容整包发布。
 
-## CLI
+## 自动化
 
-登录、查看站点、发布文章和导出内容都通过 `apps/cli` 里的 CLI 完成。运行需要鉴权的命令前，先在 shell 里设置站点地址和 API Token。
+创建站点和维护已有博客都通过 `skills/01mvp-blog` 里的 `01mvp-blog` Skill 完成。生成后的站点会暴露 `/openapi.json`，接入外部自动化前先在后台设置页创建受限 API Token。
 
 ## License
 

@@ -2577,7 +2577,7 @@ export const admin_token_secret_once: ((inputs?: Admin_Token_Secret_OnceInputs, 
 /**
 * | output |
 * | --- |
-* | "Create scoped automation tokens for CLI, OpenAPI, and AI publishing workflows." |
+* | "Create scoped automation tokens for OpenAPI and AI publishing workflows." |
 *
 * @param {Admin_Tokens_DescriptionInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -3683,7 +3683,7 @@ export const contents: ((inputs?: ContentsInputs, options?: {
 /**
 * | output |
 * | --- |
-* | "CLI + API" |
+* | "OpenAPI" |
 *
 * @param {Feature_Api_TitleInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options

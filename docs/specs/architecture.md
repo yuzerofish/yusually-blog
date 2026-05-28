@@ -1,15 +1,14 @@
 # Architecture
 
-01mvp-blog-starter is a TanStack Start monorepo built for Cloudflare Workers. The repository ships both the reusable CMS template and the `cloud-blog-cms` AI initialization Skill.
+01mvp-blog-starter is a TanStack Start monorepo built for Cloudflare Workers. The repository ships both the reusable CMS template and the `01mvp-blog` AI initialization and maintenance Skill.
 
 ## Runtime
 
 - `apps/web`: TanStack Start app deployed to Cloudflare Workers.
-- `apps/cli`: `blogcms` command surface for remote publishing, import/export, admin, and Skill automation.
 - `packages/core`: domain types, seed content, Markdown helpers, i18n-aware content helpers, and pure demo stores.
 - `packages/db`: Drizzle schema plus D1 SQL migrations.
 - `packages/ui`: shared shadcn/Base UI primitives and theme tokens.
-- `skills/cloud-blog-cms`: agent workflow, templates, checklists, and first-run examples.
+- `skills/01mvp-blog`: agent workflow, OpenAPI maintenance guidance, templates, checklists, and first-run examples.
 
 ## Cloudflare Boundary
 
@@ -39,7 +38,7 @@
 
 ## Automation Flow
 
-The Skill and CLI use the same HTTP API as the admin UI. A generated site can be initialized by provisioning Cloudflare resources, applying D1 migrations, creating the first admin, logging in to mint a scoped token, writing site settings, publishing the first bilingual post, uploading assets, submitting and approving a comment, and exporting a backup.
+The Skill uses the same OpenAPI HTTP surface as the admin UI. A generated site can be initialized by provisioning Cloudflare resources through Cloudflare-specific skills, applying D1 migrations, creating the first admin, minting a scoped token, writing site settings, publishing the first bilingual post, uploading assets, submitting and approving a comment, and exporting a backup.
 
 ## Import Flow
 

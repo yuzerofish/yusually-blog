@@ -11,7 +11,7 @@ This document records the current evidence for the PRD acceptance scope. Dates a
 - Email Sending is disabled by default and the core login, publishing, comments, moderation, import, export, backup, and password reset request paths do not depend on it.
 - Blog post pages render canonical, Open Graph, Twitter Card, and JSON-LD `BlogPosting` metadata.
 - The Worker deploy publishes the daily backup Cron Trigger `0 3 * * *`.
-- `blogcms deploy --target main` runs the build, remote D1 migration, and Wrangler deploy sequence.
+- `pnpm deploy:web` runs the build, remote D1 migration, and Wrangler deploy sequence.
 - Unauthenticated ZIP export and backup requests return HTTP 401 JSON responses.
 - Unauthenticated post batch updates return HTTP 401 JSON with `requiredScope: "posts:write"`.
 - Unauthenticated asset deletion returns HTTP 401 JSON with `requiredScope: "assets:write"`.

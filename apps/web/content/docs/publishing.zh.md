@@ -1,6 +1,6 @@
 ---
 title: 发布
-description: 通过后台、CLI、API 或 Git 文档发布内容。
+description: 通过后台、OpenAPI、AI Skill 或 Git 文档发布内容。
 ---
 
 01mvp-blog-starter 支持多种发布路径。
@@ -17,11 +17,11 @@ description: 通过后台、CLI、API 或 Git 文档发布内容。
 
 发布后的文章会出现在 `/blog`、feeds、标签页和 sitemap 中。
 
-## CLI 发布
+## OpenAPI 发布
 
-需要本地或自动化发布时，使用 `apps/cli` 里的 CLI。运行需要鉴权的命令前，先在 shell 中配置站点地址和 API Token。
+需要本地自动化、外部集成或 AI 辅助发布时，使用 `/openapi.json`。发送鉴权请求前，先在后台设置页创建受限 API Token。
 
-CLI 使用和后台相同的鉴权 HTTP API。
+发布流程使用和后台相同的鉴权 HTTP API。写入文章需要 `posts:write`，发布或定时发布还需要 `posts:publish`。
 
 ## 导入和导出
 

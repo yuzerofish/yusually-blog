@@ -8,8 +8,7 @@ description: 01mvp-blog-starter 的 API 与自动化入口。
 API 主要服务于：
 
 - 后台管理界面
-- CLI
-- AI 初始化工作流
+- AI 初始化与维护工作流
 - 自定义自动化脚本
 
 ## 主要接口
@@ -45,6 +44,8 @@ GET    /api/admin/email-status
 ```
 
 API Token 有 scope。发布内容需要写权限，把文章切换到已发布或定时发布还需要 publish 权限。
+
+API Token 在后台设置页创建。按任务选择最小权限：文章需要 `posts:read`、`posts:write`，发布或定时发布再加 `posts:publish`；评论审核需要 `comments:moderate`；导出需要 `export:read`；站点设置需要 `site:read` 或 `site:write`。
 
 ## 评论与读者登录
 

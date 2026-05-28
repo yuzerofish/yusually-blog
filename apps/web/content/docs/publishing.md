@@ -1,6 +1,6 @@
 ---
 title: Publishing
-description: Publish through the admin UI, CLI, API, or Git-managed docs.
+description: Publish through the admin UI, OpenAPI, AI Skill, or Git-managed docs.
 ---
 
 01mvp-blog-starter supports several publishing paths.
@@ -17,11 +17,11 @@ Use the admin UI when you want a normal writing workflow:
 
 Published posts appear under `/blog`, feeds, tag pages, and the sitemap.
 
-## CLI Publishing
+## OpenAPI Publishing
 
-Use the CLI in `apps/cli` when you want local or automated publishing. Configure the site URL and API token in your shell before running authenticated commands.
+Use `/openapi.json` when you want local automation, external integrations, or AI-assisted publishing. Create a scoped API token in the admin settings before running authenticated requests.
 
-The CLI uses the same authenticated HTTP API as the admin UI.
+Publishing uses the same authenticated HTTP API as the admin UI. Writing posts requires `posts:write`, and publishing or scheduling posts also requires `posts:publish`.
 
 ## Import And Export
 

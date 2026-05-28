@@ -156,7 +156,7 @@ export const Route = createFileRoute("/openapi.json")({
               post: {
                 summary: "Import ZIP package",
                 description:
-                  "Accepts a base64 ZIP or CLI file manifest, imports Markdown/HTML content, uploads image entries to R2, and rewrites local image references.",
+                  "Accepts a base64 ZIP or automation file manifest, imports Markdown/HTML content, uploads image entries to R2, and rewrites local image references.",
                 security: [{ apiToken: ["posts:write"] }],
                 requestBody: {
                   content: {
@@ -244,6 +244,8 @@ export const Route = createFileRoute("/openapi.json")({
                             type: "array",
                             items: { type: "string" },
                           },
+                          aiCommentModerationEnabled: { type: "boolean" },
+                          aiCommentModerationRules: { type: "string" },
                           emailVerificationEnabled: { type: "boolean" },
                           indexingEnabled: { type: "boolean" },
                         },

@@ -7,4 +7,4 @@ tags:
   - Markdown
 ---
 
-This post was created by the `01mvp-blog-starter` Skill during site initialization.
+This post was created by the `01mvp-blog` Skill during site initialization.

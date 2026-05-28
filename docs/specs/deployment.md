@@ -62,10 +62,10 @@ The remote databases have applied:
 Production:
 
 ```sh
-blogcms deploy --target main
+pnpm deploy:web
 ```
 
-`blogcms deploy` runs the matching Vite+ build, applies remote D1 migrations, and deploys with the generated Cloudflare Vite config. The underlying commands remain available for targeted maintenance:
+`pnpm deploy:web` runs the matching Vite+ build, applies remote D1 migrations, and deploys with the generated Cloudflare Vite config. The underlying commands remain available for targeted maintenance:
 
 ```sh
 pnpm build:web

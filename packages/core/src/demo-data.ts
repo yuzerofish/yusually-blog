@@ -26,6 +26,9 @@ export const siteSettings: SiteSettings = {
   commentsRequireApproval: true,
   commentAutoBlockEnabled: true,
   commentBlockedKeywords: ["博彩", "赌博", "色情", "诈骗", "辱骂", "violence", "scam", "spam"],
+  aiCommentModerationEnabled: false,
+  aiCommentModerationRules:
+    "判断这条博客评论是否适合公开展示。拦截广告、诈骗、钓鱼、辱骂、仇恨、色情、暴力威胁、隐私泄露、无意义灌水和明显 SEO 外链。普通反对意见、批评、提问、纠错、补充信息应该允许。",
   emailVerificationEnabled: false,
   indexingEnabled: true,
   themePreset: "maker",
@@ -67,10 +70,10 @@ export const tags: Tag[] = [
     id: "tag-ai",
     name: "AI Automation",
     slug: "ai-automation",
-    description: "Agent-friendly APIs, CLI flows, and repeatable site initialization.",
+    description: "Agent-friendly OpenAPI workflows and repeatable site initialization.",
     i18n: {
       name: { zh: "AI 自动化" },
-      description: { zh: "面向 Agent 的 API、CLI 流程和可重复的网站初始化。" },
+      description: { zh: "面向 Agent 的 OpenAPI 工作流和可重复的网站初始化。" },
     },
   },
   {
@@ -123,7 +126,7 @@ export const posts: Post[] = [
     title: "Designing a permanent personal CMS on Cloudflare",
     slug: "designing-a-permanent-personal-cms-on-cloudflare",
     excerpt:
-      "The template stores canonical content in D1, keeps media and backup archives in R2, and exposes the same publishing surface to humans, CLIs, and AI agents.",
+      "The template stores canonical content in D1, keeps media and backup archives in R2, and exposes the same OpenAPI publishing surface to humans and AI agents.",
     coverImage:
       "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=80",
     contentMarkdown: `# Designing a permanent personal CMS on Cloudflare
@@ -138,7 +141,7 @@ The first release focuses on a reliable loop: sign in, write, upload, publish, r
 - R2 owns binary assets.
 - Markdown remains exportable.
 - HTML imports are sanitized before rendering.
-- API tokens and the CLI use scoped permissions.
+- API tokens use scoped permissions for OpenAPI automation.
 `,
     contentHtml:
       "<p>01mvp-blog-starter treats the database as the source of truth and Markdown as the durable content format.</p><p>The first release focuses on a reliable loop: sign in, write, upload, publish, render, comment, review, and export.</p>",
@@ -160,7 +163,7 @@ The first release focuses on a reliable loop: sign in, write, upload, publish, r
     i18n: {
       title: { zh: "在 Cloudflare 上设计一个长期可用的个人 CMS" },
       excerpt: {
-        zh: "这个模板把标准内容存入 D1，把媒体和备份归档放进 R2，并向人类、CLI 和 AI Agent 暴露同一套发布能力。",
+        zh: "这个模板把标准内容存入 D1，把媒体和备份归档放进 R2，并向人类和 AI Agent 暴露同一套 OpenAPI 发布能力。",
       },
       contentMarkdown: {
         zh: `# 在 Cloudflare 上设计一个长期可用的个人 CMS
@@ -175,7 +178,7 @@ The first release focuses on a reliable loop: sign in, write, upload, publish, r
 - R2 负责二进制资源。
 - Markdown 始终可以导出。
 - HTML 导入会先清洗再渲染。
-- API Token 和 CLI 使用受限权限。
+- API Token 为 OpenAPI 自动化提供受限权限。
 `,
       },
       contentHtml: {

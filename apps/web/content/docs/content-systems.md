@@ -15,7 +15,7 @@ Use the publishing backend for content that benefits from runtime management:
 - comments and moderation
 - media uploads to R2
 - RSS and feed output
-- API and CLI publishing
+- OpenAPI and Skill publishing
 - imports, exports, and backups
 
 Blog content is stored in D1. Markdown remains the authoring format, and rendered HTML is cached for public pages.

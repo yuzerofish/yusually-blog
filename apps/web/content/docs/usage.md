@@ -17,13 +17,11 @@ Use the admin UI when you want a normal writing workflow:
 
 Published posts appear on `/blog`, tag pages, RSS, feeds, and sitemap output.
 
-## Publish With CLI Or API
+## Publish With OpenAPI Or Skill
 
-Use the CLI for local drafts, automation, or AI-assisted publishing:
+Use `/openapi.json` for local drafts, automation, external integrations, or AI-assisted publishing.
 
-Use the publishing command from `apps/cli`, with the site URL and API token configured in your shell.
-
-Use `/openapi.json` when connecting external tools or generating API clients.
+Create a scoped API token in the admin settings, then use the OpenAPI schema when connecting external tools or generating API clients. Use the `01mvp-blog` Skill in `skills/01mvp-blog` when an AI agent should create or maintain a blog end to end.
 
 ## Maintain Docs
 
