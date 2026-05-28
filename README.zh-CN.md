@@ -1,0 +1,128 @@
+# 01mvp-blog-starter
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/01MVP/blog-starter)
+[![Cloudflare deploy](https://github.com/01MVP/blog-starter/actions/workflows/cloudflare-deploy.yml/badge.svg)](https://github.com/01MVP/blog-starter/actions/workflows/cloudflare-deploy.yml)
+
+[English README](./README.md)
+
+01mvp-blog-starter 是一个基于 Cloudflare 的个人博客 CMS，并内置 Git 管理的文档系统。
+
+默认提供两套内容系统：
+
+- `/blog` 由 CMS 后端驱动，适合公开文章、后台写作、评论、RSS、CLI 发布、导入、导出和备份。
+- `/docs` 由 Fumadocs 与 GitHub Markdown/MDX 驱动，适合产品文档、开发者文档、API 指南和模板说明。
+
+## 技术栈
+
+- TanStack Start + TanStack Router
+- React 19 + React Compiler
+- Tailwind CSS + shadcn/ui
+- Fumadocs 管理 Git 文档
+- Paraglide.js 编译英文和中文 UI 文案
+- Cloudflare Workers，通过 `@cloudflare/vite-plugin` 集成
+- Cloudflare D1 存储文章、评论、设置、用户、会话和 API Token
+- Cloudflare R2 存储媒体、导入包、导出包和备份
+- Cloudflare KV 存储缓存元数据和短期记录
+
+## 一键部署到 Cloudflare
+
+点击上方 Deploy to Cloudflare 按钮，可以从公开 GitHub 仓库创建并部署自己的副本。
+
+这个按钮面向 Workers 应用。当前仓库是 pnpm monorepo，所以根目录脚本是部署入口：
+
+```sh
+pnpm build:web
+pnpm run deploy
+```
+
+Cloudflare 可以根据 Wrangler 配置创建支持的资源，包括 D1、R2 和 KV。第一次部署后请检查 `apps/web/wrangler.jsonc`，因为生产域名和公开站点 URL 需要改成你自己的项目值。
+
+生产环境必需的 secret：
+
+- `BETTER_AUTH_SECRET`：用 `pnpm auth:secret` 生成
+- `GITHUB_CLIENT_SECRET`：只有启用 GitHub 评论登录时才需要
+
+## Push 后自动部署
+
+仓库已包含 `.github/workflows/cloudflare-deploy.yml`。每次 push 到 `main` 后，GitHub Actions 会安装依赖、构建 Web 应用、把 D1 migrations 应用到远程数据库，并部署 Worker 到 Cloudflare。
+
+先给 GitHub 仓库添加这两个 secrets：
+
+```sh
+gh secret set CLOUDFLARE_API_TOKEN --repo 01MVP/blog-starter --body "$CLOUDFLARE_API_TOKEN"
+gh secret set CLOUDFLARE_ACCOUNT_ID --repo 01MVP/blog-starter --body "$CLOUDFLARE_ACCOUNT_ID"
+```
+
+Token 需要能部署 Workers，并能管理 `apps/web/wrangler.jsonc` 里绑定的 D1、R2 和 KV 资源。
+
+## 本地开发
+
+```sh
+pnpm install
+pnpm dev:web
+```
+
+本地 Web 应用默认运行在 `http://localhost:3000`。
+
+写入本地 D1 管理员账号：
+
+```sh
+pnpm db:seed:local-admin
+```
+
+默认本地账号：
+
+```txt
+email: a@a.test
+password: 1
+```
+
+## 构建
+
+```sh
+pnpm build:web
+```
+
+构建会编译 Paraglide 输出、构建 TanStack Start，并生成 Cloudflare Worker bundle。
+
+## 生产部署
+
+```sh
+pnpm deploy:web
+```
+
+这个命令会检查必需的 R2 存储桶、构建 Web 应用、应用远程 D1 migrations，并用生成的 Cloudflare 配置部署 Worker。
+
+## 工作区
+
+```txt
+apps/web                 TanStack Start 应用、管理后台、公开站点、文档和 API 路由
+apps/cli                 命令行发布工具
+packages/core            内容类型、演示数据、Markdown 与 i18n helper
+packages/db              Drizzle schema 与 D1 migrations
+packages/ui              共享 UI primitives
+skills                   AI 初始化 Skill
+apps/web/content/docs    公开 Fumadocs 文档源，docs/site 指向这里
+docs/specs               项目规格、部署记录和实现记录
+```
+
+## 文档
+
+公开文档源文件放在 `apps/web/content/docs`。它会渲染到 `/docs` 和 `/zh/docs`。
+
+配置新站点时优先看这些文档：
+
+- [部署](./apps/web/content/docs/deployment.zh.md)
+- [评论](./apps/web/content/docs/comments.zh.md)
+- [进阶配置](./apps/web/content/docs/advanced-configuration.zh.md)
+- [API](./apps/web/content/docs/api.zh.md)
+
+根目录下的 `docs/specs` 用于项目规格、部署记录、验收记录和实现证据，不作为公开 Fumadocs 内容整包发布。
+
+## CLI
+
+登录、查看站点、发布文章和导出内容都通过 `apps/cli` 里的 CLI 完成。运行需要鉴权的命令前，先在 shell 里设置站点地址和 API Token。
+
+## License
+
+MIT. See [LICENSE](./LICENSE).
