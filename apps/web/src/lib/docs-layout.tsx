@@ -8,6 +8,7 @@ import type { ComponentProps } from "react";
 
 import { LanguageToggle } from "#/components/language-toggle";
 import { siteBrandLinkClassName, SiteBrandText } from "#/components/site-brand";
+import { StylePresetCycleButton, type StylePresetOption } from "#/components/style-preset-switcher";
 import { ThemeToggle } from "#/components/theme-toggle";
 import { getDocsUrl, type DocsLocale } from "#/lib/docs-i18n";
 import { setCurrentLocale } from "#/lib/i18n";
@@ -16,6 +17,8 @@ type DocsLayoutConfig = Omit<DocsLayoutProps, "children" | "tree">;
 
 interface DocsLayoutOptions {
   locale: DocsLocale;
+  nextPreset: StylePresetOption;
+  onPresetSelect: (preset: StylePresetOption) => void;
   siteSettings: SiteSettings;
   slugs: string[];
 }
@@ -25,10 +28,14 @@ const docsSidebarControlClassName =
 
 function DocsSidebarControls({
   locale,
+  nextPreset,
+  onPresetSelect,
   rssLink,
   slugs,
 }: {
   readonly locale: DocsLocale;
+  readonly nextPreset: StylePresetOption;
+  readonly onPresetSelect: (preset: StylePresetOption) => void;
   readonly rssLink?: { href: string; label: string };
   readonly slugs: string[];
 }) {
@@ -57,6 +64,12 @@ function DocsSidebarControls({
           <span className="sr-only">{rssLink.label}</span>
         </Button>
       ) : null}
+      <StylePresetCycleButton
+        className={docsSidebarControlClassName}
+        locale={locale}
+        nextPreset={nextPreset}
+        onSelect={onPresetSelect}
+      />
       <ThemeToggle locale={locale} className={docsSidebarControlClassName} />
       <LanguageToggle
         currentLocale={locale}
@@ -70,6 +83,8 @@ function DocsSidebarControls({
 
 export function getDocsLayoutOptions({
   locale,
+  nextPreset,
+  onPresetSelect,
   siteSettings,
   slugs,
 }: DocsLayoutOptions): DocsLayoutConfig {
@@ -90,7 +105,15 @@ export function getDocsLayoutOptions({
       url: "/",
     },
     sidebar: {
-      footer: <DocsSidebarControls locale={locale} rssLink={rssLink} slugs={slugs} />,
+      footer: (
+        <DocsSidebarControls
+          locale={locale}
+          nextPreset={nextPreset}
+          onPresetSelect={onPresetSelect}
+          rssLink={rssLink}
+          slugs={slugs}
+        />
+      ),
     },
     themeSwitch: {
       enabled: false,

@@ -17,10 +17,11 @@ import { LanguageToggle } from "#/components/language-toggle";
 import { SignOutButton } from "#/components/sign-out-button";
 import { siteBrandLinkClassName, SiteBrandText } from "#/components/site-brand";
 import {
-  getNextStylePreset,
   resolveStylePreset,
+  type StylePresetOption,
   StylePresetCycleButton,
   StylePresetRuntimeScript,
+  useStylePreset,
 } from "#/components/style-preset-switcher";
 import { ThemeToggle } from "#/components/theme-toggle";
 import { getCurrentLocale } from "#/lib/i18n";
@@ -40,9 +41,7 @@ export function AdminShell() {
   const locale = getCurrentLocale();
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(getSiteSettingsForLocale(locale));
   const settingsPreset = resolveStylePreset(siteSettings.themePreset, siteSettings.layoutPreset);
-  const [presetOverride, setPresetOverride] = useState<typeof settingsPreset | null>(null);
-  const preset = presetOverride ?? settingsPreset;
-  const nextPreset = getNextStylePreset(preset);
+  const { preset, nextPreset, selectPreset, resetPreset } = useStylePreset(settingsPreset);
 
   useEffect(() => {
     let ignore = false;
@@ -50,7 +49,7 @@ export function AdminShell() {
       const nextSettings = (event as CustomEvent<SiteSettings>).detail;
 
       if (nextSettings) {
-        setPresetOverride(null);
+        resetPreset();
         setSiteSettings(nextSettings);
       }
     };
@@ -61,7 +60,6 @@ export function AdminShell() {
         const data = (payload as { data?: SiteSettings } | undefined)?.data;
 
         if (!ignore && data) {
-          setPresetOverride(null);
           setSiteSettings(data);
         }
       });
@@ -72,24 +70,25 @@ export function AdminShell() {
       ignore = true;
       window.removeEventListener("blogcms:site-settings-updated", handleSettingsUpdate);
     };
-  }, [locale]);
+  }, [locale, resetPreset]);
 
   return (
     <div
       data-theme-preset={preset.themePreset}
       data-layout-preset={preset.layoutPreset}
+      suppressHydrationWarning
       className="min-h-svh bg-background text-foreground lg:pl-72"
     >
       <DesktopSidebar
         locale={locale}
         nextPreset={nextPreset}
-        onPresetSelect={setPresetOverride}
+        onPresetSelect={selectPreset}
         siteName={siteSettings.name}
       />
       <MobileAdminHeader
         locale={locale}
         nextPreset={nextPreset}
-        onPresetSelect={setPresetOverride}
+        onPresetSelect={selectPreset}
         siteName={siteSettings.name}
       />
       <StylePresetRuntimeScript initialPreset={preset} locale={locale} />
@@ -110,8 +109,8 @@ function DesktopSidebar({
   siteName,
 }: {
   readonly locale: ReturnType<typeof getCurrentLocale>;
-  readonly nextPreset: ReturnType<typeof getNextStylePreset>;
-  readonly onPresetSelect: (preset: ReturnType<typeof getNextStylePreset>) => void;
+  readonly nextPreset: StylePresetOption;
+  readonly onPresetSelect: (preset: StylePresetOption) => void;
   readonly siteName: string;
 }) {
   return (
@@ -149,8 +148,8 @@ function MobileAdminHeader({
   siteName,
 }: {
   readonly locale: ReturnType<typeof getCurrentLocale>;
-  readonly nextPreset: ReturnType<typeof getNextStylePreset>;
-  readonly onPresetSelect: (preset: ReturnType<typeof getNextStylePreset>) => void;
+  readonly nextPreset: StylePresetOption;
+  readonly onPresetSelect: (preset: StylePresetOption) => void;
   readonly siteName: string;
 }) {
   return (

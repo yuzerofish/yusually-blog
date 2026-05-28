@@ -1,15 +1,18 @@
 import type { LayoutPreset, SupportedLocale, ThemePreset } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { PaletteIcon } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 
 type StylePresetId = "maker-shelf" | "apple-shelf" | "claude-shelf" | "brutalist-shelf";
 
-type StylePresetOption = {
+export type StylePresetOption = {
   id: StylePresetId;
   themePreset: ThemePreset;
   layoutPreset: LayoutPreset;
   label: Record<SupportedLocale, string>;
 };
+
+const stylePresetStorageKey = "blogcms:style-preset";
 
 const defaultStylePreset: StylePresetOption = {
   id: "maker-shelf",
@@ -53,10 +56,12 @@ export const stylePresetOptions: StylePresetOption[] = [
 ];
 
 export function StylePresetCycleButton({
+  className,
   locale,
   nextPreset,
   onSelect,
 }: {
+  readonly className?: string;
   readonly locale: SupportedLocale;
   readonly nextPreset: StylePresetOption;
   readonly onSelect?: (preset: StylePresetOption) => void;
@@ -71,6 +76,7 @@ export function StylePresetCycleButton({
       aria-label={label}
       data-style-preset-switcher
       onClick={() => onSelect?.(nextPreset)}
+      className={className}
     >
       <PaletteIcon className="size-4" />
       <span data-style-preset-label className="sr-only">
@@ -94,6 +100,72 @@ function getPresetForAttributes(themePreset?: string, layoutPreset?: string) {
   );
 }
 
+function getPresetForId(id?: string | null) {
+  return stylePresetOptions.find((preset) => preset.id === id) ?? null;
+}
+
+function getStoredStylePreset() {
+  if (typeof window === "undefined") return null;
+
+  try {
+    return getPresetForId(window.localStorage.getItem(stylePresetStorageKey));
+  } catch {
+    return null;
+  }
+}
+
+function storeStylePreset(preset: StylePresetOption) {
+  try {
+    window.localStorage.setItem(stylePresetStorageKey, preset.id);
+  } catch {
+    // Storage can be unavailable in private or restricted browser contexts.
+  }
+}
+
+function clearStoredStylePreset() {
+  try {
+    window.localStorage.removeItem(stylePresetStorageKey);
+  } catch {
+    // Storage can be unavailable in private or restricted browser contexts.
+  }
+}
+
+export function useStylePreset(settingsPreset: StylePresetOption) {
+  const [presetOverride, setPresetOverride] = useState<StylePresetOption | null>(null);
+  const preset = presetOverride ?? settingsPreset;
+
+  useEffect(() => {
+    const syncId = window.setTimeout(() => {
+      setPresetOverride(getStoredStylePreset());
+    }, 0);
+
+    return () => window.clearTimeout(syncId);
+  }, []);
+
+  const selectPreset = useCallback((nextPreset: StylePresetOption) => {
+    setPresetOverride(nextPreset);
+
+    if (typeof window !== "undefined") {
+      storeStylePreset(nextPreset);
+    }
+  }, []);
+
+  const resetPreset = useCallback(() => {
+    setPresetOverride(null);
+
+    if (typeof window !== "undefined") {
+      clearStoredStylePreset();
+    }
+  }, []);
+
+  return {
+    preset,
+    nextPreset: getNextStylePreset(preset),
+    selectPreset,
+    resetPreset,
+  };
+}
+
 export function StylePresetRuntimeScript({
   initialPreset,
   locale,
@@ -105,10 +177,12 @@ export function StylePresetRuntimeScript({
     initialId: initialPreset.id,
     locale,
     presets: stylePresetOptions,
+    storageKey: stylePresetStorageKey,
   }).replaceAll("<", "\\u003c");
 
   return (
     <script
+      suppressHydrationWarning
       dangerouslySetInnerHTML={{
         __html: `(() => {
   const config = ${payload};
@@ -116,7 +190,31 @@ export function StylePresetRuntimeScript({
   const labelLocale = config.locale === "zh" ? "zh" : "en";
 
   function getPreset(id) {
-    return presets.find((preset) => preset.id === id) || presets[0];
+    return getPresetById(id) || presets[0];
+  }
+
+  function getPresetById(id) {
+    return presets.find((preset) => preset.id === id) || null;
+  }
+
+  function getStoredPreset() {
+    try {
+      return getPresetById(localStorage.getItem(config.storageKey));
+    } catch {
+      return null;
+    }
+  }
+
+  function storePreset(preset) {
+    try {
+      localStorage.setItem(config.storageKey, preset.id);
+    } catch {}
+  }
+
+  function clearStoredPreset() {
+    try {
+      localStorage.removeItem(config.storageKey);
+    } catch {}
   }
 
   function getPresetForAttributes(themePreset, layoutPreset) {
@@ -129,7 +227,7 @@ export function StylePresetRuntimeScript({
     );
   }
 
-  let activeId = config.initialId;
+  let activeId = (getStoredPreset() || getPreset(config.initialId)).id;
 
   function getCurrentPreset(root) {
     return (
@@ -163,11 +261,12 @@ export function StylePresetRuntimeScript({
     );
   }
 
-  function applyPreset(root, preset) {
+  function applyPreset(root, preset, options) {
     root.dataset.themePreset = preset.themePreset;
     root.dataset.layoutPreset = preset.layoutPreset;
     activeId = preset.id;
-    updateButtons(root);
+    if (options && options.persist) storePreset(preset);
+    if (!options || options.updateButtons !== false) updateButtons(root);
   }
 
   document.addEventListener("click", (event) => {
@@ -181,18 +280,31 @@ export function StylePresetRuntimeScript({
     if (!root) return;
 
     event.preventDefault();
-    applyPreset(root, getNextPreset(getCurrentPreset(root)));
+    applyPreset(root, getNextPreset(getCurrentPreset(root)), {
+      persist: true,
+      updateButtons: false,
+    });
   });
 
   window.addEventListener("blogcms:site-settings-updated", (event) => {
     const root = document.querySelector("[data-theme-preset][data-layout-preset]");
     const detail = event.detail || {};
     if (!root || !detail.themePreset) return;
-    applyPreset(root, getPresetForAttributes(detail.themePreset, detail.layoutPreset));
+    clearStoredPreset();
+    applyPreset(root, getPresetForAttributes(detail.themePreset, detail.layoutPreset), {
+      updateButtons: false,
+    });
   });
 
   const root = document.querySelector("[data-theme-preset][data-layout-preset]");
-  if (root) updateButtons(root);
+  if (root) {
+    const storedPreset = getStoredPreset();
+    if (storedPreset) {
+      applyPreset(root, storedPreset, { updateButtons: false });
+    } else {
+      updateButtons(root);
+    }
+  }
 })();`,
       }}
     />

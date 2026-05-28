@@ -8,7 +8,11 @@ import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/layo
 import { Suspense, useEffect } from "react";
 
 import { DocsMDXProvider, useMDXComponents } from "#/components/mdx";
-import { resolveStylePreset, StylePresetRuntimeScript } from "#/components/style-preset-switcher";
+import {
+  resolveStylePreset,
+  StylePresetRuntimeScript,
+  useStylePreset,
+} from "#/components/style-preset-switcher";
 import { getDocsI18nProvider, getDocsUrl } from "#/lib/docs-i18n";
 import { getDocsLayoutOptions } from "#/lib/docs-layout";
 import { setCurrentLocale } from "#/lib/i18n";
@@ -37,7 +41,11 @@ interface DocsRouteData {
 
 export function DocsRouteView({ data }: { readonly data: DocsRouteData }) {
   const loaderData = useFumadocsLoader(data);
-  const preset = resolveStylePreset(data.siteSettings.themePreset, data.siteSettings.layoutPreset);
+  const settingsPreset = resolveStylePreset(
+    data.siteSettings.themePreset,
+    data.siteSettings.layoutPreset,
+  );
+  const { preset, nextPreset, selectPreset } = useStylePreset(settingsPreset);
 
   useEffect(() => {
     void setCurrentLocale(data.locale, { reload: false });
@@ -48,8 +56,10 @@ export function DocsRouteView({ data }: { readonly data: DocsRouteData }) {
       data-docs-surface=""
       data-theme-preset={preset.themePreset}
       data-layout-preset={preset.layoutPreset}
+      suppressHydrationWarning
       className="min-h-svh bg-background text-foreground"
     >
+      <StylePresetRuntimeScript initialPreset={preset} locale={data.locale} />
       <DocsMDXProvider locale={data.locale} slugs={data.slugs}>
         <I18nProvider
           {...getDocsI18nProvider(data.locale)}
@@ -64,6 +74,8 @@ export function DocsRouteView({ data }: { readonly data: DocsRouteData }) {
           <DocsLayout
             {...getDocsLayoutOptions({
               locale: data.locale,
+              nextPreset,
+              onPresetSelect: selectPreset,
               siteSettings: data.siteSettings,
               slugs: data.slugs,
             })}
@@ -73,7 +85,6 @@ export function DocsRouteView({ data }: { readonly data: DocsRouteData }) {
           </DocsLayout>
         </I18nProvider>
       </DocsMDXProvider>
-      <StylePresetRuntimeScript initialPreset={preset} locale={data.locale} />
     </div>
   );
 }

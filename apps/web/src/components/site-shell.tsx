@@ -4,15 +4,15 @@ import { getSiteSettingsForLocale, type SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Link, useLocation } from "@tanstack/react-router";
 import { Loader2Icon, SearchIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { LanguageToggle } from "#/components/language-toggle";
 import { siteBrandLinkClassName, SiteBrandText } from "#/components/site-brand";
 import {
-  getNextStylePreset,
   resolveStylePreset,
   StylePresetCycleButton,
   StylePresetRuntimeScript,
+  useStylePreset,
 } from "#/components/style-preset-switcher";
 import { ThemeToggle } from "#/components/theme-toggle";
 import { getLocalizedDocsHref } from "#/lib/docs-i18n";
@@ -29,9 +29,7 @@ export function SiteShell({
   const locale = getCurrentLocale();
   const siteSettings = providedSiteSettings ?? getSiteSettingsForLocale(locale);
   const settingsPreset = resolveStylePreset(siteSettings.themePreset, siteSettings.layoutPreset);
-  const [presetOverride, setPresetOverride] = useState<typeof settingsPreset | null>(null);
-  const preset = presetOverride ?? settingsPreset;
-  const nextPreset = getNextStylePreset(preset);
+  const { preset, nextPreset, selectPreset } = useStylePreset(settingsPreset);
   const searchLabel = locale === "zh" ? "搜索" : "Search";
   const githubLink = siteSettings.socialLinks.find(isGitHubSocialLink);
   const footerSocialLinks = siteSettings.socialLinks.filter((link) => !isGitHubSocialLink(link));
@@ -55,6 +53,7 @@ export function SiteShell({
     <div
       data-theme-preset={preset.themePreset}
       data-layout-preset={preset.layoutPreset}
+      suppressHydrationWarning
       className="flex min-h-svh flex-col bg-background text-foreground"
     >
       <header className="sticky top-0 z-40 border-b-2 border-foreground bg-background/95 backdrop-blur-xl">
@@ -88,7 +87,7 @@ export function SiteShell({
             <StylePresetCycleButton
               locale={locale}
               nextPreset={nextPreset}
-              onSelect={setPresetOverride}
+              onSelect={selectPreset}
             />
             <ThemeToggle />
             {githubLink ? <HeaderGitHubLink link={githubLink} /> : null}
