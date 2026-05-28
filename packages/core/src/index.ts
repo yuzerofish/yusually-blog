@@ -1,5 +1,5 @@
 import { siteSettings } from "./demo-data";
-import type { Comment, Post, SiteSettings, SupportedLocale, Tag } from "./types";
+import type { Comment, Post, Series, SiteSettings, SupportedLocale, Tag } from "./types";
 
 export { getCommentInitialStatus, normalizeCommentBlockedKeywords } from "./comment-moderation";
 export { htmlToText, markdownToText, renderMarkdownToHtml, sanitizeHtml } from "./markdown";
@@ -26,6 +26,7 @@ export type {
   ContentStatus,
   LayoutPreset,
   Post,
+  Series,
   SiteSettings,
   SupportedLocale,
   Tag,
@@ -52,6 +53,14 @@ export function localizeTag(tag: Tag, locale: SupportedLocale): Tag {
   };
 }
 
+export function localizeSeries(series: Series, locale: SupportedLocale): Series {
+  return {
+    ...series,
+    name: localizeText(series.name, series.i18n?.name, locale),
+    description: localizeText(series.description, series.i18n?.description, locale),
+  };
+}
+
 export function localizePost(post: Post, locale: SupportedLocale): Post {
   return {
     ...post,
@@ -62,6 +71,7 @@ export function localizePost(post: Post, locale: SupportedLocale): Post {
     contentText: localizeText(post.contentText, post.i18n?.contentText, locale),
     seoTitle: localizeText(post.seoTitle, post.i18n?.seoTitle, locale),
     seoDescription: localizeText(post.seoDescription, post.i18n?.seoDescription, locale),
+    series: post.series ? localizeSeries(post.series, locale) : null,
     tags: post.tags.map((tag) => localizeTag(tag, locale)),
   };
 }
@@ -93,12 +103,14 @@ const defaultNavigationLabels: Record<SupportedLocale, Record<string, string>> =
   en: {
     "/blog": "Blog",
     "/docs": "Docs",
+    "/series": "Series",
     "/tags": "Tags",
     "/about": "About",
   },
   zh: {
     "/blog": "博客",
     "/docs": "文档",
+    "/series": "专栏",
     "/tags": "标签",
     "/about": "关于",
   },

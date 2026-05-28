@@ -35,6 +35,7 @@ export type Post = {
   publishedAt: string;
   updatedAt: string;
   authorName: string;
+  series: Series | null;
   tags: Tag[];
   seoTitle: string;
   seoDescription: string;
@@ -47,6 +48,15 @@ export type Post = {
     | "seoTitle"
     | "seoDescription"
   >;
+};
+
+export type Series = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  sortOrder: number;
+  i18n?: LocalizedFields<"name" | "description">;
 };
 
 export type Tag = {

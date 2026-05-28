@@ -8,6 +8,24 @@ export const siteSettings = sqliteTable("site_settings", {
   updatedAt: text("updated_at").notNull(),
 });
 
+export const series = sqliteTable(
+  "series",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
+    description: text("description").notNull().default(""),
+    sortOrder: integer("sort_order").notNull().default(0),
+    i18n: text("i18n", { mode: "json" }),
+    createdAt: text("created_at").notNull(),
+    updatedAt: text("updated_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("series_slug_idx").on(table.slug),
+    index("series_sort_idx").on(table.sortOrder, table.name),
+  ],
+);
+
 export const posts = sqliteTable(
   "posts",
   {
@@ -42,11 +60,13 @@ export const posts = sqliteTable(
     createdAt: text("created_at").notNull(),
     updatedAt: text("updated_at").notNull(),
     authorId: text("author_id"),
+    seriesId: text("series_id").references(() => series.id, { onDelete: "set null" }),
   },
   (table) => [
     uniqueIndex("posts_slug_idx").on(table.slug),
     index("posts_status_published_idx").on(table.status, table.publishedAt),
     index("posts_content_text_idx").on(table.contentText),
+    index("posts_series_idx").on(table.seriesId),
   ],
 );
 

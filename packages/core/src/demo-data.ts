@@ -1,4 +1,4 @@
-import type { Asset, Comment, Post, SiteSettings, Tag } from "./types";
+import type { Asset, Comment, Post, Series, SiteSettings, Tag } from "./types";
 
 export const siteSettings: SiteSettings = {
   name: "01MVP Blog Starter",
@@ -17,6 +17,7 @@ export const siteSettings: SiteSettings = {
   navigation: [
     { label: "Blog", href: "/blog", i18n: { label: { zh: "博客" } } },
     { label: "Docs", href: "/docs", i18n: { label: { zh: "文档" } } },
+    { label: "Series", href: "/series", i18n: { label: { zh: "专栏" } } },
     { label: "Tags", href: "/tags", i18n: { label: { zh: "标签" } } },
     { label: "About", href: "/about", i18n: { label: { zh: "关于" } } },
   ],
@@ -84,10 +85,37 @@ export const tags: Tag[] = [
   },
 ];
 
+export const series: Series[] = [
+  {
+    id: "series-publishing-stack",
+    name: "Publishing Stack",
+    slug: "publishing-stack",
+    description: "Long-running notes on the blog engine, storage model, and publishing workflow.",
+    sortOrder: 10,
+    i18n: {
+      name: { zh: "发布栈" },
+      description: { zh: "围绕博客引擎、存储模型和发布工作流的长期笔记。" },
+    },
+  },
+  {
+    id: "series-ai-workflow",
+    name: "AI Workflow",
+    slug: "ai-workflow",
+    description: "Automation flows for setup, content operations, and agent-friendly maintenance.",
+    sortOrder: 20,
+    i18n: {
+      name: { zh: "AI 工作流" },
+      description: { zh: "面向初始化、内容运营和 Agent 维护的自动化流程。" },
+    },
+  },
+];
+
 const cloudflare = tags[0];
 const cms = tags[1];
 const ai = tags[2];
 const markdown = tags[3];
+const publishingStack = series[0];
+const aiWorkflow = series[1];
 
 export const posts: Post[] = [
   {
@@ -124,6 +152,7 @@ The first release focuses on a reliable loop: sign in, write, upload, publish, r
     publishedAt: "2026-05-20T09:00:00.000Z",
     updatedAt: "2026-05-22T12:20:00.000Z",
     authorName: "01MVP",
+    series: publishingStack,
     tags: [cloudflare, cms, markdown],
     seoTitle: "Designing a permanent personal CMS on Cloudflare",
     seoDescription:
@@ -189,6 +218,7 @@ Manual steps are reserved for login, token creation, paid-plan confirmation, DNS
     publishedAt: "2026-05-21T10:30:00.000Z",
     updatedAt: "2026-05-21T10:30:00.000Z",
     authorName: "01MVP",
+    series: aiWorkflow,
     tags: [ai, cloudflare],
     seoTitle: "AI Skill automation plan for 01mvp-blog-starter",
     seoDescription:
@@ -246,6 +276,7 @@ HTML import has two modes: sanitized HTML for normal use and trusted iframe rend
     publishedAt: "2026-05-23T08:10:00.000Z",
     updatedAt: "2026-05-23T08:10:00.000Z",
     authorName: "01MVP",
+    series: publishingStack,
     tags: [cms, markdown],
     seoTitle: "Portable Markdown, HTML, and ZIP backup model",
     seoDescription:
