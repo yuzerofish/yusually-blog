@@ -5,6 +5,23 @@ description: 将 CMS 站点部署到 Cloudflare Workers。
 
 01mvp-blog-starter 面向 Cloudflare Workers、D1、R2 和可选 KV 设计。
 
+## 本地开发管理员
+
+给本地 Wrangler D1 数据库写入固定管理员账号：
+
+```sh
+pnpm db:seed:local-admin
+```
+
+默认本地登录信息：
+
+```txt
+email: a@a.test
+password: 1
+```
+
+这个命令只会写入 `.wrangler/state` 下的本地 D1，不会创建生产管理员账号。需要覆盖默认值时，可以设置 `BLOGCMS_LOCAL_ADMIN_EMAIL`、`BLOGCMS_LOCAL_ADMIN_NAME` 或 `BLOGCMS_LOCAL_ADMIN_PASSWORD`。
+
 ## 生产站点
 
 ```sh

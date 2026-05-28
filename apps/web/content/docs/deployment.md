@@ -5,6 +5,23 @@ description: Deploy the CMS site to Cloudflare Workers.
 
 01mvp-blog-starter is designed for Cloudflare Workers, D1, R2, and optional KV.
 
+## Local Development Admin
+
+Seed the local Wrangler D1 database with a fixed admin account:
+
+```sh
+pnpm db:seed:local-admin
+```
+
+Default local credentials:
+
+```txt
+email: a@a.test
+password: 1
+```
+
+This command writes only to the local D1 database under `.wrangler/state`. It does not create a production admin account. Override the defaults with `BLOGCMS_LOCAL_ADMIN_EMAIL`, `BLOGCMS_LOCAL_ADMIN_NAME`, or `BLOGCMS_LOCAL_ADMIN_PASSWORD` when needed.
+
 ## Production Site
 
 ```sh
