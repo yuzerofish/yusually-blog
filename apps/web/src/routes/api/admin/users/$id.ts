@@ -1,8 +1,9 @@
+import { type CommentUserStatus, type UserRole } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { getAdminUserFromRequest } from "#/lib/admin-auth";
+import { countAdminUsers, getAdminUserFromRequest } from "#/lib/admin-auth";
 import { jsonResponse, readJsonBody } from "#/lib/cms-api";
-import { isCommentUserStatus, updateCmsUserCommentStatus } from "#/lib/cms-users";
+import { getCmsUserById, isCommentUserStatus, isUserRole, updateCmsUser } from "#/lib/cms-users";
 
 export const Route = createFileRoute("/api/admin/users/$id")({
   server: {
@@ -14,13 +15,49 @@ export const Route = createFileRoute("/api/admin/users/$id")({
           return jsonResponse({ error: "Admin authentication required" }, { status: 401 });
         }
 
-        const body = await readJsonBody<{ commentStatus?: unknown }>(request);
+        const rawBody = await readJsonBody<{ commentStatus?: unknown; role?: unknown }>(request);
+        const body = rawBody && typeof rawBody === "object" ? rawBody : {};
+        const updates: { commentStatus?: CommentUserStatus; role?: UserRole } = {};
 
-        if (!isCommentUserStatus(body.commentStatus)) {
-          return jsonResponse({ error: "Invalid comment status" }, { status: 400 });
+        if ("commentStatus" in body) {
+          if (!isCommentUserStatus(body.commentStatus)) {
+            return jsonResponse({ error: "Invalid comment status" }, { status: 400 });
+          }
+
+          updates.commentStatus = body.commentStatus;
         }
 
-        const user = await updateCmsUserCommentStatus(params.id, body.commentStatus);
+        if ("role" in body) {
+          if (!isUserRole(body.role)) {
+            return jsonResponse({ error: "Invalid role" }, { status: 400 });
+          }
+
+          updates.role = body.role;
+        }
+
+        if (!updates.commentStatus && !updates.role) {
+          return jsonResponse({ error: "No user update provided" }, { status: 400 });
+        }
+
+        const existingUser = updates.role ? await getCmsUserById(params.id) : null;
+
+        if (updates.role && !existingUser) {
+          return jsonResponse({ error: "User not found" }, { status: 404 });
+        }
+
+        if (updates.role && existingUser?.id === admin.id && updates.role !== existingUser.role) {
+          return jsonResponse({ error: "Current admin role cannot be changed" }, { status: 400 });
+        }
+
+        if (
+          updates.role === "reader" &&
+          existingUser?.role === "admin" &&
+          (await countAdminUsers()) <= 1
+        ) {
+          return jsonResponse({ error: "At least one admin is required" }, { status: 400 });
+        }
+
+        const user = await updateCmsUser(params.id, updates);
 
         if (!user) {
           return jsonResponse({ error: "User not found" }, { status: 404 });

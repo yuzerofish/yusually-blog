@@ -1,11 +1,22 @@
-import { type CmsUser, type CommentUserStatus, type UserRole } from "@repo/core";
+import { useAuthSuspense } from "@repo/auth/tanstack/hooks";
+import {
+  type CmsUser,
+  type Comment,
+  type CommentUserStatus,
+  type Post,
+  type UserRole,
+} from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Label } from "@repo/ui/components/label";
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import {
+  EyeIcon,
   type LucideIcon,
+  MessageSquareTextIcon,
   SearchIcon,
+  ShieldCheckIcon,
   ShieldIcon,
+  UserCogIcon,
   UserRoundIcon,
   Volume2Icon,
   VolumeXIcon,
@@ -33,30 +44,50 @@ type CommentStatusFilter = CommentUserStatus | "all";
 function AdminUsersPage() {
   const locale = getCurrentLocale();
   const copy = getUsersActionCopy(locale);
+  const { user: currentUser } = useAuthSuspense();
   const [rows, setRows] = useState<CmsUser[]>([]);
+  const [commentRows, setCommentRows] = useState<Comment[]>([]);
+  const [postRows, setPostRows] = useState<Post[]>([]);
   const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");
   const [statusFilter, setStatusFilter] = useState<CommentStatusFilter>("all");
   const [query, setQuery] = useState("");
+  const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
   const [pendingUserId, setPendingUserId] = useState<string | null>(null);
   const [actionStatus, setActionStatus] = useState<"idle" | "saved" | "error">("idle");
 
   useEffect(() => {
     let ignore = false;
 
-    void fetch("/api/admin/users")
-      .then((response) => (response.ok ? response.json() : undefined))
-      .then((payload) => {
-        const users = (payload as { data?: CmsUser[] } | undefined)?.data;
+    void Promise.all([
+      fetch("/api/admin/users").then((response) => (response.ok ? response.json() : undefined)),
+      fetch(`/api/comments?lang=${locale}`).then((response) =>
+        response.ok ? response.json() : undefined,
+      ),
+      fetch(`/api/posts?status=all&lang=${locale}`).then((response) =>
+        response.ok ? response.json() : undefined,
+      ),
+    ]).then(([userPayload, commentPayload, postPayload]) => {
+      const users = (userPayload as { data?: CmsUser[] } | undefined)?.data;
+      const comments = (commentPayload as { data?: Comment[] } | undefined)?.data;
+      const posts = (postPayload as { data?: Post[] } | undefined)?.data;
 
-        if (!ignore && users) {
-          setRows(users);
-        }
-      });
+      if (!ignore && users) {
+        setRows(users);
+      }
+
+      if (!ignore && comments) {
+        setCommentRows(comments);
+      }
+
+      if (!ignore && posts) {
+        setPostRows(posts);
+      }
+    });
 
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [locale]);
 
   const stats = useMemo(
     () => ({
@@ -68,6 +99,25 @@ function AdminUsersPage() {
     }),
     [rows],
   );
+  const postById = useMemo(
+    () => new Map(postRows.map((post) => [post.id, post] as const)),
+    [postRows],
+  );
+  const commentsByUserId = useMemo(() => {
+    const nextCommentsByUserId = new Map<string, Comment[]>();
+
+    for (const comment of commentRows) {
+      if (!comment.authorUserId) {
+        continue;
+      }
+
+      const userComments = nextCommentsByUserId.get(comment.authorUserId) ?? [];
+      userComments.push(comment);
+      nextCommentsByUserId.set(comment.authorUserId, userComments);
+    }
+
+    return nextCommentsByUserId;
+  }, [commentRows]);
 
   const normalizedQuery = query.trim().toLowerCase();
   const filteredRows = rows.filter((user) => {
@@ -82,14 +132,18 @@ function AdminUsersPage() {
     return roleMatches && statusMatches && queryMatches;
   });
 
-  const updateCommentStatus = async (user: CmsUser, commentStatus: CommentUserStatus) => {
+  const updateUser = async (
+    user: CmsUser,
+    input: { readonly commentStatus?: CommentUserStatus; readonly role?: UserRole },
+    successMessage: (updatedUser: CmsUser) => string,
+  ) => {
     setPendingUserId(user.id);
     setActionStatus("idle");
 
     const response = await fetch(`/api/admin/users/${user.id}`, {
       method: "PATCH",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ commentStatus }),
+      body: JSON.stringify(input),
     }).catch(() => null);
 
     setPendingUserId(null);
@@ -109,7 +163,19 @@ function AdminUsersPage() {
       current.map((currentUser) => (currentUser.id === user.id ? payload.data : currentUser)),
     );
     setActionStatus("saved");
-    toast.success(copy.updateSuccess(payload.data.name, payload.data.commentStatus));
+    toast.success(successMessage(payload.data));
+  };
+
+  const updateCommentStatus = async (user: CmsUser, commentStatus: CommentUserStatus) => {
+    await updateUser(user, { commentStatus }, (updatedUser) =>
+      copy.commentUpdateSuccess(updatedUser.name, updatedUser.commentStatus),
+    );
+  };
+
+  const updateUserRole = async (user: CmsUser, role: UserRole) => {
+    await updateUser(user, { role }, (updatedUser) =>
+      copy.roleUpdateSuccess(updatedUser.name, updatedUser.role),
+    );
   };
 
   return (
@@ -191,6 +257,14 @@ function AdminUsersPage() {
           )}
           {filteredRows.map((user) => {
             const muted = user.commentStatus === "muted";
+            const isCurrentAdmin = currentUser?.id === user.id;
+            const userComments = commentsByUserId.get(user.id) ?? [];
+            const commentsExpanded = expandedUserId === user.id;
+            const nextRole = user.role === "admin" ? "reader" : "admin";
+            const roleChangeDisabled =
+              pendingUserId === user.id ||
+              isCurrentAdmin ||
+              (user.role === "admin" && stats.admin <= 1);
 
             return (
               <article key={user.id} className="rounded-md border border-border bg-muted/45 p-3">
@@ -199,9 +273,12 @@ function AdminUsersPage() {
                     <div className="flex flex-wrap items-center gap-2">
                       <h2 className="truncate font-medium">{user.name}</h2>
                       <StatusBadge tone={muted ? "muted" : "active"}>
-                        {commentStatusLabel(user.commentStatus)}
+                        {commentAccessLabel(user.commentStatus)}
                       </StatusBadge>
                       <StatusBadge tone="neutral">{roleLabel(user.role)}</StatusBadge>
+                      {isCurrentAdmin ? (
+                        <StatusBadge tone="neutral">{copy.currentAccount}</StatusBadge>
+                      ) : null}
                     </div>
                     <p className="mt-1 truncate text-sm text-muted-foreground">{user.email}</p>
                     <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
@@ -221,6 +298,27 @@ function AdminUsersPage() {
                     <Button
                       type="button"
                       size="sm"
+                      variant={nextRole === "admin" ? "default" : "outline"}
+                      disabled={roleChangeDisabled}
+                      onClick={() => void updateUserRole(user, nextRole)}
+                      title={
+                        isCurrentAdmin
+                          ? copy.currentAdminRoleLocked
+                          : user.role === "admin" && stats.admin <= 1
+                            ? copy.lastAdminRoleLocked
+                            : undefined
+                      }
+                    >
+                      {nextRole === "admin" ? (
+                        <ShieldCheckIcon className="size-4" />
+                      ) : (
+                        <UserCogIcon className="size-4" />
+                      )}
+                      {nextRole === "admin" ? copy.makeAdmin : copy.makeReader}
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
                       variant={muted ? "outline" : "destructive"}
                       disabled={pendingUserId === user.id}
                       onClick={() => void updateCommentStatus(user, muted ? "active" : "muted")}
@@ -231,6 +329,21 @@ function AdminUsersPage() {
                         <VolumeXIcon className="size-4" />
                       )}
                       {muted ? m.admin_users_unmute() : m.admin_users_mute()}
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant={commentsExpanded ? "default" : "outline"}
+                      disabled={!user.commentCount}
+                      aria-expanded={commentsExpanded}
+                      onClick={() => setExpandedUserId(commentsExpanded ? null : user.id)}
+                    >
+                      {commentsExpanded ? (
+                        <EyeIcon className="size-4" />
+                      ) : (
+                        <MessageSquareTextIcon className="size-4" />
+                      )}
+                      {commentsExpanded ? copy.hideComments : copy.viewComments}
                     </Button>
                   </div>
                 </div>
@@ -257,6 +370,15 @@ function AdminUsersPage() {
                     }
                   />
                 </div>
+
+                {commentsExpanded ? (
+                  <UserCommentsPanel
+                    comments={userComments}
+                    locale={locale}
+                    postById={postById}
+                    copy={copy}
+                  />
+                ) : null}
               </article>
             );
           })}
@@ -299,6 +421,82 @@ function UserFact({ label, value }: { readonly label: string; readonly value: st
   );
 }
 
+type UsersActionCopy = ReturnType<typeof getUsersActionCopy>;
+
+function UserCommentsPanel({
+  comments,
+  copy,
+  locale,
+  postById,
+}: {
+  readonly comments: Comment[];
+  readonly copy: UsersActionCopy;
+  readonly locale: ReturnType<typeof getCurrentLocale>;
+  readonly postById: Map<string, Post>;
+}) {
+  return (
+    <div className="mt-4 border-t border-border/80 pt-3">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm font-medium">{copy.userComments(comments.length)}</p>
+        <p className="text-xs text-muted-foreground">{copy.commentHistory}</p>
+      </div>
+
+      {comments.length ? (
+        <div className="grid gap-3">
+          {comments.map((comment) => {
+            const localizedPost = postById.get(comment.postId);
+
+            return (
+              <article
+                key={comment.id}
+                className="rounded-md border border-border bg-card/80 p-3 text-sm"
+              >
+                <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">
+                      {localizedPost?.title ?? copy.unknownPost}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {formatDate(comment.createdAt, locale)}
+                    </p>
+                  </div>
+                  <StatusBadge tone={moderationStatusTone(comment.status)}>
+                    {moderationStatusLabel(comment.status)}
+                  </StatusBadge>
+                </div>
+                <p className="mt-3 leading-6 break-words text-muted-foreground">{comment.body}</p>
+                {localizedPost ? (
+                  <div className="mt-3">
+                    <Button
+                      render={
+                        <Link
+                          to="/blog/$slug"
+                          params={{ slug: localizedPost.slug }}
+                          target="_blank"
+                        />
+                      }
+                      nativeButton={false}
+                      size="sm"
+                      variant="outline"
+                    >
+                      <EyeIcon className="size-4" />
+                      {m.admin_comments_view_post()}
+                    </Button>
+                  </div>
+                ) : null}
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <p className="rounded-md border border-border bg-muted/35 p-3 text-sm text-muted-foreground">
+          {copy.noUserComments}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function StatusBadge({
   children,
   tone,
@@ -324,8 +522,33 @@ function roleLabel(role: UserRole) {
   return role === "admin" ? m.admin_users_role_admin() : m.admin_users_role_reader();
 }
 
-function commentStatusLabel(status: CommentUserStatus) {
+function commentAccessLabel(status: CommentUserStatus) {
   return status === "muted" ? m.admin_users_status_muted() : m.admin_users_status_active();
+}
+
+function moderationStatusLabel(status: Comment["status"]) {
+  switch (status) {
+    case "approved":
+      return m.admin_comments_status_approved();
+    case "deleted":
+      return m.admin_comments_status_deleted();
+    case "pending":
+      return m.admin_comments_status_pending();
+    case "spam":
+      return m.admin_comments_status_spam();
+  }
+}
+
+function moderationStatusTone(status: Comment["status"]): "active" | "muted" | "neutral" {
+  if (status === "approved") {
+    return "active";
+  }
+
+  if (status === "deleted" || status === "spam") {
+    return "muted";
+  }
+
+  return "neutral";
 }
 
 function providerLabel(providers: CmsUser["providers"]) {
@@ -347,17 +570,43 @@ function providerLabel(providers: CmsUser["providers"]) {
 function getUsersActionCopy(locale: "en" | "zh") {
   if (locale === "zh") {
     return {
+      commentHistory: "按发布时间倒序显示",
+      currentAccount: "当前账号",
+      currentAdminRoleLocked: "不能在这里修改当前登录管理员的角色。",
+      hideComments: "收起评论",
+      lastAdminRoleLocked: "至少需要保留一个管理员。",
+      makeAdmin: "设为管理员",
+      makeReader: "设为读者",
       networkError: "网络异常，请稍后再试。",
+      noUserComments: "这个用户还没有发表过评论。",
+      roleUpdateSuccess: (name: string, role: UserRole) =>
+        role === "admin" ? `“${name}”已设为管理员` : `“${name}”已设为读者`,
       updateError: "用户状态更新失败",
-      updateSuccess: (name: string, status: CommentUserStatus) =>
+      userComments: (count: number) => `用户评论 · ${count} 条`,
+      unknownPost: "未知文章",
+      viewComments: "查看评论",
+      commentUpdateSuccess: (name: string, status: CommentUserStatus) =>
         status === "muted" ? `“${name}”已禁言` : `“${name}”已恢复评论`,
     };
   }
 
   return {
+    commentHistory: "Newest first",
+    currentAccount: "You",
+    currentAdminRoleLocked: "The signed-in admin role cannot be changed here.",
+    hideComments: "Hide comments",
+    lastAdminRoleLocked: "At least one admin is required.",
+    makeAdmin: "Make admin",
+    makeReader: "Make reader",
     networkError: "Network error. Try again in a moment.",
+    noUserComments: "This user has not posted comments yet.",
+    roleUpdateSuccess: (name: string, role: UserRole) =>
+      role === "admin" ? `"${name}" is now an admin` : `"${name}" is now a reader`,
     updateError: "User status could not be updated",
-    updateSuccess: (name: string, status: CommentUserStatus) =>
+    userComments: (count: number) => `User comments · ${count}`,
+    unknownPost: "Unknown post",
+    viewComments: "View comments",
+    commentUpdateSuccess: (name: string, status: CommentUserStatus) =>
       status === "muted" ? `"${name}" muted` : `"${name}" can comment again`,
   };
 }

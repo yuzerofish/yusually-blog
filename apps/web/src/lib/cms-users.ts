@@ -1,5 +1,5 @@
 import "@tanstack/react-start/server-only";
-import { toIsoString, type CmsUser, type CommentUserStatus } from "@repo/core";
+import { toIsoString, type CmsUser, type CommentUserStatus, type UserRole } from "@repo/core";
 import { createAuthDb } from "@repo/db";
 import { account as authAccountTable, user as authUserTable } from "@repo/db/schema";
 import * as cmsSchema from "@repo/db/schema/cms";
@@ -14,6 +14,10 @@ const authDb = createAuthDb(env.CMS_DB as Parameters<typeof createAuthDb>[0]);
 
 export function isCommentUserStatus(value: unknown): value is CommentUserStatus {
   return value === "active" || value === "muted";
+}
+
+export function isUserRole(value: unknown): value is UserRole {
+  return value === "admin" || value === "reader";
 }
 
 export async function listCmsUsers(): Promise<CmsUser[]> {
@@ -116,19 +120,38 @@ export async function updateCmsUserCommentStatus(
   id: string,
   commentStatus: CommentUserStatus,
 ): Promise<CmsUser | null> {
+  return updateCmsUser(id, { commentStatus });
+}
+
+export async function updateCmsUser(
+  id: string,
+  input: {
+    readonly commentStatus?: CommentUserStatus;
+    readonly role?: UserRole;
+  },
+): Promise<CmsUser | null> {
   const existing = await getAuthUserById(id);
 
   if (!existing) {
     return null;
   }
 
-  await authDb
-    .update(authUserTable)
-    .set({
-      commentStatus,
-      commentStatusUpdatedAt: new Date().toISOString(),
-    })
-    .where(eq(authUserTable.id, id));
+  const nextValues: Partial<typeof authUserTable.$inferInsert> = {};
+
+  if (input.commentStatus && input.commentStatus !== existing.commentStatus) {
+    nextValues.commentStatus = input.commentStatus;
+    nextValues.commentStatusUpdatedAt = new Date().toISOString();
+  }
+
+  if (input.role && input.role !== existing.role) {
+    nextValues.role = input.role;
+  }
+
+  if (!Object.keys(nextValues).length) {
+    return getCmsUserById(id);
+  }
+
+  await authDb.update(authUserTable).set(nextValues).where(eq(authUserTable.id, id));
 
   return getCmsUserById(id);
 }

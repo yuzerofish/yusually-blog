@@ -413,16 +413,16 @@ export const Route = createFileRoute("/openapi.json")({
             },
             "/api/admin/users/{id}": {
               patch: {
-                summary: "Update a user's comment access",
+                summary: "Update a user's role or comment access",
                 requestBody: {
                   content: {
                     "application/json": {
                       schema: {
                         type: "object",
                         properties: {
+                          role: { type: "string", enum: ["admin", "reader"] },
                           commentStatus: { type: "string", enum: ["active", "muted"] },
                         },
-                        required: ["commentStatus"],
                       },
                     },
                   },
