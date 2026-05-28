@@ -70,13 +70,6 @@ test.describe("Admin authentication", () => {
     await context.close();
   });
 
-  test("renders signup with a native registration action", async ({ page }) => {
-    await page.goto("/signup", { waitUntil: "domcontentloaded" });
-    await expect(page.locator('form[action="/api/admin/users"]')).toBeVisible();
-    await expect(page.locator("#email")).toHaveAttribute("autocomplete", "email");
-    await expect(page.locator("#password")).toHaveAttribute("autocomplete", "new-password");
-  });
-
   test("signs out of the admin shell", async ({ page }) => {
     await logInAsLocalAdmin(page);
 

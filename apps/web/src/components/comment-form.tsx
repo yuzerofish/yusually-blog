@@ -172,12 +172,18 @@ export function CommentForm({
             {authMode === "signup" ? (
               <div className="grid gap-2">
                 <Label htmlFor="comment-auth-name">{m.signup_name()}</Label>
-                <Input id="comment-auth-name" name="name" required />
+                <Input id="comment-auth-name" name="name" autoComplete="name" required />
               </div>
             ) : null}
             <div className="grid gap-2">
               <Label htmlFor="comment-auth-email">{m.login_email()}</Label>
-              <Input id="comment-auth-email" name="email" type="email" required />
+              <Input
+                id="comment-auth-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+              />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="comment-auth-password">{m.login_password()}</Label>
@@ -185,6 +191,7 @@ export function CommentForm({
                 id="comment-auth-password"
                 name="password"
                 type="password"
+                autoComplete={authMode === "login" ? "current-password" : "new-password"}
                 minLength={8}
                 required
               />

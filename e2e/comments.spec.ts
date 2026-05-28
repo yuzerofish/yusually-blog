@@ -6,7 +6,7 @@ const localAdmin = {
 };
 
 test.describe("Comments", () => {
-  test("submits a reader comment and shows it after admin approval", async ({ page }) => {
+  test("signs up and logs in a reader before submitting a comment", async ({ page }) => {
     test.setTimeout(120_000);
 
     const runId = `${Date.now()}-${test.info().parallelIndex}`;
@@ -43,22 +43,33 @@ test.describe("Comments", () => {
     });
 
     await page.goto(`/blog/${postSlug}#comments`, { waitUntil: "domcontentloaded" });
+    const comments = page.locator("#comments");
     await expect(page.getByRole("heading", { name: postTitle })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Comments" })).toBeVisible();
+    await expect(comments.getByRole("heading", { name: "Comments" })).toBeVisible();
 
-    await page.getByRole("button", { name: "Create email account" }).click();
-    await page.locator("#comment-auth-name").fill(readerName);
-    await page.locator("#comment-auth-email").fill(readerEmail);
-    await page.locator("#comment-auth-password").fill("password123");
-    await page.getByRole("button", { name: "Sign up" }).click();
-    await expect(page.getByText(`Commenting as ${readerName}`)).toBeVisible();
+    await comments.getByRole("button", { name: "Create email account" }).click();
+    await comments.locator("#comment-auth-name").fill(readerName);
+    await comments.locator("#comment-auth-email").fill(readerEmail);
+    await comments.locator("#comment-auth-password").fill("password123");
+    await comments.getByRole("button", { name: "Sign up" }).click();
+    await expect(comments.getByText(`Commenting as ${readerName}`)).toBeVisible();
+
+    await page.context().clearCookies();
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await expect(
+      comments.getByRole("heading", { name: "Login required to comment" }),
+    ).toBeVisible();
+    await comments.locator("#comment-auth-email").fill(readerEmail);
+    await comments.locator("#comment-auth-password").fill("password123");
+    await comments.getByRole("button", { name: "Login" }).click();
+    await expect(comments.getByText(`Commenting as ${readerName}`)).toBeVisible();
 
     const createCommentResponse = page.waitForResponse(
       (response) =>
         response.url().endsWith("/api/comments") && response.request().method() === "POST",
     );
-    await page.locator("#comment-body").fill(commentBody);
-    await page.getByRole("button", { name: "Submit comment" }).click();
+    await comments.locator("#comment-body").fill(commentBody);
+    await comments.getByRole("button", { name: "Submit comment" }).click();
 
     const commentResponse = await createCommentResponse;
     expect(commentResponse.status()).toBe(201);

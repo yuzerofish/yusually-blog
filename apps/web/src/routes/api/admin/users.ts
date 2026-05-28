@@ -58,12 +58,8 @@ export const Route = createFileRoute("/api/admin/users")({
         const session = await loginAdmin({ email: body.email, password: body.password }, request);
 
         if ("error" in session) {
-          if (formPost) {
-            return formRedirect("/login?error=1");
-          }
-
           return jsonResponse(
-            { error: "Admin account was created, but sign-in failed. Please log in." },
+            { error: "Admin account was created, but the session could not be started." },
             { status: 500 },
           );
         }
