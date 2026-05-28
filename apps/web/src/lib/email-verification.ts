@@ -1,6 +1,9 @@
 import "@tanstack/react-start/server-only";
 import { digestText } from "@repo/core";
+import { createAuthDb } from "@repo/db";
+import { user as authUserTable, verification } from "@repo/db/schema";
 import { env } from "cloudflare:workers";
+import { eq } from "drizzle-orm";
 
 import { getD1SiteSettings } from "#/lib/cms-d1";
 import {
@@ -10,6 +13,10 @@ import {
 } from "#/lib/cms-email";
 
 const emailVerificationTtlMinutes = 30;
+
+function getAuthDb() {
+  return createAuthDb(env.CMS_DB as Parameters<typeof createAuthDb>[0]);
+}
 
 export type EmailVerificationStatus = {
   enabled: boolean;
@@ -54,21 +61,18 @@ export async function sendCommentEmailVerification(input: {
   verifyUrl.searchParams.set("userId", input.userId);
   verifyUrl.searchParams.set("token", token);
 
-  await env.CMS_DB.prepare("delete from verification where identifier = ?")
-    .bind(emailVerificationIdentifier(input.userId))
-    .run();
-  await env.CMS_DB.prepare(
-    "insert into verification (id, identifier, value, expires_at, created_at, updated_at) values (?, ?, ?, ?, ?, ?)",
-  )
-    .bind(
-      `verification_${crypto.randomUUID()}`,
-      emailVerificationIdentifier(input.userId),
-      tokenHash,
-      expiresAt,
-      now,
-      now,
-    )
-    .run();
+  const db = getAuthDb();
+  const identifier = emailVerificationIdentifier(input.userId);
+
+  await db.delete(verification).where(eq(verification.identifier, identifier));
+  await db.insert(verification).values({
+    id: `verification_${crypto.randomUUID()}`,
+    identifier,
+    value: tokenHash,
+    expiresAt: new Date(expiresAt),
+    createdAt: new Date(now),
+    updatedAt: new Date(now),
+  });
 
   const result = await sendEmailVerificationEmail({
     email: input.email,
@@ -93,13 +97,17 @@ export async function confirmCommentEmailVerification(input: { userId: string; t
     return { ok: false, error: "Email verification link is invalid or expired." } as const;
   }
 
-  const row = await env.CMS_DB.prepare(
-    "select value, expires_at from verification where identifier = ? limit 1",
-  )
-    .bind(emailVerificationIdentifier(userId))
-    .first<{ value: string; expires_at: number }>();
+  const db = getAuthDb();
+  const identifier = emailVerificationIdentifier(userId);
 
-  if (!row || row.expires_at < Date.now()) {
+  const rows = await db
+    .select({ value: verification.value, expiresAt: verification.expiresAt })
+    .from(verification)
+    .where(eq(verification.identifier, identifier))
+    .limit(1);
+  const row = rows[0];
+
+  if (!row || row.expiresAt < new Date()) {
     await deleteCommentEmailVerification(userId);
     return { ok: false, error: "Email verification link is invalid or expired." } as const;
   }
@@ -110,20 +118,20 @@ export async function confirmCommentEmailVerification(input: { userId: string; t
     return { ok: false, error: "Email verification link is invalid or expired." } as const;
   }
 
-  await env.CMS_DB.prepare(
-    'update "user" set email_verified = 1, updated_at = ? where id = ? and role = ?',
-  )
-    .bind(Date.now(), userId, "reader")
-    .run();
+  await db
+    .update(authUserTable)
+    .set({ emailVerified: true, updatedAt: new Date() })
+    .where(eq(authUserTable.id, userId));
   await deleteCommentEmailVerification(userId);
 
   return { ok: true } as const;
 }
 
 export async function deleteCommentEmailVerification(userId: string) {
-  await env.CMS_DB.prepare("delete from verification where identifier = ?")
-    .bind(emailVerificationIdentifier(userId))
-    .run();
+  const db = getAuthDb();
+  await db
+    .delete(verification)
+    .where(eq(verification.identifier, emailVerificationIdentifier(userId)));
 }
 
 function emailVerificationIdentifier(userId: string) {

@@ -1,9 +1,9 @@
 import "@tanstack/react-start/server-only";
 import { env } from "cloudflare:workers";
 
-const rateLimitWindowSeconds = 10 * 60;
-const perIpLimit = 5;
-const perPostLimit = 3;
+const RATE_LIMIT_WINDOW_SECONDS = 10 * 60;
+const RATE_LIMIT_PER_IP = 5;
+const RATE_LIMIT_PER_POST = 3;
 
 type CommentGuardResult = { ok: true } | { ok: false; error: string };
 
@@ -28,22 +28,24 @@ export async function checkCommentRateLimit({
   const ipKey = `ratelimit:ip:${ip}`;
   const postKey = `ratelimit:post:${postSlug}:${ip}`;
 
-  const [ipCount, postCount] = await Promise.all([
+  const [rawIpCount, rawPostCount] = await Promise.all([
     env.CMS_CACHE.get(ipKey, "json").catch(() => 0),
     env.CMS_CACHE.get(postKey, "json").catch(() => 0),
   ]);
+  const ipCount = Number(rawIpCount ?? 0);
+  const postCount = Number(rawPostCount ?? 0);
 
-  if ((ipCount ?? 0) >= perIpLimit || (postCount ?? 0) >= perPostLimit) {
+  if (ipCount >= RATE_LIMIT_PER_IP || postCount >= RATE_LIMIT_PER_POST) {
     return { ok: false, error: "Too many comments submitted recently" };
   }
 
   // Fire-and-forget increment — approximate rate limiting (KV is eventually consistent)
   await Promise.all([
-    env.CMS_CACHE.put(ipKey, JSON.stringify((ipCount ?? 0) + 1), {
-      expirationTtl: rateLimitWindowSeconds,
+    env.CMS_CACHE.put(ipKey, JSON.stringify(ipCount + 1), {
+      expirationTtl: RATE_LIMIT_WINDOW_SECONDS,
     }),
-    env.CMS_CACHE.put(postKey, JSON.stringify((postCount ?? 0) + 1), {
-      expirationTtl: rateLimitWindowSeconds,
+    env.CMS_CACHE.put(postKey, JSON.stringify(postCount + 1), {
+      expirationTtl: RATE_LIMIT_WINDOW_SECONDS,
     }),
   ]).catch(() => {});
 

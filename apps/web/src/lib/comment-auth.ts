@@ -13,6 +13,29 @@ import { env } from "cloudflare:workers";
 import { eq } from "drizzle-orm";
 
 import { auth } from "#/lib/auth";
+import { getSetCookieValues } from "#/lib/auth-helpers";
+
+async function callAuthEndpoint(path: string, body: object, request: Request) {
+  const url = new URL(path, request.url);
+  const headers = new Headers(request.headers);
+  headers.set("content-type", "application/json");
+
+  return auth.handler(
+    new Request(url, {
+      body: JSON.stringify(body),
+      headers,
+      method: "POST",
+    }),
+  );
+}
+
+async function readAuthPayload<TPayload>(response: Response) {
+  try {
+    return (await response.clone().json()) as TPayload;
+  } catch {
+    return null;
+  }
+}
 import {
   deleteCommentEmailVerification,
   isCommentEmailVerificationRequired,
@@ -266,31 +289,6 @@ async function resolvePrimaryProvider(userId: string): Promise<CommentUser["prov
   return accounts.some((account) => account.providerId === "github") ? "github" : "email";
 }
 
-async function callAuthEndpoint(path: string, body: object, request: Request) {
-  const url = new URL(path, request.url);
-  const headers = new Headers(request.headers);
-
-  headers.set("content-type", "application/json");
-
-  return auth.handler(
-    new Request(url, {
-      body: JSON.stringify(body),
-      headers,
-      method: "POST",
-    }),
-  );
-}
-
-async function readAuthPayload<TPayload extends AuthUserPayload | SocialSignInPayload>(
-  response: Response,
-) {
-  try {
-    return (await response.clone().json()) as TPayload;
-  } catch {
-    return null;
-  }
-}
-
 function toBetterAuthUser(value: unknown) {
   const record = value as ({ user?: BetterAuthUser } & Partial<BetterAuthUser>) | null;
 
@@ -303,18 +301,6 @@ function toBetterAuthUser(value: unknown) {
   }
 
   return null;
-}
-
-function getSetCookieValues(headers: Headers) {
-  const getSetCookie = (
-    headers as Headers & {
-      getSetCookie?: () => string[];
-    }
-  ).getSetCookie;
-  const cookies = getSetCookie ? getSetCookie.call(headers) : [];
-  const fallback = headers.get("set-cookie");
-
-  return cookies.length ? cookies : fallback ? [fallback] : [];
 }
 
 function hasGitHubProvider() {

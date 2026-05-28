@@ -13,6 +13,28 @@ import { count, eq } from "drizzle-orm";
 
 import { auth } from "#/lib/auth";
 
+async function callAuthEndpoint(path: string, body: object, request: Request) {
+  const url = new URL(path, request.url);
+  const headers = new Headers(request.headers);
+  headers.set("content-type", "application/json");
+
+  return auth.handler(
+    new Request(url, {
+      body: JSON.stringify(body),
+      headers,
+      method: "POST",
+    }),
+  );
+}
+
+async function readAuthPayload<TPayload>(response: Response) {
+  try {
+    return (await response.clone().json()) as TPayload;
+  } catch {
+    return null;
+  }
+}
+
 export type AdminUser = {
   id: string;
   name: string;
@@ -136,7 +158,7 @@ export async function loginAdmin(input: { email?: string; password?: string }, r
     { email, password: input.password ?? "" },
     request,
   );
-  const payload = await readAuthPayload(response);
+  const payload = await readAuthPayload<AuthUserPayload>(response);
 
   if (!response.ok || !payload?.user || !isAdminUser(payload.user)) {
     if (response.ok && payload?.user) {
@@ -207,26 +229,4 @@ function toAdminUser(user: BetterAuthUser): AdminUser {
     createdAt: toIsoString(user.createdAt),
     lastLoginAt: null,
   };
-}
-
-async function callAuthEndpoint(path: string, body: object, request: Request) {
-  const url = new URL(path, request.url);
-  const headers = new Headers(request.headers);
-  headers.set("content-type", "application/json");
-
-  return auth.handler(
-    new Request(url, {
-      body: JSON.stringify(body),
-      headers,
-      method: "POST",
-    }),
-  );
-}
-
-async function readAuthPayload(response: Response) {
-  try {
-    return (await response.clone().json()) as AuthUserPayload;
-  } catch {
-    return null;
-  }
 }
