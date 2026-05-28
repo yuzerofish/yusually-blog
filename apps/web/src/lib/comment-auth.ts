@@ -6,6 +6,7 @@ import {
   extractSetCookieHeaders,
   normalizeEmail,
   toIsoString,
+  type CommentUserStatus,
 } from "@repo/core";
 import { createAuthDb } from "@repo/db";
 import { user as authUserTable } from "@repo/db/schema";
@@ -49,6 +50,7 @@ export type CommentUser = {
   emailHash: string;
   avatarUrl: string | null;
   provider: "email" | "github";
+  commentStatus: CommentUserStatus;
   createdAt: string;
   lastLoginAt: string | null;
 };
@@ -65,6 +67,7 @@ type BetterAuthUser = {
   email: string;
   emailVerified?: boolean;
   image?: string | null;
+  commentStatus?: CommentUserStatus;
   createdAt?: Date | string | number;
 };
 
@@ -93,11 +96,20 @@ export async function getCommentUserFromRequest(request: Request) {
     return null;
   }
 
-  const user = await toCommentUser(session.user);
+  const persistedUser = await getAuthUserById(session.user.id);
+
+  if (!persistedUser) {
+    return null;
+  }
+
+  const user = await toCommentUser({
+    ...session.user,
+    ...persistedUser,
+  });
 
   if (
     user.provider === "email" &&
-    !session.user.emailVerified &&
+    !persistedUser.emailVerified &&
     (await isCommentEmailVerificationRequired())
   ) {
     return null;
@@ -266,6 +278,7 @@ export function publicCommentUser(user: CommentUser) {
     email: user.email,
     avatarUrl: user.avatarUrl,
     provider: user.provider,
+    commentStatus: user.commentStatus,
   };
 }
 
@@ -277,9 +290,14 @@ async function toCommentUser(user: BetterAuthUser): Promise<CommentUser> {
     emailHash: await digestText(user.email),
     avatarUrl: user.image ?? null,
     provider: await resolvePrimaryProvider(user.id),
+    commentStatus: user.commentStatus ?? "active",
     createdAt: toIsoString(user.createdAt),
     lastLoginAt: null,
   };
+}
+
+async function getAuthUserById(id: string) {
+  return (await authDb.select().from(authUserTable).where(eq(authUserTable.id, id)).limit(1))[0];
 }
 
 async function resolvePrimaryProvider(userId: string): Promise<CommentUser["provider"]> {

@@ -23,6 +23,38 @@ export function getDocsUrl(slugs: string[], locale: DocsLocale) {
   return locale === "en" ? `/${path}` : `/zh/${path}`;
 }
 
+export function getLocalizedDocsHref(href: string, locale: DocsLocale) {
+  const url = new URL(href, "http://local");
+
+  if (url.origin !== "http://local") {
+    return href;
+  }
+
+  const slugs = getDocsSlugsFromPathname(url.pathname);
+
+  if (!slugs) {
+    return href;
+  }
+
+  return `${getDocsUrl(slugs, locale)}${url.search}${url.hash}`;
+}
+
+function getDocsSlugsFromPathname(pathname: string) {
+  if (pathname === "/docs" || pathname === "/zh/docs") {
+    return [];
+  }
+
+  if (pathname.startsWith("/docs/")) {
+    return pathname.slice("/docs/".length).split("/").filter(Boolean);
+  }
+
+  if (pathname.startsWith("/zh/docs/")) {
+    return pathname.slice("/zh/docs/".length).split("/").filter(Boolean);
+  }
+
+  return undefined;
+}
+
 const zhTranslations: I18nProviderProps["translations"] = {
   search: "搜索",
   searchNoResult: "没有找到结果",

@@ -1,12 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { countAdminUsers, createAdminUser, loginAdmin, publicAdminUser } from "#/lib/admin-auth";
+import {
+  countAdminUsers,
+  createAdminUser,
+  getAdminUserFromRequest,
+  loginAdmin,
+  publicAdminUser,
+} from "#/lib/admin-auth";
 import { jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
+import { listCmsUsers } from "#/lib/cms-users";
 
 export const Route = createFileRoute("/api/admin/users")({
   server: {
     handlers: {
+      GET: async ({ request }: { request: Request }) => {
+        const admin = await getAdminUserFromRequest(request).catch(() => null);
+
+        if (!admin) {
+          return jsonResponse({ error: "Admin authentication required" }, { status: 401 });
+        }
+
+        return jsonResponse({ data: await listCmsUsers() });
+      },
       POST: async ({ request }: { request: Request }) => {
         const existingAdmins = await countAdminUsers();
 

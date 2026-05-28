@@ -38,7 +38,8 @@ export const Route = createFileRoute("/blog/$slug")({
     const siteSettings = localizeSiteSettings(loaderData.siteSettings, locale);
     const siteUrl = siteSettings.url.replace(/\/$/, "");
     const canonicalUrl = `${siteUrl}/blog/${post.slug}`;
-    const imageUrl = absoluteUrl(post.coverImage, siteUrl);
+    const socialImage = post.coverImage.trim() || siteSettings.defaultOgImage.trim();
+    const imageUrl = absoluteUrl(socialImage, siteUrl);
     const avatarUrl = absoluteUrl(siteSettings.avatarUrl, siteUrl);
     const robots = siteSettings.indexingEnabled ? "index,follow" : "noindex,nofollow";
     const jsonLd = {
@@ -79,13 +80,17 @@ export const Route = createFileRoute("/blog/$slug")({
         { property: "og:description", content: post.excerpt },
         { property: "og:type", content: "article" },
         { property: "og:url", content: canonicalUrl },
-        { property: "og:image", content: imageUrl },
         { property: "article:published_time", content: post.publishedAt },
         { property: "article:modified_time", content: post.updatedAt },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: post.title },
         { name: "twitter:description", content: post.seoDescription },
-        { name: "twitter:image", content: imageUrl },
+        ...(imageUrl
+          ? [
+              { property: "og:image", content: imageUrl },
+              { name: "twitter:image", content: imageUrl },
+            ]
+          : []),
       ],
       links: [{ rel: "canonical", href: canonicalUrl }],
       scripts: [
@@ -100,7 +105,8 @@ export const Route = createFileRoute("/blog/$slug")({
 });
 
 function BlogPostPage() {
-  const { comments, post, relatedPosts, siteSettings }: BlogPostPageData = Route.useLoaderData();
+  const { comments, post, relatedPosts, siteSettings, turnstileSiteKey }: BlogPostPageData =
+    Route.useLoaderData();
   const { user } = useAuth();
   const [replyTarget, setReplyTarget] = useState<Comment | null>(null);
   const locale = getCurrentLocale();
@@ -111,19 +117,27 @@ function BlogPostPage() {
     localizePost(relatedPost, locale),
   );
   const commentsEnabled = localizedSiteSettings.commentsEnabled && localizedPost.commentsEnabled;
+  const commentsDescription = localizedSiteSettings.commentsRequireApproval
+    ? m.comments_description()
+    : null;
   const articleBody = buildArticleBody(localizedPost.contentHtml);
   const editLabel = locale === "zh" ? "编辑文章" : m.admin_posts_edit();
+  const coverImage = localizedPost.coverImage.trim();
 
   return (
     <SiteShell siteSettings={localizedSiteSettings}>
       <article>
         <header className="relative isolate flex min-h-[calc(100svh-3.5rem)] items-end overflow-hidden bg-foreground text-white">
-          <img
-            src={localizedPost.coverImage}
-            alt=""
-            className="absolute inset-0 -z-20 size-full object-cover"
-          />
-          <div className="absolute inset-0 -z-10 bg-linear-to-t from-black/85 via-black/40 to-black/20" />
+          {coverImage ? (
+            <>
+              <img
+                src={coverImage}
+                alt=""
+                className="absolute inset-0 -z-20 size-full object-cover"
+              />
+              <div className="absolute inset-0 -z-10 bg-linear-to-t from-black/85 via-black/40 to-black/20" />
+            </>
+          ) : null}
 
           {user?.role === "admin" ? (
             <Link
@@ -253,12 +267,15 @@ function BlogPostPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <h2 className="text-2xl font-semibold">{m.comments()}</h2>
-                    <p className="mt-2 text-sm text-muted-foreground">{m.comments_description()}</p>
+                    {commentsDescription ? (
+                      <p className="mt-2 text-sm text-muted-foreground">{commentsDescription}</p>
+                    ) : null}
                   </div>
                 </div>
                 {commentsEnabled ? (
                   <CommentForm
                     postSlug={localizedPost.slug}
+                    turnstileSiteKey={turnstileSiteKey}
                     parentId={replyTarget?.id ?? null}
                     replyingTo={replyTarget?.authorName ?? null}
                     onCancelReply={() => setReplyTarget(null)}

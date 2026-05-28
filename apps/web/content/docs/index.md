@@ -49,6 +49,7 @@ Start with the deployment and comment guides when configuring a new site:
 
 - [Deployment](./deployment): Cloudflare Workers, D1, R2, KV, migrations, environment variables, and deploy targets.
 - [Comments](./comments): reader login, GitHub OAuth, email/password fallback, approval mode, keyword blocking, and moderation.
+- [Advanced configuration](./advanced-configuration): optional email delivery, GitHub OAuth, and Turnstile status checks.
 - [API](./api): automation routes, OpenAPI, and comment-auth endpoints.
 
 ## Development

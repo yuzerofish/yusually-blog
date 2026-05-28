@@ -69,6 +69,26 @@ export type Tag = {
 
 export type CommentStatus = "pending" | "approved" | "spam" | "deleted";
 
+export type UserRole = "admin" | "reader";
+
+export type CommentUserStatus = "active" | "muted";
+
+export type CmsUser = {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  emailVerified: boolean;
+  image: string | null;
+  commentStatus: CommentUserStatus;
+  commentStatusUpdatedAt: string | null;
+  providers: Array<"email" | "github" | "unknown">;
+  commentCount: number;
+  lastCommentAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type Comment = {
   id: string;
   postId: string;

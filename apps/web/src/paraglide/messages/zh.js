@@ -80,6 +80,7 @@
 /** @typedef {{}} Admin_Nav_PostsInputs */
 /** @typedef {{}} Admin_Nav_SeriesInputs */
 /** @typedef {{}} Admin_Nav_SettingsInputs */
+/** @typedef {{}} Admin_Nav_UsersInputs */
 /** @typedef {{}} Admin_New_PostInputs */
 /** @typedef {{}} Admin_Overview_EyebrowInputs */
 /** @typedef {{}} Admin_Overview_TitleInputs */
@@ -185,6 +186,35 @@
 /** @typedef {{}} Admin_Token_Secret_OnceInputs */
 /** @typedef {{}} Admin_Tokens_DescriptionInputs */
 /** @typedef {{}} Admin_Tokens_TitleInputs */
+/** @typedef {{}} Admin_Users_CommentsInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Admin_Users_Comments_CountInputs */
+/** @typedef {{}} Admin_Users_DescriptionInputs */
+/** @typedef {{}} Admin_Users_Email_UnverifiedInputs */
+/** @typedef {{}} Admin_Users_Email_VerifiedInputs */
+/** @typedef {{}} Admin_Users_EmptyInputs */
+/** @typedef {{}} Admin_Users_ErrorInputs */
+/** @typedef {{}} Admin_Users_Filter_RoleInputs */
+/** @typedef {{}} Admin_Users_Filter_StatusInputs */
+/** @typedef {{ date: NonNullable<unknown> }} Admin_Users_JoinedInputs */
+/** @typedef {{}} Admin_Users_Last_CommentInputs */
+/** @typedef {{}} Admin_Users_MuteInputs */
+/** @typedef {{}} Admin_Users_No_CommentsInputs */
+/** @typedef {{}} Admin_Users_Provider_EmailInputs */
+/** @typedef {{}} Admin_Users_Provider_UnknownInputs */
+/** @typedef {{}} Admin_Users_Role_AdminInputs */
+/** @typedef {{}} Admin_Users_Role_AllInputs */
+/** @typedef {{}} Admin_Users_Role_ReaderInputs */
+/** @typedef {{}} Admin_Users_SavedInputs */
+/** @typedef {{}} Admin_Users_SearchInputs */
+/** @typedef {{}} Admin_Users_Search_PlaceholderInputs */
+/** @typedef {{}} Admin_Users_Status_ActiveInputs */
+/** @typedef {{}} Admin_Users_Status_AllInputs */
+/** @typedef {{}} Admin_Users_Status_MutedInputs */
+/** @typedef {{}} Admin_Users_Status_Not_ChangedInputs */
+/** @typedef {{}} Admin_Users_Status_UpdatedInputs */
+/** @typedef {{}} Admin_Users_TitleInputs */
+/** @typedef {{}} Admin_Users_TotalInputs */
+/** @typedef {{}} Admin_Users_UnmuteInputs */
 /** @typedef {{}} Account_Management_NoteInputs */
 /** @typedef {{}} Account_Signed_In_AsInputs */
 /** @typedef {{}} Account_TitleInputs */
@@ -212,6 +242,8 @@
 /** @typedef {{}} Comment_CompanyInputs */
 /** @typedef {{}} Comment_Auth_ErrorInputs */
 /** @typedef {{}} Comment_Auth_LoadingInputs */
+/** @typedef {{}} Comment_Account_MutedInputs */
+/** @typedef {{}} Comment_Account_Muted_DescriptionInputs */
 /** @typedef {{}} Comment_Continue_GithubInputs */
 /** @typedef {{}} Comment_EmailInputs */
 /** @typedef {{}} Comment_Email_Verification_SentInputs */
@@ -227,7 +259,6 @@
 /** @typedef {{}} Comment_SuccessInputs */
 /** @typedef {{}} Comment_Switch_To_LoginInputs */
 /** @typedef {{}} Comment_Switch_To_SignupInputs */
-/** @typedef {{}} Comment_WebsiteInputs */
 /** @typedef {{}} CommentsInputs */
 /** @typedef {{}} Comments_DescriptionInputs */
 /** @typedef {{}} Comments_DisabledInputs */
@@ -516,7 +547,7 @@ export const admin_editor_comments_enabled = /** @type {(inputs: Admin_Editor_Co
 };
 
 export const admin_editor_description = /** @type {(inputs: Admin_Editor_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`编写 Markdown、预览渲染效果，然后通过 API 保存为草稿或发布。`)
+	return /** @type {LocalizedString} */ (`支持 Markdown 语法，也可以直接粘贴图片。粘贴的图片会上传到 R2 存储桶，并插入到正文里。`)
 };
 
 export const admin_editor_edit_title = /** @type {(inputs: Admin_Editor_Edit_TitleInputs) => LocalizedString} */ () => {
@@ -639,6 +670,10 @@ export const admin_nav_settings = /** @type {(inputs: Admin_Nav_SettingsInputs) 
 	return /** @type {LocalizedString} */ (`设置`)
 };
 
+export const admin_nav_users = /** @type {(inputs: Admin_Nav_UsersInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`用户`)
+};
+
 export const admin_new_post = /** @type {(inputs: Admin_New_PostInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`新文章`)
 };
@@ -652,7 +687,7 @@ export const admin_overview_title = /** @type {(inputs: Admin_Overview_TitleInpu
 };
 
 export const admin_post_status_archived_description = /** @type {(inputs: Admin_Post_Status_Archived_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`后台保留，公开博客、标签页、订阅和站点地图都不显示；可以重新发布或改回草稿。`)
+	return /** @type {LocalizedString} */ (`后台保留，不公开。`)
 };
 
 export const admin_post_status_archived_label = /** @type {(inputs: Admin_Post_Status_Archived_LabelInputs) => LocalizedString} */ () => {
@@ -660,7 +695,7 @@ export const admin_post_status_archived_label = /** @type {(inputs: Admin_Post_S
 };
 
 export const admin_post_status_deleted_description = /** @type {(inputs: Admin_Post_Status_Deleted_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`软删除记录，默认不再出现在管理列表和公开页面。`)
+	return /** @type {LocalizedString} */ (`已删除，默认隐藏。`)
 };
 
 export const admin_post_status_deleted_label = /** @type {(inputs: Admin_Post_Status_Deleted_LabelInputs) => LocalizedString} */ () => {
@@ -668,7 +703,7 @@ export const admin_post_status_deleted_label = /** @type {(inputs: Admin_Post_St
 };
 
 export const admin_post_status_draft_description = /** @type {(inputs: Admin_Post_Status_Draft_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`后台可见，不会出现在公开站点，适合未完成内容。`)
+	return /** @type {LocalizedString} */ (`仅后台可见。`)
 };
 
 export const admin_post_status_draft_label = /** @type {(inputs: Admin_Post_Status_Draft_LabelInputs) => LocalizedString} */ () => {
@@ -676,7 +711,7 @@ export const admin_post_status_draft_label = /** @type {(inputs: Admin_Post_Stat
 };
 
 export const admin_post_status_published_description = /** @type {(inputs: Admin_Post_Status_Published_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`立即公开显示在博客、标签页、订阅和站点地图。`)
+	return /** @type {LocalizedString} */ (`立即公开。`)
 };
 
 export const admin_post_status_published_label = /** @type {(inputs: Admin_Post_Status_Published_LabelInputs) => LocalizedString} */ () => {
@@ -684,7 +719,7 @@ export const admin_post_status_published_label = /** @type {(inputs: Admin_Post_
 };
 
 export const admin_post_status_scheduled_description = /** @type {(inputs: Admin_Post_Status_Scheduled_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`到达发布时间后公开；到期前不在公开站点显示。`)
+	return /** @type {LocalizedString} */ (`到发布时间后公开。`)
 };
 
 export const admin_post_status_scheduled_label = /** @type {(inputs: Admin_Post_Status_Scheduled_LabelInputs) => LocalizedString} */ () => {
@@ -708,7 +743,7 @@ export const admin_posts_delete = /** @type {(inputs: Admin_Posts_DeleteInputs) 
 };
 
 export const admin_posts_description = /** @type {(inputs: Admin_Posts_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`管理草稿、已发布、定时发布和归档文章。归档会保留后台记录，但从公开站点隐藏。`)
+	return /** @type {LocalizedString} */ (`管理写作、发布、标签和专栏。`)
 };
 
 export const admin_posts_edit = /** @type {(inputs: Admin_Posts_EditInputs) => LocalizedString} */ () => {
@@ -780,7 +815,7 @@ export const admin_posts_status = /** @type {(inputs: Admin_Posts_StatusInputs) 
 };
 
 export const admin_posts_status_help = /** @type {(inputs: Admin_Posts_Status_HelpInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`公开站点只展示已发布文章，以及发布时间已到的定时文章。草稿和归档都不会公开显示；归档适合下架但保留记录。`)
+	return /** @type {LocalizedString} */ (`公开可见性由状态和发布时间决定。`)
 };
 
 export const admin_posts_title = /** @type {(inputs: Admin_Posts_TitleInputs) => LocalizedString} */ () => {
@@ -816,7 +851,7 @@ export const admin_series_cancel = /** @type {(inputs: Admin_Series_CancelInputs
 };
 
 export const admin_series_description = /** @type {(inputs: Admin_Series_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`创建和编辑文章可归属的长期专栏。`)
+	return /** @type {LocalizedString} */ (`专栏适合放一组长期连载或同一主题的文章。每篇文章只能归属一个专栏，标签仍然可以用来标记多个主题。`)
 };
 
 export const admin_series_error = /** @type {(inputs: Admin_Series_ErrorInputs) => LocalizedString} */ () => {
@@ -1059,6 +1094,122 @@ export const admin_tokens_title = /** @type {(inputs: Admin_Tokens_TitleInputs) 
 	return /** @type {LocalizedString} */ (`API Token`)
 };
 
+export const admin_users_comments = /** @type {(inputs: Admin_Users_CommentsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`评论`)
+};
+
+export const admin_users_comments_count = /** @type {(inputs: Admin_Users_Comments_CountInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.count} 条评论`)
+};
+
+export const admin_users_description = /** @type {(inputs: Admin_Users_DescriptionInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`管理可以评论的读者账号，以及管理员账号。`)
+};
+
+export const admin_users_email_unverified = /** @type {(inputs: Admin_Users_Email_UnverifiedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`邮箱未验证`)
+};
+
+export const admin_users_email_verified = /** @type {(inputs: Admin_Users_Email_VerifiedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`邮箱已验证`)
+};
+
+export const admin_users_empty = /** @type {(inputs: Admin_Users_EmptyInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`当前筛选条件下没有用户。`)
+};
+
+export const admin_users_error = /** @type {(inputs: Admin_Users_ErrorInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`用户更新失败。`)
+};
+
+export const admin_users_filter_role = /** @type {(inputs: Admin_Users_Filter_RoleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`按角色筛选`)
+};
+
+export const admin_users_filter_status = /** @type {(inputs: Admin_Users_Filter_StatusInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`按评论权限筛选`)
+};
+
+export const admin_users_joined = /** @type {(inputs: Admin_Users_JoinedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`注册于 ${i?.date}`)
+};
+
+export const admin_users_last_comment = /** @type {(inputs: Admin_Users_Last_CommentInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`最近评论`)
+};
+
+export const admin_users_mute = /** @type {(inputs: Admin_Users_MuteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`禁止评论`)
+};
+
+export const admin_users_no_comments = /** @type {(inputs: Admin_Users_No_CommentsInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`暂无评论`)
+};
+
+export const admin_users_provider_email = /** @type {(inputs: Admin_Users_Provider_EmailInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`邮箱`)
+};
+
+export const admin_users_provider_unknown = /** @type {(inputs: Admin_Users_Provider_UnknownInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`未知登录方式`)
+};
+
+export const admin_users_role_admin = /** @type {(inputs: Admin_Users_Role_AdminInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`管理员`)
+};
+
+export const admin_users_role_all = /** @type {(inputs: Admin_Users_Role_AllInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`全部角色`)
+};
+
+export const admin_users_role_reader = /** @type {(inputs: Admin_Users_Role_ReaderInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`读者`)
+};
+
+export const admin_users_saved = /** @type {(inputs: Admin_Users_SavedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`用户已更新。`)
+};
+
+export const admin_users_search = /** @type {(inputs: Admin_Users_SearchInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`搜索用户`)
+};
+
+export const admin_users_search_placeholder = /** @type {(inputs: Admin_Users_Search_PlaceholderInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`昵称、邮箱或登录方式`)
+};
+
+export const admin_users_status_active = /** @type {(inputs: Admin_Users_Status_ActiveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`可评论`)
+};
+
+export const admin_users_status_all = /** @type {(inputs: Admin_Users_Status_AllInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`全部评论权限`)
+};
+
+export const admin_users_status_muted = /** @type {(inputs: Admin_Users_Status_MutedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`已禁止评论`)
+};
+
+export const admin_users_status_not_changed = /** @type {(inputs: Admin_Users_Status_Not_ChangedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`未调整过`)
+};
+
+export const admin_users_status_updated = /** @type {(inputs: Admin_Users_Status_UpdatedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`权限更新时间`)
+};
+
+export const admin_users_title = /** @type {(inputs: Admin_Users_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`用户`)
+};
+
+export const admin_users_total = /** @type {(inputs: Admin_Users_TotalInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`用户总数`)
+};
+
+export const admin_users_unmute = /** @type {(inputs: Admin_Users_UnmuteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`恢复评论`)
+};
+
 export const account_management_note = /** @type {(inputs: Account_Management_NoteInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`使用管理后台维护发布、设置和导出。`)
 };
@@ -1167,6 +1318,14 @@ export const comment_auth_loading = /** @type {(inputs: Comment_Auth_LoadingInpu
 	return /** @type {LocalizedString} */ (`正在检查评论登录状态...`)
 };
 
+export const comment_account_muted = /** @type {(inputs: Comment_Account_MutedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`这个账号已被禁止评论`)
+};
+
+export const comment_account_muted_description = /** @type {(inputs: Comment_Account_Muted_DescriptionInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`这个账号仍然可以阅读网站，但不能继续发布新评论。`)
+};
+
 export const comment_continue_github = /** @type {(inputs: Comment_Continue_GithubInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`使用 GitHub 继续`)
 };
@@ -1216,7 +1375,7 @@ export const comment_submitting = /** @type {(inputs: Comment_SubmittingInputs) 
 };
 
 export const comment_success = /** @type {(inputs: Comment_SuccessInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`评论已提交，等待审核。`)
+	return /** @type {LocalizedString} */ (`评论已提交。`)
 };
 
 export const comment_switch_to_login = /** @type {(inputs: Comment_Switch_To_LoginInputs) => LocalizedString} */ () => {
@@ -1227,16 +1386,12 @@ export const comment_switch_to_signup = /** @type {(inputs: Comment_Switch_To_Si
 	return /** @type {LocalizedString} */ (`创建邮箱账号`)
 };
 
-export const comment_website = /** @type {(inputs: Comment_WebsiteInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`个人网站`)
-};
-
 export const comments = /** @type {(inputs: CommentsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`评论`)
 };
 
 export const comments_description = /** @type {(inputs: Comments_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`新评论会先进入审核，通过后再公开展示。`)
+	return /** @type {LocalizedString} */ (`评论会在审核通过后显示。`)
 };
 
 export const comments_disabled = /** @type {(inputs: Comments_DisabledInputs) => LocalizedString} */ () => {

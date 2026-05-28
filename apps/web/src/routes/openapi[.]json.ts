@@ -316,9 +316,12 @@ export const Route = createFileRoute("/openapi.json")({
                             type: "string",
                             description: "Optional approved parent comment id for replies.",
                           },
-                          authorWebsite: { type: "string" },
                           body: { type: "string" },
-                          turnstileToken: { type: "string" },
+                          turnstileToken: {
+                            type: "string",
+                            description:
+                              "Required only when Turnstile site key and secret are configured.",
+                          },
                         },
                         required: ["postSlug", "body"],
                       },
@@ -328,6 +331,7 @@ export const Route = createFileRoute("/openapi.json")({
                 responses: {
                   "201": { description: "Comment created through moderation settings" },
                   "401": { description: "Comment login required" },
+                  "403": { description: "Comment account is muted" },
                 },
               },
             },
@@ -399,6 +403,34 @@ export const Route = createFileRoute("/openapi.json")({
                 summary: "Read outbound email configuration status",
                 security: [{ apiToken: ["site:read"] }],
                 responses: { "200": { description: "Email provider and verification status" } },
+              },
+            },
+            "/api/admin/users": {
+              get: {
+                summary: "List admin and reader users",
+                responses: { "200": { description: "User list with comment access status" } },
+              },
+            },
+            "/api/admin/users/{id}": {
+              patch: {
+                summary: "Update a user's comment access",
+                requestBody: {
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          commentStatus: { type: "string", enum: ["active", "muted"] },
+                        },
+                        required: ["commentStatus"],
+                      },
+                    },
+                  },
+                },
+                responses: {
+                  "200": { description: "User updated" },
+                  "404": { description: "User not found" },
+                },
               },
             },
             "/api/comments/{id}/approve": {

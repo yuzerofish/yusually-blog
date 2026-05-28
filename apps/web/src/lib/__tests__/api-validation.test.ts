@@ -6,7 +6,6 @@ describe("CreateCommentSchema", () => {
   const validComment = {
     postSlug: "my-post",
     body: "This is a great article!",
-    turnstileToken: "cf-turnstile-token-123",
   };
 
   it("accepts a valid minimal comment", () => {
@@ -17,9 +16,9 @@ describe("CreateCommentSchema", () => {
   it("accepts optional fields when provided", () => {
     const result = CreateCommentSchema.safeParse({
       ...validComment,
-      authorWebsite: "https://example.com",
       parentId: "comment-abc",
       honeypot: "",
+      turnstileToken: "cf-turnstile-token-123",
     });
     expect(result.success).toBe(true);
   });
@@ -58,31 +57,17 @@ describe("CreateCommentSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it("rejects when turnstileToken is empty", () => {
-    const result = CreateCommentSchema.safeParse({ ...validComment, turnstileToken: "" });
-    expect(result.success).toBe(false);
-  });
-
-  it("rejects when turnstileToken is missing", () => {
-    const { turnstileToken: _turnstileToken, ...noToken } = validComment;
-    const result = CreateCommentSchema.safeParse(noToken);
-    expect(result.success).toBe(false);
-  });
-
-  it("rejects invalid authorWebsite URL", () => {
-    const result = CreateCommentSchema.safeParse({
-      ...validComment,
-      authorWebsite: "not-a-url",
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it("accepts empty string for authorWebsite", () => {
-    const result = CreateCommentSchema.safeParse({
-      ...validComment,
-      authorWebsite: "",
-    });
+  it("accepts a missing turnstileToken", () => {
+    const result = CreateCommentSchema.safeParse(validComment);
     expect(result.success).toBe(true);
+  });
+
+  it("normalizes a null turnstileToken to undefined", () => {
+    const result = CreateCommentSchema.safeParse({ ...validComment, turnstileToken: null });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.turnstileToken).toBeUndefined();
+    }
   });
 });
 
@@ -93,7 +78,6 @@ describe("validateBody", () => {
     const input = {
       postSlug: "post",
       body: "Hello world!",
-      turnstileToken: "token",
     };
     const [data, error] = validateBody(schema, input);
     expect(data).toBeDefined();
@@ -127,10 +111,10 @@ describe("validateBody", () => {
   });
 
   it("error details include the correct field path", async () => {
-    const [, error] = validateBody(schema, { postSlug: "ok", body: "x", turnstileToken: "" });
+    const [, error] = validateBody(schema, { postSlug: "", body: "x" });
     const body = (await error!.json()) as { details: Array<{ path: string }> };
     const paths = body.details.map((d) => d.path);
-    expect(paths).toContain("turnstileToken");
+    expect(paths).toContain("postSlug");
     expect(paths).toContain("body");
   });
 });

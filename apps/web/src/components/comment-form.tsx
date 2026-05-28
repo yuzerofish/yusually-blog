@@ -9,6 +9,7 @@ import { m } from "#/paraglide/messages.js";
 
 type CommentFormProps = {
   readonly postSlug: string;
+  readonly turnstileSiteKey?: string | null;
   readonly parentId?: string | null;
   readonly replyingTo?: string | null;
   readonly onCancelReply?: () => void;
@@ -18,7 +19,6 @@ type SubmitState = "idle" | "submitting" | "success" | "error";
 type AuthState = "idle" | "submitting" | "error" | "verification";
 type AuthMode = "login" | "signup";
 type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
-const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
 type CommentAuthUser = {
   id: string;
@@ -26,9 +26,16 @@ type CommentAuthUser = {
   email: string;
   avatarUrl: string | null;
   provider: "email" | "github";
+  commentStatus?: "active" | "muted";
 };
 
-export function CommentForm({ onCancelReply, parentId, postSlug, replyingTo }: CommentFormProps) {
+export function CommentForm({
+  onCancelReply,
+  parentId,
+  postSlug,
+  replyingTo,
+  turnstileSiteKey,
+}: CommentFormProps) {
   const [state, setState] = useState<SubmitState>("idle");
   const [authState, setAuthState] = useState<AuthState>("idle");
   const [authMode, setAuthMode] = useState<AuthMode>("login");
@@ -65,17 +72,17 @@ export function CommentForm({ onCancelReply, parentId, postSlug, replyingTo }: C
 
     setState("submitting");
     const formData = new FormData(event.currentTarget);
+    const turnstileToken = turnstileSiteKey ? formData.get("cf-turnstile-response") : undefined;
 
     const response = await fetch("/api/comments", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         postSlug,
-        authorWebsite: formData.get("authorWebsite"),
         body: formData.get("body"),
         parentId,
         honeypot: formData.get("company"),
-        turnstileToken: formData.get("cf-turnstile-response"),
+        turnstileToken,
       }),
     });
 
@@ -210,6 +217,26 @@ export function CommentForm({ onCancelReply, parentId, postSlug, replyingTo }: C
     );
   }
 
+  if (user.commentStatus === "muted") {
+    return (
+      <div className="mt-6 rounded-md border border-border bg-muted/35 p-4">
+        <h3 className="font-semibold">{m.comment_account_muted()}</h3>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+          {m.comment_account_muted_description()}
+        </p>
+        <Button
+          type="button"
+          variant="outline"
+          className="mt-4"
+          onClick={() => void handleLogout()}
+        >
+          <LogOutIcon className="size-4" />
+          {m.sign_out()}
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 pb-3 text-sm">
@@ -235,10 +262,6 @@ export function CommentForm({ onCancelReply, parentId, postSlug, replyingTo }: C
           </button>
         </div>
       ) : null}
-      <div className="grid gap-2">
-        <Label htmlFor="comment-author-website">{m.comment_website()}</Label>
-        <Input id="comment-author-website" name="authorWebsite" type="url" />
-      </div>
       <div className="hidden">
         <Label htmlFor="comment-company">{m.comment_company()}</Label>
         <Input id="comment-company" name="company" tabIndex={-1} autoComplete="off" />

@@ -7,6 +7,6 @@ export function getCurrentLocale(): SupportedLocale {
   return resolveLocale(getLocale());
 }
 
-export function setCurrentLocale(locale: SupportedLocale) {
-  setLocale(locale as Locale);
+export function setCurrentLocale(locale: SupportedLocale, options?: { reload?: boolean }) {
+  return setLocale(locale as Locale, options);
 }

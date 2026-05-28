@@ -4,7 +4,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 vi.mock("@tanstack/react-start/server-only", () => ({}));
 
 const mockCacheStore = new Map<string, string>();
-const mockEnv = { CMS_CACHE: null as any, CMS_TURNSTILE_SECRET_KEY: "" };
+const mockEnv = {
+  CMS_CACHE: null as any,
+  CMS_TURNSTILE_SECRET_KEY: "",
+  VITE_TURNSTILE_SITE_KEY: "",
+};
 
 vi.mock("cloudflare:workers", () => ({
   get env() {
@@ -111,6 +115,7 @@ describe("verifyTurnstile", () => {
     mockFetch.mockReset();
     globalThis.fetch = mockFetch;
     mockEnv.CMS_TURNSTILE_SECRET_KEY = "";
+    mockEnv.VITE_TURNSTILE_SITE_KEY = "";
   });
 
   afterEach(() => {
@@ -119,6 +124,7 @@ describe("verifyTurnstile", () => {
 
   it("skips verification when no secret key is configured", async () => {
     mockEnv.CMS_TURNSTILE_SECRET_KEY = "";
+    mockEnv.VITE_TURNSTILE_SITE_KEY = "site-key";
     const result = await verifyTurnstile({ token: "any-token", request: makeRequest() });
     expect(result).toEqual({ ok: true });
     expect(mockFetch).not.toHaveBeenCalled();
@@ -126,18 +132,29 @@ describe("verifyTurnstile", () => {
 
   it("skips verification when secret key is whitespace only", async () => {
     mockEnv.CMS_TURNSTILE_SECRET_KEY = "   ";
+    mockEnv.VITE_TURNSTILE_SITE_KEY = "site-key";
     const result = await verifyTurnstile({ token: "any-token", request: makeRequest() });
     expect(result).toEqual({ ok: true });
   });
 
+  it("skips verification when no site key is configured", async () => {
+    mockEnv.CMS_TURNSTILE_SECRET_KEY = "secret-key";
+    mockEnv.VITE_TURNSTILE_SITE_KEY = "";
+    const result = await verifyTurnstile({ token: undefined, request: makeRequest() });
+    expect(result).toEqual({ ok: true });
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
   it("rejects when token is undefined", async () => {
     mockEnv.CMS_TURNSTILE_SECRET_KEY = "secret-key";
+    mockEnv.VITE_TURNSTILE_SITE_KEY = "site-key";
     const result = await verifyTurnstile({ token: undefined, request: makeRequest() });
     expect(result).toEqual({ ok: false, error: "Turnstile token is required" });
   });
 
   it("returns ok when Turnstile API responds with success", async () => {
     mockEnv.CMS_TURNSTILE_SECRET_KEY = "secret-key";
+    mockEnv.VITE_TURNSTILE_SITE_KEY = "site-key";
     mockFetch.mockResolvedValueOnce({
       json: async () => ({ success: true }),
     });
@@ -151,6 +168,7 @@ describe("verifyTurnstile", () => {
 
   it("returns error when Turnstile API responds with failure", async () => {
     mockEnv.CMS_TURNSTILE_SECRET_KEY = "secret-key";
+    mockEnv.VITE_TURNSTILE_SITE_KEY = "site-key";
     mockFetch.mockResolvedValueOnce({
       json: async () => ({ success: false }),
     });

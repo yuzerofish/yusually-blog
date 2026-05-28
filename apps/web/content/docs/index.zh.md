@@ -49,6 +49,7 @@ docs/specs               项目规格、部署记录和实现记录
 
 - [部署](./deployment)：Cloudflare Workers、D1、R2、KV、migrations、环境变量和部署 target。
 - [评论](./comments)：读者登录、GitHub OAuth、邮箱登录、审核模式、关键词屏蔽和评论管理。
+- [进阶配置](./advanced-configuration)：可选邮件发送、GitHub OAuth 和 Turnstile 状态检测。
 - [API](./api)：自动化接口、OpenAPI 和评论登录接口。
 
 ## 本地开发

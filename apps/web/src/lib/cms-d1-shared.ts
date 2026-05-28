@@ -121,7 +121,7 @@ export function drizzleRowToPost(
     title: row.title,
     slug: row.slug,
     excerpt: row.excerpt,
-    coverImage: row.coverImage || currentSettings.defaultOgImage,
+    coverImage: row.coverImage ?? "",
     contentMarkdown: row.contentMarkdown,
     contentHtml: row.contentHtml,
     contentText: row.contentText,

@@ -147,6 +147,28 @@ export const comments = sqliteTable(
   ],
 );
 
+export const analyticsEvents = sqliteTable(
+  "analytics_events",
+  {
+    id: text("id").primaryKey(),
+    eventType: text("event_type", { enum: ["page_view"] })
+      .notNull()
+      .default("page_view"),
+    path: text("path").notNull(),
+    postSlug: text("post_slug"),
+    referrerHost: text("referrer_host"),
+    visitorHash: text("visitor_hash").notNull(),
+    occurredDate: text("occurred_date").notNull(),
+    occurredAt: text("occurred_at").notNull(),
+  },
+  (table) => [
+    index("analytics_events_date_idx").on(table.occurredDate),
+    index("analytics_events_path_date_idx").on(table.path, table.occurredDate),
+    index("analytics_events_post_date_idx").on(table.postSlug, table.occurredDate),
+    index("analytics_events_visitor_date_idx").on(table.visitorHash, table.occurredDate),
+  ],
+);
+
 export const apiTokens = sqliteTable(
   "api_tokens",
   {

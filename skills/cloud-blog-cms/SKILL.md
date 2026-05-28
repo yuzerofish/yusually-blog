@@ -31,7 +31,7 @@ Ask for missing values only when they are not already provided:
 3. Write site config from `templates/site.config.json`.
 4. Keep `locales: ["en", "zh"]`, `primaryLanguage`, and `i18nRuntime: "paraglide-js"` in generator config. Site settings use `i18n` for localized text fields.
 5. Check Cloudflare login with Wrangler.
-6. Create D1, R2 assets, R2 backups, optional KV resources, and optional Email Sending resources.
+6. Create D1, one R2 storage bucket, optional KV resources, and optional Email Sending resources.
 7. Write `apps/web/wrangler.jsonc` bindings.
 8. Run `blogcms deploy --target main`. This applies D1 migrations and deploys the Worker with the generated Cloudflare Vite config.
 9. Verify that the Worker version and custom domain route match the selected target.

@@ -37,6 +37,7 @@ import {
 
 import { SiteShell } from "#/components/site-shell";
 import { $getHomePageData, type HomePageData } from "#/lib/cms-server";
+import { getDocsUrl } from "#/lib/docs-i18n";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
@@ -94,10 +95,10 @@ function HomePage() {
 
 function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
   const copy = getHomeCopy(locale);
-  const primaryPost = featuredPosts[0] ?? posts[0];
-  const displayPosts = primaryPost
-    ? [primaryPost, ...posts.filter((post) => post.id !== primaryPost.id)].slice(0, 5)
-    : posts.slice(0, 5);
+  const docsHref = getDocsUrl([], locale);
+  const visibleFeaturedPosts = featuredPosts.slice(0, 3);
+  const visibleFeaturedIds = new Set(visibleFeaturedPosts.map((post) => post.id));
+  const displayPosts = posts.filter((post) => !visibleFeaturedIds.has(post.id)).slice(0, 5);
   const visibleTags = tags.slice(0, 16);
 
   return (
@@ -124,7 +125,7 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
               <ArrowRightIcon />
             </Button>
             <Button
-              render={<Link to="/docs/$" params={{ _splat: "" }} />}
+              render={<a href={docsHref} aria-label={copy.secondaryCta} />}
               variant="outline"
               nativeButton={false}
               size="lg"
@@ -174,26 +175,6 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
         </div>
       </section>
 
-      {/* ── Merged: No Server + Free Quota ── */}
-      <section className="border-b border-border bg-muted/35">
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
-          <p className="text-sm font-semibold text-link uppercase">{copy.freeEyebrow}</p>
-          <h2 className="mt-3 max-w-2xl text-3xl leading-tight font-semibold text-balance">
-            {copy.freeTitle}
-          </h2>
-          <div className="mt-10 grid gap-px border border-border bg-border sm:grid-cols-3">
-            {copy.freeHighlights.map((h) => (
-              <FreeHighlightCard key={h.label} item={h} />
-            ))}
-          </div>
-          <div className="mt-10 divide-y divide-border border-y border-border">
-            {copy.quotaItems.map((item) => (
-              <QuotaRow key={item.service} item={item} />
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── AI Skill ── */}
       <section className="border-b border-border bg-background">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
@@ -219,6 +200,27 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
               </li>
             ))}
           </ol>
+        </div>
+      </section>
+
+      {/* ── Merged: No Server + Free Quota ── */}
+      <section className="border-b border-border bg-muted/35">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
+          <p className="text-sm font-semibold text-link uppercase">{copy.freeEyebrow}</p>
+          <h2 className="mt-3 max-w-2xl text-3xl leading-tight font-semibold text-balance">
+            {copy.freeTitle}
+          </h2>
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">{copy.freeBody}</p>
+          <div className="mt-10 grid gap-px border border-border bg-border sm:grid-cols-3">
+            {copy.freeHighlights.map((h) => (
+              <FreeHighlightCard key={h.label} item={h} />
+            ))}
+          </div>
+          <div className="mt-10 divide-y divide-border border-y border-border">
+            {copy.quotaItems.map((item) => (
+              <QuotaRow key={item.service} item={item} />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -266,6 +268,10 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
               {copy.contentTitle}
             </h2>
           </div>
+
+          {visibleFeaturedPosts.length ? (
+            <FeaturedPostsBlock posts={visibleFeaturedPosts} locale={locale} />
+          ) : null}
 
           {visibleTags.length ? (
             <div className="mt-8 flex flex-wrap gap-2">
@@ -399,12 +405,111 @@ function ThemePreviewCard({ preview }: { readonly preview: ThemePreview }) {
   );
 }
 
+function FeaturedPostsBlock({
+  locale,
+  posts,
+}: {
+  readonly locale: SupportedLocale;
+  readonly posts: Post[];
+}) {
+  return (
+    <section className="mt-8 border-y border-border">
+      <div className="grid gap-px bg-border lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]">
+        <FeaturedPostLarge post={posts[0]} locale={locale} />
+        <div className="divide-y divide-border bg-background">
+          {posts.slice(1).map((post) => (
+            <FeaturedPostCompact key={post.id} post={post} locale={locale} />
+          ))}
+          {posts.length === 1 ? (
+            <div className="flex h-full min-h-32 items-center px-5 py-5 text-sm leading-6 text-muted-foreground">
+              {locale === "zh"
+                ? "继续在后台把文章设为精选，它们会出现在这里。"
+                : "Feature more posts in admin and they will appear here."}
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FeaturedPostLarge({
+  locale,
+  post,
+}: {
+  readonly locale: SupportedLocale;
+  readonly post: Post;
+}) {
+  const coverImage = post.coverImage.trim();
+
+  return (
+    <article className="grid gap-5 bg-background p-5 sm:grid-cols-[minmax(0,1fr)_220px] sm:items-start">
+      <div className="min-w-0">
+        <span className="inline-flex items-center gap-1.5 rounded-sm bg-accent px-2 py-1 text-xs font-semibold text-accent-foreground">
+          <SparklesIcon className="size-3.5" />
+          {m.home_featured_title()}
+        </span>
+        <Link to="/blog/$slug" params={{ slug: post.slug }} className="group mt-4 block">
+          <h3 className="text-3xl leading-tight font-semibold text-balance group-hover:text-link">
+            {post.title}
+          </h3>
+        </Link>
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">{post.excerpt}</p>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <PostBadges post={post} />
+          <time dateTime={post.publishedAt} className="text-sm text-muted-foreground">
+            {formatDate(post.publishedAt, locale)}
+          </time>
+        </div>
+      </div>
+      <Link
+        to="/blog/$slug"
+        params={{ slug: post.slug }}
+        className="block aspect-[4/3] overflow-hidden rounded-md bg-muted"
+        aria-label={post.title}
+      >
+        {coverImage ? (
+          <img src={coverImage} alt="" loading="lazy" className="size-full object-cover" />
+        ) : (
+          <div className="flex size-full items-center justify-center text-muted-foreground">
+            <FileTextIcon className="size-9" />
+          </div>
+        )}
+      </Link>
+    </article>
+  );
+}
+
+function FeaturedPostCompact({
+  locale,
+  post,
+}: {
+  readonly locale: SupportedLocale;
+  readonly post: Post;
+}) {
+  return (
+    <article className="p-5">
+      <PostBadges post={post} />
+      <Link to="/blog/$slug" params={{ slug: post.slug }} className="group mt-3 block">
+        <h3 className="text-xl leading-tight font-semibold text-balance group-hover:text-link">
+          {post.title}
+        </h3>
+      </Link>
+      <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">{post.excerpt}</p>
+      <time dateTime={post.publishedAt} className="mt-4 block text-sm text-muted-foreground">
+        {formatDate(post.publishedAt, locale)}
+      </time>
+    </article>
+  );
+}
+
 function ArticleRow({ post, locale }: { readonly post: Post; readonly locale: SupportedLocale }) {
   return (
     <article className="grid gap-4 py-7 sm:grid-cols-[minmax(0,1fr)_150px] sm:items-start">
       <div className="min-w-0">
+        <PostBadges post={post} />
         <Link to="/blog/$slug" params={{ slug: post.slug }} className="group">
-          <h3 className="text-2xl leading-tight font-semibold text-balance group-hover:text-link">
+          <h3 className="mt-2 text-2xl leading-tight font-semibold text-balance group-hover:text-link">
             {post.title}
           </h3>
         </Link>
@@ -415,6 +520,27 @@ function ArticleRow({ post, locale }: { readonly post: Post; readonly locale: Su
         {formatDate(post.publishedAt, locale)}
       </time>
     </article>
+  );
+}
+
+function PostBadges({ post }: { readonly post: Post }) {
+  if (!post.pinned && !post.featured) {
+    return null;
+  }
+
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {post.pinned ? (
+        <span className="rounded-sm bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+          {m.pinned()}
+        </span>
+      ) : null}
+      {post.featured ? (
+        <span className="rounded-sm bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
+          {m.featured()}
+        </span>
+      ) : null}
+    </div>
   );
 }
 
@@ -475,16 +601,18 @@ function getHomeCopy(locale: SupportedLocale) {
 
   if (locale === "zh") {
     return {
-      eyebrow: "个人站点 · Cloudflare 托管 · 永久免费",
-      heroTitle: "搭建你的永久精神家园",
+      eyebrow: "个人博客 CMS · Cloudflare 托管 · AI 一键部署",
+      heroTitle: "把个人博客部署到真正属于你的站点。",
       heroBody:
-        "在算法和平台规则之外，属于你自己的地方。基于 Cloudflare 构建，长期免费，后台、评论、图床、RSS 开箱即用。只需一个 AI 编辑器 + 一个 Cloudflare 账号。",
+        "01mvp-blog-starter 是一套 Cloudflare 原生的个人博客 CMS。后台、评论、图床、RSS 开箱即用，配合 AI Init Skill 可以从初始化到上线自动完成。",
       primaryCta: "查看示例内容",
       secondaryCta: "阅读使用文档",
 
       // ── Why Free ──
-      freeEyebrow: "无需服务器，无需续费",
-      freeTitle: "基于 Cloudflare 免费额度，个人博客基本用不完。",
+      freeEyebrow: "免费边界",
+      freeTitle: "无需服务器，无需续费。",
+      freeBody:
+        "Cloudflare 的免费额度对个人博客来说基本用不完。你只需要在第一天配置好，之后几乎不需要再管服务器、数据库和存储。",
       freeHighlights: [
         {
           icon: ServerIcon,
@@ -493,20 +621,20 @@ function getHomeCopy(locale: SupportedLocale) {
         },
         {
           icon: GlobeIcon,
-          label: "永久域名",
-          body: "默认提供 *.workers.dev 子域名，长期稳定。如需国内访问，自购域名绑定即可。",
+          label: "自带访问地址",
+          body: "默认提供 *.workers.dev 子域名。如需自定义品牌或国内访问，再绑定自己的域名即可。",
         },
         {
           icon: ShieldCheckIcon,
-          label: "大厂背书",
-          body: "Cloudflare 成立超 15 年，服务全球数百万网站，不存在跑路风险。",
+          label: "底层服务成熟",
+          body: "Workers、D1、R2 都由 Cloudflare 托管，不需要自己维护 VPS、数据库实例和对象存储。",
         },
       ] as (FreeHighlight & { icon: LucideIcon })[],
 
       // ── Your Own Corner ──
       ownershipEyebrow: "内容所有权",
       ownershipTitle: "你的内容，真正属于你。",
-      ownershipBody: "平台账号随时可以被封，内容随时可以被删除。个人站点是你真正拥有的互联网资产。",
+      ownershipBody: "平台账号随时可以被封、内容随时可以被删除。个人站点是你真正拥有的互联网资产。",
       ownershipPoints: [
         {
           icon: LockKeyholeIcon,
@@ -663,16 +791,18 @@ function getHomeCopy(locale: SupportedLocale) {
 
   // ── English ──
   return {
-    eyebrow: "Personal site · Cloudflare-hosted · Free forever",
-    heroTitle: "Build your permanent home on the internet",
+    eyebrow: "Personal blog CMS · Cloudflare-hosted · AI deployment",
+    heroTitle: "Deploy your blog to a site you actually own.",
     heroBody:
-      "Outside the algorithm and the platform's rules, a place that's entirely yours. Built on Cloudflare, free long-term — writing dashboard, comments, image hosting, and RSS out of the box. All you need: an AI editor and a Cloudflare account.",
+      "01mvp-blog-starter is a Cloudflare-native personal blog CMS. Writing dashboard, comments, image hosting, and RSS ship out of the box, and the AI Init Skill can take it from setup to live deploy.",
     primaryCta: "View sample content",
     secondaryCta: "Read the docs",
 
     // ── Why Free ──
-    freeEyebrow: "No server. No renewal fees.",
-    freeTitle: "Cloudflare's free tier is more than enough for a personal blog.",
+    freeEyebrow: "Cost boundary",
+    freeTitle: "No server. No renewal fees.",
+    freeBody:
+      "Cloudflare's free tier is effectively more than enough for a personal blog. Configure it on day one, then stop thinking about servers, databases, and storage.",
     freeHighlights: [
       {
         icon: ServerIcon,
@@ -681,13 +811,13 @@ function getHomeCopy(locale: SupportedLocale) {
       },
       {
         icon: GlobeIcon,
-        label: "Permanent domain",
-        body: "Free *.workers.dev subdomain included. Bring your own domain anytime for a custom URL.",
+        label: "Built-in URL",
+        body: "A free *.workers.dev subdomain is included. Bring your own domain anytime for a custom URL.",
       },
       {
         icon: ShieldCheckIcon,
-        label: "Backed by a major vendor",
-        body: "Cloudflare has operated for 15+ years and serves millions of websites. Not a startup risk.",
+        label: "Mature infrastructure",
+        body: "Workers, D1, and R2 are hosted by Cloudflare, so you do not maintain VPS, database, or object storage infrastructure.",
       },
     ] as (FreeHighlight & { icon: LucideIcon })[],
 

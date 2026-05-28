@@ -2,23 +2,35 @@ import { type Asset, type Post, type Series, renderMarkdownToHtml } from "@repo/
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
-import { CalendarClockIcon, Code2Icon, EyeIcon, PencilLineIcon } from "lucide-react";
+import { cn } from "@repo/ui/lib/utils";
+import {
+  CalendarClockIcon,
+  Code2Icon,
+  EyeIcon,
+  ImageIcon,
+  Loader2Icon,
+  PencilLineIcon,
+  UploadIcon,
+  XIcon,
+} from "lucide-react";
 import {
   lazy,
   Suspense,
   useEffect,
   useMemo,
+  useRef,
   useState,
   useSyncExternalStore,
   type ComponentProps,
+  type DragEventHandler,
 } from "react";
 
 import {
-  adminInputClassName,
   adminPanelClassName,
   adminSelectClassName,
   adminTextareaClassName,
 } from "#/components/admin/admin-ui";
+import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
 const MdxEditorSurface = lazy(() =>
@@ -48,15 +60,21 @@ export function PostForm({
   onMarkdownChange,
   onSubmit,
 }: PostFormProps) {
+  const locale = getCurrentLocale();
+  const copy = getPostFormCopy(locale);
+  const coverFileInputRef = useRef<HTMLInputElement | null>(null);
   const [assetRows, setAssetRows] = useState<Asset[]>([]);
   const [seriesRows, setSeriesRows] = useState<Series[]>([]);
   const [coverImage, setCoverImage] = useState(editingPost?.coverImage ?? "");
+  const [coverUploadState, setCoverUploadState] = useState<"idle" | "uploading" | "error">("idle");
+  const [isCoverDragging, setIsCoverDragging] = useState(false);
   const mounted = useClientMounted();
   const previewHtml = useMemo(() => renderMarkdownToHtml(markdown), [markdown]);
   const imageAssets = useMemo(
     () => assetRows.filter((asset) => asset.contentType.startsWith("image/")),
     [assetRows],
   );
+  const trimmedCoverImage = coverImage.trim();
 
   useEffect(() => {
     let ignore = false;
@@ -83,6 +101,64 @@ export function PostForm({
       ignore = true;
     };
   }, []);
+
+  const uploadCoverFile = async (file: File | undefined) => {
+    if (!file || !file.type.startsWith("image/")) {
+      setCoverUploadState("error");
+      return;
+    }
+
+    setCoverUploadState("uploading");
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    if (editingPost?.id) {
+      formData.append("attachedPostId", editingPost.id);
+    }
+
+    const response = await fetch("/api/assets", {
+      method: "POST",
+      body: formData,
+    }).catch(() => null);
+
+    if (!response?.ok) {
+      setCoverUploadState("error");
+      return;
+    }
+
+    const payload = (await response.json().catch(() => undefined)) as { data?: Asset } | undefined;
+
+    if (!payload?.data?.url) {
+      setCoverUploadState("error");
+      return;
+    }
+
+    const uploadedAsset = payload.data;
+    setCoverImage(uploadedAsset.url);
+    setAssetRows((current) => [
+      uploadedAsset,
+      ...current.filter((asset) => asset.id !== uploadedAsset.id),
+    ]);
+    if (coverFileInputRef.current) {
+      coverFileInputRef.current.value = "";
+    }
+    setCoverUploadState("idle");
+  };
+
+  const handleCoverDragOver: DragEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault();
+    setIsCoverDragging(true);
+  };
+
+  const handleCoverDrop: DragEventHandler<HTMLDivElement> = (event) => {
+    event.preventDefault();
+    setIsCoverDragging(false);
+
+    void uploadCoverFile(
+      Array.from(event.dataTransfer.files).find((file) => file.type.startsWith("image/")),
+    );
+  };
 
   return (
     <form
@@ -126,6 +202,154 @@ export function PostForm({
         </div>
       </div>
 
+      <div className="grid gap-4 border-b border-border/80 pb-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
+        <div className="grid gap-3">
+          <div className="flex items-center justify-between gap-3">
+            <Label htmlFor="editor-cover-file">{m.admin_editor_cover_image()}</Label>
+            {trimmedCoverImage ? (
+              <Button type="button" size="sm" variant="outline" onClick={() => setCoverImage("")}>
+                <XIcon />
+                {copy.clearCover}
+              </Button>
+            ) : null}
+          </div>
+          <input type="hidden" name="coverImage" value={coverImage} />
+          <input
+            ref={coverFileInputRef}
+            id="editor-cover-file"
+            type="file"
+            accept="image/*"
+            className="sr-only"
+            onChange={(event) => void uploadCoverFile(event.currentTarget.files?.[0])}
+            suppressHydrationWarning
+          />
+          <div
+            onDragOver={handleCoverDragOver}
+            onDragLeave={() => setIsCoverDragging(false)}
+            onDrop={handleCoverDrop}
+            className={cn(
+              "relative flex aspect-[16/9] min-h-56 overflow-hidden rounded-md border border-border bg-muted transition",
+              isCoverDragging && "border-link ring-3 ring-link/15",
+            )}
+          >
+            {trimmedCoverImage ? (
+              <img src={trimmedCoverImage} alt="" className="size-full object-cover" />
+            ) : (
+              <div className="flex size-full flex-col items-center justify-center gap-3 px-6 text-center text-muted-foreground">
+                <ImageIcon className="size-10" />
+                <p className="text-sm leading-6">{copy.emptyCover}</p>
+              </div>
+            )}
+            {coverUploadState === "uploading" ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-background/80 text-sm font-medium">
+                <Loader2Icon className="mr-2 size-4 animate-spin" />
+                {m.admin_assets_uploading()}
+              </div>
+            ) : null}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => coverFileInputRef.current?.click()}
+              disabled={coverUploadState === "uploading"}
+            >
+              <UploadIcon />
+              {copy.uploadCover}
+            </Button>
+            {imageAssets.length ? (
+              <select
+                aria-label={m.admin_editor_cover_asset()}
+                value=""
+                onChange={(event) => {
+                  const nextCoverImage = event.currentTarget.value;
+
+                  if (nextCoverImage) {
+                    setCoverImage(nextCoverImage);
+                  }
+                }}
+                className={cn(adminSelectClassName, "min-w-52")}
+              >
+                <option value="">{m.admin_editor_cover_asset_placeholder()}</option>
+                {imageAssets.map((asset) => (
+                  <option key={asset.id} value={asset.url}>
+                    {asset.filename}
+                  </option>
+                ))}
+              </select>
+            ) : null}
+          </div>
+          {coverUploadState === "error" ? (
+            <p className="text-sm text-destructive">{m.admin_assets_error()}</p>
+          ) : null}
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-2">
+            <Label htmlFor="editor-series">{m.admin_editor_series()}</Label>
+            <select
+              id="editor-series"
+              name="seriesId"
+              defaultValue={editingPost?.series?.id ?? ""}
+              className={adminSelectClassName}
+            >
+              <option value="">{m.admin_editor_series_none()}</option>
+              {seriesRows.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="editor-tags">{m.admin_editor_tags()}</Label>
+            <Input
+              id="editor-tags"
+              name="tags"
+              defaultValue={editingPost?.tags.map((tag) => tag.name).join(", ")}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="editor-published-at">{m.admin_editor_publish_at()}</Label>
+            <Input
+              id="editor-published-at"
+              name="publishedAt"
+              type="datetime-local"
+              defaultValue={toDatetimeLocal(editingPost?.publishedAt ?? fallbackPublishedAtIso)}
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-3 md:col-span-2">
+            <label className="flex min-h-9 items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                name="commentsEnabled"
+                defaultChecked={editingPost?.commentsEnabled ?? true}
+                className="size-4 rounded border-input"
+              />
+              {m.admin_editor_comments_enabled()}
+            </label>
+            <label className="flex min-h-9 items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                name="pinned"
+                defaultChecked={editingPost?.pinned ?? false}
+                className="size-4 rounded border-input"
+              />
+              {m.admin_editor_pinned()}
+            </label>
+            <label className="flex min-h-9 items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                name="featured"
+                defaultChecked={editingPost?.featured ?? false}
+                className="size-4 rounded border-input"
+              />
+              {m.admin_editor_featured()}
+            </label>
+          </div>
+        </div>
+      </div>
+
       <div className="grid gap-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap gap-2">
@@ -164,6 +388,10 @@ export function PostForm({
           </div>
         </div>
 
+        <p className="border-l-2 border-border px-3 text-sm leading-6 text-muted-foreground">
+          {m.admin_editor_description()}
+        </p>
+
         {editorMode === "editor" && !mounted ? (
           <div className="min-h-[560px] animate-pulse rounded-md border border-border bg-muted/55" />
         ) : null}
@@ -195,119 +423,6 @@ export function PostForm({
           />
         ) : null}
       </div>
-
-      <div className="grid gap-4 border-t border-border/80 pt-5 md:grid-cols-2 xl:grid-cols-4">
-        <div className="grid gap-2">
-          <Label htmlFor="editor-cover-image">{m.admin_editor_cover_image()}</Label>
-          <input
-            id="editor-cover-image"
-            name="coverImage"
-            value={coverImage}
-            onChange={(event) => setCoverImage(event.currentTarget.value)}
-            placeholder="/uploads/cover.jpg"
-            className={adminInputClassName}
-            suppressHydrationWarning
-          />
-        </div>
-        {imageAssets.length ? (
-          <div className="grid gap-2">
-            <Label htmlFor="editor-cover-asset">{m.admin_editor_cover_asset()}</Label>
-            <select
-              id="editor-cover-asset"
-              value=""
-              onChange={(event) => {
-                const nextCoverImage = event.currentTarget.value;
-
-                if (nextCoverImage) {
-                  setCoverImage(nextCoverImage);
-                }
-              }}
-              className={adminSelectClassName}
-            >
-              <option value="">{m.admin_editor_cover_asset_placeholder()}</option>
-              {imageAssets.map((asset) => (
-                <option key={asset.id} value={asset.url}>
-                  {asset.filename}
-                </option>
-              ))}
-            </select>
-          </div>
-        ) : null}
-        <div className="grid gap-2">
-          <Label htmlFor="editor-seo-title">{m.admin_editor_seo_title()}</Label>
-          <Input id="editor-seo-title" name="seoTitle" defaultValue={editingPost?.seoTitle} />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="editor-seo-description">{m.admin_editor_seo_description()}</Label>
-          <Input
-            id="editor-seo-description"
-            name="seoDescription"
-            defaultValue={editingPost?.seoDescription}
-          />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="editor-series">{m.admin_editor_series()}</Label>
-          <select
-            id="editor-series"
-            name="seriesId"
-            defaultValue={editingPost?.series?.id ?? ""}
-            className={adminSelectClassName}
-          >
-            <option value="">{m.admin_editor_series_none()}</option>
-            {seriesRows.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="editor-tags">{m.admin_editor_tags()}</Label>
-          <Input
-            id="editor-tags"
-            name="tags"
-            defaultValue={editingPost?.tags.map((tag) => tag.name).join(", ")}
-          />
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="editor-published-at">{m.admin_editor_publish_at()}</Label>
-          <Input
-            id="editor-published-at"
-            name="publishedAt"
-            type="datetime-local"
-            defaultValue={toDatetimeLocal(editingPost?.publishedAt ?? fallbackPublishedAtIso)}
-          />
-        </div>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-3 md:col-span-2">
-          <label className="flex min-h-9 items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              name="commentsEnabled"
-              defaultChecked={editingPost?.commentsEnabled ?? true}
-              className="size-4 rounded border-input"
-            />
-            {m.admin_editor_comments_enabled()}
-          </label>
-          <label className="flex min-h-9 items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              name="pinned"
-              defaultChecked={editingPost?.pinned ?? false}
-              className="size-4 rounded border-input"
-            />
-            {m.admin_editor_pinned()}
-          </label>
-          <label className="flex min-h-9 items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              name="featured"
-              defaultChecked={editingPost?.featured ?? false}
-              className="size-4 rounded border-input"
-            />
-            {m.admin_editor_featured()}
-          </label>
-        </div>
-      </div>
     </form>
   );
 }
@@ -328,4 +443,20 @@ function useClientMounted() {
     () => true,
     () => false,
   );
+}
+
+function getPostFormCopy(locale: "en" | "zh") {
+  if (locale === "zh") {
+    return {
+      clearCover: "清空封面",
+      emptyCover: "拖入一张图片，或从本机选择图片作为封面。",
+      uploadCover: "上传封面",
+    };
+  }
+
+  return {
+    clearCover: "Clear cover",
+    emptyCover: "Drop an image here, or choose one from your device.",
+    uploadCover: "Upload cover",
+  };
 }

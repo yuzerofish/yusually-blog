@@ -11,6 +11,23 @@ type AssetUploadInput = {
   attachedPostId?: string | null;
 };
 
+type R2StatusBucket = Pick<(typeof env)["CMS_STORAGE"], "list">;
+
+export type R2BucketStatus = {
+  binding: "CMS_STORAGE";
+  purpose: "storage";
+  prefix: string;
+  status: "ready" | "unavailable";
+  checkedAt: string;
+  sampleCount: number;
+  message?: string;
+};
+
+export type R2StorageStatus = {
+  status: "ready" | "degraded";
+  buckets: R2BucketStatus[];
+};
+
 export async function readAssetUpload(request: Request): Promise<AssetUploadInput> {
   const contentType = request.headers.get("content-type") ?? "";
 
@@ -60,7 +77,7 @@ export async function uploadAssetToR2(input: AssetUploadInput) {
   const url = `/uploads/${key.replace(/^uploads\//, "")}`;
   const sizeBytes = await byteLength(input.data);
 
-  await env.CMS_ASSETS.put(key, input.data, {
+  await env.CMS_STORAGE.put(key, input.data, {
     httpMetadata: {
       contentType: input.contentType,
       cacheControl: "public, max-age=31536000, immutable",
@@ -78,11 +95,27 @@ export async function uploadAssetToR2(input: AssetUploadInput) {
 }
 
 export async function getR2Asset(key: string) {
-  return env.CMS_ASSETS.get(key);
+  return env.CMS_STORAGE.get(key);
 }
 
 export async function deleteR2Asset(key: string) {
-  await env.CMS_ASSETS.delete(key);
+  await env.CMS_STORAGE.delete(key);
+}
+
+export async function getR2StorageStatus(): Promise<R2StorageStatus> {
+  const buckets = [
+    await checkR2Bucket({
+      binding: "CMS_STORAGE",
+      bucket: env.CMS_STORAGE,
+      purpose: "storage",
+      prefix: "uploads/ · imports/ · exports/",
+    }),
+  ];
+
+  return {
+    buckets,
+    status: buckets.every((bucket) => bucket.status === "ready") ? "ready" : "degraded",
+  };
 }
 
 export async function storeImportPackage(input: {
@@ -95,7 +128,7 @@ export async function storeImportPackage(input: {
   const key = objectKey("imports", filename);
   const data = input.contentBase64 ? decodeBase64(input.contentBase64) : new Uint8Array();
 
-  await env.CMS_BACKUPS.put(key, data, {
+  await env.CMS_STORAGE.put(key, data, {
     httpMetadata: {
       contentType: input.contentType,
     },
@@ -104,7 +137,7 @@ export async function storeImportPackage(input: {
   return {
     id: `asset_${crypto.randomUUID()}`,
     key,
-    url: `r2://CMS_BACKUPS/${key}`,
+    url: `r2://CMS_STORAGE/${key}`,
     filename,
     contentType: input.contentType,
     sizeBytes: data.byteLength,
@@ -118,7 +151,7 @@ export async function storeExportBackup(payload: unknown) {
   const createdAt = new Date().toISOString();
   const key = objectKey("exports", `01mvp-blog-starter-${createdAt.replace(/[:.]/g, "-")}.json`);
 
-  await env.CMS_BACKUPS.put(key, content, {
+  await env.CMS_STORAGE.put(key, content, {
     httpMetadata: {
       contentType: "application/json; charset=utf-8",
     },
@@ -126,7 +159,7 @@ export async function storeExportBackup(payload: unknown) {
 
   return {
     key,
-    url: `r2://CMS_BACKUPS/${key}`,
+    url: `r2://CMS_STORAGE/${key}`,
     contentType: "application/json",
     sizeBytes: new TextEncoder().encode(content).byteLength,
     createdAt,
@@ -137,7 +170,7 @@ export async function storeExportZipBackup(data: Uint8Array, filename: string) {
   const createdAt = new Date().toISOString();
   const key = objectKey("exports", filename);
 
-  await env.CMS_BACKUPS.put(key, data, {
+  await env.CMS_STORAGE.put(key, data, {
     httpMetadata: {
       contentType: "application/zip",
     },
@@ -145,7 +178,7 @@ export async function storeExportZipBackup(data: Uint8Array, filename: string) {
 
   return {
     key,
-    url: `r2://CMS_BACKUPS/${key}`,
+    url: `r2://CMS_STORAGE/${key}`,
     contentType: "application/zip",
     sizeBytes: data.byteLength,
     createdAt,
@@ -158,7 +191,7 @@ export async function pruneExportBackups(retentionDays: number) {
   let cursor: string | undefined;
 
   do {
-    const result = await env.CMS_BACKUPS.list({
+    const result = await env.CMS_STORAGE.list({
       prefix: "exports/",
       cursor,
       limit: 100,
@@ -169,7 +202,7 @@ export async function pruneExportBackups(retentionDays: number) {
         continue;
       }
 
-      await env.CMS_BACKUPS.delete(object.key);
+      await env.CMS_STORAGE.delete(object.key);
       deletedKeys.push(object.key);
     }
 
@@ -245,4 +278,80 @@ async function byteLength(data: ArrayBuffer | Uint8Array | Blob) {
 
 function valueOrNull(value: FormDataEntryValue | null) {
   return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+async function checkR2Bucket({
+  binding,
+  bucket,
+  purpose,
+  prefix,
+}: {
+  binding: R2BucketStatus["binding"];
+  bucket: R2StatusBucket | undefined;
+  purpose: R2BucketStatus["purpose"];
+  prefix: string;
+}): Promise<R2BucketStatus> {
+  const checkedAt = new Date().toISOString();
+
+  if (!bucket) {
+    return {
+      binding,
+      checkedAt,
+      message: "R2 binding is not available in this Worker environment.",
+      prefix,
+      purpose,
+      sampleCount: 0,
+      status: "unavailable",
+    };
+  }
+
+  try {
+    const result = await withTimeout(bucket.list({ limit: 1 }), 2500);
+
+    return {
+      binding,
+      checkedAt,
+      prefix,
+      purpose,
+      sampleCount: result.objects.length,
+      status: "ready",
+    };
+  } catch (error) {
+    return {
+      binding,
+      checkedAt,
+      message: storageErrorMessage(error),
+      prefix,
+      purpose,
+      sampleCount: 0,
+      status: "unavailable",
+    };
+  }
+}
+
+function storageErrorMessage(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+
+  if (/bucket.*(not found|does not exist)|no such bucket/i.test(message)) {
+    return "The configured R2 bucket was not found.";
+  }
+
+  if (/billing|payment|pre.?author|subscription|r2.*(not enabled|disabled)/i.test(message)) {
+    return "R2 may not be enabled for this Cloudflare account yet.";
+  }
+
+  if (/timed out/i.test(message)) {
+    return "R2 status check timed out.";
+  }
+
+  return "R2 could not be reached from this Worker environment.";
+}
+
+function withTimeout<TValue>(promise: Promise<TValue>, timeoutMs: number) {
+  return Promise.race([
+    promise,
+    new Promise<TValue>((_, reject) => {
+      setTimeout(() => reject(new Error("R2 status check timed out.")), timeoutMs);
+    }),
+  ]);
 }

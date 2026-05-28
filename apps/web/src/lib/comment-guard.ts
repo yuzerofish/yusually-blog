@@ -60,8 +60,9 @@ export async function verifyTurnstile({
   request: Request;
 }): Promise<CommentGuardResult> {
   const secret = env.CMS_TURNSTILE_SECRET_KEY?.trim();
+  const siteKey = env.VITE_TURNSTILE_SITE_KEY?.trim();
 
-  if (!secret) {
+  if (!secret || !siteKey) {
     return { ok: true };
   }
 

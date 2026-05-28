@@ -70,8 +70,7 @@ type CmsEmailBinding = {
 
 type CloudflareBindings = {
   CMS_DB: CmsD1Database;
-  CMS_ASSETS: CmsR2Bucket;
-  CMS_BACKUPS: CmsR2Bucket;
+  CMS_STORAGE: CmsR2Bucket;
   CMS_CACHE: CmsKVNamespace;
   CMS_EMAIL?: CmsEmailBinding;
   VITE_BASE_URL: string;

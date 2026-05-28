@@ -4,7 +4,7 @@ import { z } from "zod";
  * Schema for POST /api/comments — comment creation body.
  *
  * Fields read from the request body in the comments route:
- *   postSlug, body, authorWebsite, parentId, honeypot, turnstileToken
+ *   postSlug, body, parentId, honeypot, turnstileToken
  *
  * `authorName` and `authorEmail` are resolved server-side from the
  * authenticated session, so they are not part of this input schema.
@@ -12,10 +12,12 @@ import { z } from "zod";
 export const CreateCommentSchema = z.object({
   postSlug: z.string().min(1).max(200),
   body: z.string().min(2).max(4000),
-  authorWebsite: z.url().max(500).optional().or(z.literal("")),
   parentId: z.string().optional(),
   honeypot: z.string().optional().default(""),
-  turnstileToken: z.string().min(1, "Turnstile token is required"),
+  turnstileToken: z.preprocess(
+    (value) => (value === null ? undefined : value),
+    z.string().optional(),
+  ),
 });
 
 /**

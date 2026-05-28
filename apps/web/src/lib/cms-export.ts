@@ -203,7 +203,7 @@ async function readAssetEntries(assets: Asset[]) {
     replacements.set(asset.url, `../assets/${exportAssetPath(asset)}`);
     replacements.set(asset.key, `../assets/${exportAssetPath(asset)}`);
 
-    const object = await env.CMS_ASSETS.get(asset.key);
+    const object = await env.CMS_STORAGE.get(asset.key);
 
     if (!object?.body) {
       missingKeys.push(asset.key);

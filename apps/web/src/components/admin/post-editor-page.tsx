@@ -100,8 +100,6 @@ export function PostEditorPage({ postId }: PostEditorPageProps) {
         title: formData.get("title"),
         excerpt: formData.get("excerpt"),
         coverImage: formData.get("coverImage"),
-        seoTitle: formData.get("seoTitle"),
-        seoDescription: formData.get("seoDescription"),
         contentMarkdown: markdown,
         status,
         publishedAt:
@@ -148,7 +146,6 @@ export function PostEditorPage({ postId }: PostEditorPageProps) {
     <section className="grid gap-5">
       <AdminPageHeader
         title={pageTitle}
-        description={m.admin_editor_description()}
         actions={
           <Button
             render={<Link to="/admin/posts" />}

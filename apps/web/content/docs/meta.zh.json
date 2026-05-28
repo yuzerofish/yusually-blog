@@ -1,4 +1,13 @@
 {
   "title": "01mvp-blog-starter",
-  "pages": ["index", "usage", "content-systems", "publishing", "comments", "api", "deployment"]
+  "pages": [
+    "index",
+    "usage",
+    "content-systems",
+    "publishing",
+    "comments",
+    "api",
+    "deployment",
+    "advanced-configuration"
+  ]
 }

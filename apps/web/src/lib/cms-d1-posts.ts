@@ -136,7 +136,7 @@ export async function createD1Post(input: PostInput) {
   const status = input.status ?? "draft";
   const source = input.source ?? "api";
   const publishedAt = normalizeDateInput(input.publishedAt) ?? now;
-  const coverImage = input.coverImage?.trim() || currentSettings.defaultOgImage;
+  const coverImage = input.coverImage?.trim() ?? "";
   const seriesId = (await resolveD1SeriesId(input)) ?? null;
   const post: Post = {
     id: `post_${crypto.randomUUID()}`,
@@ -209,7 +209,6 @@ export async function createD1Post(input: PostInput) {
 }
 
 export async function updateD1Post(idOrSlug: string, input: PostInput) {
-  const currentSettings = await getD1SiteSettings();
   const post = await getD1PostByIdOrSlug(idOrSlug);
 
   if (!post) {
@@ -276,10 +275,7 @@ export async function updateD1Post(idOrSlug: string, input: PostInput) {
     .set({
       title,
       excerpt,
-      coverImage:
-        input.coverImage !== undefined
-          ? input.coverImage.trim() || currentSettings.defaultOgImage
-          : post.coverImage,
+      coverImage: input.coverImage !== undefined ? input.coverImage.trim() : post.coverImage,
       contentMarkdown,
       contentHtml,
       contentText,

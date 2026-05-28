@@ -23,7 +23,9 @@ export type {
   Asset,
   Comment,
   CommentStatus,
+  CommentUserStatus,
   ContentStatus,
+  CmsUser,
   LayoutPreset,
   Post,
   Series,
@@ -31,6 +33,7 @@ export type {
   SupportedLocale,
   Tag,
   ThemePreset,
+  UserRole,
 } from "./types";
 
 export function resolveLocale(locale?: string): SupportedLocale {

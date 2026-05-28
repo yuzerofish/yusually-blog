@@ -33,12 +33,8 @@
   ],
   "r2_buckets": [
     {
-      "binding": "CMS_ASSETS",
+      "binding": "CMS_STORAGE",
       "bucket_name": "blog-starter-assets",
-    },
-    {
-      "binding": "CMS_BACKUPS",
-      "bucket_name": "blog-starter-backups",
     },
   ],
   "kv_namespaces": [

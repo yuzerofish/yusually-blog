@@ -1,7 +1,7 @@
 import type { Post, SupportedLocale } from "@repo/core";
 import { formatDate } from "@repo/core";
 import { Link } from "@tanstack/react-router";
-import { CalendarDaysIcon, LibraryIcon } from "lucide-react";
+import { CalendarDaysIcon, FileTextIcon, LibraryIcon } from "lucide-react";
 
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
@@ -13,15 +13,23 @@ type PostCardProps = {
 };
 
 export function PostCard({ post, priority = false, locale = getCurrentLocale() }: PostCardProps) {
+  const coverImage = post.coverImage.trim();
+
   return (
     <article className="grid overflow-hidden rounded-lg border border-border/80 bg-card shadow-xs transition hover:border-ring/45 hover:shadow-sm md:grid-cols-[0.42fr_0.58fr]">
       <Link to="/blog/$slug" params={{ slug: post.slug }} className="block min-h-56 bg-muted">
-        <img
-          src={post.coverImage}
-          alt=""
-          loading={priority ? "eager" : "lazy"}
-          className="h-full min-h-56 w-full object-cover"
-        />
+        {coverImage ? (
+          <img
+            src={coverImage}
+            alt=""
+            loading={priority ? "eager" : "lazy"}
+            className="h-full min-h-56 w-full object-cover"
+          />
+        ) : (
+          <div className="flex min-h-56 w-full items-center justify-center bg-muted text-muted-foreground">
+            <FileTextIcon className="size-10 opacity-70" aria-hidden="true" />
+          </div>
+        )}
       </Link>
       <div className="flex min-w-0 flex-col p-5">
         <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
@@ -32,6 +40,11 @@ export function PostCard({ post, priority = false, locale = getCurrentLocale() }
           {post.pinned ? (
             <span className="rounded-sm bg-accent px-2 py-0.5 text-accent-foreground">
               {m.pinned()}
+            </span>
+          ) : null}
+          {post.featured ? (
+            <span className="rounded-sm bg-accent px-2 py-0.5 text-accent-foreground">
+              {m.featured()}
             </span>
           ) : null}
           {post.series ? (

@@ -42,6 +42,12 @@ export function createBlogAuth(database: AuthDatabase, env: BlogAuthEnv) {
           required: true,
           defaultValue: "reader",
         },
+        commentStatus: {
+          type: "string",
+          input: false,
+          required: true,
+          defaultValue: "active",
+        },
       },
     },
 

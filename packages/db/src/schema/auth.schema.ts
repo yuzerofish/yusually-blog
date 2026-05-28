@@ -10,6 +10,10 @@ export const user = sqliteTable("user", {
   role: text("role", { enum: ["admin", "reader"] })
     .default("reader")
     .notNull(),
+  commentStatus: text("comment_status", { enum: ["active", "muted"] })
+    .default("active")
+    .notNull(),
+  commentStatusUpdatedAt: text("comment_status_updated_at"),
   emailVerified: integer("email_verified", { mode: "boolean" }).default(false).notNull(),
   image: text("image"),
   createdAt: integer("created_at", { mode: "timestamp_ms" }).default(nowMs).notNull(),

@@ -28,7 +28,17 @@ This command writes only to the local D1 database under `.wrangler/state`. It do
 pnpm deploy:web
 ```
 
-This builds the web app, applies D1 migrations, and deploys the Worker using the generated Cloudflare config.
+This checks the required R2 bucket, builds the web app, and deploys the Worker using the generated Cloudflare config.
+
+R2 must be enabled on the target Cloudflare account before the storage bucket can be created. Cloudflare includes free monthly R2 usage, but R2 is still a usage-billed product, so new accounts may need to complete the R2 subscription checkout and add a valid payment method first.
+
+If deploy reports a missing R2 bucket, create it in the same Cloudflare account:
+
+```sh
+pnpm --filter @repo/web exec wrangler r2 bucket create blog-starter-assets --config wrangler.jsonc
+```
+
+The default setup uses one R2 bucket. Object prefixes separate responsibilities: `uploads/` for public assets, `imports/` for import packages, and `exports/` for JSON/ZIP backups.
 
 ## Runtime Resources
 
@@ -40,6 +50,8 @@ KV: cache metadata and optional short-lived records
 ```
 
 Turnstile and Cloudflare Email Sending are optional. Empty optional bindings should not block login, publishing, imports, exports, backups, or comment moderation.
+
+For setup steps and admin status checks, see [Advanced configuration](./advanced-configuration).
 
 ## Required Migrations
 
@@ -82,12 +94,14 @@ Check Cloudflare's [Email Service pricing](https://developers.cloudflare.com/ema
 
 ## GitHub Comment Login
 
-GitHub OAuth is the recommended reader login method for comments. Create a GitHub OAuth app and add callback URLs for every environment:
+GitHub OAuth is the recommended reader login method for comments. Create a GitHub OAuth app for each environment that needs its own callback URL:
 
 ```txt
 http://localhost:3000/api/auth/callback/github
 https://blog.01mvp.com/api/auth/callback/github
 ```
+
+GitHub OAuth apps have one authorization callback URL, so local and production usually use separate OAuth apps.
 
 Set `GITHUB_CLIENT_ID` in the matching Wrangler config or Cloudflare dashboard. Email/password reader login still works when GitHub OAuth is not configured.
 

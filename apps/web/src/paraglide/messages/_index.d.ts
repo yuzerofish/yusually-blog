@@ -687,7 +687,7 @@ export const admin_editor_comments_enabled: ((inputs?: Admin_Editor_Comments_Ena
 /**
 * | output |
 * | --- |
-* | "Write Markdown, preview the rendered shape, then save as draft or publish through the API." |
+* | "Supports Markdown syntax and direct image paste. Pasted images are uploaded to the R2 bucket and inserted into the post." |
 *
 * @param {Admin_Editor_DescriptionInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -1121,6 +1121,20 @@ export const admin_nav_settings: ((inputs?: Admin_Nav_SettingsInputs, options?: 
 /**
 * | output |
 * | --- |
+* | "Users" |
+*
+* @param {Admin_Nav_UsersInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_nav_users: ((inputs?: Admin_Nav_UsersInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Nav_UsersInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
 * | "New post" |
 *
 * @param {Admin_New_PostInputs} inputs
@@ -1163,7 +1177,7 @@ export const admin_overview_title: ((inputs?: Admin_Overview_TitleInputs, option
 /**
 * | output |
 * | --- |
-* | "Kept in admin, hidden from the public blog, tag pages, feeds, and sitemap. It can be republished or moved back to draft." |
+* | "Kept in admin, hidden publicly." |
 *
 * @param {Admin_Post_Status_Archived_DescriptionInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -1191,7 +1205,7 @@ export const admin_post_status_archived_label: ((inputs?: Admin_Post_Status_Arch
 /**
 * | output |
 * | --- |
-* | "Soft-deleted record, hidden from the admin list and public pages by default." |
+* | "Deleted record, hidden by default." |
 *
 * @param {Admin_Post_Status_Deleted_DescriptionInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -1219,7 +1233,7 @@ export const admin_post_status_deleted_label: ((inputs?: Admin_Post_Status_Delet
 /**
 * | output |
 * | --- |
-* | "Visible in admin only. Use this for unfinished content." |
+* | "Admin only." |
 *
 * @param {Admin_Post_Status_Draft_DescriptionInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -1247,7 +1261,7 @@ export const admin_post_status_draft_label: ((inputs?: Admin_Post_Status_Draft_L
 /**
 * | output |
 * | --- |
-* | "Visible on the public blog, tag pages, feeds, and sitemap immediately." |
+* | "Public immediately." |
 *
 * @param {Admin_Post_Status_Published_DescriptionInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -1275,7 +1289,7 @@ export const admin_post_status_published_label: ((inputs?: Admin_Post_Status_Pub
 /**
 * | output |
 * | --- |
-* | "Goes public when the publish time is reached. Hidden before that time." |
+* | "Public at publish time." |
 *
 * @param {Admin_Post_Status_Scheduled_DescriptionInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -1359,7 +1373,7 @@ export const admin_posts_delete: ((inputs?: Admin_Posts_DeleteInputs, options?: 
 /**
 * | output |
 * | --- |
-* | "Manage draft, published, scheduled, and archived posts. Archived posts stay in admin but are hidden from the public site." |
+* | "Manage writing, publishing, tags, and series." |
 *
 * @param {Admin_Posts_DescriptionInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -1611,7 +1625,7 @@ export const admin_posts_status: ((inputs?: Admin_Posts_StatusInputs, options?: 
 /**
 * | output |
 * | --- |
-* | "The public site only shows published posts and scheduled posts whose publish time has arrived. Drafts and archived posts are hidden; archive is for unpublish..." |
+* | "Public visibility depends on status and publish time." |
 *
 * @param {Admin_Posts_Status_HelpInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -1737,7 +1751,7 @@ export const admin_series_cancel: ((inputs?: Admin_Series_CancelInputs, options?
 /**
 * | output |
 * | --- |
-* | "Create and edit the focused series that posts can belong to." |
+* | "Series are curated article collections. A post can belong to one series, while tags can still mark multiple topics." |
 *
 * @param {Admin_Series_DescriptionInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -2591,6 +2605,412 @@ export const admin_tokens_title: ((inputs?: Admin_Tokens_TitleInputs, options?: 
 /**
 * | output |
 * | --- |
+* | "Comments" |
+*
+* @param {Admin_Users_CommentsInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_comments: ((inputs?: Admin_Users_CommentsInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_CommentsInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "{count} comments" |
+*
+* @param {Admin_Users_Comments_CountInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_comments_count: ((inputs: Admin_Users_Comments_CountInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Comments_CountInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Manage reader accounts that can comment, plus admin accounts." |
+*
+* @param {Admin_Users_DescriptionInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_description: ((inputs?: Admin_Users_DescriptionInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_DescriptionInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Email unverified" |
+*
+* @param {Admin_Users_Email_UnverifiedInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_email_unverified: ((inputs?: Admin_Users_Email_UnverifiedInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Email_UnverifiedInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Email verified" |
+*
+* @param {Admin_Users_Email_VerifiedInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_email_verified: ((inputs?: Admin_Users_Email_VerifiedInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Email_VerifiedInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "No users match the current filters." |
+*
+* @param {Admin_Users_EmptyInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_empty: ((inputs?: Admin_Users_EmptyInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_EmptyInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "User could not be updated." |
+*
+* @param {Admin_Users_ErrorInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_error: ((inputs?: Admin_Users_ErrorInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_ErrorInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Filter by role" |
+*
+* @param {Admin_Users_Filter_RoleInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_filter_role: ((inputs?: Admin_Users_Filter_RoleInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Filter_RoleInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Filter by comment access" |
+*
+* @param {Admin_Users_Filter_StatusInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_filter_status: ((inputs?: Admin_Users_Filter_StatusInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Filter_StatusInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Joined {date}" |
+*
+* @param {Admin_Users_JoinedInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_joined: ((inputs: Admin_Users_JoinedInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_JoinedInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Last comment" |
+*
+* @param {Admin_Users_Last_CommentInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_last_comment: ((inputs?: Admin_Users_Last_CommentInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Last_CommentInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Mute comments" |
+*
+* @param {Admin_Users_MuteInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_mute: ((inputs?: Admin_Users_MuteInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_MuteInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "No comments" |
+*
+* @param {Admin_Users_No_CommentsInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_no_comments: ((inputs?: Admin_Users_No_CommentsInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_No_CommentsInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Email" |
+*
+* @param {Admin_Users_Provider_EmailInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_provider_email: ((inputs?: Admin_Users_Provider_EmailInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Provider_EmailInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Unknown provider" |
+*
+* @param {Admin_Users_Provider_UnknownInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_provider_unknown: ((inputs?: Admin_Users_Provider_UnknownInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Provider_UnknownInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Admin" |
+*
+* @param {Admin_Users_Role_AdminInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_role_admin: ((inputs?: Admin_Users_Role_AdminInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Role_AdminInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "All roles" |
+*
+* @param {Admin_Users_Role_AllInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_role_all: ((inputs?: Admin_Users_Role_AllInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Role_AllInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Reader" |
+*
+* @param {Admin_Users_Role_ReaderInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_role_reader: ((inputs?: Admin_Users_Role_ReaderInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Role_ReaderInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "User updated." |
+*
+* @param {Admin_Users_SavedInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_saved: ((inputs?: Admin_Users_SavedInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_SavedInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Search users" |
+*
+* @param {Admin_Users_SearchInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_search: ((inputs?: Admin_Users_SearchInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_SearchInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Name, email, or provider" |
+*
+* @param {Admin_Users_Search_PlaceholderInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_search_placeholder: ((inputs?: Admin_Users_Search_PlaceholderInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Search_PlaceholderInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Can comment" |
+*
+* @param {Admin_Users_Status_ActiveInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_status_active: ((inputs?: Admin_Users_Status_ActiveInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Status_ActiveInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "All comment access" |
+*
+* @param {Admin_Users_Status_AllInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_status_all: ((inputs?: Admin_Users_Status_AllInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Status_AllInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Muted" |
+*
+* @param {Admin_Users_Status_MutedInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_status_muted: ((inputs?: Admin_Users_Status_MutedInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Status_MutedInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Never changed" |
+*
+* @param {Admin_Users_Status_Not_ChangedInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_status_not_changed: ((inputs?: Admin_Users_Status_Not_ChangedInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Status_Not_ChangedInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Access updated" |
+*
+* @param {Admin_Users_Status_UpdatedInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_status_updated: ((inputs?: Admin_Users_Status_UpdatedInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_Status_UpdatedInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Users" |
+*
+* @param {Admin_Users_TitleInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_title: ((inputs?: Admin_Users_TitleInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_TitleInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Total users" |
+*
+* @param {Admin_Users_TotalInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_total: ((inputs?: Admin_Users_TotalInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_TotalInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Restore comments" |
+*
+* @param {Admin_Users_UnmuteInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const admin_users_unmute: ((inputs?: Admin_Users_UnmuteInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Admin_Users_UnmuteInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
 * | "Use the admin area to manage publishing, settings, and exports." |
 *
 * @param {Account_Management_NoteInputs} inputs
@@ -2969,6 +3389,34 @@ export const comment_auth_loading: ((inputs?: Comment_Auth_LoadingInputs, option
 /**
 * | output |
 * | --- |
+* | "Commenting is muted for this account" |
+*
+* @param {Comment_Account_MutedInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const comment_account_muted: ((inputs?: Comment_Account_MutedInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Comment_Account_MutedInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "This account can still read the site, but it cannot post new comments." |
+*
+* @param {Comment_Account_Muted_DescriptionInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const comment_account_muted_description: ((inputs?: Comment_Account_Muted_DescriptionInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Comment_Account_Muted_DescriptionInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
 * | "Continue with GitHub" |
 *
 * @param {Comment_Continue_GithubInputs} inputs
@@ -3137,7 +3585,7 @@ export const comment_submitting: ((inputs?: Comment_SubmittingInputs, options?: 
 /**
 * | output |
 * | --- |
-* | "Comment submitted for review." |
+* | "Comment submitted." |
 *
 * @param {Comment_SuccessInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -3179,20 +3627,6 @@ export const comment_switch_to_signup: ((inputs?: Comment_Switch_To_SignupInputs
 /**
 * | output |
 * | --- |
-* | "Website" |
-*
-* @param {Comment_WebsiteInputs} inputs
-* @param {{ locale?: "en" | "zh" }} options
-* @returns {LocalizedString}
-*/
-export const comment_website: ((inputs?: Comment_WebsiteInputs, options?: {
-    locale?: "en" | "zh";
-}) => LocalizedString) & import("../runtime.js").MessageMetadata<Comment_WebsiteInputs, {
-    locale?: "en" | "zh";
-}, {}>;
-/**
-* | output |
-* | --- |
 * | "Comments" |
 *
 * @param {CommentsInputs} inputs
@@ -3207,7 +3641,7 @@ export const comments: ((inputs?: CommentsInputs, options?: {
 /**
 * | output |
 * | --- |
-* | "New comments are held for review before publication." |
+* | "Comments appear after approval." |
 *
 * @param {Comments_DescriptionInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -4527,6 +4961,7 @@ export type Admin_Nav_OverviewInputs = {};
 export type Admin_Nav_PostsInputs = {};
 export type Admin_Nav_SeriesInputs = {};
 export type Admin_Nav_SettingsInputs = {};
+export type Admin_Nav_UsersInputs = {};
 export type Admin_New_PostInputs = {};
 export type Admin_Overview_EyebrowInputs = {};
 export type Admin_Overview_TitleInputs = {};
@@ -4640,6 +5075,39 @@ export type Admin_Token_ScopesInputs = {};
 export type Admin_Token_Secret_OnceInputs = {};
 export type Admin_Tokens_DescriptionInputs = {};
 export type Admin_Tokens_TitleInputs = {};
+export type Admin_Users_CommentsInputs = {};
+export type Admin_Users_Comments_CountInputs = {
+    count: NonNullable<unknown>;
+};
+export type Admin_Users_DescriptionInputs = {};
+export type Admin_Users_Email_UnverifiedInputs = {};
+export type Admin_Users_Email_VerifiedInputs = {};
+export type Admin_Users_EmptyInputs = {};
+export type Admin_Users_ErrorInputs = {};
+export type Admin_Users_Filter_RoleInputs = {};
+export type Admin_Users_Filter_StatusInputs = {};
+export type Admin_Users_JoinedInputs = {
+    date: NonNullable<unknown>;
+};
+export type Admin_Users_Last_CommentInputs = {};
+export type Admin_Users_MuteInputs = {};
+export type Admin_Users_No_CommentsInputs = {};
+export type Admin_Users_Provider_EmailInputs = {};
+export type Admin_Users_Provider_UnknownInputs = {};
+export type Admin_Users_Role_AdminInputs = {};
+export type Admin_Users_Role_AllInputs = {};
+export type Admin_Users_Role_ReaderInputs = {};
+export type Admin_Users_SavedInputs = {};
+export type Admin_Users_SearchInputs = {};
+export type Admin_Users_Search_PlaceholderInputs = {};
+export type Admin_Users_Status_ActiveInputs = {};
+export type Admin_Users_Status_AllInputs = {};
+export type Admin_Users_Status_MutedInputs = {};
+export type Admin_Users_Status_Not_ChangedInputs = {};
+export type Admin_Users_Status_UpdatedInputs = {};
+export type Admin_Users_TitleInputs = {};
+export type Admin_Users_TotalInputs = {};
+export type Admin_Users_UnmuteInputs = {};
 export type Account_Management_NoteInputs = {};
 export type Account_Signed_In_AsInputs = {};
 export type Account_TitleInputs = {};
@@ -4667,6 +5135,8 @@ export type Comment_BodyInputs = {};
 export type Comment_CompanyInputs = {};
 export type Comment_Auth_ErrorInputs = {};
 export type Comment_Auth_LoadingInputs = {};
+export type Comment_Account_MutedInputs = {};
+export type Comment_Account_Muted_DescriptionInputs = {};
 export type Comment_Continue_GithubInputs = {};
 export type Comment_EmailInputs = {};
 export type Comment_Email_Verification_SentInputs = {};
@@ -4686,7 +5156,6 @@ export type Comment_SubmittingInputs = {};
 export type Comment_SuccessInputs = {};
 export type Comment_Switch_To_LoginInputs = {};
 export type Comment_Switch_To_SignupInputs = {};
-export type Comment_WebsiteInputs = {};
 export type CommentsInputs = {};
 export type Comments_DescriptionInputs = {};
 export type Comments_DisabledInputs = {};

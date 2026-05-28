@@ -28,7 +28,17 @@ password: 1
 pnpm deploy:web
 ```
 
-这会构建 Web 应用、应用 D1 migrations，并使用生成的 Cloudflare 配置部署 Worker。
+这会先检查必要的 R2 存储桶，再构建 Web 应用，并使用生成的 Cloudflare 配置部署 Worker。
+
+R2 存储桶需要在目标 Cloudflare 账号里先开通 R2 后才能创建。Cloudflare 提供 R2 免费月额度，但 R2 仍然是按量计费产品，新账号可能需要先完成 R2 subscription checkout，并添加有效付款方式。
+
+如果部署前检查提示缺少 R2 存储桶，在同一个 Cloudflare 账号里创建：
+
+```sh
+pnpm --filter @repo/web exec wrangler r2 bucket create blog-starter-assets --config wrangler.jsonc
+```
+
+默认只使用一个 R2 存储桶。对象前缀负责区分用途：`uploads/` 保存公开资源，`imports/` 保存导入包，`exports/` 保存 JSON/ZIP 备份。
 
 ## 运行时资源
 
@@ -40,6 +50,8 @@ KV: 缓存元数据和可选短期记录
 ```
 
 Turnstile 和 Cloudflare Email Sending 是可选能力。未配置可选 binding 不应该阻塞登录、发布、导入、导出、备份或评论审核。
+
+配置步骤和后台状态检测说明见 [进阶配置](./advanced-configuration)。
 
 ## 必要 Migration
 
@@ -82,12 +94,14 @@ Cloudflare Email Sending 默认关闭，因为出站邮件需要 Workers Paid。
 
 ## GitHub 评论登录
 
-GitHub OAuth 是推荐的读者评论登录方式。创建 GitHub OAuth app 后，为每个环境添加 callback URL：
+GitHub OAuth 是推荐的读者评论登录方式。每个需要独立 callback URL 的环境创建一个 GitHub OAuth app：
 
 ```txt
 http://localhost:3000/api/auth/callback/github
 https://blog.01mvp.com/api/auth/callback/github
 ```
+
+GitHub OAuth app 只有一个 authorization callback URL，所以本地和生产通常使用两个 OAuth app。
 
 `GITHUB_CLIENT_ID` 可以放在对应的 Wrangler 配置或 Cloudflare dashboard。没有配置 GitHub OAuth 时，邮箱和密码登录仍然可用。
 

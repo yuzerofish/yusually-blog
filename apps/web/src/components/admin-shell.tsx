@@ -9,6 +9,7 @@ import {
   MessageSquareIcon,
   SettingsIcon,
   SquareLibraryIcon,
+  UsersIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -31,6 +32,7 @@ const adminNav = [
   { label: m.admin_nav_series, href: "/admin/series", icon: LibraryIcon },
   { label: m.admin_nav_assets, href: "/admin/assets", icon: ImageIcon },
   { label: m.admin_nav_comments, href: "/admin/comments", icon: MessageSquareIcon },
+  { label: m.admin_nav_users, href: "/admin/users", icon: UsersIcon },
   { label: m.admin_nav_settings, href: "/admin/settings", icon: SettingsIcon },
 ];
 

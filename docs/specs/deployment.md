@@ -15,8 +15,7 @@ Canonical production target:
 
 - Worker: `blog-starter`
 - D1: `blog-starter-cms`, id `b267c97c-72a5-45a1-9f5a-cfd0b8e8067c`
-- R2 assets: `blog-starter-assets`
-- R2 backups: `blog-starter-backups`
+- R2 storage: `blog-starter-assets`
 - KV: `CMS_CACHE`, id `c1150cc286374ba9919f48f48a985f36`
 - Cron Trigger: `0 3 * * *`
 - Backup retention: 30 days
@@ -24,6 +23,23 @@ Canonical production target:
 - Current verified version: `bd7113d3-4755-4c3c-82fb-c78e2531af58`
 - Email Sending: disabled by default
 - Password reset TTL: 30 minutes
+
+R2 must be enabled on the target Cloudflare account before this bucket can be
+created. New accounts may need to complete the R2 subscription checkout and add
+a valid payment method because R2 uses usage-based billing with a free monthly
+allowance.
+
+Deploy commands run `scripts/check-r2-buckets.mjs` before building. The preflight
+uses Wrangler to list R2 buckets and fails early when `blog-starter-assets` is
+missing from the target account. Create the missing bucket with:
+
+```sh
+pnpm --filter @repo/web exec wrangler r2 bucket create blog-starter-assets --config wrangler.jsonc
+```
+
+The app uses one R2 bucket by default. Object prefixes keep responsibilities
+separate: `uploads/` for public assets, `imports/` for import packages, and
+`exports/` for JSON/ZIP backups.
 
 ## Migrations
 

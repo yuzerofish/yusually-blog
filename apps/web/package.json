@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vp dev",
-    "deploy": "vp build && wrangler deploy --config dist/server/wrangler.json",
+    "deploy": "node ../../scripts/check-r2-buckets.mjs && vp build && wrangler deploy --config dist/server/wrangler.json",
     "preview": "vp preview",
     "cf-typegen": "wrangler types",
     "docs:source": "fumadocs-mdx source.config.ts .source",

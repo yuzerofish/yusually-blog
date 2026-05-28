@@ -3,7 +3,7 @@ import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { Link } from "@tanstack/react-router";
-import { ArchiveIcon, FileTextIcon, SearchIcon, SendIcon } from "lucide-react";
+import { ArchiveIcon, FileTextIcon, InfoIcon, SearchIcon, SendIcon } from "lucide-react";
 
 import { AdminPanel, AdminTableFrame, adminSelectClassName } from "#/components/admin/admin-ui";
 import { PostBatchActions, type BatchAction } from "#/components/admin/post-batch-actions";
@@ -132,9 +132,13 @@ export function PostList({
         </div>
       </div>
 
-      <div className="mt-4 border-y border-border/80 py-3">
-        <p className="text-sm text-muted-foreground">{m.admin_posts_status_help()}</p>
-        <dl className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+      <details className="mt-4 border-y border-border/80 py-3">
+        <summary className="flex min-h-9 w-fit cursor-pointer list-none items-center gap-2 rounded-md px-1 text-sm font-medium text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/20 [&::-webkit-details-marker]:hidden">
+          <InfoIcon className="size-4" />
+          {m.admin_posts_status()}
+        </summary>
+        <p className="mt-2 text-sm text-muted-foreground">{m.admin_posts_status_help()}</p>
+        <dl className="mt-3 grid gap-2 md:grid-cols-2 xl:grid-cols-4">
           {statusDetails.map((item) => (
             <div key={item.status} className="space-y-1">
               <dt className="text-sm font-medium text-foreground">{item.label}</dt>
@@ -142,7 +146,7 @@ export function PostList({
             </div>
           ))}
         </dl>
-      </div>
+      </details>
 
       <PostBatchActions selectedCount={selectedPostIds.length} onAction={onBatchAction} />
 

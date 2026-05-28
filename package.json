@@ -7,7 +7,7 @@
     "build:web": "vp run web#build",
     "dev": "pnpm run --recursive --parallel dev",
     "dev:web": "vp run --filter=@repo/web dev",
-    "deploy:web": "pnpm build:web && pnpm --filter @repo/web exec wrangler deploy --config dist/server/wrangler.json",
+    "deploy:web": "node scripts/check-r2-buckets.mjs && pnpm build:web && pnpm --filter @repo/web exec wrangler deploy --config dist/server/wrangler.json",
     "lint": "vp lint --type-aware --type-check",
     "lint:fix": "vp lint --type-aware --type-check --fix",
     "format": "vp fmt",

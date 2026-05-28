@@ -28,7 +28,7 @@ The theme preset is written to site settings and applied through shared UI token
 2. Create or clone the project.
 3. Write site config from `templates/site.config.json`.
 4. Verify Cloudflare login.
-5. Create D1, R2 assets, R2 backups, optional KV resources, and optional Email Sending resources.
+5. Create D1, one R2 storage bucket, optional KV resources, and optional Email Sending resources.
 6. Write Wrangler bindings.
 7. Run `blogcms deploy --target main`. This applies D1 migrations and deploys the Worker with the generated Cloudflare Vite config.
 8. Create the first admin user.

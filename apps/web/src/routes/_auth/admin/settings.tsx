@@ -1,10 +1,24 @@
+import { SiGithub } from "@icons-pack/react-simple-icons";
 import { type ApiToken, type ApiTokenScope, type SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
+import { cn } from "@repo/ui/lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
-import { DownloadIcon, KeyRoundIcon, LinkIcon, UploadIcon, UserRoundIcon } from "lucide-react";
-import { useEffect, useState, type ComponentProps } from "react";
+import {
+  CircleAlertIcon,
+  CircleCheckIcon,
+  DownloadIcon,
+  ExternalLinkIcon,
+  KeyRoundIcon,
+  LinkIcon,
+  MailIcon,
+  Settings2Icon,
+  ShieldCheckIcon,
+  UploadIcon,
+  UserRoundIcon,
+} from "lucide-react";
+import { useEffect, useState, type ComponentProps, type ComponentType } from "react";
 
 import {
   AdminPageHeader,
@@ -31,6 +45,25 @@ type EmailVerificationStatus = {
     missing: string[];
   };
 };
+type OptionalEnvStatus = {
+  configured: boolean;
+  missing: string[];
+};
+type AdvancedConfigStatus = {
+  email: EmailVerificationStatus["delivery"];
+  github: OptionalEnvStatus;
+  turnstile: OptionalEnvStatus;
+};
+type AdvancedConfigItem = {
+  id: "email" | "github" | "turnstile";
+  configured: boolean;
+  description: string;
+  detail: string;
+  docsHref: string;
+  icon: ComponentType<{ className?: string }>;
+  missing: string[];
+  title: string;
+};
 type PortabilityStatus = {
   tone: "success" | "error";
   message: string;
@@ -52,6 +85,17 @@ const defaultEmailVerificationStatus: EmailVerificationStatus = {
   },
   enabled: false,
   requested: false,
+};
+const defaultAdvancedConfigStatus: AdvancedConfigStatus = {
+  email: defaultEmailVerificationStatus.delivery,
+  github: {
+    configured: false,
+    missing: [],
+  },
+  turnstile: {
+    configured: false,
+    missing: [],
+  },
 };
 
 function AdminSettingsPage() {
@@ -82,6 +126,9 @@ function AdminSettingsPage() {
   const [emailStatus, setEmailStatus] = useState<EmailVerificationStatus>(
     defaultEmailVerificationStatus,
   );
+  const [advancedConfig, setAdvancedConfig] = useState<AdvancedConfigStatus>(
+    defaultAdvancedConfigStatus,
+  );
   const [tokens, setTokens] = useState<ApiToken[]>([]);
   const [secret, setSecret] = useState<string | null>(null);
   const [settingsStatus, setSettingsStatus] = useState<"idle" | "saved" | "error">("idle");
@@ -99,6 +146,11 @@ function AdminSettingsPage() {
     ]).then(([sitePayload, emailPayload, tokenPayload]) => {
       const siteData = (sitePayload as { data?: SiteSettings } | undefined)?.data;
       const emailData = (emailPayload as { data?: EmailVerificationStatus } | undefined)?.data;
+      const advancedData = (
+        emailPayload as
+          | { advanced?: AdvancedConfigStatus; data?: EmailVerificationStatus }
+          | undefined
+      )?.advanced;
       const tokenData = (tokenPayload as { data?: ApiToken[] } | undefined)?.data;
 
       if (!ignore && siteData) {
@@ -107,6 +159,10 @@ function AdminSettingsPage() {
 
       if (!ignore && emailData) {
         setEmailStatus(emailData);
+      }
+
+      if (!ignore && advancedData) {
+        setAdvancedConfig(advancedData);
       }
 
       if (!ignore && tokenData) {
@@ -316,6 +372,8 @@ function AdminSettingsPage() {
       : emailStatus.delivery.provider === "resend"
         ? "Resend"
         : "";
+  const advancedItems = getAdvancedConfigItems(locale, advancedConfig);
+  const advancedCopy = getAdvancedConfigCopy(locale);
 
   return (
     <div className="grid gap-5">
@@ -576,6 +634,79 @@ function AdminSettingsPage() {
 
       <AdminPanel>
         <div className="flex items-start gap-3">
+          <Settings2Icon className="mt-1 size-5 text-link" />
+          <div>
+            <h2 className="text-xl font-semibold">{advancedCopy.title}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">{advancedCopy.description}</p>
+          </div>
+        </div>
+
+        <div className="mt-6 overflow-hidden rounded-md border border-border">
+          {advancedItems.map((item, index) => {
+            const Icon = item.icon;
+            const StatusIcon = item.configured ? CircleCheckIcon : CircleAlertIcon;
+
+            return (
+              <article
+                key={item.id}
+                className={cn(
+                  "grid gap-4 p-4 md:grid-cols-[1fr_auto] md:items-center",
+                  index > 0 && "border-t border-border",
+                )}
+              >
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="grid size-8 place-items-center rounded-md bg-muted text-foreground">
+                      <Icon className="size-4" />
+                    </span>
+                    <h3 className="text-sm font-semibold">{item.title}</h3>
+                    <span
+                      className={cn(
+                        "inline-flex min-h-7 items-center gap-1 rounded-md border px-2 text-xs font-medium",
+                        item.configured
+                          ? "border-success/25 bg-success/10 text-success"
+                          : "border-border bg-muted text-muted-foreground",
+                      )}
+                    >
+                      <StatusIcon className="size-3.5" />
+                      {item.configured ? advancedCopy.configured : advancedCopy.needsSetup}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.description}</p>
+                  <p className="mt-2 text-sm leading-6">{item.detail}</p>
+                  {item.missing.length > 0 ? (
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {item.missing.map((name) => (
+                        <code
+                          key={name}
+                          className="rounded-md border border-border bg-muted px-1.5 py-0.5 text-xs"
+                        >
+                          {name}
+                        </code>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+                <Button
+                  render={
+                    <a href={item.docsHref} aria-label={`${advancedCopy.docs}: ${item.title}`} />
+                  }
+                  nativeButton={false}
+                  variant="outline"
+                  size="sm"
+                  className="w-fit md:justify-self-end"
+                >
+                  {advancedCopy.docs}
+                  <ExternalLinkIcon />
+                </Button>
+              </article>
+            );
+          })}
+        </div>
+      </AdminPanel>
+
+      <AdminPanel>
+        <div className="flex items-start gap-3">
           <DownloadIcon className="mt-1 size-5 text-link" />
           <div>
             <h2 className="text-xl font-semibold">{m.admin_import_export_title()}</h2>
@@ -715,6 +846,106 @@ function AdminSettingsPage() {
       </AdminPanel>
     </div>
   );
+}
+
+function getAdvancedConfigItems(
+  locale: ReturnType<typeof getCurrentLocale>,
+  status: AdvancedConfigStatus,
+): AdvancedConfigItem[] {
+  const copy = getAdvancedConfigCopy(locale);
+  const docsPrefix = locale === "zh" ? "/zh/docs" : "/docs";
+  const emailDocsHash = locale === "zh" ? "邮件发送" : "email-delivery";
+  const emailProviderLabel =
+    status.email.provider === "cloudflare"
+      ? "Cloudflare Email"
+      : status.email.provider === "resend"
+        ? "Resend"
+        : "";
+
+  return [
+    {
+      id: "email",
+      configured: status.email.configured,
+      description: copy.emailDescription,
+      detail: status.email.configured
+        ? copy.emailConfigured(emailProviderLabel)
+        : copy.emailMissing,
+      docsHref: `${docsPrefix}/advanced-configuration#${emailDocsHash}`,
+      icon: MailIcon,
+      missing: status.email.missing,
+      title: copy.emailTitle,
+    },
+    {
+      id: "github",
+      configured: status.github.configured,
+      description: copy.githubDescription,
+      detail: status.github.configured ? copy.githubConfigured : copy.githubMissing,
+      docsHref: `${docsPrefix}/advanced-configuration#github-oauth`,
+      icon: SiGithub,
+      missing: status.github.missing,
+      title: copy.githubTitle,
+    },
+    {
+      id: "turnstile",
+      configured: status.turnstile.configured,
+      description: copy.turnstileDescription,
+      detail: status.turnstile.configured ? copy.turnstileConfigured : copy.turnstileMissing,
+      docsHref: `${docsPrefix}/advanced-configuration#cloudflare-turnstile`,
+      icon: ShieldCheckIcon,
+      missing: status.turnstile.missing,
+      title: copy.turnstileTitle,
+    },
+  ];
+}
+
+function getAdvancedConfigCopy(locale: ReturnType<typeof getCurrentLocale>) {
+  if (locale === "zh") {
+    return {
+      configured: "已配置",
+      description:
+        "这些集成默认可不配置。后台只检测当前环境变量和绑定状态，真正的 Cloudflare、GitHub 或邮件服务配置在文档里完成。",
+      docs: "查看文档",
+      emailConfigured: (provider: string) => `已检测到邮件服务：${provider}。`,
+      emailDescription: "用于密码重置、后台通知、导入导出通知，以及可选的评论账号邮箱验证。",
+      emailMissing: "未检测到 Cloudflare Email Sending 或 Resend，核心发布和评论审核仍可正常使用。",
+      emailTitle: "邮件发送",
+      githubConfigured: "已检测到 GitHub OAuth client id 和 secret。",
+      githubDescription: "为读者评论提供 GitHub 登录；未配置时仍可使用邮箱和密码登录。",
+      githubMissing: "未检测到 GitHub OAuth 环境变量。",
+      githubTitle: "GitHub 登录",
+      needsSetup: "未配置",
+      title: "进阶配置",
+      turnstileConfigured: "已检测到 Turnstile site key 和 secret key，评论提交会启用校验。",
+      turnstileDescription: "为评论提交增加 Cloudflare Turnstile 防滥用校验。",
+      turnstileMissing: "未检测到完整 Turnstile 配置，评论会继续使用登录、限流和审核保护。",
+      turnstileTitle: "Cloudflare Turnstile",
+    };
+  }
+
+  return {
+    configured: "Configured",
+    description:
+      "These integrations are optional by default. The admin area only detects current environment variables and bindings; setup happens in Cloudflare, GitHub, or the email provider.",
+    docs: "Open docs",
+    emailConfigured: (provider: string) => `Email provider detected: ${provider}.`,
+    emailDescription:
+      "Enables password resets, admin notifications, import/export notices, and optional comment email verification.",
+    emailMissing:
+      "Cloudflare Email Sending or Resend was not detected. Publishing and comment moderation still work.",
+    emailTitle: "Email delivery",
+    githubConfigured: "GitHub OAuth client id and secret were detected.",
+    githubDescription:
+      "Adds GitHub login for reader comments; email/password login remains available without it.",
+    githubMissing: "GitHub OAuth environment variables were not detected.",
+    githubTitle: "GitHub login",
+    needsSetup: "Needs setup",
+    title: "Advanced configuration",
+    turnstileConfigured: "Turnstile site key and secret key were detected for comment checks.",
+    turnstileDescription: "Adds Cloudflare Turnstile abuse protection to comment submission.",
+    turnstileMissing:
+      "Turnstile is not fully configured. Comments still use login, rate limits, and moderation.",
+    turnstileTitle: "Cloudflare Turnstile",
+  };
 }
 
 function parseLinkLines(value: FormDataEntryValue | null): SiteSettings["socialLinks"] {

@@ -17,8 +17,7 @@ Run date: 2026-05-25
 
 - Worker: `blog-starter`
 - D1: `blog-starter-cms`
-- R2 assets: `blog-starter-assets`
-- R2 backups: `blog-starter-backups`
+- R2 storage: `blog-starter-assets`
 - KV: `CMS_CACHE`
 
 ## Automated Steps

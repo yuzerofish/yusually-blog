@@ -6,6 +6,7 @@ export type BlogPostPageData = {
   comments: Comment[];
   relatedPosts: Post[];
   siteSettings: SiteSettings;
+  turnstileSiteKey: string | null;
 };
 
 export type HomePageData = {
@@ -58,7 +59,8 @@ export type AboutPageData = {
 export const $getBlogPostPage = createServerFn({ method: "GET" })
   .inputValidator((data: { slug: string }) => data)
   .handler(async ({ data }): Promise<BlogPostPageData | null> => {
-    const { getD1PostBySlug, getD1SiteSettings, listD1ApprovedComments } = await import("./cms-d1");
+    const [{ env }, { getD1PostBySlug, getD1SiteSettings, listD1ApprovedComments }] =
+      await Promise.all([import("cloudflare:workers"), import("./cms-d1")]);
     const [siteSettings, post] = await Promise.all([
       getD1SiteSettings(),
       getD1PostBySlug(data.slug),
@@ -73,6 +75,7 @@ export const $getBlogPostPage = createServerFn({ method: "GET" })
       comments: await listD1ApprovedComments(post.id),
       relatedPosts: [],
       siteSettings,
+      turnstileSiteKey: env.VITE_TURNSTILE_SITE_KEY?.trim() || null,
     };
   });
 

@@ -46,6 +46,13 @@ export const Route = createFileRoute("/api/comments")({
           return jsonResponse({ error: "Login is required to comment" }, { status: 401 });
         }
 
+        if (user.commentStatus === "muted") {
+          return jsonResponse(
+            { error: "Commenting is disabled for this account" },
+            { status: 403 },
+          );
+        }
+
         const turnstile = await verifyTurnstile({
           token: body.turnstileToken,
           request,
@@ -69,7 +76,6 @@ export const Route = createFileRoute("/api/comments")({
           authorUserId: user.id,
           authorName: user.name,
           authorEmail: user.email,
-          authorWebsite: body.authorWebsite,
           body: body.body,
           parentId: body.parentId || null,
           locale: resolveLocale(new URL(request.url).searchParams.get("lang") ?? undefined),

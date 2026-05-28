@@ -79,6 +79,7 @@
 /** @typedef {{}} Admin_Nav_PostsInputs */
 /** @typedef {{}} Admin_Nav_SeriesInputs */
 /** @typedef {{}} Admin_Nav_SettingsInputs */
+/** @typedef {{}} Admin_Nav_UsersInputs */
 /** @typedef {{}} Admin_New_PostInputs */
 /** @typedef {{}} Admin_Overview_EyebrowInputs */
 /** @typedef {{}} Admin_Overview_TitleInputs */
@@ -184,6 +185,35 @@
 /** @typedef {{}} Admin_Token_Secret_OnceInputs */
 /** @typedef {{}} Admin_Tokens_DescriptionInputs */
 /** @typedef {{}} Admin_Tokens_TitleInputs */
+/** @typedef {{}} Admin_Users_CommentsInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Admin_Users_Comments_CountInputs */
+/** @typedef {{}} Admin_Users_DescriptionInputs */
+/** @typedef {{}} Admin_Users_Email_UnverifiedInputs */
+/** @typedef {{}} Admin_Users_Email_VerifiedInputs */
+/** @typedef {{}} Admin_Users_EmptyInputs */
+/** @typedef {{}} Admin_Users_ErrorInputs */
+/** @typedef {{}} Admin_Users_Filter_RoleInputs */
+/** @typedef {{}} Admin_Users_Filter_StatusInputs */
+/** @typedef {{ date: NonNullable<unknown> }} Admin_Users_JoinedInputs */
+/** @typedef {{}} Admin_Users_Last_CommentInputs */
+/** @typedef {{}} Admin_Users_MuteInputs */
+/** @typedef {{}} Admin_Users_No_CommentsInputs */
+/** @typedef {{}} Admin_Users_Provider_EmailInputs */
+/** @typedef {{}} Admin_Users_Provider_UnknownInputs */
+/** @typedef {{}} Admin_Users_Role_AdminInputs */
+/** @typedef {{}} Admin_Users_Role_AllInputs */
+/** @typedef {{}} Admin_Users_Role_ReaderInputs */
+/** @typedef {{}} Admin_Users_SavedInputs */
+/** @typedef {{}} Admin_Users_SearchInputs */
+/** @typedef {{}} Admin_Users_Search_PlaceholderInputs */
+/** @typedef {{}} Admin_Users_Status_ActiveInputs */
+/** @typedef {{}} Admin_Users_Status_AllInputs */
+/** @typedef {{}} Admin_Users_Status_MutedInputs */
+/** @typedef {{}} Admin_Users_Status_Not_ChangedInputs */
+/** @typedef {{}} Admin_Users_Status_UpdatedInputs */
+/** @typedef {{}} Admin_Users_TitleInputs */
+/** @typedef {{}} Admin_Users_TotalInputs */
+/** @typedef {{}} Admin_Users_UnmuteInputs */
 /** @typedef {{}} Account_Management_NoteInputs */
 /** @typedef {{}} Account_Signed_In_AsInputs */
 /** @typedef {{}} Account_TitleInputs */
@@ -211,6 +241,8 @@
 /** @typedef {{}} Comment_CompanyInputs */
 /** @typedef {{}} Comment_Auth_ErrorInputs */
 /** @typedef {{}} Comment_Auth_LoadingInputs */
+/** @typedef {{}} Comment_Account_MutedInputs */
+/** @typedef {{}} Comment_Account_Muted_DescriptionInputs */
 /** @typedef {{}} Comment_Continue_GithubInputs */
 /** @typedef {{}} Comment_EmailInputs */
 /** @typedef {{}} Comment_Email_Verification_SentInputs */
@@ -226,7 +258,6 @@
 /** @typedef {{}} Comment_SuccessInputs */
 /** @typedef {{}} Comment_Switch_To_LoginInputs */
 /** @typedef {{}} Comment_Switch_To_SignupInputs */
-/** @typedef {{}} Comment_WebsiteInputs */
 /** @typedef {{}} CommentsInputs */
 /** @typedef {{}} Comments_DescriptionInputs */
 /** @typedef {{}} Comments_DisabledInputs */
@@ -396,6 +427,7 @@ export const admin_nav_overview: (inputs: Admin_Nav_OverviewInputs) => Localized
 export const admin_nav_posts: (inputs: Admin_Nav_PostsInputs) => LocalizedString;
 export const admin_nav_series: (inputs: Admin_Nav_SeriesInputs) => LocalizedString;
 export const admin_nav_settings: (inputs: Admin_Nav_SettingsInputs) => LocalizedString;
+export const admin_nav_users: (inputs: Admin_Nav_UsersInputs) => LocalizedString;
 export const admin_new_post: (inputs: Admin_New_PostInputs) => LocalizedString;
 export const admin_overview_eyebrow: (inputs: Admin_Overview_EyebrowInputs) => LocalizedString;
 export const admin_overview_title: (inputs: Admin_Overview_TitleInputs) => LocalizedString;
@@ -501,6 +533,35 @@ export const admin_token_scopes: (inputs: Admin_Token_ScopesInputs) => Localized
 export const admin_token_secret_once: (inputs: Admin_Token_Secret_OnceInputs) => LocalizedString;
 export const admin_tokens_description: (inputs: Admin_Tokens_DescriptionInputs) => LocalizedString;
 export const admin_tokens_title: (inputs: Admin_Tokens_TitleInputs) => LocalizedString;
+export const admin_users_comments: (inputs: Admin_Users_CommentsInputs) => LocalizedString;
+export const admin_users_comments_count: (inputs: Admin_Users_Comments_CountInputs) => LocalizedString;
+export const admin_users_description: (inputs: Admin_Users_DescriptionInputs) => LocalizedString;
+export const admin_users_email_unverified: (inputs: Admin_Users_Email_UnverifiedInputs) => LocalizedString;
+export const admin_users_email_verified: (inputs: Admin_Users_Email_VerifiedInputs) => LocalizedString;
+export const admin_users_empty: (inputs: Admin_Users_EmptyInputs) => LocalizedString;
+export const admin_users_error: (inputs: Admin_Users_ErrorInputs) => LocalizedString;
+export const admin_users_filter_role: (inputs: Admin_Users_Filter_RoleInputs) => LocalizedString;
+export const admin_users_filter_status: (inputs: Admin_Users_Filter_StatusInputs) => LocalizedString;
+export const admin_users_joined: (inputs: Admin_Users_JoinedInputs) => LocalizedString;
+export const admin_users_last_comment: (inputs: Admin_Users_Last_CommentInputs) => LocalizedString;
+export const admin_users_mute: (inputs: Admin_Users_MuteInputs) => LocalizedString;
+export const admin_users_no_comments: (inputs: Admin_Users_No_CommentsInputs) => LocalizedString;
+export const admin_users_provider_email: (inputs: Admin_Users_Provider_EmailInputs) => LocalizedString;
+export const admin_users_provider_unknown: (inputs: Admin_Users_Provider_UnknownInputs) => LocalizedString;
+export const admin_users_role_admin: (inputs: Admin_Users_Role_AdminInputs) => LocalizedString;
+export const admin_users_role_all: (inputs: Admin_Users_Role_AllInputs) => LocalizedString;
+export const admin_users_role_reader: (inputs: Admin_Users_Role_ReaderInputs) => LocalizedString;
+export const admin_users_saved: (inputs: Admin_Users_SavedInputs) => LocalizedString;
+export const admin_users_search: (inputs: Admin_Users_SearchInputs) => LocalizedString;
+export const admin_users_search_placeholder: (inputs: Admin_Users_Search_PlaceholderInputs) => LocalizedString;
+export const admin_users_status_active: (inputs: Admin_Users_Status_ActiveInputs) => LocalizedString;
+export const admin_users_status_all: (inputs: Admin_Users_Status_AllInputs) => LocalizedString;
+export const admin_users_status_muted: (inputs: Admin_Users_Status_MutedInputs) => LocalizedString;
+export const admin_users_status_not_changed: (inputs: Admin_Users_Status_Not_ChangedInputs) => LocalizedString;
+export const admin_users_status_updated: (inputs: Admin_Users_Status_UpdatedInputs) => LocalizedString;
+export const admin_users_title: (inputs: Admin_Users_TitleInputs) => LocalizedString;
+export const admin_users_total: (inputs: Admin_Users_TotalInputs) => LocalizedString;
+export const admin_users_unmute: (inputs: Admin_Users_UnmuteInputs) => LocalizedString;
 export const account_management_note: (inputs: Account_Management_NoteInputs) => LocalizedString;
 export const account_signed_in_as: (inputs: Account_Signed_In_AsInputs) => LocalizedString;
 export const account_title: (inputs: Account_TitleInputs) => LocalizedString;
@@ -528,6 +589,8 @@ export const comment_body: (inputs: Comment_BodyInputs) => LocalizedString;
 export const comment_company: (inputs: Comment_CompanyInputs) => LocalizedString;
 export const comment_auth_error: (inputs: Comment_Auth_ErrorInputs) => LocalizedString;
 export const comment_auth_loading: (inputs: Comment_Auth_LoadingInputs) => LocalizedString;
+export const comment_account_muted: (inputs: Comment_Account_MutedInputs) => LocalizedString;
+export const comment_account_muted_description: (inputs: Comment_Account_Muted_DescriptionInputs) => LocalizedString;
 export const comment_continue_github: (inputs: Comment_Continue_GithubInputs) => LocalizedString;
 export const comment_email: (inputs: Comment_EmailInputs) => LocalizedString;
 export const comment_email_verification_sent: (inputs: Comment_Email_Verification_SentInputs) => LocalizedString;
@@ -543,7 +606,6 @@ export const comment_submitting: (inputs: Comment_SubmittingInputs) => Localized
 export const comment_success: (inputs: Comment_SuccessInputs) => LocalizedString;
 export const comment_switch_to_login: (inputs: Comment_Switch_To_LoginInputs) => LocalizedString;
 export const comment_switch_to_signup: (inputs: Comment_Switch_To_SignupInputs) => LocalizedString;
-export const comment_website: (inputs: Comment_WebsiteInputs) => LocalizedString;
 export const comments: (inputs: CommentsInputs) => LocalizedString;
 export const comments_description: (inputs: Comments_DescriptionInputs) => LocalizedString;
 export const comments_disabled: (inputs: Comments_DisabledInputs) => LocalizedString;
@@ -724,6 +786,7 @@ export type Admin_Nav_OverviewInputs = {};
 export type Admin_Nav_PostsInputs = {};
 export type Admin_Nav_SeriesInputs = {};
 export type Admin_Nav_SettingsInputs = {};
+export type Admin_Nav_UsersInputs = {};
 export type Admin_New_PostInputs = {};
 export type Admin_Overview_EyebrowInputs = {};
 export type Admin_Overview_TitleInputs = {};
@@ -837,6 +900,39 @@ export type Admin_Token_ScopesInputs = {};
 export type Admin_Token_Secret_OnceInputs = {};
 export type Admin_Tokens_DescriptionInputs = {};
 export type Admin_Tokens_TitleInputs = {};
+export type Admin_Users_CommentsInputs = {};
+export type Admin_Users_Comments_CountInputs = {
+    count: NonNullable<unknown>;
+};
+export type Admin_Users_DescriptionInputs = {};
+export type Admin_Users_Email_UnverifiedInputs = {};
+export type Admin_Users_Email_VerifiedInputs = {};
+export type Admin_Users_EmptyInputs = {};
+export type Admin_Users_ErrorInputs = {};
+export type Admin_Users_Filter_RoleInputs = {};
+export type Admin_Users_Filter_StatusInputs = {};
+export type Admin_Users_JoinedInputs = {
+    date: NonNullable<unknown>;
+};
+export type Admin_Users_Last_CommentInputs = {};
+export type Admin_Users_MuteInputs = {};
+export type Admin_Users_No_CommentsInputs = {};
+export type Admin_Users_Provider_EmailInputs = {};
+export type Admin_Users_Provider_UnknownInputs = {};
+export type Admin_Users_Role_AdminInputs = {};
+export type Admin_Users_Role_AllInputs = {};
+export type Admin_Users_Role_ReaderInputs = {};
+export type Admin_Users_SavedInputs = {};
+export type Admin_Users_SearchInputs = {};
+export type Admin_Users_Search_PlaceholderInputs = {};
+export type Admin_Users_Status_ActiveInputs = {};
+export type Admin_Users_Status_AllInputs = {};
+export type Admin_Users_Status_MutedInputs = {};
+export type Admin_Users_Status_Not_ChangedInputs = {};
+export type Admin_Users_Status_UpdatedInputs = {};
+export type Admin_Users_TitleInputs = {};
+export type Admin_Users_TotalInputs = {};
+export type Admin_Users_UnmuteInputs = {};
 export type Account_Management_NoteInputs = {};
 export type Account_Signed_In_AsInputs = {};
 export type Account_TitleInputs = {};
@@ -864,6 +960,8 @@ export type Comment_BodyInputs = {};
 export type Comment_CompanyInputs = {};
 export type Comment_Auth_ErrorInputs = {};
 export type Comment_Auth_LoadingInputs = {};
+export type Comment_Account_MutedInputs = {};
+export type Comment_Account_Muted_DescriptionInputs = {};
 export type Comment_Continue_GithubInputs = {};
 export type Comment_EmailInputs = {};
 export type Comment_Email_Verification_SentInputs = {};
@@ -883,7 +981,6 @@ export type Comment_SubmittingInputs = {};
 export type Comment_SuccessInputs = {};
 export type Comment_Switch_To_LoginInputs = {};
 export type Comment_Switch_To_SignupInputs = {};
-export type Comment_WebsiteInputs = {};
 export type CommentsInputs = {};
 export type Comments_DescriptionInputs = {};
 export type Comments_DisabledInputs = {};

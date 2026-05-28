@@ -1,21 +1,82 @@
+import type { SiteSettings } from "@repo/core";
+import { Button } from "@repo/ui/components/button";
 import { cn } from "@repo/ui/lib/utils";
 import FumadocsLink from "fumadocs-core/link";
-import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
+import type { DocsLayoutProps } from "fumadocs-ui/layouts/docs";
+import { RssIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
+import { LanguageToggle } from "#/components/language-toggle";
 import { siteBrandLinkClassName, SiteBrandText } from "#/components/site-brand";
 import { ThemeToggle } from "#/components/theme-toggle";
+import { getDocsUrl, type DocsLocale } from "#/lib/docs-i18n";
+import { setCurrentLocale } from "#/lib/i18n";
 
-function DocsThemeSwitch({ className }: ComponentProps<"div">) {
+type DocsLayoutConfig = Omit<DocsLayoutProps, "children" | "tree">;
+
+interface DocsLayoutOptions {
+  locale: DocsLocale;
+  siteSettings: SiteSettings;
+  slugs: string[];
+}
+
+const docsSidebarControlClassName =
+  "text-fd-muted-foreground hover:bg-fd-accent hover:text-fd-accent-foreground size-8 rounded-md";
+
+function DocsSidebarControls({
+  locale,
+  rssLink,
+  slugs,
+}: {
+  readonly locale: DocsLocale;
+  readonly rssLink?: { href: string; label: string };
+  readonly slugs: string[];
+}) {
+  function handleLocaleChange(nextLocale: DocsLocale) {
+    void Promise.resolve(setCurrentLocale(nextLocale, { reload: false })).finally(() => {
+      window.location.href = getDocsUrl(slugs, nextLocale);
+    });
+  }
+
   return (
-    <div className={cn("flex items-center", className)}>
-      <ThemeToggle className="text-fd-muted-foreground hover:bg-fd-accent hover:text-fd-accent-foreground size-7 rounded-md" />
+    <div
+      data-docs-sidebar-controls=""
+      className="text-fd-muted-foreground flex items-center gap-1.5 pt-2"
+    >
+      {rssLink ? (
+        <Button
+          render={<FumadocsLink href={rssLink.href} />}
+          variant="ghost"
+          size="icon-sm"
+          nativeButton={false}
+          aria-label={rssLink.label}
+          title={rssLink.label}
+          className={cn(docsSidebarControlClassName)}
+        >
+          <RssIcon className="size-4" />
+          <span className="sr-only">{rssLink.label}</span>
+        </Button>
+      ) : null}
+      <ThemeToggle locale={locale} className={docsSidebarControlClassName} />
+      <LanguageToggle
+        currentLocale={locale}
+        labelLocale={locale}
+        onLocaleChange={handleLocaleChange}
+        className={docsSidebarControlClassName}
+      />
     </div>
   );
 }
 
-export function getDocsLayoutOptions(siteTitle = "01mvp-blog-starter"): BaseLayoutProps {
+export function getDocsLayoutOptions({
+  locale,
+  siteSettings,
+  slugs,
+}: DocsLayoutOptions): DocsLayoutConfig {
+  const rssLink = getRssLink(siteSettings, locale);
+
   return {
+    i18n: false,
     nav: {
       title: ({ className, href = "/", ...props }: ComponentProps<"a">) => (
         <FumadocsLink
@@ -23,14 +84,30 @@ export function getDocsLayoutOptions(siteTitle = "01mvp-blog-starter"): BaseLayo
           {...props}
           className={cn(siteBrandLinkClassName, "inline-flex max-w-full items-center", className)}
         >
-          <SiteBrandText name={siteTitle} />
+          <SiteBrandText name={siteSettings.name} />
         </FumadocsLink>
       ),
       url: "/",
     },
-    slots: {
-      themeSwitch: DocsThemeSwitch,
+    sidebar: {
+      footer: <DocsSidebarControls locale={locale} rssLink={rssLink} slugs={slugs} />,
+    },
+    themeSwitch: {
+      enabled: false,
     },
     githubUrl: "https://github.com/01mvp/blog-starter",
+  };
+}
+
+function getRssLink(siteSettings: SiteSettings, locale: DocsLocale) {
+  if (!siteSettings.rssEnabled) return undefined;
+
+  const configuredLink = siteSettings.socialLinks.find(
+    (link) => link.href === "/rss.xml" || link.label.trim().toLowerCase() === "rss",
+  );
+
+  return {
+    href: configuredLink?.href ?? "/rss.xml",
+    label: configuredLink?.label ?? (locale === "zh" ? "RSS 订阅" : "RSS feed"),
   };
 }

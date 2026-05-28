@@ -1,8 +1,9 @@
 import { useAuth } from "@repo/auth/tanstack/hooks";
 import { getSiteSettingsForLocale, type SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Loader2Icon, SearchIcon } from "lucide-react";
+import { useEffect } from "react";
 
 import { LanguageToggle } from "#/components/language-toggle";
 import { siteBrandLinkClassName, SiteBrandText } from "#/components/site-brand";
@@ -13,6 +14,7 @@ import {
   StylePresetRuntimeScript,
 } from "#/components/style-preset-switcher";
 import { ThemeToggle } from "#/components/theme-toggle";
+import { getLocalizedDocsHref } from "#/lib/docs-i18n";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
@@ -37,6 +39,12 @@ export function SiteShell({
         { label: m.nav_tags(), href: "/tags" },
         { label: m.nav_about(), href: "/about" },
       ];
+  const localizedNavigation = navigation.map((item) => ({
+    ...item,
+    href: getLocalizedDocsHref(item.href, locale),
+  }));
+
+  usePublicPageViewTracking();
 
   return (
     <div
@@ -51,7 +59,7 @@ export function SiteShell({
           </Link>
 
           <nav className="hidden items-center gap-6 md:flex">
-            {navigation.map((item) => (
+            {localizedNavigation.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
@@ -103,6 +111,67 @@ export function SiteShell({
       </footer>
     </div>
   );
+}
+
+let lastTrackedPageViewKey = "";
+
+function usePublicPageViewTracking() {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const path = `${location.pathname}${location.searchStr ?? ""}`;
+
+    if (!shouldTrackPublicPath(path) || path === lastTrackedPageViewKey) {
+      return;
+    }
+
+    lastTrackedPageViewKey = path;
+
+    const payload = JSON.stringify({
+      path,
+      postSlug: getTrackedPostSlug(location.pathname),
+      referrer: document.referrer || null,
+    });
+
+    if (navigator.sendBeacon) {
+      const sent = navigator.sendBeacon(
+        "/api/analytics/track",
+        new Blob([payload], { type: "application/json" }),
+      );
+
+      if (sent) {
+        return;
+      }
+    }
+
+    void fetch("/api/analytics/track", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: payload,
+      keepalive: true,
+    }).catch(() => {});
+  }, [location.pathname, location.searchStr]);
+}
+
+function shouldTrackPublicPath(path: string) {
+  const pathname = path.split("?")[0];
+
+  return (
+    pathname !== "/login" &&
+    !pathname.startsWith("/admin") &&
+    !pathname.startsWith("/api") &&
+    !pathname.startsWith("/uploads")
+  );
+}
+
+function getTrackedPostSlug(pathname: string) {
+  const match = /^\/blog\/([^/?#]+)/.exec(pathname);
+
+  return match ? decodeURIComponent(match[1]) : null;
 }
 
 function HeaderAuthAction({ locale }: { readonly locale: string }) {

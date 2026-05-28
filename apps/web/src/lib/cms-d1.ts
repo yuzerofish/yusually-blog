@@ -54,3 +54,6 @@ export {
   verifyD1ApiToken,
   buildD1SiteExport,
 } from "./cms-d1-assets";
+
+// Re-export analytics
+export { getD1AnalyticsOverview, trackD1PageView } from "./cms-d1-analytics";
