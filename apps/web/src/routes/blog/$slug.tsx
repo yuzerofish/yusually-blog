@@ -140,6 +140,15 @@ function BlogPostPage() {
           <div className="mx-auto w-full max-w-5xl px-4 pt-24 pb-14 sm:px-6 sm:pb-20 lg:px-8">
             <div className="max-w-4xl">
               <div className="flex flex-wrap gap-x-4 gap-y-2">
+                {localizedPost.series ? (
+                  <Link
+                    to="/series/$slug"
+                    params={{ slug: localizedPost.series.slug }}
+                    className="text-xs font-semibold tracking-[0.18em] text-white uppercase underline-offset-4 drop-shadow-md hover:underline"
+                  >
+                    {localizedPost.series.name}
+                  </Link>
+                ) : null}
                 {localizedPost.tags.map((tag) => (
                   <Link
                     key={tag.slug}

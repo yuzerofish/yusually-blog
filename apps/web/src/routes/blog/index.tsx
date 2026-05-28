@@ -1,4 +1,4 @@
-import { localizePost, localizeSiteSettings, localizeTag } from "@repo/core";
+import { localizePost, localizeSeries, localizeSiteSettings, localizeTag } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { createFileRoute } from "@tanstack/react-router";
@@ -14,6 +14,7 @@ export const Route = createFileRoute("/blog/")({
   validateSearch: (search) => ({
     q: typeof search.q === "string" ? search.q : "",
     tag: typeof search.tag === "string" ? search.tag : "",
+    series: typeof search.series === "string" ? search.series : "",
     page: Math.max(1, Number(search.page) || 1),
   }),
   loaderDeps: ({ search }) => search,
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/blog/")({
       data: {
         query: deps.q,
         tagSlug: deps.tag || undefined,
+        seriesSlug: deps.series || undefined,
       },
     }),
   component: BlogIndexPage,
@@ -33,6 +35,7 @@ function BlogIndexPage() {
   const data: BlogIndexPageData = Route.useLoaderData();
   const pageSize = 6;
   const tags = data.tags.map((tag) => localizeTag(tag, locale));
+  const series = data.series.map((item) => localizeSeries(item, locale));
   const matchedPosts = data.posts.map((post) => localizePost(post, locale));
   const siteSettings = localizeSiteSettings(data.siteSettings, locale);
   const pageCount = Math.max(1, Math.ceil(matchedPosts.length / pageSize));
@@ -48,6 +51,8 @@ function BlogIndexPage() {
           <p className="mt-4 text-base leading-7 text-muted-foreground">{m.blog_description()}</p>
         </div>
         <form className="mt-8 grid gap-4 rounded-lg border border-border/80 bg-card p-4 shadow-xs md:grid-cols-[minmax(0,1fr)_auto]">
+          {search.tag ? <input type="hidden" name="tag" value={search.tag} /> : null}
+          {search.series ? <input type="hidden" name="series" value={search.series} /> : null}
           <label className="relative block">
             <span className="sr-only">{m.blog_search_placeholder()}</span>
             <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -61,12 +66,7 @@ function BlogIndexPage() {
           <Button type="submit">{m.blog_search_submit()}</Button>
           <div className="flex flex-wrap gap-2 md:col-span-2" aria-label={m.blog_filter_label()}>
             <Button
-              render={
-                <a
-                  href={search.q ? `/blog?q=${encodeURIComponent(search.q)}` : "/blog"}
-                  aria-label={m.blog_filter_all()}
-                />
-              }
+              render={<a href={blogHref({ q: search.q })} aria-label={m.blog_filter_all()} />}
               nativeButton={false}
               variant={search.tag ? "outline" : "default"}
               size="sm"
@@ -78,10 +78,7 @@ function BlogIndexPage() {
                 key={tag.slug}
                 render={
                   <a
-                    href={`/blog?${new URLSearchParams({
-                      ...(search.q ? { q: search.q } : {}),
-                      tag: tag.slug,
-                    }).toString()}`}
+                    href={blogHref({ q: search.q, tag: tag.slug, series: search.series })}
                     aria-label={tag.name}
                   />
                 }
@@ -90,6 +87,40 @@ function BlogIndexPage() {
                 size="sm"
               >
                 {tag.name}
+              </Button>
+            ))}
+          </div>
+          <div
+            className="flex flex-wrap gap-2 md:col-span-2"
+            aria-label={m.blog_series_filter_label()}
+          >
+            <Button
+              render={
+                <a
+                  href={blogHref({ q: search.q, tag: search.tag })}
+                  aria-label={m.blog_series_all()}
+                />
+              }
+              nativeButton={false}
+              variant={search.series ? "outline" : "default"}
+              size="sm"
+            >
+              {m.blog_series_all()}
+            </Button>
+            {series.map((item) => (
+              <Button
+                key={item.slug}
+                render={
+                  <a
+                    href={blogHref({ q: search.q, tag: search.tag, series: item.slug })}
+                    aria-label={item.name}
+                  />
+                }
+                nativeButton={false}
+                variant={search.series === item.slug ? "default" : "outline"}
+                size="sm"
+              >
+                {item.name}
               </Button>
             ))}
           </div>
@@ -113,11 +144,12 @@ function BlogIndexPage() {
             <Button
               render={
                 <a
-                  href={`/blog?${new URLSearchParams({
-                    ...(search.q ? { q: search.q } : {}),
-                    ...(search.tag ? { tag: search.tag } : {}),
-                    page: String(Math.max(1, currentPage - 1)),
-                  }).toString()}`}
+                  href={blogHref({
+                    q: search.q,
+                    tag: search.tag,
+                    series: search.series,
+                    page: Math.max(1, currentPage - 1),
+                  })}
                   aria-label={m.pagination_previous()}
                 />
               }
@@ -130,11 +162,12 @@ function BlogIndexPage() {
             <Button
               render={
                 <a
-                  href={`/blog?${new URLSearchParams({
-                    ...(search.q ? { q: search.q } : {}),
-                    ...(search.tag ? { tag: search.tag } : {}),
-                    page: String(Math.min(pageCount, currentPage + 1)),
-                  }).toString()}`}
+                  href={blogHref({
+                    q: search.q,
+                    tag: search.tag,
+                    series: search.series,
+                    page: Math.min(pageCount, currentPage + 1),
+                  })}
                   aria-label={m.pagination_next()}
                 />
               }
@@ -149,4 +182,26 @@ function BlogIndexPage() {
       </section>
     </SiteShell>
   );
+}
+
+function blogHref({
+  page,
+  q,
+  series,
+  tag,
+}: {
+  readonly page?: number;
+  readonly q?: string;
+  readonly series?: string;
+  readonly tag?: string;
+}) {
+  const search = new URLSearchParams({
+    ...(q ? { q } : {}),
+    ...(tag ? { tag } : {}),
+    ...(series ? { series } : {}),
+    ...(page && page > 1 ? { page: String(page) } : {}),
+  });
+  const value = search.toString();
+
+  return value ? `/blog?${value}` : "/blog";
 }

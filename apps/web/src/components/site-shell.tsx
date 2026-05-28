@@ -33,6 +33,7 @@ export function SiteShell({
     : [
         { label: m.nav_blog(), href: "/blog" },
         { label: m.nav_docs(), href: "/docs" },
+        { label: m.nav_series(), href: "/series" },
         { label: m.nav_tags(), href: "/tags" },
         { label: m.nav_about(), href: "/about" },
       ];
@@ -64,7 +65,7 @@ export function SiteShell({
           <div className="flex shrink-0 items-center gap-1.5">
             <Link
               to="/blog"
-              search={{ q: "", tag: "", page: 1 }}
+              search={{ q: "", tag: "", series: "", page: 1 }}
               className="hidden h-9 min-w-28 items-center gap-2 rounded-md px-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground lg:flex"
             >
               <SearchIcon className="size-4" />

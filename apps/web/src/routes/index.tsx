@@ -116,7 +116,7 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button
-              render={<Link to="/blog" search={{ q: "", tag: "", page: 1 }} />}
+              render={<Link to="/blog" search={{ q: "", tag: "", series: "", page: 1 }} />}
               nativeButton={false}
               size="lg"
             >
@@ -174,7 +174,7 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
         </div>
       </section>
 
-      {/* ── Why Permanently Free ── */}
+      {/* ── Merged: No Server + Free Quota ── */}
       <section className="border-b border-border bg-muted/35">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
           <p className="text-sm font-semibold text-link uppercase">{copy.freeEyebrow}</p>
@@ -186,9 +186,15 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
               <FreeHighlightCard key={h.label} item={h} />
             ))}
           </div>
+          <div className="mt-10 divide-y divide-border border-y border-border">
+            {copy.quotaItems.map((item) => (
+              <QuotaRow key={item.service} item={item} />
+            ))}
+          </div>
         </div>
       </section>
 
+      {/* ── AI Skill ── */}
       <section className="border-b border-border bg-background">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
           <div className="grid gap-9 lg:grid-cols-[0.44fr_0.56fr]">
@@ -213,26 +219,6 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
               </li>
             ))}
           </ol>
-        </div>
-      </section>
-
-      {/* ── Cloudflare Free Quota ── */}
-      <section className="border-b border-border bg-muted/35">
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
-          <div className="grid gap-9 lg:grid-cols-[0.44fr_0.56fr]">
-            <div>
-              <p className="text-sm font-semibold text-link uppercase">{copy.quotaEyebrow}</p>
-              <h2 className="mt-3 text-3xl leading-tight font-semibold text-balance">
-                {copy.quotaTitle}
-              </h2>
-              <p className="mt-4 text-sm leading-7 text-muted-foreground">{copy.quotaBody}</p>
-            </div>
-            <div className="divide-y divide-border border-y border-border">
-              {copy.quotaItems.map((item) => (
-                <QuotaRow key={item.service} item={item} />
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
@@ -306,7 +292,7 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
 
           <div className="mt-7">
             <Button
-              render={<Link to="/blog" search={{ q: "", tag: "", page: 1 }} />}
+              render={<Link to="/blog" search={{ q: "", tag: "", series: "", page: 1 }} />}
               variant="outline"
               nativeButton={false}
             >
@@ -496,9 +482,9 @@ function getHomeCopy(locale: SupportedLocale) {
       primaryCta: "查看示例内容",
       secondaryCta: "阅读使用文档",
 
-      // ── Why Permanently Free ──
-      freeEyebrow: "为什么是永久免费",
-      freeTitle: "服务器级能力，永久免费。",
+      // ── Why Free ──
+      freeEyebrow: "无需服务器，无需续费",
+      freeTitle: "基于 Cloudflare 免费额度，个人博客基本用不完。",
       freeHighlights: [
         {
           icon: ServerIcon,
@@ -518,24 +504,25 @@ function getHomeCopy(locale: SupportedLocale) {
       ] as (FreeHighlight & { icon: LucideIcon })[],
 
       // ── Your Own Corner ──
-      ownershipEyebrow: "只属于你",
-      ownershipTitle: "互联网上最后一片自留地。",
-      ownershipBody:
-        "在平台发内容，你是打工人——算法决定谁看到你，规则决定你能说什么。个人博客是你的地盘，你制定规则。",
+      ownershipEyebrow: "内容所有权",
+      ownershipTitle: "你的内容，真正属于你。",
+      ownershipBody: "平台账号随时可以被封，内容随时可以被删除。个人站点是你真正拥有的互联网资产。",
       ownershipPoints: [
         {
           icon: LockKeyholeIcon,
-          title: "不被算法驯化",
-          description: "只写你想写的，不追热点，不讨好算法，不被平台牵着鼻子走。",
+          title: "不被平台控制",
+          description:
+            "平台可以限制你发什么、决定何时推送、甚至封号禁言。在自己的站点上，这些规则都是你定的。",
         },
         {
           icon: PencilIcon,
-          title: "没有平台审查",
-          description: "发链接、留联系方式、引用竞品——在自己的博客里，这些都没有限制。",
+          title: "写你真正想写的",
+          description:
+            "发链接、留联系方式、评价竞品——在自己的博客里，这些都没有限制。不追热点，不讨好算法。",
         },
         {
           icon: Share2Icon,
-          title: "内容原点，多平台出口",
+          title: "博客是原点，平台是出口",
           description:
             "在博客写完，用 multipost 等工具分发到各平台，或让 AI 按平台风格改写后再发。",
         },
@@ -608,10 +595,10 @@ function getHomeCopy(locale: SupportedLocale) {
         },
       ],
 
-      // ── Cloudflare Free Quota ──
-      quotaEyebrow: "Cloudflare 免费额度",
-      quotaTitle: "免费的边界在哪里？",
-      quotaBody: "对绝大多数个人博客完全够用，流量真的很大时才需要付费计划。",
+      // ── Merged quota (rendered inline, no heading needed) ──
+      quotaEyebrow: "",
+      quotaTitle: "",
+      quotaBody: "",
       quotaItems: [
         {
           service: "Workers",
@@ -683,9 +670,9 @@ function getHomeCopy(locale: SupportedLocale) {
     primaryCta: "View sample content",
     secondaryCta: "Read the docs",
 
-    // ── Why Permanently Free ──
-    freeEyebrow: "Why permanently free",
-    freeTitle: "Server-grade infrastructure. Permanent. Free.",
+    // ── Why Free ──
+    freeEyebrow: "No server. No renewal fees.",
+    freeTitle: "Cloudflare's free tier is more than enough for a personal blog.",
     freeHighlights: [
       {
         icon: ServerIcon,
@@ -705,22 +692,22 @@ function getHomeCopy(locale: SupportedLocale) {
     ] as (FreeHighlight & { icon: LucideIcon })[],
 
     // ── Your Own Corner ──
-    ownershipEyebrow: "Ownership",
-    ownershipTitle: "The last unclaimed territory on the internet.",
+    ownershipEyebrow: "Content ownership",
+    ownershipTitle: "Your content, truly yours.",
     ownershipBody:
-      "Publishing on TikTok or Medium means you're working for the platform — algorithms control your reach, rules control your voice. Your blog, your rules.",
+      "Platform accounts can be suspended anytime. Content can be deleted without warning. A personal site is an internet asset you actually own.",
     ownershipPoints: [
       {
         icon: LockKeyholeIcon,
-        title: "Algorithm-free writing",
+        title: "No platform control",
         description:
-          "Write what you want, when you want. No feed performance anxiety, no trend-chasing.",
+          "Platforms decide what you can post, when you get pushed, and when you get banned. On your own site, you set the rules.",
       },
       {
         icon: PencilIcon,
-        title: "No platform censorship",
+        title: "Write what you actually want",
         description:
-          "Link freely, share contact info, mention competitors — none of the usual platform restrictions.",
+          "Link out freely, share contact info, critique competitors — none of the restrictions that come with publishing on someone else's platform.",
       },
       {
         icon: Share2Icon,
@@ -804,11 +791,10 @@ function getHomeCopy(locale: SupportedLocale) {
       },
     ],
 
-    // ── Cloudflare Free Quota ──
-    quotaEyebrow: "Cloudflare free tier",
-    quotaTitle: 'Where does "free" end?',
-    quotaBody:
-      "More than enough for virtually any personal blog. You'd only need a paid plan with seriously large traffic.",
+    // ── Merged quota (rendered inline, no heading needed) ──
+    quotaEyebrow: "",
+    quotaTitle: "",
+    quotaBody: "",
     quotaItems: [
       {
         service: "Workers",

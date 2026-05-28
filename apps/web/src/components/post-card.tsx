@@ -1,7 +1,7 @@
 import type { Post, SupportedLocale } from "@repo/core";
 import { formatDate } from "@repo/core";
 import { Link } from "@tanstack/react-router";
-import { CalendarDaysIcon } from "lucide-react";
+import { CalendarDaysIcon, LibraryIcon } from "lucide-react";
 
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
@@ -33,6 +33,16 @@ export function PostCard({ post, priority = false, locale = getCurrentLocale() }
             <span className="rounded-sm bg-accent px-2 py-0.5 text-accent-foreground">
               {m.pinned()}
             </span>
+          ) : null}
+          {post.series ? (
+            <Link
+              to="/series/$slug"
+              params={{ slug: post.series.slug }}
+              className="inline-flex items-center gap-1 rounded-sm bg-accent px-2 py-0.5 text-accent-foreground transition hover:bg-accent/80"
+            >
+              <LibraryIcon className="size-3.5" />
+              {post.series.name}
+            </Link>
           ) : null}
         </div>
         <Link to="/blog/$slug" params={{ slug: post.slug }} className="group mt-3">

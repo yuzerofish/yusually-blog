@@ -19,7 +19,12 @@ export const Route = createFileRoute("/openapi.json")({
               get: {
                 summary: "List posts",
                 security: [{ apiToken: ["posts:read"] }],
-                parameters: [{ name: "lang", in: "query", schema: { enum: ["en", "zh"] } }],
+                parameters: [
+                  { name: "lang", in: "query", schema: { enum: ["en", "zh"] } },
+                  { name: "q", in: "query", schema: { type: "string" } },
+                  { name: "tag", in: "query", schema: { type: "string" } },
+                  { name: "series", in: "query", schema: { type: "string" } },
+                ],
                 responses: { "200": { description: "Localized post list" } },
               },
               post: {
@@ -70,6 +75,49 @@ export const Route = createFileRoute("/openapi.json")({
                 summary: "Delete post",
                 security: [{ apiToken: ["posts:write"] }],
                 responses: { "200": { description: "Post deleted" } },
+              },
+            },
+            "/api/series": {
+              get: {
+                summary: "List series",
+                security: [{ apiToken: ["posts:read"] }],
+                responses: { "200": { description: "Series list" } },
+              },
+              post: {
+                summary: "Create series",
+                security: [{ apiToken: ["posts:write"] }],
+                requestBody: {
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/SeriesInput" },
+                    },
+                  },
+                },
+                responses: { "201": { description: "Series created" } },
+              },
+            },
+            "/api/series/{id}": {
+              get: {
+                summary: "Get series",
+                security: [{ apiToken: ["posts:read"] }],
+                responses: { "200": { description: "Series detail" } },
+              },
+              patch: {
+                summary: "Update series",
+                security: [{ apiToken: ["posts:write"] }],
+                requestBody: {
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/SeriesInput" },
+                    },
+                  },
+                },
+                responses: { "200": { description: "Series updated" } },
+              },
+              delete: {
+                summary: "Delete series",
+                security: [{ apiToken: ["posts:write"] }],
+                responses: { "200": { description: "Series deleted" } },
               },
             },
             "/api/import/markdown": {
@@ -442,9 +490,23 @@ export const Route = createFileRoute("/openapi.json")({
                   seoTitle: { type: "string" },
                   seoDescription: { type: "string" },
                   tags: { type: "array", items: { type: "string" } },
+                  seriesId: { type: "string" },
+                  seriesSlug: { type: "string" },
+                  seriesName: { type: "string" },
                   locale: { enum: ["en", "zh"] },
                   i18n: { $ref: "#/components/schemas/LocalizedFields" },
                 },
+              },
+              SeriesInput: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  slug: { type: "string" },
+                  description: { type: "string" },
+                  sortOrder: { type: "number" },
+                  locale: { enum: ["en", "zh"] },
+                },
+                required: ["name"],
               },
               MarkdownImportRequest: {
                 allOf: [

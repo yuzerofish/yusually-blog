@@ -23,9 +23,13 @@ export const Route = createFileRoute("/api/posts")({
 
         const query = url.searchParams.get("q") ?? "";
         const tagSlug = url.searchParams.get("tag") ?? undefined;
-        const posts = (await listD1Posts({ includeUnpublished, query })).filter((post) =>
-          tagSlug ? post.tags.some((tag) => tag.slug === tagSlug) : true,
-        );
+        const seriesSlug = url.searchParams.get("series") ?? undefined;
+        const posts = (await listD1Posts({ includeUnpublished, query })).filter((post) => {
+          const matchesTag = tagSlug ? post.tags.some((tag) => tag.slug === tagSlug) : true;
+          const matchesSeries = seriesSlug ? post.series?.slug === seriesSlug : true;
+
+          return matchesTag && matchesSeries;
+        });
 
         return jsonResponse({
           data: posts.map((post) => localizePost(post, locale)),
