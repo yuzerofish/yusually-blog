@@ -181,14 +181,6 @@ function AdminSettingsPage() {
   const saveSettings: FormSubmitHandler = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const rawBlockedKeywords = formData.get("commentBlockedKeywords");
-    const blockedKeywords =
-      typeof rawBlockedKeywords === "string"
-        ? rawBlockedKeywords
-            .split(/[\n,，]/)
-            .map((item) => item.trim())
-            .filter(Boolean)
-        : [];
     const response = await fetch("/api/site", {
       method: "PUT",
       headers: { "content-type": "application/json" },
@@ -205,10 +197,6 @@ function AdminSettingsPage() {
         themePreset: formData.get("themePreset"),
         primaryLanguage: formData.get("primaryLanguage"),
         rssEnabled: formData.get("rssEnabled") === "on",
-        commentsEnabled: formData.get("commentsEnabled") === "on",
-        commentsRequireApproval: formData.get("commentsRequireApproval") === "on",
-        commentAutoBlockEnabled: formData.get("commentAutoBlockEnabled") === "on",
-        commentBlockedKeywords: blockedKeywords,
         emailVerificationEnabled:
           emailStatus.delivery.configured && formData.get("emailVerificationEnabled") === "on",
         indexingEnabled: formData.get("indexingEnabled") === "on",
@@ -620,51 +608,6 @@ function AdminSettingsPage() {
                   ? m.admin_email_verification_provider({ provider: emailProviderLabel })
                   : m.admin_email_verification_unavailable()}
               </p>
-            </fieldset>
-            <fieldset className="grid gap-3 rounded-md border border-border bg-muted/35 p-4 md:col-span-2">
-              <legend className="px-1 text-sm font-medium">{m.admin_comment_settings()}</legend>
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  name="commentsEnabled"
-                  defaultChecked={siteSettings.commentsEnabled}
-                  className="size-4 rounded border-input"
-                />
-                {m.comments()}
-              </label>
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  name="commentsRequireApproval"
-                  defaultChecked={siteSettings.commentsRequireApproval}
-                  className="size-4 rounded border-input"
-                />
-                {m.admin_comments_require_approval()}
-              </label>
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  name="commentAutoBlockEnabled"
-                  defaultChecked={siteSettings.commentAutoBlockEnabled}
-                  className="size-4 rounded border-input"
-                />
-                {m.admin_comments_auto_block()}
-              </label>
-              <div className="grid gap-2">
-                <Label htmlFor="comment-blocked-keywords">
-                  {m.admin_comments_blocked_keywords()}
-                </Label>
-                <textarea
-                  id="comment-blocked-keywords"
-                  name="commentBlockedKeywords"
-                  defaultValue={siteSettings.commentBlockedKeywords.join("\n")}
-                  rows={5}
-                  className={`${adminTextareaClassName} min-h-28`}
-                />
-                <p className="text-xs text-muted-foreground">
-                  {m.admin_comments_blocked_keywords_help()}
-                </p>
-              </div>
             </fieldset>
           </div>
         </form>

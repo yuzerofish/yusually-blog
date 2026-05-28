@@ -161,7 +161,7 @@
   "admin_settings_default_og": "默认 OG 图片",
   "admin_settings_description": "描述",
   "admin_settings_error": "设置保存失败。",
-  "admin_settings_help": "基础身份、SEO、RSS、评论和主语言配置。",
+  "admin_settings_help": "基础身份、SEO、RSS 和主语言配置。",
   "admin_settings_identity": "基础资料",
   "admin_settings_indexing": "允许搜索引擎索引",
   "admin_settings_language": "主语言",

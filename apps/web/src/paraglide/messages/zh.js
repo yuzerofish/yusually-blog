@@ -999,7 +999,7 @@ export const admin_settings_error = /** @type {(inputs: Admin_Settings_ErrorInpu
 };
 
 export const admin_settings_help = /** @type {(inputs: Admin_Settings_HelpInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`基础身份、SEO、RSS、评论和主语言配置。`)
+	return /** @type {LocalizedString} */ (`基础身份、SEO、RSS 和主语言配置。`)
 };
 
 export const admin_settings_identity = /** @type {(inputs: Admin_Settings_IdentityInputs) => LocalizedString} */ () => {

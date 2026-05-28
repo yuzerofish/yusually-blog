@@ -161,7 +161,7 @@
   "admin_settings_default_og": "Default OG image",
   "admin_settings_description": "Description",
   "admin_settings_error": "Settings could not be saved.",
-  "admin_settings_help": "Basic identity, SEO, RSS, comments, and primary language configuration.",
+  "admin_settings_help": "Basic identity, SEO, RSS, and primary language configuration.",
   "admin_settings_identity": "Identity",
   "admin_settings_indexing": "Allow search indexing",
   "admin_settings_language": "Primary language",

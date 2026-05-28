@@ -2269,7 +2269,7 @@ export const admin_settings_error: ((inputs?: Admin_Settings_ErrorInputs, option
 /**
 * | output |
 * | --- |
-* | "Basic identity, SEO, RSS, comments, and primary language configuration." |
+* | "Basic identity, SEO, RSS, and primary language configuration." |
 *
 * @param {Admin_Settings_HelpInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
