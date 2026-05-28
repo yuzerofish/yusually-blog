@@ -1,4 +1,4 @@
-import { authQueryOptions } from "@repo/auth/tanstack/queries";
+import { authQueryOptions, type AuthQueryResult } from "@repo/auth/tanstack/queries";
 import { getSiteSettingsForLocale } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
@@ -13,11 +13,15 @@ import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/_guest/signup")({
+  validateSearch: (search): { error?: boolean } => (search.error === "1" ? { error: true } : {}),
   component: SignupForm,
 });
 
+type AdminUser = NonNullable<AuthQueryResult>;
+
 function SignupForm() {
   const { redirectUrl } = Route.useRouteContext();
+  const search = Route.useSearch();
   const siteSettings = getSiteSettingsForLocale(getCurrentLocale());
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -29,17 +33,19 @@ function SignupForm() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify(data),
       });
-      const payload = (await response.json()) as { error?: string };
+      const payload = (await response.json()) as { data?: AdminUser; error?: string };
 
-      if (!response.ok) {
+      if (!response.ok || !payload.data) {
         throw new Error(payload.error || m.signup_error());
       }
+
+      return payload.data;
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : m.signup_error());
     },
-    onSuccess: async () => {
-      queryClient.removeQueries({ queryKey: authQueryOptions().queryKey });
+    onSuccess: async (user) => {
+      queryClient.setQueryData(authQueryOptions().queryKey, user);
       await navigate({ to: redirectUrl });
     },
   });
@@ -66,7 +72,7 @@ function SignupForm() {
 
   return (
     <div className="flex flex-col gap-6">
-      <form method="post" onSubmit={handleSubmit}>
+      <form action="/api/admin/users" method="post" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
             <Link to="/" className="flex flex-col items-center gap-2 font-medium">
@@ -77,6 +83,11 @@ function SignupForm() {
             </Link>
             <h1 className="text-xl font-bold">{m.signup_greeting({ name: siteSettings.name })}</h1>
           </div>
+          {search.error ? (
+            <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              {m.signup_error()}
+            </p>
+          ) : null}
           <div className="flex flex-col gap-5">
             <div className="grid gap-2">
               <Label htmlFor="name">{m.signup_name()}</Label>
@@ -85,6 +96,7 @@ function SignupForm() {
                 name="name"
                 type="text"
                 placeholder="John Doe"
+                autoComplete="name"
                 readOnly={isPending}
                 required
               />
@@ -96,6 +108,7 @@ function SignupForm() {
                 name="email"
                 type="email"
                 placeholder="hello@example.com"
+                autoComplete="email"
                 readOnly={isPending}
                 required
               />

@@ -4,6 +4,8 @@ const localAdmin = {
   email: process.env.BLOGCMS_LOCAL_ADMIN_EMAIL ?? "a@a.test",
   password: process.env.BLOGCMS_LOCAL_ADMIN_PASSWORD ?? "1",
 };
+const baseURL =
+  process.env.PLAYWRIGHT_BASE_URL ?? `http://localhost:${process.env.PLAYWRIGHT_PORT ?? "3000"}`;
 
 const adminRoutes = [
   { path: "/admin", heading: "Publishing overview" },
@@ -50,6 +52,29 @@ test.describe("Admin authentication", () => {
       );
       await expect(page.getByRole("heading", { name: route.heading }).first()).toBeVisible();
     }
+  });
+
+  test("logs in with the native form fallback", async ({ browser }) => {
+    const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
+    const page = await context.newPage();
+
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
+    await expect(page.locator('form[action="/api/admin/login"]')).toBeVisible();
+    await expect(page.locator('button[type="submit"]')).toBeEnabled();
+    await page.locator("#email").fill(localAdmin.email);
+    await page.locator("#password").fill(localAdmin.password);
+    await page.locator('button[type="submit"]').click();
+    await expect(page).toHaveURL(/\/admin\/?$/);
+    await expect(page.getByRole("heading", { name: "Publishing overview" })).toBeVisible();
+
+    await context.close();
+  });
+
+  test("renders signup with a native registration action", async ({ page }) => {
+    await page.goto("/signup", { waitUntil: "domcontentloaded" });
+    await expect(page.locator('form[action="/api/admin/users"]')).toBeVisible();
+    await expect(page.locator("#email")).toHaveAttribute("autocomplete", "email");
+    await expect(page.locator("#password")).toHaveAttribute("autocomplete", "new-password");
   });
 
   test("signs out of the admin shell", async ({ page }) => {

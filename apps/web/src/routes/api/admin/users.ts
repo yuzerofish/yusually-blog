@@ -7,7 +7,8 @@ import {
   loginAdmin,
   publicAdminUser,
 } from "#/lib/admin-auth";
-import { jsonResponse, readJsonBody } from "#/lib/cms-api";
+import { formRedirect, isFormPost, readJsonOrFormBody } from "#/lib/auth-form";
+import { jsonResponse } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { listCmsUsers } from "#/lib/cms-users";
 
@@ -24,29 +25,51 @@ export const Route = createFileRoute("/api/admin/users")({
         return jsonResponse({ data: await listCmsUsers() });
       },
       POST: async ({ request }: { request: Request }) => {
+        const formPost = isFormPost(request);
         const existingAdmins = await countAdminUsers();
 
         if (existingAdmins > 0) {
           const accessError = await requireCmsAccess(request, "site:write");
 
           if (accessError) {
+            if (formPost) {
+              return formRedirect("/signup?error=1");
+            }
+
             return accessError;
           }
         }
 
-        const body = await readJsonBody<{ name: string; email: string; password: string }>(request);
+        const body = await readJsonOrFormBody<{ name: string; email: string; password: string }>(
+          request,
+        );
         const created = await createAdminUser(body).catch((error: unknown) => ({
           error: error instanceof Error ? error.message : "Admin user could not be created",
         }));
 
         if ("error" in created) {
+          if (formPost) {
+            return formRedirect("/signup?error=1");
+          }
+
           return jsonResponse({ error: created.error }, { status: 400 });
         }
 
         const session = await loginAdmin({ email: body.email, password: body.password }, request);
 
         if ("error" in session) {
-          return jsonResponse({ data: publicAdminUser(created.data) }, { status: 201 });
+          if (formPost) {
+            return formRedirect("/login?error=1");
+          }
+
+          return jsonResponse(
+            { error: "Admin account was created, but sign-in failed. Please log in." },
+            { status: 500 },
+          );
+        }
+
+        if (formPost) {
+          return formRedirect("/admin", { headers: session.headers });
         }
 
         return jsonResponse(

@@ -1,4 +1,4 @@
-import { authQueryOptions } from "@repo/auth/tanstack/queries";
+import { authQueryOptions, type AuthQueryResult } from "@repo/auth/tanstack/queries";
 import { getSiteSettingsForLocale } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
@@ -6,22 +6,24 @@ import { Label } from "@repo/ui/components/label";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { BookOpenIcon, LoaderCircleIcon } from "lucide-react";
-import { useSyncExternalStore } from "react";
 import { toast } from "sonner";
 
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/_guest/login")({
+  validateSearch: (search): { error?: boolean } => (search.error === "1" ? { error: true } : {}),
   component: LoginForm,
 });
 
+type AdminUser = NonNullable<AuthQueryResult>;
+
 function LoginForm() {
   const { redirectUrl } = Route.useRouteContext();
+  const search = Route.useSearch();
   const siteSettings = getSiteSettingsForLocale(getCurrentLocale());
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const isHydrated = useIsHydrated();
 
   const { mutate: emailLoginMutate, isPending } = useMutation({
     mutationFn: async (data: { email: string; password: string }) => {
@@ -30,24 +32,26 @@ function LoginForm() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify(data),
       });
-      const payload = (await response.json()) as { error?: string };
+      const payload = (await response.json()) as { data?: AdminUser; error?: string };
 
-      if (!response.ok) {
+      if (!response.ok || !payload.data) {
         throw new Error(payload.error || m.login_error());
       }
+
+      return payload.data;
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : m.login_error());
     },
-    onSuccess: async () => {
-      queryClient.removeQueries({ queryKey: authQueryOptions().queryKey });
+    onSuccess: async (user) => {
+      queryClient.setQueryData(authQueryOptions().queryKey, user);
       await navigate({ to: redirectUrl });
     },
   });
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!isHydrated || isPending) return;
+    if (isPending) return;
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
@@ -60,7 +64,7 @@ function LoginForm() {
 
   return (
     <div className="flex flex-col gap-6">
-      <form method="post" onSubmit={handleSubmit}>
+      <form action="/api/admin/login" method="post" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
             <Link to="/" className="flex flex-col items-center gap-2 font-medium">
@@ -71,6 +75,11 @@ function LoginForm() {
             </Link>
             <h1 className="text-xl font-bold">{m.login_greeting({ name: siteSettings.name })}</h1>
           </div>
+          {search.error ? (
+            <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              {m.login_error()}
+            </p>
+          ) : null}
           <div className="flex flex-col gap-5">
             <div className="grid gap-2">
               <Label htmlFor="email">{m.login_email()}</Label>
@@ -79,7 +88,8 @@ function LoginForm() {
                 name="email"
                 type="email"
                 placeholder="hello@example.com"
-                disabled={!isHydrated || isPending}
+                autoComplete="email"
+                readOnly={isPending}
                 required
               />
             </div>
@@ -95,16 +105,12 @@ function LoginForm() {
                 name="password"
                 type="password"
                 placeholder={m.login_password_placeholder()}
-                disabled={!isHydrated || isPending}
+                autoComplete="current-password"
+                readOnly={isPending}
                 required
               />
             </div>
-            <Button
-              type="submit"
-              className="mt-2 w-full"
-              size="lg"
-              disabled={!isHydrated || isPending}
-            >
+            <Button type="submit" className="mt-2 w-full" size="lg" disabled={isPending}>
               {isPending && <LoaderCircleIcon className="animate-spin" />}
               {isPending ? m.login_pending() : m.login()}
             </Button>
@@ -119,13 +125,5 @@ function LoginForm() {
         </Link>
       </div>
     </div>
-  );
-}
-
-function useIsHydrated() {
-  return useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false,
   );
 }
