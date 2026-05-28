@@ -6,12 +6,12 @@ const scrypt = promisify(scryptCallback);
 
 const userId = "local-dev-admin";
 const accountId = "local-dev-admin-credential";
-const email = normalizeEmail(process.env.BLOGCMS_LOCAL_ADMIN_EMAIL ?? "admin@blog-starter.test");
+const email = normalizeEmail(process.env.BLOGCMS_LOCAL_ADMIN_EMAIL ?? "a@a.test");
 const name = (process.env.BLOGCMS_LOCAL_ADMIN_NAME ?? "Local Admin").trim() || "Local Admin";
-const password = process.env.BLOGCMS_LOCAL_ADMIN_PASSWORD ?? "password123";
+const password = process.env.BLOGCMS_LOCAL_ADMIN_PASSWORD ?? "1";
 
-if (password.length < 8) {
-  throw new Error("BLOGCMS_LOCAL_ADMIN_PASSWORD must be at least 8 characters.");
+if (!password) {
+  throw new Error("BLOGCMS_LOCAL_ADMIN_PASSWORD cannot be empty.");
 }
 
 const passwordHash = await hashPassword(password);
