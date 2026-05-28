@@ -1,3 +1,4 @@
+import { SiGithub } from "@icons-pack/react-simple-icons";
 import { useAuth } from "@repo/auth/tanstack/hooks";
 import { getSiteSettingsForLocale, type SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
@@ -32,6 +33,8 @@ export function SiteShell({
   const preset = presetOverride ?? settingsPreset;
   const nextPreset = getNextStylePreset(preset);
   const searchLabel = locale === "zh" ? "搜索" : "Search";
+  const githubLink = siteSettings.socialLinks.find(isGitHubSocialLink);
+  const footerSocialLinks = siteSettings.socialLinks.filter((link) => !isGitHubSocialLink(link));
   const navigation = siteSettings.navigation.length
     ? siteSettings.navigation
     : [
@@ -82,7 +85,13 @@ export function SiteShell({
               <span>{searchLabel}</span>
             </Link>
             <LanguageToggle />
+            <StylePresetCycleButton
+              locale={locale}
+              nextPreset={nextPreset}
+              onSelect={setPresetOverride}
+            />
             <ThemeToggle />
+            {githubLink ? <HeaderGitHubLink link={githubLink} /> : null}
             <HeaderAuthAction locale={locale} />
           </div>
         </div>
@@ -97,22 +106,19 @@ export function SiteShell({
             <p className="text-sm font-semibold">{siteSettings.name}</p>
             <p className="mt-1 text-xs text-muted-foreground">{siteSettings.description}</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
-            {siteSettings.socialLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-xs text-muted-foreground transition hover:text-foreground"
-              >
-                {link.label}
-              </a>
-            ))}
-            <StylePresetCycleButton
-              locale={locale}
-              nextPreset={nextPreset}
-              onSelect={setPresetOverride}
-            />
-          </div>
+          {footerSocialLinks.length ? (
+            <div className="flex flex-wrap items-center gap-3">
+              {footerSocialLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="text-xs text-muted-foreground transition hover:text-foreground"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          ) : null}
         </div>
       </footer>
     </div>
@@ -178,6 +184,28 @@ function getTrackedPostSlug(pathname: string) {
   const match = /^\/blog\/([^/?#]+)/.exec(pathname);
 
   return match ? decodeURIComponent(match[1]) : null;
+}
+
+type SocialLink = SiteSettings["socialLinks"][number];
+
+function isGitHubSocialLink(link: SocialLink) {
+  return link.label.trim().toLowerCase() === "github" || link.href.includes("github.com");
+}
+
+function HeaderGitHubLink({ link }: { readonly link: SocialLink }) {
+  return (
+    <Button
+      render={<a href={link.href} aria-label={m.github_repository()} />}
+      variant="ghost"
+      size="icon-sm"
+      nativeButton={false}
+      aria-label={m.github_repository()}
+      title={link.label}
+    >
+      <SiGithub className="size-4" />
+      <span className="sr-only">{link.label}</span>
+    </Button>
+  );
 }
 
 function HeaderAuthAction({ locale }: { readonly locale: string }) {
