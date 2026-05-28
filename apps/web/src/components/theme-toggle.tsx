@@ -1,45 +1,31 @@
 import { Button } from "@repo/ui/components/button";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@repo/ui/components/dropdown-menu";
 import { useTheme } from "@repo/ui/lib/theme-provider";
-import { SunIcon, MoonIcon } from "lucide-react";
+import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
 
 import { m } from "#/paraglide/messages.js";
 
+const themeModes = ["light", "dark", "system"] as const;
+
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const nextTheme = themeModes[(themeModes.indexOf(theme) + 1) % themeModes.length];
+  const themeLabels = {
+    light: m.theme_light(),
+    dark: m.theme_dark(),
+    system: m.theme_system(),
+  };
+  const Icon = theme === "light" ? SunIcon : theme === "dark" ? MoonIcon : MonitorIcon;
 
   return (
-    <DropdownMenu>
-      <Button render={<DropdownMenuTrigger />} variant="outline" size="icon">
-        <SunIcon className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-        <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-        <span className="sr-only">{m.theme_toggle()}</span>
-      </Button>
-      <DropdownMenuContent align="end">
-        <DropdownMenuCheckboxItem
-          checked={theme === "light"}
-          onCheckedChange={(v) => v && setTheme("light")}
-        >
-          {m.theme_light()}
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={theme === "dark"}
-          onCheckedChange={(v) => v && setTheme("dark")}
-        >
-          {m.theme_dark()}
-        </DropdownMenuCheckboxItem>
-        <DropdownMenuCheckboxItem
-          checked={theme === "system"}
-          onCheckedChange={(v) => v && setTheme("system")}
-        >
-          {m.theme_system()}
-        </DropdownMenuCheckboxItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button
+      variant="ghost"
+      size="icon-sm"
+      onClick={() => setTheme(nextTheme)}
+      aria-label={`${m.theme_toggle()}: ${themeLabels[theme]}`}
+      title={`${themeLabels[theme]} -> ${themeLabels[nextTheme]}`}
+    >
+      <Icon className="size-4" />
+      <span className="sr-only">{m.theme_toggle()}</span>
+    </Button>
   );
 }

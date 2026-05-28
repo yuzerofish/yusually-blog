@@ -14,23 +14,18 @@
   },
   "dependencies": {
     "@base-ui/react": "catalog:",
-    "@icons-pack/react-simple-icons": "catalog:",
-    "@tanstack/react-form-start": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
-    "date-fns": "catalog:",
     "lucide-react": "catalog:",
-    "motion": "catalog:",
-    "shadcn": "catalog:",
     "sonner": "catalog:",
     "tailwind-merge": "catalog:",
-    "tw-animate-css": "catalog:",
-    "zod": "catalog:"
+    "tw-animate-css": "catalog:"
   },
   "devDependencies": {
     "@repo/tsconfig": "workspace:*",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "shadcn": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
   },

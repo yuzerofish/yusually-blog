@@ -3,12 +3,17 @@
 /** @typedef {{}} AdminInputs */
 /** @typedef {{}} Admin_Assets_DescriptionInputs */
 /** @typedef {{}} Admin_Assets_CopiedInputs */
+/** @typedef {{}} Admin_Assets_Copy_MarkdownInputs */
 /** @typedef {{}} Admin_Assets_Copy_UrlInputs */
 /** @typedef {{}} Admin_Assets_DeleteInputs */
 /** @typedef {{}} Admin_Assets_Drop_HintInputs */
 /** @typedef {{}} Admin_Assets_EmptyInputs */
 /** @typedef {{}} Admin_Assets_ErrorInputs */
 /** @typedef {{}} Admin_Assets_FilenameInputs */
+/** @typedef {{}} Admin_Assets_Markdown_CopiedInputs */
+/** @typedef {{}} Admin_Assets_No_MatchesInputs */
+/** @typedef {{}} Admin_Assets_SearchInputs */
+/** @typedef {{}} Admin_Assets_Search_PlaceholderInputs */
 /** @typedef {{}} Admin_Assets_TitleInputs */
 /** @typedef {{}} Admin_Assets_UploadedInputs */
 /** @typedef {{}} Admin_Assets_UploadingInputs */
@@ -16,6 +21,9 @@
 /** @typedef {{}} Admin_Comments_ApproveInputs */
 /** @typedef {{}} Admin_Comments_All_PostsInputs */
 /** @typedef {{}} Admin_Comments_Auto_BlockInputs */
+/** @typedef {{}} Admin_Comments_Batch_ApproveInputs */
+/** @typedef {{}} Admin_Comments_Batch_DeleteInputs */
+/** @typedef {{}} Admin_Comments_Batch_SpamInputs */
 /** @typedef {{}} Admin_Comments_Blocked_KeywordsInputs */
 /** @typedef {{}} Admin_Comments_Blocked_Keywords_HelpInputs */
 /** @typedef {{}} Admin_Comments_DeleteInputs */
@@ -23,8 +31,20 @@
 /** @typedef {{}} Admin_Comments_EmptyInputs */
 /** @typedef {{}} Admin_Comments_Filter_PostInputs */
 /** @typedef {{}} Admin_Comments_Mark_SpamInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Admin_Comments_Pending_CountInputs */
 /** @typedef {{}} Admin_Comments_Require_ApprovalInputs */
+/** @typedef {{}} Admin_Comments_SearchInputs */
+/** @typedef {{}} Admin_Comments_Search_PlaceholderInputs */
+/** @typedef {{}} Admin_Comments_Select_AllInputs */
+/** @typedef {{ author: NonNullable<unknown> }} Admin_Comments_Select_OneInputs */
+/** @typedef {{ count: NonNullable<unknown> }} Admin_Comments_SelectedInputs */
+/** @typedef {{}} Admin_Comments_Status_AllInputs */
+/** @typedef {{}} Admin_Comments_Status_ApprovedInputs */
+/** @typedef {{}} Admin_Comments_Status_DeletedInputs */
+/** @typedef {{}} Admin_Comments_Status_PendingInputs */
+/** @typedef {{}} Admin_Comments_Status_SpamInputs */
 /** @typedef {{}} Admin_Comments_TitleInputs */
+/** @typedef {{}} Admin_Comments_View_PostInputs */
 /** @typedef {{}} Admin_Comment_SettingsInputs */
 /** @typedef {{}} Admin_Editor_Default_ExcerptInputs */
 /** @typedef {{}} Admin_Editor_Default_TitleInputs */
@@ -33,6 +53,11 @@
 /** @typedef {{}} Admin_Editor_Edit_TitleInputs */
 /** @typedef {{}} Admin_Editor_ErrorInputs */
 /** @typedef {{}} Admin_Editor_ExcerptInputs */
+/** @typedef {{}} Admin_Editor_Cover_AssetInputs */
+/** @typedef {{}} Admin_Editor_Cover_Asset_PlaceholderInputs */
+/** @typedef {{}} Admin_Editor_Cover_ImageInputs */
+/** @typedef {{}} Admin_Editor_FeaturedInputs */
+/** @typedef {{}} Admin_Editor_PinnedInputs */
 /** @typedef {{}} Admin_Editor_Preview_ModeInputs */
 /** @typedef {{}} Admin_Editor_Publish_AtInputs */
 /** @typedef {{}} Admin_Editor_Rich_ModeInputs */
@@ -60,6 +85,16 @@
 /** @typedef {{}} Admin_Pages_DescriptionInputs */
 /** @typedef {{}} Admin_Pages_Editor_TitleInputs */
 /** @typedef {{}} Admin_Pages_TitleInputs */
+/** @typedef {{}} Admin_Post_Status_Archived_DescriptionInputs */
+/** @typedef {{}} Admin_Post_Status_Archived_LabelInputs */
+/** @typedef {{}} Admin_Post_Status_Deleted_DescriptionInputs */
+/** @typedef {{}} Admin_Post_Status_Deleted_LabelInputs */
+/** @typedef {{}} Admin_Post_Status_Draft_DescriptionInputs */
+/** @typedef {{}} Admin_Post_Status_Draft_LabelInputs */
+/** @typedef {{}} Admin_Post_Status_Published_DescriptionInputs */
+/** @typedef {{}} Admin_Post_Status_Published_LabelInputs */
+/** @typedef {{}} Admin_Post_Status_Scheduled_DescriptionInputs */
+/** @typedef {{}} Admin_Post_Status_Scheduled_LabelInputs */
 /** @typedef {{}} Admin_Posts_ActionsInputs */
 /** @typedef {{}} Admin_Posts_ArchiveInputs */
 /** @typedef {{}} Admin_Posts_Column_TitleInputs */
@@ -70,6 +105,8 @@
 /** @typedef {{}} Admin_Posts_Filter_All_TagsInputs */
 /** @typedef {{}} Admin_Posts_Filter_StatusInputs */
 /** @typedef {{}} Admin_Posts_Filter_TagInputs */
+/** @typedef {{}} Admin_Posts_Move_To_DraftInputs */
+/** @typedef {{}} Admin_Posts_Not_PublicInputs */
 /** @typedef {{}} Admin_Posts_Public_UrlInputs */
 /** @typedef {{}} Admin_Posts_SearchInputs */
 /** @typedef {{}} Admin_Posts_Select_AllInputs */
@@ -77,6 +114,7 @@
 /** @typedef {{ count: NonNullable<unknown> }} Admin_Posts_SelectedInputs */
 /** @typedef {{}} Admin_Posts_SourceInputs */
 /** @typedef {{}} Admin_Posts_StatusInputs */
+/** @typedef {{}} Admin_Posts_Status_HelpInputs */
 /** @typedef {{}} Admin_Posts_TitleInputs */
 /** @typedef {{}} Admin_Posts_UpdatedInputs */
 /** @typedef {{}} Admin_Posts_ViewInputs */
@@ -84,6 +122,22 @@
 /** @typedef {{}} Admin_Save_DraftInputs */
 /** @typedef {{}} Admin_Schedule_PostInputs */
 /** @typedef {{}} Admin_Save_SettingsInputs */
+/** @typedef {{}} Admin_Import_Export_TitleInputs */
+/** @typedef {{}} Admin_Import_Export_DescriptionInputs */
+/** @typedef {{}} Admin_Export_TitleInputs */
+/** @typedef {{}} Admin_Export_JsonInputs */
+/** @typedef {{}} Admin_Export_ZipInputs */
+/** @typedef {{}} Admin_Export_StartedInputs */
+/** @typedef {{}} Admin_Export_ErrorInputs */
+/** @typedef {{}} Admin_Create_BackupInputs */
+/** @typedef {{}} Admin_Backup_CreatedInputs */
+/** @typedef {{}} Admin_Backup_ErrorInputs */
+/** @typedef {{}} Admin_Import_TitleInputs */
+/** @typedef {{}} Admin_Import_FileInputs */
+/** @typedef {{}} Admin_Import_StatusInputs */
+/** @typedef {{}} Admin_Import_SubmitInputs */
+/** @typedef {{ title: NonNullable<unknown> }} Admin_Import_SuccessInputs */
+/** @typedef {{}} Admin_Import_ErrorInputs */
 /** @typedef {{}} Admin_Email_SettingsInputs */
 /** @typedef {{}} Admin_Email_VerificationInputs */
 /** @typedef {{}} Admin_Email_Verification_HelpInputs */
@@ -91,16 +145,22 @@
 /** @typedef {{}} Admin_Email_Verification_UnavailableInputs */
 /** @typedef {{}} Admin_Settings_Author_BioInputs */
 /** @typedef {{}} Admin_Settings_Author_NameInputs */
+/** @typedef {{}} Admin_Settings_Avatar_UrlInputs */
 /** @typedef {{}} Admin_Settings_Default_OgInputs */
 /** @typedef {{}} Admin_Settings_DescriptionInputs */
 /** @typedef {{}} Admin_Settings_ErrorInputs */
 /** @typedef {{}} Admin_Settings_HelpInputs */
+/** @typedef {{}} Admin_Settings_IdentityInputs */
 /** @typedef {{}} Admin_Settings_IndexingInputs */
 /** @typedef {{}} Admin_Settings_LanguageInputs */
+/** @typedef {{}} Admin_Settings_Layout_PresetInputs */
+/** @typedef {{}} Admin_Settings_LinksInputs */
+/** @typedef {{}} Admin_Settings_Navigation_LinksInputs */
 /** @typedef {{}} Admin_Settings_RssInputs */
 /** @typedef {{}} Admin_Settings_SavedInputs */
 /** @typedef {{}} Admin_Settings_Site_NameInputs */
 /** @typedef {{}} Admin_Settings_Site_UrlInputs */
+/** @typedef {{}} Admin_Settings_Social_LinksInputs */
 /** @typedef {{}} Admin_Settings_Theme_PresetInputs */
 /** @typedef {{}} Admin_Settings_TitleInputs */
 /** @typedef {{}} Admin_Storage_ContractInputs */
@@ -116,7 +176,6 @@
 /** @typedef {{}} Account_Management_NoteInputs */
 /** @typedef {{}} Account_Signed_In_AsInputs */
 /** @typedef {{}} Account_TitleInputs */
-/** @typedef {{}} Archive_TitleInputs */
 /** @typedef {{}} Api_DescriptionInputs */
 /** @typedef {{}} Api_EyebrowInputs */
 /** @typedef {{}} Api_Manage_SettingsInputs */
@@ -178,6 +237,9 @@
 /** @typedef {{}} Language_Switch_To_ZhInputs */
 /** @typedef {{}} Language_ZhInputs */
 /** @typedef {{}} Latest_PostsInputs */
+/** @typedef {{}} Layout_Preset_DeveloperInputs */
+/** @typedef {{}} Layout_Preset_JournalInputs */
+/** @typedef {{}} Layout_Preset_ShelfInputs */
 /** @typedef {{}} LoginInputs */
 /** @typedef {{}} Login_AlternativeInputs */
 /** @typedef {{}} Login_EmailInputs */
@@ -201,10 +263,9 @@
 /** @typedef {{}} Password_Reset_Request_SuccessInputs */
 /** @typedef {{}} Password_Reset_TitleInputs */
 /** @typedef {{}} Nav_AboutInputs */
-/** @typedef {{}} Nav_ArchiveInputs */
 /** @typedef {{}} Nav_BlogInputs */
 /** @typedef {{}} Nav_TagsInputs */
-/** @typedef {{}} Open_CmsInputs */
+/** @typedef {{}} Open_AdminInputs */
 /** @typedef {{}} PinnedInputs */
 /** @typedef {{}} Pagination_NextInputs */
 /** @typedef {{ current: NonNullable<unknown>, total: NonNullable<unknown> }} Pagination_PageInputs */
@@ -231,7 +292,8 @@
 /** @typedef {{}} Theme_LightInputs */
 /** @typedef {{}} Theme_Preset_AppleInputs */
 /** @typedef {{}} Theme_Preset_ClaudeInputs */
-/** @typedef {{}} Theme_Preset_EditorialInputs */
+/** @typedef {{}} Theme_Preset_BrutalistInputs */
+/** @typedef {{}} Theme_Preset_MakerInputs */
 /** @typedef {{}} Theme_SystemInputs */
 /** @typedef {{}} Theme_ToggleInputs */
 /** @typedef {{}} UpdatedInputs */
@@ -249,6 +311,10 @@ export const admin_assets_description = /** @type {(inputs: Admin_Assets_Descrip
 
 export const admin_assets_copied = /** @type {(inputs: Admin_Assets_CopiedInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`已复制`)
+};
+
+export const admin_assets_copy_markdown = /** @type {(inputs: Admin_Assets_Copy_MarkdownInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`复制 Markdown`)
 };
 
 export const admin_assets_copy_url = /** @type {(inputs: Admin_Assets_Copy_UrlInputs) => LocalizedString} */ () => {
@@ -273,6 +339,22 @@ export const admin_assets_error = /** @type {(inputs: Admin_Assets_ErrorInputs) 
 
 export const admin_assets_filename = /** @type {(inputs: Admin_Assets_FilenameInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`文件名`)
+};
+
+export const admin_assets_markdown_copied = /** @type {(inputs: Admin_Assets_Markdown_CopiedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Markdown 已复制`)
+};
+
+export const admin_assets_no_matches = /** @type {(inputs: Admin_Assets_No_MatchesInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`没有匹配的资源。`)
+};
+
+export const admin_assets_search = /** @type {(inputs: Admin_Assets_SearchInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`搜索资源`)
+};
+
+export const admin_assets_search_placeholder = /** @type {(inputs: Admin_Assets_Search_PlaceholderInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`文件名、类型或 Key`)
 };
 
 export const admin_assets_title = /** @type {(inputs: Admin_Assets_TitleInputs) => LocalizedString} */ () => {
@@ -303,6 +385,18 @@ export const admin_comments_auto_block = /** @type {(inputs: Admin_Comments_Auto
 	return /** @type {LocalizedString} */ (`命中屏蔽关键词时自动屏蔽`)
 };
 
+export const admin_comments_batch_approve = /** @type {(inputs: Admin_Comments_Batch_ApproveInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`通过所选`)
+};
+
+export const admin_comments_batch_delete = /** @type {(inputs: Admin_Comments_Batch_DeleteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`删除所选`)
+};
+
+export const admin_comments_batch_spam = /** @type {(inputs: Admin_Comments_Batch_SpamInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`所选标记垃圾`)
+};
+
 export const admin_comments_blocked_keywords = /** @type {(inputs: Admin_Comments_Blocked_KeywordsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`屏蔽关键词`)
 };
@@ -331,12 +425,60 @@ export const admin_comments_mark_spam = /** @type {(inputs: Admin_Comments_Mark_
 	return /** @type {LocalizedString} */ (`标记垃圾`)
 };
 
+export const admin_comments_pending_count = /** @type {(inputs: Admin_Comments_Pending_CountInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`${i?.count} 条待审`)
+};
+
 export const admin_comments_require_approval = /** @type {(inputs: Admin_Comments_Require_ApprovalInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`公开展示前需要人工审核`)
 };
 
+export const admin_comments_search = /** @type {(inputs: Admin_Comments_SearchInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`搜索评论`)
+};
+
+export const admin_comments_search_placeholder = /** @type {(inputs: Admin_Comments_Search_PlaceholderInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`作者、正文或文章标题`)
+};
+
+export const admin_comments_select_all = /** @type {(inputs: Admin_Comments_Select_AllInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`选择当前可见评论`)
+};
+
+export const admin_comments_select_one = /** @type {(inputs: Admin_Comments_Select_OneInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`选择 ${i?.author} 的评论`)
+};
+
+export const admin_comments_selected = /** @type {(inputs: Admin_Comments_SelectedInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`已选择 ${i?.count} 条`)
+};
+
+export const admin_comments_status_all = /** @type {(inputs: Admin_Comments_Status_AllInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`全部状态`)
+};
+
+export const admin_comments_status_approved = /** @type {(inputs: Admin_Comments_Status_ApprovedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`已通过`)
+};
+
+export const admin_comments_status_deleted = /** @type {(inputs: Admin_Comments_Status_DeletedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`已删除`)
+};
+
+export const admin_comments_status_pending = /** @type {(inputs: Admin_Comments_Status_PendingInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`待审核`)
+};
+
+export const admin_comments_status_spam = /** @type {(inputs: Admin_Comments_Status_SpamInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`垃圾评论`)
+};
+
 export const admin_comments_title = /** @type {(inputs: Admin_Comments_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`评论`)
+};
+
+export const admin_comments_view_post = /** @type {(inputs: Admin_Comments_View_PostInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`查看文章`)
 };
 
 export const admin_comment_settings = /** @type {(inputs: Admin_Comment_SettingsInputs) => LocalizedString} */ () => {
@@ -369,6 +511,26 @@ export const admin_editor_error = /** @type {(inputs: Admin_Editor_ErrorInputs) 
 
 export const admin_editor_excerpt = /** @type {(inputs: Admin_Editor_ExcerptInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`摘要`)
+};
+
+export const admin_editor_cover_asset = /** @type {(inputs: Admin_Editor_Cover_AssetInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`选择已上传图片`)
+};
+
+export const admin_editor_cover_asset_placeholder = /** @type {(inputs: Admin_Editor_Cover_Asset_PlaceholderInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`选择图片`)
+};
+
+export const admin_editor_cover_image = /** @type {(inputs: Admin_Editor_Cover_ImageInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`封面图`)
+};
+
+export const admin_editor_featured = /** @type {(inputs: Admin_Editor_FeaturedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`设为精选文章`)
+};
+
+export const admin_editor_pinned = /** @type {(inputs: Admin_Editor_PinnedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`置顶这篇文章`)
 };
 
 export const admin_editor_preview_mode = /** @type {(inputs: Admin_Editor_Preview_ModeInputs) => LocalizedString} */ () => {
@@ -464,7 +626,7 @@ export const admin_overview_eyebrow = /** @type {(inputs: Admin_Overview_Eyebrow
 };
 
 export const admin_overview_title = /** @type {(inputs: Admin_Overview_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`CMS 概览`)
+	return /** @type {LocalizedString} */ (`发布概览`)
 };
 
 export const admin_pages_description = /** @type {(inputs: Admin_Pages_DescriptionInputs) => LocalizedString} */ () => {
@@ -477,6 +639,46 @@ export const admin_pages_editor_title = /** @type {(inputs: Admin_Pages_Editor_T
 
 export const admin_pages_title = /** @type {(inputs: Admin_Pages_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`页面`)
+};
+
+export const admin_post_status_archived_description = /** @type {(inputs: Admin_Post_Status_Archived_DescriptionInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`后台保留，公开博客、标签页、订阅和站点地图都不显示；可以重新发布或改回草稿。`)
+};
+
+export const admin_post_status_archived_label = /** @type {(inputs: Admin_Post_Status_Archived_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`已归档`)
+};
+
+export const admin_post_status_deleted_description = /** @type {(inputs: Admin_Post_Status_Deleted_DescriptionInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`软删除记录，默认不再出现在管理列表和公开页面。`)
+};
+
+export const admin_post_status_deleted_label = /** @type {(inputs: Admin_Post_Status_Deleted_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`已删除`)
+};
+
+export const admin_post_status_draft_description = /** @type {(inputs: Admin_Post_Status_Draft_DescriptionInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`后台可见，不会出现在公开站点，适合未完成内容。`)
+};
+
+export const admin_post_status_draft_label = /** @type {(inputs: Admin_Post_Status_Draft_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`草稿`)
+};
+
+export const admin_post_status_published_description = /** @type {(inputs: Admin_Post_Status_Published_DescriptionInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`立即公开显示在博客、标签页、订阅和站点地图。`)
+};
+
+export const admin_post_status_published_label = /** @type {(inputs: Admin_Post_Status_Published_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`已发布`)
+};
+
+export const admin_post_status_scheduled_description = /** @type {(inputs: Admin_Post_Status_Scheduled_DescriptionInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`到达发布时间后公开；到期前不在公开站点显示。`)
+};
+
+export const admin_post_status_scheduled_label = /** @type {(inputs: Admin_Post_Status_Scheduled_LabelInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`定时发布`)
 };
 
 export const admin_posts_actions = /** @type {(inputs: Admin_Posts_ActionsInputs) => LocalizedString} */ () => {
@@ -496,7 +698,7 @@ export const admin_posts_delete = /** @type {(inputs: Admin_Posts_DeleteInputs) 
 };
 
 export const admin_posts_description = /** @type {(inputs: Admin_Posts_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`创建双语草稿、发布 Markdown 并管理状态。`)
+	return /** @type {LocalizedString} */ (`管理草稿、已发布、定时发布和归档文章。归档会保留后台记录，但从公开站点隐藏。`)
 };
 
 export const admin_posts_edit = /** @type {(inputs: Admin_Posts_EditInputs) => LocalizedString} */ () => {
@@ -517,6 +719,14 @@ export const admin_posts_filter_status = /** @type {(inputs: Admin_Posts_Filter_
 
 export const admin_posts_filter_tag = /** @type {(inputs: Admin_Posts_Filter_TagInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`按标签筛选`)
+};
+
+export const admin_posts_move_to_draft = /** @type {(inputs: Admin_Posts_Move_To_DraftInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`改为草稿`)
+};
+
+export const admin_posts_not_public = /** @type {(inputs: Admin_Posts_Not_PublicInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`未公开`)
 };
 
 export const admin_posts_public_url = /** @type {(inputs: Admin_Posts_Public_UrlInputs) => LocalizedString} */ () => {
@@ -547,6 +757,10 @@ export const admin_posts_status = /** @type {(inputs: Admin_Posts_StatusInputs) 
 	return /** @type {LocalizedString} */ (`状态`)
 };
 
+export const admin_posts_status_help = /** @type {(inputs: Admin_Posts_Status_HelpInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`公开站点只展示已发布文章，以及发布时间已到的定时文章。草稿和归档都不会公开显示；归档适合下架但保留记录。`)
+};
+
 export const admin_posts_title = /** @type {(inputs: Admin_Posts_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`文章`)
 };
@@ -573,6 +787,70 @@ export const admin_schedule_post = /** @type {(inputs: Admin_Schedule_PostInputs
 
 export const admin_save_settings = /** @type {(inputs: Admin_Save_SettingsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`保存设置`)
+};
+
+export const admin_import_export_title = /** @type {(inputs: Admin_Import_Export_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`导入与导出`)
+};
+
+export const admin_import_export_description = /** @type {(inputs: Admin_Import_Export_DescriptionInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`在后台完成内容迁移、归档和备份。`)
+};
+
+export const admin_export_title = /** @type {(inputs: Admin_Export_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`导出`)
+};
+
+export const admin_export_json = /** @type {(inputs: Admin_Export_JsonInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`下载 JSON`)
+};
+
+export const admin_export_zip = /** @type {(inputs: Admin_Export_ZipInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`下载 ZIP`)
+};
+
+export const admin_export_started = /** @type {(inputs: Admin_Export_StartedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`导出下载已开始。`)
+};
+
+export const admin_export_error = /** @type {(inputs: Admin_Export_ErrorInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`导出失败。`)
+};
+
+export const admin_create_backup = /** @type {(inputs: Admin_Create_BackupInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`创建备份`)
+};
+
+export const admin_backup_created = /** @type {(inputs: Admin_Backup_CreatedInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`备份已创建。`)
+};
+
+export const admin_backup_error = /** @type {(inputs: Admin_Backup_ErrorInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`备份创建失败。`)
+};
+
+export const admin_import_title = /** @type {(inputs: Admin_Import_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`导入`)
+};
+
+export const admin_import_file = /** @type {(inputs: Admin_Import_FileInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`导入文件`)
+};
+
+export const admin_import_status = /** @type {(inputs: Admin_Import_StatusInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`导入为`)
+};
+
+export const admin_import_submit = /** @type {(inputs: Admin_Import_SubmitInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`导入内容`)
+};
+
+export const admin_import_success = /** @type {(inputs: Admin_Import_SuccessInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`已导入：${i?.title}。`)
+};
+
+export const admin_import_error = /** @type {(inputs: Admin_Import_ErrorInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`导入失败。`)
 };
 
 export const admin_email_settings = /** @type {(inputs: Admin_Email_SettingsInputs) => LocalizedString} */ () => {
@@ -603,6 +881,10 @@ export const admin_settings_author_name = /** @type {(inputs: Admin_Settings_Aut
 	return /** @type {LocalizedString} */ (`作者名称`)
 };
 
+export const admin_settings_avatar_url = /** @type {(inputs: Admin_Settings_Avatar_UrlInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`头像 URL`)
+};
+
 export const admin_settings_default_og = /** @type {(inputs: Admin_Settings_Default_OgInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`默认 OG 图片`)
 };
@@ -619,12 +901,28 @@ export const admin_settings_help = /** @type {(inputs: Admin_Settings_HelpInputs
 	return /** @type {LocalizedString} */ (`基础身份、SEO、RSS、评论和主语言配置。`)
 };
 
+export const admin_settings_identity = /** @type {(inputs: Admin_Settings_IdentityInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`基础资料`)
+};
+
 export const admin_settings_indexing = /** @type {(inputs: Admin_Settings_IndexingInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`允许搜索引擎索引`)
 };
 
 export const admin_settings_language = /** @type {(inputs: Admin_Settings_LanguageInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`主语言`)
+};
+
+export const admin_settings_layout_preset = /** @type {(inputs: Admin_Settings_Layout_PresetInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`首页布局`)
+};
+
+export const admin_settings_links = /** @type {(inputs: Admin_Settings_LinksInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`链接`)
+};
+
+export const admin_settings_navigation_links = /** @type {(inputs: Admin_Settings_Navigation_LinksInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`导航链接`)
 };
 
 export const admin_settings_rss = /** @type {(inputs: Admin_Settings_RssInputs) => LocalizedString} */ () => {
@@ -641,6 +939,10 @@ export const admin_settings_site_name = /** @type {(inputs: Admin_Settings_Site_
 
 export const admin_settings_site_url = /** @type {(inputs: Admin_Settings_Site_UrlInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`站点 URL`)
+};
+
+export const admin_settings_social_links = /** @type {(inputs: Admin_Settings_Social_LinksInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`社交链接`)
 };
 
 export const admin_settings_theme_preset = /** @type {(inputs: Admin_Settings_Theme_PresetInputs) => LocalizedString} */ () => {
@@ -692,7 +994,7 @@ export const admin_tokens_title = /** @type {(inputs: Admin_Tokens_TitleInputs) 
 };
 
 export const account_management_note = /** @type {(inputs: Account_Management_NoteInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`使用 CMS 管理后台维护发布、设置和导出。`)
+	return /** @type {LocalizedString} */ (`使用管理后台维护发布、设置和导出。`)
 };
 
 export const account_signed_in_as = /** @type {(inputs: Account_Signed_In_AsInputs) => LocalizedString} */ () => {
@@ -701,10 +1003,6 @@ export const account_signed_in_as = /** @type {(inputs: Account_Signed_In_AsInpu
 
 export const account_title = /** @type {(inputs: Account_TitleInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`账号`)
-};
-
-export const archive_title = /** @type {(inputs: Archive_TitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`归档`)
 };
 
 export const api_description = /** @type {(inputs: Api_DescriptionInputs) => LocalizedString} */ () => {
@@ -748,7 +1046,7 @@ export const back_home = /** @type {(inputs: Back_HomeInputs) => LocalizedString
 };
 
 export const blog_description = /** @type {(inputs: Blog_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`关于 01mvp-blog-starter 模板、Cloudflare 原生存储、Markdown 发布和自动化工作流的文章。`)
+	return /** @type {LocalizedString} */ (`关于 01MVP 博客模板、Cloudflare 原生存储、Markdown 发布和自动化工作流的文章。`)
 };
 
 export const blog_eyebrow = /** @type {(inputs: Blog_EyebrowInputs) => LocalizedString} */ () => {
@@ -912,11 +1210,11 @@ export const home_bilingual_intro_en = /** @type {(inputs: Home_Bilingual_Intro_
 };
 
 export const home_bilingual_intro_zh = /** @type {(inputs: Home_Bilingual_Intro_ZhInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`01mvp-blog-starter 是面向个人创作者的 Cloudflare 原生发布系统，支持可视化写作、Markdown 导入、中英文内容和 AI 自动化。`)
+	return /** @type {LocalizedString} */ (`基于 Cloudflare 的个人发布系统——支持可视化写作、Markdown 导入、中英文内容和 AI 自动化工作流。`)
 };
 
 export const home_eyebrow = /** @type {(inputs: Home_EyebrowInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Cloudflare 原生个人博客 CMS`)
+	return /** @type {LocalizedString} */ (`Cloudflare 原生 · 个人博客`)
 };
 
 export const home_featured_title = /** @type {(inputs: Home_Featured_TitleInputs) => LocalizedString} */ () => {
@@ -949,6 +1247,18 @@ export const language_zh = /** @type {(inputs: Language_ZhInputs) => LocalizedSt
 
 export const latest_posts = /** @type {(inputs: Latest_PostsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`最新文章`)
+};
+
+export const layout_preset_developer = /** @type {(inputs: Layout_Preset_DeveloperInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`开发者`)
+};
+
+export const layout_preset_journal = /** @type {(inputs: Layout_Preset_JournalInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`日志`)
+};
+
+export const layout_preset_shelf = /** @type {(inputs: Layout_Preset_ShelfInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`书架`)
 };
 
 export const login = /** @type {(inputs: LoginInputs) => LocalizedString} */ () => {
@@ -1043,10 +1353,6 @@ export const nav_about = /** @type {(inputs: Nav_AboutInputs) => LocalizedString
 	return /** @type {LocalizedString} */ (`关于`)
 };
 
-export const nav_archive = /** @type {(inputs: Nav_ArchiveInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`归档`)
-};
-
 export const nav_blog = /** @type {(inputs: Nav_BlogInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`博客`)
 };
@@ -1055,8 +1361,8 @@ export const nav_tags = /** @type {(inputs: Nav_TagsInputs) => LocalizedString} 
 	return /** @type {LocalizedString} */ (`标签`)
 };
 
-export const open_cms = /** @type {(inputs: Open_CmsInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`打开 CMS`)
+export const open_admin = /** @type {(inputs: Open_AdminInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`打开后台`)
 };
 
 export const pinned = /** @type {(inputs: PinnedInputs) => LocalizedString} */ () => {
@@ -1096,7 +1402,7 @@ export const rss_feed = /** @type {(inputs: Rss_FeedInputs) => LocalizedString} 
 };
 
 export const site_subtitle = /** @type {(inputs: Site_SubtitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Cloudflare 原生发布`)
+	return /** @type {LocalizedString} */ (`01MVP博客模板`)
 };
 
 export const signup = /** @type {(inputs: SignupInputs) => LocalizedString} */ () => {
@@ -1156,15 +1462,19 @@ export const theme_light = /** @type {(inputs: Theme_LightInputs) => LocalizedSt
 };
 
 export const theme_preset_apple = /** @type {(inputs: Theme_Preset_AppleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Apple`)
+	return /** @type {LocalizedString} */ (`苹果圆角`)
 };
 
 export const theme_preset_claude = /** @type {(inputs: Theme_Preset_ClaudeInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Claude`)
+	return /** @type {LocalizedString} */ (`暖调人文`)
 };
 
-export const theme_preset_editorial = /** @type {(inputs: Theme_Preset_EditorialInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Editorial`)
+export const theme_preset_brutalist = /** @type {(inputs: Theme_Preset_BrutalistInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`野兽派`)
+};
+
+export const theme_preset_maker = /** @type {(inputs: Theme_Preset_MakerInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`黑白极简`)
 };
 
 export const theme_system = /** @type {(inputs: Theme_SystemInputs) => LocalizedString} */ () => {

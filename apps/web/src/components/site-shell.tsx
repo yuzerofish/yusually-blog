@@ -1,10 +1,11 @@
-import { SiGithub } from "@icons-pack/react-simple-icons";
+import { useAuth } from "@repo/auth/tanstack/hooks";
 import { getSiteSettingsForLocale, type SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Link } from "@tanstack/react-router";
-import { BookOpenIcon, ExternalLinkIcon, RssIcon, SettingsIcon } from "lucide-react";
+import { Loader2Icon, SearchIcon } from "lucide-react";
 
 import { LanguageToggle } from "#/components/language-toggle";
+import { siteBrandLinkClassName, SiteBrandText } from "#/components/site-brand";
 import {
   getNextStylePreset,
   resolveStylePreset,
@@ -26,127 +27,76 @@ export function SiteShell({
   const siteSettings = providedSiteSettings ?? getSiteSettingsForLocale(locale);
   const preset = resolveStylePreset(siteSettings.themePreset, siteSettings.layoutPreset);
   const nextPreset = getNextStylePreset(preset);
-  const footerCopy = getFooterCopy(locale);
-  const navigation = [
-    { label: m.nav_blog(), href: "/blog" },
-    { label: "Docs", href: "/docs" },
-    { label: m.nav_tags(), href: "/tags" },
-    { label: m.nav_archive(), href: "/archive" },
-    { label: m.nav_about(), href: "/about" },
-  ];
+  const searchLabel = locale === "zh" ? "搜索" : "Search";
+  const navigation = siteSettings.navigation.length
+    ? siteSettings.navigation
+    : [
+        { label: m.nav_blog(), href: "/blog" },
+        { label: "Docs", href: "/docs" },
+        { label: m.nav_tags(), href: "/tags" },
+        { label: m.nav_about(), href: "/about" },
+      ];
 
   return (
     <div
       data-theme-preset={preset.themePreset}
       data-layout-preset={preset.layoutPreset}
-      className="min-h-svh bg-background text-foreground"
+      className="flex min-h-svh flex-col bg-background text-foreground"
     >
-      <header className="sticky top-0 z-40 border-b border-border/80 bg-background/88 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-          <Link to="/" className="flex shrink-0 items-center gap-3" aria-label={siteSettings.name}>
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-xs">
-              <BookOpenIcon className="size-5" />
-            </span>
-            <span className="hidden min-w-0 sm:block">
-              <span className="block text-sm leading-5 font-semibold">{siteSettings.name}</span>
-              <span className="hidden text-xs text-muted-foreground sm:block">
-                {m.site_subtitle()}
-              </span>
-            </span>
+      <header className="sticky top-0 z-40 border-b-2 border-foreground bg-background/95 backdrop-blur-xl">
+        <div className="mx-auto flex min-h-14 max-w-7xl items-center justify-between gap-4 px-4 py-2 sm:px-6 lg:px-8">
+          <Link to="/" className={siteBrandLinkClassName} aria-label={siteSettings.name}>
+            <SiteBrandText name={siteSettings.name} />
           </Link>
 
-          <nav className="hidden items-center gap-1 md:flex">
+          <nav className="hidden items-center gap-6 md:flex">
             {navigation.map((item) => (
-              <Link
+              <a
                 key={item.href}
-                to={item.href}
-                className="rounded-md px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                href={item.href}
+                className="text-sm font-semibold text-foreground transition hover:text-muted-foreground"
               >
                 {item.label}
-              </Link>
+              </a>
             ))}
           </nav>
 
-          <div className="flex shrink-0 items-center gap-2">
-            <Button
-              render={<Link to="/rss.xml" />}
-              variant="ghost"
-              size="icon-sm"
-              nativeButton={false}
-              aria-label={m.rss_feed()}
+          <div className="flex shrink-0 items-center gap-1.5">
+            <Link
+              to="/blog"
+              search={{ q: "", tag: "", page: 1 }}
+              className="hidden h-9 min-w-28 items-center gap-2 rounded-md px-2.5 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground lg:flex"
             >
-              <RssIcon />
-            </Button>
-            <Button
-              render={
-                <a
-                  href="https://github.com/01mvp/blog-starter"
-                  aria-label={m.github_repository()}
-                />
-              }
-              variant="ghost"
-              size="icon-sm"
-              nativeButton={false}
-              aria-label={m.github_repository()}
-            >
-              <SiGithub className="size-4" />
-            </Button>
-            <Button render={<Link to="/admin" />} variant="outline" size="sm" nativeButton={false}>
-              <SettingsIcon />
-              {m.admin()}
-            </Button>
-            <StylePresetCycleButton locale={locale} nextPreset={nextPreset} />
+              <SearchIcon className="size-4" />
+              <span>{searchLabel}</span>
+            </Link>
             <LanguageToggle />
             <ThemeToggle />
+            <HeaderAuthAction locale={locale} />
           </div>
         </div>
       </header>
       <StylePresetRuntimeScript initialPreset={preset} locale={locale} />
 
-      <main>{children}</main>
+      <main className="flex-1">{children}</main>
 
       <footer className="border-t border-border/80 bg-muted/45">
-        <div className="mx-auto grid max-w-7xl gap-7 px-4 py-8 sm:px-6 md:grid-cols-[1fr_1.1fr] lg:grid-cols-[1.05fr_1.1fr_0.75fr] lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <div>
             <p className="text-sm font-semibold">{siteSettings.name}</p>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-              {siteSettings.description}
-            </p>
+            <p className="mt-1 text-xs text-muted-foreground">{siteSettings.description}</p>
           </div>
-          <div>
-            <p className="text-sm font-semibold">{footerCopy.title}</p>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-2">
-              {footerCopy.links.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group rounded-lg border border-border bg-background p-3 transition hover:border-foreground"
-                >
-                  <span className="flex items-center justify-between gap-3 text-sm font-semibold">
-                    {link.label}
-                    <ExternalLinkIcon className="size-3.5 shrink-0 text-muted-foreground transition group-hover:text-foreground" />
-                  </span>
-                  <span className="mt-2 block text-xs leading-5 text-muted-foreground">
-                    {link.description}
-                  </span>
-                </a>
-              ))}
-            </div>
-          </div>
-          <div className="flex flex-wrap items-start gap-2 lg:justify-end">
+          <div className="flex flex-wrap items-center gap-3">
             {siteSettings.socialLinks.map((link) => (
-              <Button
+              <a
                 key={link.href}
-                render={<a href={link.href} aria-label={link.label} />}
-                variant="outline"
-                size="sm"
-                nativeButton={false}
+                href={link.href}
+                className="text-xs text-muted-foreground transition hover:text-foreground"
               >
                 {link.label}
-              </Button>
+              </a>
             ))}
+            <StylePresetCycleButton locale={locale} nextPreset={nextPreset} />
           </div>
         </div>
       </footer>
@@ -154,38 +104,50 @@ export function SiteShell({
   );
 }
 
-function getFooterCopy(locale: string) {
-  if (locale === "zh") {
-    return {
-      title: "更多 01MVP 内容",
-      links: [
-        {
-          label: "makerjackie.com",
-          href: "https://makerjackie.com",
-          description: "Jackie 的个人博客，记录产品、写作和构建过程。",
-        },
-        {
-          label: "01mvp.com",
-          href: "https://01mvp.com",
-          description: "01MVP 教程网站，整理从想法到上线的实战方法。",
-        },
-      ],
-    };
+function HeaderAuthAction({ locale }: { readonly locale: string }) {
+  const { user, isPending } = useAuth();
+  const adminLabel = locale === "zh" ? "后台" : "Admin";
+
+  if (isPending) {
+    return (
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        disabled
+        className="min-w-14"
+        aria-label={m.login()}
+      >
+        <Loader2Icon className="animate-spin" />
+      </Button>
+    );
   }
 
-  return {
-    title: "More from 01MVP",
-    links: [
-      {
-        label: "makerjackie.com",
-        href: "https://makerjackie.com",
-        description: "Jackie's personal blog for product notes, essays, and build logs.",
-      },
-      {
-        label: "01mvp.com",
-        href: "https://01mvp.com",
-        description: "01MVP tutorials for taking ideas from first draft to launch.",
-      },
-    ],
-  };
+  if (user) {
+    return (
+      <Button
+        render={<Link to="/admin" />}
+        variant="outline"
+        size="sm"
+        nativeButton={false}
+        className="min-w-14 px-3 font-semibold"
+        aria-label={adminLabel}
+      >
+        {adminLabel}
+      </Button>
+    );
+  }
+
+  return (
+    <Button
+      render={<Link to="/login" />}
+      variant="outline"
+      size="sm"
+      nativeButton={false}
+      className="min-w-14 px-3 font-semibold"
+      aria-label={m.login()}
+    >
+      {m.login()}
+    </Button>
+  );
 }

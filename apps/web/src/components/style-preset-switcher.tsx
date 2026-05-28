@@ -1,8 +1,9 @@
 import type { LayoutPreset, SupportedLocale, ThemePreset } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { PaletteIcon } from "lucide-react";
+import type { MouseEvent } from "react";
 
-type StylePresetId = "maker-shelf" | "apple-shelf" | "editorial-shelf";
+type StylePresetId = "maker-shelf" | "apple-shelf" | "claude-shelf" | "brutalist-shelf";
 
 export type StylePresetOption = {
   id: StylePresetId;
@@ -16,8 +17,8 @@ const defaultStylePreset: StylePresetOption = {
   themePreset: "maker",
   layoutPreset: "shelf",
   label: {
-    en: "Maker Shelf",
-    zh: "黑白架",
+    en: "Monochrome",
+    zh: "黑白极简",
   },
 };
 
@@ -28,17 +29,26 @@ export const stylePresetOptions: StylePresetOption[] = [
     themePreset: "apple",
     layoutPreset: "shelf",
     label: {
-      en: "Apple Dev",
-      zh: "Apple Dev",
+      en: "Apple Rounded",
+      zh: "苹果圆角",
     },
   },
   {
-    id: "editorial-shelf",
-    themePreset: "editorial",
+    id: "claude-shelf",
+    themePreset: "claude",
     layoutPreset: "shelf",
     label: {
-      en: "Editorial",
-      zh: "编辑杂志",
+      en: "Warm Editorial",
+      zh: "暖调人文",
+    },
+  },
+  {
+    id: "brutalist-shelf",
+    themePreset: "brutalist",
+    layoutPreset: "shelf",
+    label: {
+      en: "Brutalist",
+      zh: "野兽派",
     },
   },
 ];
@@ -50,17 +60,15 @@ export function StylePresetCycleButton({
   readonly locale: SupportedLocale;
   readonly nextPreset: StylePresetOption;
 }) {
-  const label =
-    locale === "zh" ? `切换到 ${nextPreset.label.zh}` : `Switch to ${nextPreset.label.en}`;
+  const label = getStylePresetSwitchLabel(locale, nextPreset);
 
   return (
     <Button
       type="button"
       variant="ghost"
-      size="sm"
-      className="px-2.5"
+      size="icon-sm"
       aria-label={label}
-      title={label}
+      onClick={(event) => applyNextStylePreset(event, locale)}
       data-style-preset-switcher
     >
       <PaletteIcon className="size-4" />
@@ -69,6 +77,47 @@ export function StylePresetCycleButton({
       </span>
     </Button>
   );
+}
+
+function getStylePresetSwitchLabel(locale: SupportedLocale, nextPreset: StylePresetOption) {
+  return locale === "zh" ? `切换到 ${nextPreset.label.zh}` : `Switch to ${nextPreset.label.en}`;
+}
+
+function getPresetForAttributes(themePreset?: string, layoutPreset?: string) {
+  return (
+    stylePresetOptions.find(
+      (preset) => preset.themePreset === themePreset && preset.layoutPreset === layoutPreset,
+    ) ??
+    stylePresetOptions.find((preset) => preset.themePreset === themePreset) ??
+    defaultStylePreset
+  );
+}
+
+function applyNextStylePreset(event: MouseEvent<HTMLButtonElement>, locale: SupportedLocale) {
+  const button = event.currentTarget;
+  const root = button.closest("[data-theme-preset][data-layout-preset]");
+
+  if (!(root instanceof HTMLElement)) {
+    return;
+  }
+
+  const nextPreset = getNextStylePreset(
+    getPresetForAttributes(root.dataset.themePreset, root.dataset.layoutPreset),
+  );
+  const followingPreset = getNextStylePreset(nextPreset);
+
+  root.dataset.themePreset = nextPreset.themePreset;
+  root.dataset.layoutPreset = nextPreset.layoutPreset;
+
+  document.querySelectorAll("[data-style-preset-switcher]").forEach((switcher) => {
+    switcher.setAttribute("aria-label", getStylePresetSwitchLabel(locale, followingPreset));
+    switcher.removeAttribute("title");
+
+    const visibleLabel = switcher.querySelector("[data-style-preset-label]");
+    if (visibleLabel) {
+      visibleLabel.textContent = followingPreset.label[locale];
+    }
+  });
 }
 
 export function StylePresetRuntimeScript({
@@ -91,19 +140,27 @@ export function StylePresetRuntimeScript({
   const config = ${payload};
   const presets = config.presets;
   const labelLocale = config.locale === "zh" ? "zh" : "en";
-  let activeId = config.initialId;
 
   function getPreset(id) {
     return presets.find((preset) => preset.id === id) || presets[0];
   }
 
-  function getCurrentPreset(root) {
+  function getPresetForAttributes(themePreset, layoutPreset) {
     return (
       presets.find(
-        (preset) =>
-          preset.themePreset === root.dataset.themePreset &&
-          preset.layoutPreset === root.dataset.layoutPreset,
-      ) || getPreset(activeId)
+        (preset) => preset.themePreset === themePreset && preset.layoutPreset === layoutPreset,
+      ) ||
+      presets.find((preset) => preset.themePreset === themePreset) ||
+      presets[0]
+    );
+  }
+
+  let activeId = config.initialId;
+
+  function getCurrentPreset(root) {
+    return (
+      getPresetForAttributes(root.dataset.themePreset, root.dataset.layoutPreset) ||
+      getPreset(activeId)
     );
   }
 
@@ -118,7 +175,7 @@ export function StylePresetRuntimeScript({
         ? "切换到 " + nextPreset.label.zh
         : "Switch to " + nextPreset.label.en;
     button.setAttribute("aria-label", label);
-    button.setAttribute("title", label);
+    button.removeAttribute("title");
     const visibleLabel = button.querySelector("[data-style-preset-label]");
     if (visibleLabel) {
       visibleLabel.textContent = nextPreset.label[labelLocale];
@@ -132,19 +189,18 @@ export function StylePresetRuntimeScript({
     );
   }
 
-  document.addEventListener("click", (event) => {
-    const target = event.target;
-    if (!(target instanceof Element)) return;
-    const button = target.closest("[data-style-preset-switcher]");
-    if (!button) return;
-    const root = button.closest("[data-theme-preset][data-layout-preset]");
-    if (!root) return;
-    event.preventDefault();
-    const nextPreset = getNextPreset(getCurrentPreset(root));
-    root.dataset.themePreset = nextPreset.themePreset;
-    root.dataset.layoutPreset = nextPreset.layoutPreset;
-    activeId = nextPreset.id;
+  function applyPreset(root, preset) {
+    root.dataset.themePreset = preset.themePreset;
+    root.dataset.layoutPreset = preset.layoutPreset;
+    activeId = preset.id;
     updateButtons(root);
+  }
+
+  window.addEventListener("blogcms:site-settings-updated", (event) => {
+    const root = document.querySelector("[data-theme-preset][data-layout-preset]");
+    const detail = event.detail || {};
+    if (!root || !detail.themePreset) return;
+    applyPreset(root, getPresetForAttributes(detail.themePreset, detail.layoutPreset));
   });
 
   const root = document.querySelector("[data-theme-preset][data-layout-preset]");
@@ -156,13 +212,7 @@ export function StylePresetRuntimeScript({
 }
 
 export function resolveStylePreset(themePreset: ThemePreset, layoutPreset: LayoutPreset) {
-  return (
-    stylePresetOptions.find(
-      (preset) => preset.themePreset === themePreset && preset.layoutPreset === layoutPreset,
-    ) ??
-    stylePresetOptions.find((preset) => preset.themePreset === themePreset) ??
-    defaultStylePreset
-  );
+  return getPresetForAttributes(themePreset, layoutPreset);
 }
 
 export function getNextStylePreset(currentPreset: StylePresetOption) {
