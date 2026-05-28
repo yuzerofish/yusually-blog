@@ -65,11 +65,6 @@ export function createBlogAuth(database: AuthDatabase, env: BlogAuthEnv) {
       minPasswordLength: 8,
       revokeSessionsOnPasswordReset: true,
     },
-
-    experimental: {
-      // https://www.better-auth.com/docs/adapters/drizzle#joins-experimental
-      joins: true,
-    },
   });
 }
 

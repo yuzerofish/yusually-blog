@@ -1,4 +1,3 @@
-import { revokeApiToken } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { jsonResponse } from "#/lib/cms-api";
@@ -15,8 +14,7 @@ export const Route = createFileRoute("/api/tokens/$id/revoke")({
           return accessError;
         }
 
-        const token =
-          (await revokeD1ApiToken(params.id).catch(() => undefined)) ?? revokeApiToken(params.id);
+        const token = await revokeD1ApiToken(params.id);
 
         if (!token) {
           return jsonResponse({ error: "Token not found" }, { status: 404 });

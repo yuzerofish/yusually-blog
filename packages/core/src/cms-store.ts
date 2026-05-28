@@ -20,6 +20,7 @@ import type {
   SupportedLocale,
   Tag,
 } from "./types";
+import { countLinks, digestText, slugify } from "./utils";
 
 type PostInput = Partial<{
   title: string;
@@ -29,6 +30,8 @@ type PostInput = Partial<{
   contentMarkdown: string;
   contentHtml: string;
   status: ContentStatus;
+  featured: boolean;
+  pinned: boolean;
   commentsEnabled: boolean;
   seoTitle: string;
   seoDescription: string;
@@ -168,8 +171,8 @@ export function createPost(input: PostInput) {
     contentText,
     status,
     source: "api",
-    featured: false,
-    pinned: false,
+    featured: input.featured ?? false,
+    pinned: input.pinned ?? false,
     commentsEnabled: input.commentsEnabled ?? true,
     publishedAt,
     updatedAt: now,
@@ -227,6 +230,14 @@ export function updatePost(idOrSlug: string, input: PostInput) {
 
   if (input.commentsEnabled !== undefined) {
     post.commentsEnabled = input.commentsEnabled;
+  }
+
+  if (input.featured !== undefined) {
+    post.featured = input.featured;
+  }
+
+  if (input.pinned !== undefined) {
+    post.pinned = input.pinned;
   }
 
   if (input.tags !== undefined) {
@@ -419,11 +430,16 @@ function normalizeThemePreset(
   value: SiteSettings["themePreset"] | undefined,
   fallback: SiteSettings["themePreset"],
 ) {
-  if (value === "apple" || value === "editorial" || value === "maker") {
+  if (value === "maker" || value === "apple" || value === "claude" || value === "brutalist") {
     return value;
   }
 
-  return value === "claude" ? "maker" : fallback;
+  // Legacy: editorial mapped to claude, old claude alias mapped to maker
+  if (value === "editorial" || value === "editorial-edge") {
+    return "claude";
+  }
+
+  return fallback;
 }
 
 function normalizeLayoutPreset(
@@ -435,18 +451,6 @@ function normalizeLayoutPreset(
 
 function clone<TValue>(value: TValue): TValue {
   return JSON.parse(JSON.stringify(value)) as TValue;
-}
-
-function countLinks(value: string) {
-  return (value.match(/https?:\/\//g) ?? []).length;
-}
-
-async function digestText(value: string) {
-  const data = new TextEncoder().encode(value);
-  const hash = await crypto.subtle.digest("SHA-256", data);
-  return Array.from(new Uint8Array(hash))
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join("");
 }
 
 function uniqueSlug(base: string) {
@@ -500,13 +504,4 @@ function normalizeDateInput(value: string | undefined) {
   const date = new Date(value);
 
   return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
-}
-
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 96);
 }

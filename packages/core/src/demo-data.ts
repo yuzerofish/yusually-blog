@@ -1,7 +1,7 @@
 import type { Asset, Comment, DashboardMetric, Post, SiteSettings, Tag } from "./types";
 
 export const siteSettings: SiteSettings = {
-  name: "01mvp-blog-starter",
+  name: "01MVP Blog Starter",
   description:
     "A Cloudflare-native personal site for articles, videos, durable notes, and AI-assisted publishing.",
   url: "https://blog.01mvp.com",
@@ -16,8 +16,8 @@ export const siteSettings: SiteSettings = {
   ],
   navigation: [
     { label: "Blog", href: "/blog" },
+    { label: "Docs", href: "/docs" },
     { label: "Tags", href: "/tags" },
-    { label: "Archive", href: "/archive" },
     { label: "About", href: "/about" },
   ],
   rssEnabled: true,
@@ -194,7 +194,7 @@ Manual steps are reserved for login, token creation, paid-plan confirmation, DNS
     seoDescription:
       "The 01mvp-blog-starter Skill initializes, configures, deploys, validates, and maintains a new Cloudflare-native blog.",
     i18n: {
-      title: { zh: "AI 初始化 Skill 需要自动完成什么" },
+      title: { zh: "AI 初始化 Skill 自动化了哪些步骤" },
       excerpt: {
         zh: "Skill 会检查本地工具、创建 Cloudflare 资源、写入站点配置、部署 Worker、验证路由并创建第一篇文章。",
       },

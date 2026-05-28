@@ -14,6 +14,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      "#": resolve(__dirname, "apps/web/src"),
       "@repo/core": resolve(__dirname, "packages/core/src"),
       "@repo/db": resolve(__dirname, "packages/db/src/index.ts"),
       "@repo/db/cms": resolve(__dirname, "packages/db/src/cms.ts"),

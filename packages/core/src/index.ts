@@ -1,11 +1,4 @@
-import {
-  assets,
-  comments,
-  dashboardMetrics,
-  posts,
-  siteSettings,
-  tags,
-} from "./cms-store";
+import { dashboardMetrics, siteSettings } from "./cms-store";
 import type {
   CmsPage,
   Comment,
@@ -16,23 +9,6 @@ import type {
   Tag,
 } from "./types";
 
-export {
-  apiTokens,
-  createApiToken,
-  createAsset,
-  createComment,
-  createPost,
-  deleteAsset,
-  deletePost,
-  findPost,
-  listPosts,
-  moderateComment,
-  revokeApiToken,
-  searchPosts,
-  updatePost,
-  updateSiteSettings,
-} from "./cms-store";
-export { assets, comments, dashboardMetrics, posts, siteSettings, tags };
 export {
   defaultCommentBlockedKeywords,
   findBlockedCommentKeyword,
@@ -61,7 +37,6 @@ export type {
   CmsPage,
   Comment,
   CommentStatus,
-  ContentSource,
   ContentStatus,
   DashboardMetric,
   LayoutPreset,
@@ -136,7 +111,22 @@ export function localizeSiteSettings(
   };
 }
 
-export function localizeDashboardMetric(
+export function formatDate(date: string, locale: SupportedLocale = "en") {
+  return new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(date));
+}
+
+/** Default site settings from seed data — used as SSR fallback by client components */
+export { siteSettings };
+
+export function getSiteSettingsForLocale(locale: SupportedLocale) {
+  return localizeSiteSettings(siteSettings, locale);
+}
+
+function localizeDashboardMetric(
   metric: DashboardMetric,
   locale: SupportedLocale,
 ): DashboardMetric {
@@ -147,69 +137,6 @@ export function localizeDashboardMetric(
   };
 }
 
-export function getPublishedPosts() {
-  return posts
-    .filter((post) => post.status === "published")
-    .sort((a, b) => {
-      if (a.pinned !== b.pinned) {
-        return a.pinned ? -1 : 1;
-      }
-
-      return b.publishedAt.localeCompare(a.publishedAt);
-    });
-}
-
-export function getFeaturedPosts() {
-  return getPublishedPosts().filter((post) => post.featured);
-}
-
-export function getPostBySlug(slug: string) {
-  return getPublishedPosts().find((post) => post.slug === slug);
-}
-
-export function getTagBySlug(slug: string) {
-  return tags.find((tag) => tag.slug === slug);
-}
-
-export function getTagsForLocale(locale: SupportedLocale) {
-  return tags.map((tag) => localizeTag(tag, locale));
-}
-
-export function getApprovedCommentsForPost(postId: string) {
-  return comments.filter((comment) => comment.postId === postId && comment.status === "approved");
-}
-
-export function getApprovedCommentsForPostForLocale(postId: string, locale: SupportedLocale) {
-  return getApprovedCommentsForPost(postId).map((comment) => localizeComment(comment, locale));
-}
-
-export function getRelatedPosts(postId: string) {
-  const post = posts.find((candidate) => candidate.id === postId);
-
-  if (!post) {
-    return [];
-  }
-
-  const postTagSlugs = new Set(post.tags.map((tag) => tag.slug));
-
-  return getPublishedPosts()
-    .filter((candidate) => candidate.id !== post.id)
-    .filter((candidate) => candidate.tags.some((tag) => postTagSlugs.has(tag.slug)))
-    .slice(0, 3);
-}
-
-export function getSiteSettingsForLocale(locale: SupportedLocale) {
-  return localizeSiteSettings(siteSettings, locale);
-}
-
 export function getDashboardMetricsForLocale(locale: SupportedLocale) {
   return dashboardMetrics.map((metric) => localizeDashboardMetric(metric, locale));
-}
-
-export function formatDate(date: string, locale: SupportedLocale = "en") {
-  return new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(date));
 }

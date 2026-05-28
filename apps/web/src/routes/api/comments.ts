@@ -1,6 +1,7 @@
 import { localizeComment, resolveLocale } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
+import { CreateCommentSchema, validateBody } from "#/lib/api-validation";
 import { getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { createD1Comment, getD1PostBySlug, listD1Comments } from "#/lib/cms-d1";
@@ -28,14 +29,12 @@ export const Route = createFileRoute("/api/comments")({
         });
       },
       POST: async ({ request }: { request: Request }) => {
-        const body = await readJsonBody<{
-          postSlug: string;
-          authorWebsite: string;
-          body: string;
-          parentId: string;
-          honeypot: string;
-          turnstileToken: string;
-        }>(request);
+        const raw = await readJsonBody(request);
+        const [body, validationError] = validateBody(CreateCommentSchema, raw);
+
+        if (validationError) {
+          return validationError;
+        }
 
         if (body.honeypot) {
           return jsonResponse({ error: "Comment rejected" }, { status: 400 });
@@ -58,7 +57,7 @@ export const Route = createFileRoute("/api/comments")({
 
         const rateLimit = await checkCommentRateLimit({
           ip: getClientIp(request),
-          postSlug: body.postSlug ?? "",
+          postSlug: body.postSlug,
         });
 
         if (!rateLimit.ok) {
@@ -66,7 +65,7 @@ export const Route = createFileRoute("/api/comments")({
         }
 
         const commentInput = {
-          postSlug: body.postSlug ?? "",
+          postSlug: body.postSlug,
           authorUserId: user.id,
           authorName: user.name,
           authorEmail: user.email,

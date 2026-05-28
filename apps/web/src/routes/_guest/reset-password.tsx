@@ -104,7 +104,7 @@ function ResetPasswordForm() {
       </div>
 
       {token ? (
-        <form onSubmit={handleConfirm} className="flex flex-col gap-5">
+        <form method="post" onSubmit={handleConfirm} className="flex flex-col gap-5">
           <div className="grid gap-2">
             <Label htmlFor="password">{m.password_reset_new_password()}</Label>
             <Input
@@ -133,7 +133,7 @@ function ResetPasswordForm() {
           </Button>
         </form>
       ) : (
-        <form onSubmit={handleRequest} className="flex flex-col gap-5">
+        <form method="post" onSubmit={handleRequest} className="flex flex-col gap-5">
           <div className="grid gap-2">
             <Label htmlFor="email">{m.login_email()}</Label>
             <Input

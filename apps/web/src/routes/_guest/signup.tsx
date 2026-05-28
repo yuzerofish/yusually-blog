@@ -5,7 +5,8 @@ import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { BookOpenIcon, LoaderCircleIcon } from "lucide-react";
+import { BookOpenIcon, EyeIcon, EyeOffIcon, LoaderCircleIcon } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { getCurrentLocale } from "#/lib/i18n";
@@ -65,7 +66,7 @@ function SignupForm() {
 
   return (
     <div className="flex flex-col gap-6">
-      <form onSubmit={handleSubmit}>
+      <form method="post" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
             <Link to="/" className="flex flex-col items-center gap-2 font-medium">
@@ -101,23 +102,23 @@ function SignupForm() {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="password">{m.login_password()}</Label>
-              <Input
+              <PasswordInput
                 id="password"
                 name="password"
-                type="password"
                 placeholder="Password"
                 readOnly={isPending}
+                autoComplete="new-password"
                 required
               />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="confirm_password">{m.signup_confirm_password()}</Label>
-              <Input
+              <PasswordInput
                 id="confirm_password"
                 name="confirm_password"
-                type="password"
                 placeholder="Confirm Password"
                 readOnly={isPending}
+                autoComplete="new-password"
                 required
               />
             </div>
@@ -135,6 +136,42 @@ function SignupForm() {
           {m.login()}
         </Link>
       </div>
+    </div>
+  );
+}
+
+function PasswordInput(props: React.ComponentProps<typeof Input>) {
+  const [isVisible, setIsVisible] = useState(false);
+  const locale = getCurrentLocale();
+  const toggleLabel =
+    locale === "zh"
+      ? isVisible
+        ? "隐藏密码"
+        : "显示密码"
+      : isVisible
+        ? "Hide password"
+        : "Show password";
+  const Icon = isVisible ? EyeOffIcon : EyeIcon;
+
+  return (
+    <div className="relative">
+      <Input
+        {...props}
+        type={isVisible ? "text" : "password"}
+        className={`relative z-0 pr-10 ${props.className ?? ""}`}
+      />
+      <button
+        type="button"
+        className="absolute inset-y-1 right-1 z-20 inline-flex w-7 items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-45"
+        aria-label={toggleLabel}
+        aria-pressed={isVisible}
+        disabled={props.readOnly || props.disabled}
+        onClick={() => {
+          setIsVisible((value) => !value);
+        }}
+      >
+        <Icon className="size-4" />
+      </button>
     </div>
   );
 }

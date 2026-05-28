@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { buildSiteExport, getApiLocale, jsonResponse } from "#/lib/cms-api";
+import { getApiLocale, jsonResponse } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { buildD1SiteExport } from "#/lib/cms-d1";
 import { notifyExportCompleted } from "#/lib/cms-email";
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/api/export")({
           });
         }
 
-        const data = await buildD1SiteExport(locale).catch(() => buildSiteExport(locale));
+        const data = await buildD1SiteExport(locale);
         const backup = await storeExportBackup(data).catch(() => null);
         await notifyExportCompleted({
           format: "json",

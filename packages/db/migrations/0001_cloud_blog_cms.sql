@@ -70,7 +70,6 @@ CREATE TABLE IF NOT EXISTS post_tags (
 
 CREATE UNIQUE INDEX IF NOT EXISTS post_tags_unique_idx ON post_tags (post_id, tag_id);
 
-
 CREATE TABLE IF NOT EXISTS assets (
   id TEXT PRIMARY KEY NOT NULL,
   key TEXT NOT NULL,

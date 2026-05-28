@@ -5,6 +5,7 @@ import { env } from "cloudflare:workers";
 import { getAdminUserByEmail, publicAdminUser, resetAdminPassword } from "#/lib/admin-auth";
 import { jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { sendPasswordResetEmail } from "#/lib/cms-email";
+import { getClientIp } from "#/lib/comment-guard";
 
 const passwordResetWindowSeconds = 60 * 60;
 const passwordResetIpLimit = 5;
@@ -126,15 +127,4 @@ async function consumePasswordResetBucket(kind: string, value: string, limit: nu
   });
 
   return false;
-}
-
-function getClientIp(request: Request) {
-  const forwardedFor = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-
-  return (
-    request.headers.get("cf-connecting-ip") ??
-    forwardedFor ??
-    request.headers.get("x-real-ip") ??
-    "local"
-  );
 }

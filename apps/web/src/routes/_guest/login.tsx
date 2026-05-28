@@ -58,7 +58,7 @@ function LoginForm() {
 
   return (
     <div className="flex flex-col gap-6">
-      <form onSubmit={handleSubmit}>
+      <form method="post" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
             <Link to="/" className="flex flex-col items-center gap-2 font-medium">

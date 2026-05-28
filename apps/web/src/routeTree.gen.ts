@@ -16,7 +16,6 @@ import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as OpenapiDotjsonRouteImport } from './routes/openapi[.]json'
 import { Route as FeedDotxmlRouteImport } from './routes/feed[.]xml'
-import { Route as ArchiveRouteImport } from './routes/archive'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as GuestRouteRouteImport } from './routes/_guest/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
@@ -69,11 +68,14 @@ import { Route as AuthAdminPostsRouteImport } from './routes/_auth/admin/posts'
 import { Route as AuthAdminPagesRouteImport } from './routes/_auth/admin/pages'
 import { Route as AuthAdminCommentsRouteImport } from './routes/_auth/admin/comments'
 import { Route as AuthAdminAssetsRouteImport } from './routes/_auth/admin/assets'
+import { Route as AuthAdminPostsIndexRouteImport } from './routes/_auth/admin/posts/index'
 import { Route as ApiTokensIdRevokeRouteImport } from './routes/api/tokens/$id/revoke'
 import { Route as ApiCommentsIdSpamRouteImport } from './routes/api/comments/$id/spam'
 import { Route as ApiCommentsIdDeleteRouteImport } from './routes/api/comments/$id/delete'
 import { Route as ApiCommentsIdApproveRouteImport } from './routes/api/comments/$id/approve'
 import { Route as ApiCommentAuthGithubStartRouteImport } from './routes/api/comment-auth/github/start'
+import { Route as AuthAdminPostsNewRouteImport } from './routes/_auth/admin/posts/new'
+import { Route as AuthAdminPostsPostIdRouteImport } from './routes/_auth/admin/posts/$postId'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -108,11 +110,6 @@ const OpenapiDotjsonRoute = OpenapiDotjsonRouteImport.update({
 const FeedDotxmlRoute = FeedDotxmlRouteImport.update({
   id: '/feed.xml',
   path: '/feed.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ArchiveRoute = ArchiveRouteImport.update({
-  id: '/archive',
-  path: '/archive',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -374,6 +371,11 @@ const AuthAdminAssetsRoute = AuthAdminAssetsRouteImport.update({
   path: '/assets',
   getParentRoute: () => AuthAdminRouteRoute,
 } as any)
+const AuthAdminPostsIndexRoute = AuthAdminPostsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthAdminPostsRoute,
+} as any)
 const ApiTokensIdRevokeRoute = ApiTokensIdRevokeRouteImport.update({
   id: '/$id/revoke',
   path: '/$id/revoke',
@@ -400,11 +402,20 @@ const ApiCommentAuthGithubStartRoute =
     path: '/api/comment-auth/github/start',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthAdminPostsNewRoute = AuthAdminPostsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthAdminPostsRoute,
+} as any)
+const AuthAdminPostsPostIdRoute = AuthAdminPostsPostIdRouteImport.update({
+  id: '/$postId',
+  path: '/$postId',
+  getParentRoute: () => AuthAdminPostsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/archive': typeof ArchiveRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/openapi.json': typeof OpenapiDotjsonRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -435,7 +446,7 @@ export interface FileRoutesByFullPath {
   '/admin/assets': typeof AuthAdminAssetsRoute
   '/admin/comments': typeof AuthAdminCommentsRoute
   '/admin/pages': typeof AuthAdminPagesRoute
-  '/admin/posts': typeof AuthAdminPostsRoute
+  '/admin/posts': typeof AuthAdminPostsRouteWithChildren
   '/admin/settings': typeof AuthAdminSettingsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
@@ -460,16 +471,18 @@ export interface FileRoutesByFullPath {
   '/zh/docs/$': typeof ZhDocsSplatRoute
   '/admin/': typeof AuthAdminIndexRoute
   '/app/': typeof AuthAppIndexRoute
+  '/admin/posts/$postId': typeof AuthAdminPostsPostIdRoute
+  '/admin/posts/new': typeof AuthAdminPostsNewRoute
   '/api/comment-auth/github/start': typeof ApiCommentAuthGithubStartRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
   '/api/comments/$id/delete': typeof ApiCommentsIdDeleteRoute
   '/api/comments/$id/spam': typeof ApiCommentsIdSpamRoute
   '/api/tokens/$id/revoke': typeof ApiTokensIdRevokeRoute
+  '/admin/posts/': typeof AuthAdminPostsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/archive': typeof ArchiveRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/openapi.json': typeof OpenapiDotjsonRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -498,7 +511,6 @@ export interface FileRoutesByTo {
   '/admin/assets': typeof AuthAdminAssetsRoute
   '/admin/comments': typeof AuthAdminCommentsRoute
   '/admin/pages': typeof AuthAdminPagesRoute
-  '/admin/posts': typeof AuthAdminPostsRoute
   '/admin/settings': typeof AuthAdminSettingsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
@@ -523,11 +535,14 @@ export interface FileRoutesByTo {
   '/zh/docs/$': typeof ZhDocsSplatRoute
   '/admin': typeof AuthAdminIndexRoute
   '/app': typeof AuthAppIndexRoute
+  '/admin/posts/$postId': typeof AuthAdminPostsPostIdRoute
+  '/admin/posts/new': typeof AuthAdminPostsNewRoute
   '/api/comment-auth/github/start': typeof ApiCommentAuthGithubStartRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
   '/api/comments/$id/delete': typeof ApiCommentsIdDeleteRoute
   '/api/comments/$id/spam': typeof ApiCommentsIdSpamRoute
   '/api/tokens/$id/revoke': typeof ApiTokensIdRevokeRoute
+  '/admin/posts': typeof AuthAdminPostsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -535,7 +550,6 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_guest': typeof GuestRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/archive': typeof ArchiveRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/openapi.json': typeof OpenapiDotjsonRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -566,7 +580,7 @@ export interface FileRoutesById {
   '/_auth/admin/assets': typeof AuthAdminAssetsRoute
   '/_auth/admin/comments': typeof AuthAdminCommentsRoute
   '/_auth/admin/pages': typeof AuthAdminPagesRoute
-  '/_auth/admin/posts': typeof AuthAdminPostsRoute
+  '/_auth/admin/posts': typeof AuthAdminPostsRouteWithChildren
   '/_auth/admin/settings': typeof AuthAdminSettingsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
@@ -591,18 +605,20 @@ export interface FileRoutesById {
   '/zh/docs/$': typeof ZhDocsSplatRoute
   '/_auth/admin/': typeof AuthAdminIndexRoute
   '/_auth/app/': typeof AuthAppIndexRoute
+  '/_auth/admin/posts/$postId': typeof AuthAdminPostsPostIdRoute
+  '/_auth/admin/posts/new': typeof AuthAdminPostsNewRoute
   '/api/comment-auth/github/start': typeof ApiCommentAuthGithubStartRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
   '/api/comments/$id/delete': typeof ApiCommentsIdDeleteRoute
   '/api/comments/$id/spam': typeof ApiCommentsIdSpamRoute
   '/api/tokens/$id/revoke': typeof ApiTokensIdRevokeRoute
+  '/_auth/admin/posts/': typeof AuthAdminPostsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
-    | '/archive'
     | '/feed.xml'
     | '/openapi.json'
     | '/robots.txt'
@@ -658,16 +674,18 @@ export interface FileRouteTypes {
     | '/zh/docs/$'
     | '/admin/'
     | '/app/'
+    | '/admin/posts/$postId'
+    | '/admin/posts/new'
     | '/api/comment-auth/github/start'
     | '/api/comments/$id/approve'
     | '/api/comments/$id/delete'
     | '/api/comments/$id/spam'
     | '/api/tokens/$id/revoke'
+    | '/admin/posts/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/archive'
     | '/feed.xml'
     | '/openapi.json'
     | '/robots.txt'
@@ -696,7 +714,6 @@ export interface FileRouteTypes {
     | '/admin/assets'
     | '/admin/comments'
     | '/admin/pages'
-    | '/admin/posts'
     | '/admin/settings'
     | '/api/admin/email-status'
     | '/api/admin/login'
@@ -721,18 +738,20 @@ export interface FileRouteTypes {
     | '/zh/docs/$'
     | '/admin'
     | '/app'
+    | '/admin/posts/$postId'
+    | '/admin/posts/new'
     | '/api/comment-auth/github/start'
     | '/api/comments/$id/approve'
     | '/api/comments/$id/delete'
     | '/api/comments/$id/spam'
     | '/api/tokens/$id/revoke'
+    | '/admin/posts'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/_guest'
     | '/about'
-    | '/archive'
     | '/feed.xml'
     | '/openapi.json'
     | '/robots.txt'
@@ -788,11 +807,14 @@ export interface FileRouteTypes {
     | '/zh/docs/$'
     | '/_auth/admin/'
     | '/_auth/app/'
+    | '/_auth/admin/posts/$postId'
+    | '/_auth/admin/posts/new'
     | '/api/comment-auth/github/start'
     | '/api/comments/$id/approve'
     | '/api/comments/$id/delete'
     | '/api/comments/$id/spam'
     | '/api/tokens/$id/revoke'
+    | '/_auth/admin/posts/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -800,7 +822,6 @@ export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   GuestRouteRoute: typeof GuestRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
-  ArchiveRoute: typeof ArchiveRoute
   FeedDotxmlRoute: typeof FeedDotxmlRoute
   OpenapiDotjsonRoute: typeof OpenapiDotjsonRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
@@ -892,13 +913,6 @@ declare module '@tanstack/react-router' {
       path: '/feed.xml'
       fullPath: '/feed.xml'
       preLoaderRoute: typeof FeedDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/archive': {
-      id: '/archive'
-      path: '/archive'
-      fullPath: '/archive'
-      preLoaderRoute: typeof ArchiveRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -1265,6 +1279,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAdminAssetsRouteImport
       parentRoute: typeof AuthAdminRouteRoute
     }
+    '/_auth/admin/posts/': {
+      id: '/_auth/admin/posts/'
+      path: '/'
+      fullPath: '/admin/posts/'
+      preLoaderRoute: typeof AuthAdminPostsIndexRouteImport
+      parentRoute: typeof AuthAdminPostsRoute
+    }
     '/api/tokens/$id/revoke': {
       id: '/api/tokens/$id/revoke'
       path: '/$id/revoke'
@@ -1300,14 +1321,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCommentAuthGithubStartRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/admin/posts/new': {
+      id: '/_auth/admin/posts/new'
+      path: '/new'
+      fullPath: '/admin/posts/new'
+      preLoaderRoute: typeof AuthAdminPostsNewRouteImport
+      parentRoute: typeof AuthAdminPostsRoute
+    }
+    '/_auth/admin/posts/$postId': {
+      id: '/_auth/admin/posts/$postId'
+      path: '/$postId'
+      fullPath: '/admin/posts/$postId'
+      preLoaderRoute: typeof AuthAdminPostsPostIdRouteImport
+      parentRoute: typeof AuthAdminPostsRoute
+    }
   }
 }
+
+interface AuthAdminPostsRouteChildren {
+  AuthAdminPostsPostIdRoute: typeof AuthAdminPostsPostIdRoute
+  AuthAdminPostsNewRoute: typeof AuthAdminPostsNewRoute
+  AuthAdminPostsIndexRoute: typeof AuthAdminPostsIndexRoute
+}
+
+const AuthAdminPostsRouteChildren: AuthAdminPostsRouteChildren = {
+  AuthAdminPostsPostIdRoute: AuthAdminPostsPostIdRoute,
+  AuthAdminPostsNewRoute: AuthAdminPostsNewRoute,
+  AuthAdminPostsIndexRoute: AuthAdminPostsIndexRoute,
+}
+
+const AuthAdminPostsRouteWithChildren = AuthAdminPostsRoute._addFileChildren(
+  AuthAdminPostsRouteChildren,
+)
 
 interface AuthAdminRouteRouteChildren {
   AuthAdminAssetsRoute: typeof AuthAdminAssetsRoute
   AuthAdminCommentsRoute: typeof AuthAdminCommentsRoute
   AuthAdminPagesRoute: typeof AuthAdminPagesRoute
-  AuthAdminPostsRoute: typeof AuthAdminPostsRoute
+  AuthAdminPostsRoute: typeof AuthAdminPostsRouteWithChildren
   AuthAdminSettingsRoute: typeof AuthAdminSettingsRoute
   AuthAdminIndexRoute: typeof AuthAdminIndexRoute
 }
@@ -1316,7 +1367,7 @@ const AuthAdminRouteRouteChildren: AuthAdminRouteRouteChildren = {
   AuthAdminAssetsRoute: AuthAdminAssetsRoute,
   AuthAdminCommentsRoute: AuthAdminCommentsRoute,
   AuthAdminPagesRoute: AuthAdminPagesRoute,
-  AuthAdminPostsRoute: AuthAdminPostsRoute,
+  AuthAdminPostsRoute: AuthAdminPostsRouteWithChildren,
   AuthAdminSettingsRoute: AuthAdminSettingsRoute,
   AuthAdminIndexRoute: AuthAdminIndexRoute,
 }
@@ -1438,7 +1489,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   GuestRouteRoute: GuestRouteRouteWithChildren,
   AboutRoute: AboutRoute,
-  ArchiveRoute: ArchiveRoute,
   FeedDotxmlRoute: FeedDotxmlRoute,
   OpenapiDotjsonRoute: OpenapiDotjsonRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
@@ -1483,3 +1533,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 
 import { LanguageToggle } from "#/components/language-toggle";
 import { SignOutButton } from "#/components/sign-out-button";
+import { siteBrandLinkClassName, SiteBrandText } from "#/components/site-brand";
 import {
   getNextStylePreset,
   resolveStylePreset,
@@ -97,15 +98,11 @@ function DesktopSidebar({
 }) {
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground lg:flex">
-      <div className="flex min-h-16 items-center justify-between gap-3 border-b border-sidebar-border px-5">
-        <Link
-          to="/"
-          className="min-w-0 text-base leading-none font-black tracking-tight"
-          title={siteName}
-        >
-          <span className="block truncate">{siteName}</span>
+      <div className="border-b border-sidebar-border px-5 py-4">
+        <Link to="/" className={cn(siteBrandLinkClassName, "block")} title={siteName}>
+          <SiteBrandText name={siteName} />
         </Link>
-        <div className="flex items-center gap-1">
+        <div className="mt-3 flex items-center gap-1">
           <LanguageToggle />
           <StylePresetCycleButton locale={locale} nextPreset={nextPreset} />
           <ThemeToggle />
@@ -135,8 +132,8 @@ function MobileAdminHeader({
   return (
     <header className="sticky top-0 z-40 border-b border-sidebar-border bg-sidebar/95 text-sidebar-foreground backdrop-blur-xl lg:hidden">
       <div className="flex min-h-14 items-center justify-between gap-3 px-4">
-        <Link to="/" className="min-w-0 text-base leading-none font-black tracking-tight">
-          <span className="block truncate">{siteName}</span>
+        <Link to="/" className={siteBrandLinkClassName} title={siteName}>
+          <SiteBrandText name={siteName} />
         </Link>
         <div className="flex shrink-0 items-center gap-1">
           <LanguageToggle />

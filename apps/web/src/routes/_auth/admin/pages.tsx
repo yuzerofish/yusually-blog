@@ -4,9 +4,20 @@ import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { FilePlusIcon } from "lucide-react";
-import { useEffect, useMemo, useState, type ComponentProps } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState, type ComponentProps } from "react";
 
-import { MdxEditorSurface } from "#/components/mdx-editor-surface";
+import {
+  AdminPageHeader,
+  AdminPanel,
+  AdminTableFrame,
+  adminPanelClassName,
+  adminSelectClassName,
+  adminTextareaClassName,
+} from "#/components/admin/admin-ui";
+
+const MdxEditorSurface = lazy(() =>
+  import("#/components/mdx-editor-surface").then((m) => ({ default: m.MdxEditorSurface })),
+);
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
@@ -119,42 +130,42 @@ function AdminPagesPage() {
   };
 
   return (
-    <section className="grid gap-6">
-      <div className="rounded-lg border border-border/80 bg-card p-6 shadow-xs">
-        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-          <div>
-            <h1 className="text-2xl font-semibold">{m.admin_pages_title()}</h1>
-            <p className="mt-2 text-sm text-muted-foreground">{m.admin_pages_description()}</p>
-          </div>
+    <section className="grid gap-5">
+      <AdminPageHeader
+        title={m.admin_pages_title()}
+        description={m.admin_pages_description()}
+        actions={
           <Button type="button" onClick={startNewPage}>
             <FilePlusIcon />
             {m.admin_new_page()}
           </Button>
-        </div>
+        }
+      />
 
-        <div className="mt-6 overflow-hidden rounded-lg border border-border/80">
+      <AdminPanel>
+        <AdminTableFrame>
           <table className="w-full min-w-[760px] text-left text-sm">
             <thead className="bg-muted/55 text-xs text-muted-foreground uppercase">
               <tr>
-                <th className="px-4 py-3">{m.admin_posts_column_title()}</th>
-                <th className="px-4 py-3">Slug</th>
-                <th className="px-4 py-3">{m.admin_posts_status()}</th>
-                <th className="px-4 py-3">{m.admin_posts_updated()}</th>
-                <th className="px-4 py-3">{m.admin_posts_actions()}</th>
+                <th className="px-3 py-2.5">{m.admin_posts_column_title()}</th>
+                <th className="px-3 py-2.5">Slug</th>
+                <th className="px-3 py-2.5">{m.admin_posts_status()}</th>
+                <th className="px-3 py-2.5">{m.admin_posts_updated()}</th>
+                <th className="px-3 py-2.5">{m.admin_posts_actions()}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/80">
               {pages.map((page) => (
                 <tr key={page.id}>
-                  <td className="px-4 py-4 font-medium">{page.title}</td>
-                  <td className="px-4 py-4 text-muted-foreground">{page.slug}</td>
-                  <td className="px-4 py-4">
+                  <td className="px-3 py-3 font-medium">{page.title}</td>
+                  <td className="px-3 py-3 text-muted-foreground">{page.slug}</td>
+                  <td className="px-3 py-3">
                     <span className="rounded-sm bg-accent px-2 py-1 text-xs font-medium text-accent-foreground">
                       {page.status}
                     </span>
                   </td>
-                  <td className="px-4 py-4 text-muted-foreground">{page.updatedAt.slice(0, 10)}</td>
-                  <td className="px-4 py-4">
+                  <td className="px-3 py-3 text-muted-foreground">{page.updatedAt.slice(0, 10)}</td>
+                  <td className="px-3 py-3">
                     <div className="flex flex-wrap gap-2">
                       {page.slug === "about" && page.status === "published" ? (
                         <Button
@@ -183,19 +194,19 @@ function AdminPagesPage() {
               ))}
             </tbody>
           </table>
-        </div>
-      </div>
+        </AdminTableFrame>
+      </AdminPanel>
 
       <form
         key={editingPage?.id ?? "new-page"}
         id="page-editor"
         onSubmit={savePage}
-        className="rounded-lg border border-border/80 bg-card p-6 shadow-xs"
+        className={`${adminPanelClassName} grid gap-5`}
       >
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
-            <h2 className="text-2xl font-semibold">{m.admin_pages_editor_title()}</h2>
-            <p className="mt-2 text-sm text-muted-foreground">{m.admin_editor_description()}</p>
+            <h2 className="text-base font-semibold">{m.admin_pages_editor_title()}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">{m.admin_editor_description()}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button type="submit" name="status" value="draft" variant="outline">
@@ -207,7 +218,7 @@ function AdminPagesPage() {
           </div>
         </div>
 
-        <div className="mt-6 grid gap-5 lg:grid-cols-[0.4fr_0.6fr]">
+        <div className="grid gap-5 lg:grid-cols-[0.4fr_0.6fr]">
           <div className="grid content-start gap-4">
             <div className="grid gap-2">
               <Label htmlFor="page-title">{m.admin_posts_column_title()}</Label>
@@ -246,7 +257,7 @@ function AdminPagesPage() {
                 id="page-status"
                 name="status"
                 defaultValue={editingPage?.status ?? "draft"}
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
+                className={adminSelectClassName}
               >
                 {statusOptions.map((status) => (
                   <option key={status} value={status}>
@@ -287,13 +298,15 @@ function AdminPagesPage() {
           </div>
 
           {editorMode === "editor" ? (
-            <MdxEditorSurface value={markdown} onChange={setMarkdown} />
+            <Suspense fallback={<div className="h-64 animate-pulse rounded bg-muted" />}>
+              <MdxEditorSurface value={markdown} onChange={setMarkdown} />
+            </Suspense>
           ) : null}
           {editorMode === "source" ? (
             <textarea
               value={markdown}
               onChange={(event) => setMarkdown(event.target.value)}
-              className="min-h-96 rounded-md border border-input bg-background px-3 py-3 font-mono text-sm leading-6 shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              className={`${adminTextareaClassName} min-h-96 font-mono leading-6 focus-visible:ring-[3px] focus-visible:ring-ring/50`}
             />
           ) : null}
           {editorMode === "preview" ? (

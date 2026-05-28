@@ -1,11 +1,12 @@
-import { assets, type Asset } from "@repo/core";
+import type { Asset } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckIcon, CopyIcon, Trash2Icon, UploadIcon } from "lucide-react";
+import { CheckIcon, CopyIcon, FileTextIcon, Trash2Icon, UploadIcon } from "lucide-react";
 import { useEffect, useState, type ComponentProps, type DragEventHandler } from "react";
 
+import { AdminPageHeader, AdminPanel, adminPanelClassName } from "#/components/admin/admin-ui";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/_auth/admin/assets")({
@@ -16,9 +17,13 @@ type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
 
 function AdminAssetsPage() {
   const [state, setState] = useState<"idle" | "uploading" | "uploaded" | "error">("idle");
-  const [rows, setRows] = useState<Asset[]>(assets);
+  const [rows, setRows] = useState<Asset[]>([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [copiedAssetId, setCopiedAssetId] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const [copiedAsset, setCopiedAsset] = useState<{
+    id: string;
+    type: "markdown" | "url";
+  } | null>(null);
 
   useEffect(() => {
     let ignore = false;
@@ -90,10 +95,15 @@ function AdminAssetsPage() {
   };
 
   const copyAssetUrl = async (asset: Asset) => {
+    await navigator.clipboard.writeText(getAbsoluteAssetUrl(asset.url)).catch(() => undefined);
+    setCopiedAsset({ id: asset.id, type: "url" });
+  };
+
+  const copyAssetMarkdown = async (asset: Asset) => {
     await navigator.clipboard
-      .writeText(new URL(asset.url, window.location.origin).toString())
+      .writeText(`![${asset.filename}](${getAbsoluteAssetUrl(asset.url)})`)
       .catch(() => undefined);
-    setCopiedAssetId(asset.id);
+    setCopiedAsset({ id: asset.id, type: "markdown" });
   };
 
   const deleteAsset = async (asset: Asset) => {
@@ -106,21 +116,32 @@ function AdminAssetsPage() {
     setRows((current) => current.filter((row) => row.id !== asset.id));
   };
 
+  const normalizedQuery = query.trim().toLowerCase();
+  const visibleRows = normalizedQuery
+    ? rows.filter((asset) =>
+        [asset.filename, asset.contentType, asset.key].some((value) =>
+          value.toLowerCase().includes(normalizedQuery),
+        ),
+      )
+    : rows;
+
   return (
-    <section className="grid gap-6">
+    <section className="grid gap-5">
+      <AdminPageHeader title={m.admin_assets_title()} description={m.admin_assets_description()} />
+
       <form
         onSubmit={handleSubmit}
         onDragOver={handleDragOver}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
-        className={`rounded-lg border bg-card p-6 shadow-xs ${
+        className={`${adminPanelClassName} ${
           isDragging ? "border-link ring-3 ring-link/15" : "border-border/80"
         }`}
       >
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
-            <h1 className="text-2xl font-semibold">{m.admin_assets_title()}</h1>
-            <p className="mt-2 text-sm text-muted-foreground">{m.admin_assets_description()}</p>
+            <h2 className="text-base font-semibold">{m.upload()}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">{m.admin_assets_drop_hint()}</p>
           </div>
           <Button type="submit" disabled={state === "uploading"}>
             <UploadIcon />
@@ -128,11 +149,10 @@ function AdminAssetsPage() {
           </Button>
         </div>
 
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div className="grid gap-2">
             <Label htmlFor="asset-filename">{m.admin_assets_filename()}</Label>
             <Input id="asset-filename" name="file" type="file" accept="image/*" multiple />
-            <p className="text-sm text-muted-foreground">{m.admin_assets_drop_hint()}</p>
           </div>
         </div>
         {state === "uploaded" ? (
@@ -143,10 +163,20 @@ function AdminAssetsPage() {
         ) : null}
       </form>
 
-      <div className="rounded-lg border border-border/80 bg-card p-6 shadow-xs">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {rows.map((asset) => (
-            <article key={asset.id} className="rounded-lg border border-border bg-muted/45 p-4">
+      <AdminPanel>
+        <div className="mb-4 grid gap-2 md:max-w-xs">
+          <Label htmlFor="asset-search">{m.admin_assets_search()}</Label>
+          <Input
+            id="asset-search"
+            value={query}
+            onChange={(event) => setQuery(event.currentTarget.value)}
+            placeholder={m.admin_assets_search_placeholder()}
+          />
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {visibleRows.map((asset) => (
+            <article key={asset.id} className="rounded-md border border-border bg-muted/45 p-3">
               <img src={asset.url} alt="" className="h-36 w-full rounded-md object-cover" />
               <p className="mt-3 truncate font-medium">{asset.filename}</p>
               <p className="mt-1 text-xs text-muted-foreground">{asset.contentType}</p>
@@ -158,8 +188,29 @@ function AdminAssetsPage() {
                   variant="outline"
                   onClick={() => void copyAssetUrl(asset)}
                 >
-                  {copiedAssetId === asset.id ? <CheckIcon /> : <CopyIcon />}
-                  {copiedAssetId === asset.id ? m.admin_assets_copied() : m.admin_assets_copy_url()}
+                  {copiedAsset?.id === asset.id && copiedAsset.type === "url" ? (
+                    <CheckIcon />
+                  ) : (
+                    <CopyIcon />
+                  )}
+                  {copiedAsset?.id === asset.id && copiedAsset.type === "url"
+                    ? m.admin_assets_copied()
+                    : m.admin_assets_copy_url()}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => void copyAssetMarkdown(asset)}
+                >
+                  {copiedAsset?.id === asset.id && copiedAsset.type === "markdown" ? (
+                    <CheckIcon />
+                  ) : (
+                    <FileTextIcon />
+                  )}
+                  {copiedAsset?.id === asset.id && copiedAsset.type === "markdown"
+                    ? m.admin_assets_markdown_copied()
+                    : m.admin_assets_copy_markdown()}
                 </Button>
                 <Button
                   type="button"
@@ -176,14 +227,21 @@ function AdminAssetsPage() {
           {rows.length === 0 ? (
             <p className="text-sm text-muted-foreground">{m.admin_assets_empty()}</p>
           ) : null}
+          {rows.length > 0 && visibleRows.length === 0 ? (
+            <p className="text-sm text-muted-foreground">{m.admin_assets_no_matches()}</p>
+          ) : null}
         </div>
-      </div>
+      </AdminPanel>
     </section>
   );
 }
 
 function isUploadFile(value: FormDataEntryValue): value is File {
   return value instanceof File && value.size > 0;
+}
+
+function getAbsoluteAssetUrl(url: string) {
+  return new URL(url, window.location.origin).toString();
 }
 
 function formatBytes(value: number) {

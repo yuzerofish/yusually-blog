@@ -103,9 +103,15 @@ export function markdownToText(markdown: string) {
 export function sanitizeHtml(input: string) {
   return input
     .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
+    .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, "")
     .replace(/\son\w+="[^"]*"/gi, "")
     .replace(/\son\w+='[^']*'/gi, "")
-    .replace(/javascript:/gi, "");
+    .replace(/\son\w+=[^\s>]*/gi, "")
+    .replace(/\ssrcdoc="[^"]*"/gi, "")
+    .replace(/\ssrcdoc='[^']*'/gi, "")
+    .replace(/\ssrcdoc=[^\s>]*/gi, "")
+    .replace(/javascript:/gi, "")
+    .replace(/data:text\/html/gi, "");
 }
 
 function inlineMarkdown(value: string) {

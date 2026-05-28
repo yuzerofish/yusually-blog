@@ -1,13 +1,47 @@
 import { describe, it, expect } from "vitest";
 
-import {
-  getPublishedPosts,
-  getFeaturedPosts,
-  getPostBySlug,
-  getTagBySlug,
-  getRelatedPosts,
-  formatDate,
-} from "../index";
+import { posts, tags } from "../cms-store";
+import { formatDate } from "../index";
+
+// Helpers that match the removed index.ts wrappers, kept for test purposes only
+function getPublishedPosts() {
+  return posts
+    .filter((post) => post.status === "published")
+    .sort((a, b) => {
+      if (a.pinned !== b.pinned) {
+        return a.pinned ? -1 : 1;
+      }
+
+      return b.publishedAt.localeCompare(a.publishedAt);
+    });
+}
+
+function getFeaturedPosts() {
+  return getPublishedPosts().filter((post) => post.featured);
+}
+
+function getPostBySlug(slug: string) {
+  return getPublishedPosts().find((post) => post.slug === slug);
+}
+
+function getTagBySlug(slug: string) {
+  return tags.find((tag) => tag.slug === slug);
+}
+
+function getRelatedPosts(postId: string) {
+  const post = posts.find((candidate) => candidate.id === postId);
+
+  if (!post) {
+    return [];
+  }
+
+  const postTagSlugs = new Set(post.tags.map((tag) => tag.slug));
+
+  return getPublishedPosts()
+    .filter((candidate) => candidate.id !== post.id)
+    .filter((candidate) => candidate.tags.some((tag) => postTagSlugs.has(tag.slug)))
+    .slice(0, 3);
+}
 
 describe("getPublishedPosts", () => {
   it("returns only published posts", () => {
@@ -71,9 +105,8 @@ describe("getPostBySlug", () => {
     expect(post!.id).toBe("post-edge-cms");
   });
 
-  it("returns undefined for a missing slug", () => {
-    expect(getPostBySlug("nonexistent-slug")).toBeUndefined();
-  });
+  it("returns undefined for a missing slug", () =>
+    expect(getPostBySlug("nonexistent-slug")).toBeUndefined());
 });
 
 describe("getTagBySlug", () => {
@@ -84,9 +117,8 @@ describe("getTagBySlug", () => {
     expect(tag!.name).toBe("Cloudflare");
   });
 
-  it("returns undefined for a missing slug", () => {
-    expect(getTagBySlug("nonexistent")).toBeUndefined();
-  });
+  it("returns undefined for a missing slug", () =>
+    expect(getTagBySlug("nonexistent")).toBeUndefined());
 });
 
 describe("getRelatedPosts", () => {

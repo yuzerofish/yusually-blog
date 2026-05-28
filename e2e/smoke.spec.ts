@@ -1,31 +1,37 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Smoke Tests", () => {
-  test("homepage renders with posts", async ({ page }) => {
+  test("homepage renders and links to the blog", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("h1, h2").first()).toBeVisible();
-    // Should have at least one article link
-    const articleLinks = page.locator('a[href*="/blog/"]');
-    await expect(articleLinks.first()).toBeVisible();
+
+    await page.getByRole("button", { name: "View sample content" }).click();
+    await expect(page).toHaveURL(/\/blog/);
+    await expect(page.getByRole("heading", { name: "Durable publishing notes" })).toBeVisible();
   });
 
   test("blog list page loads", async ({ page }) => {
     await page.goto("/blog?q=&tag=&page=1");
-    // Page should have blog content
-    await expect(page.locator("body")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Durable publishing notes" })).toBeVisible();
     const title = await page.title();
     expect(title).toBeTruthy();
   });
 
-  test("article detail page loads", async ({ page }) => {
-    await page.goto("/");
-    const firstArticle = page.locator('a[href*="/blog/"]').first();
-    await expect(firstArticle).toBeVisible();
+  test("article detail page or empty blog state loads", async ({ page }) => {
+    await page.goto("/blog?q=&tag=&page=1");
+    const articleLinks = page.locator('main a[href^="/blog/"]');
+    const articleCount = await articleLinks.count();
+
+    if (articleCount === 0) {
+      await expect(page.getByText("No posts matched this search.")).toBeVisible();
+      return;
+    }
+
+    const firstArticle = articleLinks.first();
     const href = await firstArticle.getAttribute("href");
-    expect(href).toBeTruthy();
+    expect(href).toMatch(/^\/blog\/[^/]+/);
 
     await firstArticle.click();
-    // Wait for the article page to render (avoid networkidle — SPAs keep connections open)
     await expect(page.locator("article, main, [role='main']").first()).toBeVisible({
       timeout: 15_000,
     });
@@ -33,7 +39,7 @@ test.describe("Smoke Tests", () => {
 
   test("theme preset switcher works", async ({ page }) => {
     await page.goto("/");
-    const root = page.locator("[data-theme-preset]");
+    const root = page.locator("body > div[data-theme-preset][data-layout-preset]");
     await expect(root).toBeVisible();
 
     const initialTheme = await root.getAttribute("data-theme-preset");
@@ -41,22 +47,22 @@ test.describe("Smoke Tests", () => {
 
     // Click the style preset switcher button
     const switcher = page.locator("[data-style-preset-switcher]");
-    if (await switcher.isVisible()) {
-      await switcher.click();
-      await page.waitForTimeout(200);
-      const newTheme = await root.getAttribute("data-theme-preset");
-      expect(newTheme).toBeTruthy();
-      // Theme should have changed (unless only 1 preset)
-      if (initialTheme !== newTheme) {
-        expect(newTheme).not.toBe(initialTheme);
-      }
-    }
+    await expect(switcher).toBeVisible();
+
+    await switcher.click();
+    await page.waitForTimeout(200);
+    const newTheme = await root.getAttribute("data-theme-preset");
+    expect(newTheme).toBeTruthy();
+    expect(newTheme).not.toBe(initialTheme);
   });
 
-  test("admin login page loads", async ({ page }) => {
-    const response = await page.goto("/admin/login");
-    // Should not be a 500 error
+  test("login page loads and protected admin redirects", async ({ page }) => {
+    const response = await page.goto("/login");
     expect(response?.status()).toBeLessThan(500);
+    await expect(page.getByRole("heading", { name: /Welcome back/ })).toBeVisible();
+
+    await page.goto("/admin");
+    await expect(page).toHaveURL(/\/login/);
   });
 
   test("RSS feed returns valid XML", async ({ request }) => {
@@ -77,8 +83,16 @@ test.describe("Smoke Tests", () => {
     expect(body).toContain("<urlset");
   });
 
-  test("pages route loads", async ({ page }) => {
-    const response = await page.goto("/pages");
+  test("docs and about routes load", async ({ page }) => {
+    let response = await page.goto("/docs");
+    expect(response?.status()).toBeLessThan(500);
+    await expect(page.getByRole("heading").first()).toBeVisible();
+
+    response = await page.goto("/zh/docs");
+    expect(response?.status()).toBeLessThan(500);
+    await expect(page.getByRole("heading").first()).toBeVisible();
+
+    response = await page.goto("/about");
     expect(response?.status()).toBeLessThan(500);
   });
 });

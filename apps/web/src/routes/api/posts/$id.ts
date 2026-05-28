@@ -1,7 +1,7 @@
 import { localizePost } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { findPost, getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
+import { getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { deleteD1Post, getD1PostByIdOrSlug, updateD1Post } from "#/lib/cms-d1";
 
@@ -16,13 +16,13 @@ export const Route = createFileRoute("/api/posts/$id")({
         }
 
         const locale = getApiLocale(request);
-        const post = (await getD1PostByIdOrSlug(params.id)) ?? findPost(params.id, locale);
+        const post = await getD1PostByIdOrSlug(params.id, true);
 
         if (!post) {
           return jsonResponse({ error: "Post not found" }, { status: 404 });
         }
 
-        return jsonResponse({ data: post, locale });
+        return jsonResponse({ data: localizePost(post, locale), locale });
       },
       PATCH: async ({ params, request }: { params: { id: string }; request: Request }) => {
         const body = await readJsonBody<Record<string, unknown>>(request);

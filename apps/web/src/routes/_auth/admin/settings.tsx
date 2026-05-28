@@ -1,18 +1,19 @@
-import {
-  apiTokens,
-  getSiteSettingsForLocale,
-  type ApiToken,
-  type ApiTokenScope,
-  type SiteSettings,
-} from "@repo/core";
+import { type ApiToken, type ApiTokenScope, type SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { createFileRoute } from "@tanstack/react-router";
-import { KeyRoundIcon } from "lucide-react";
+import { DownloadIcon, KeyRoundIcon, LinkIcon, UploadIcon, UserRoundIcon } from "lucide-react";
 import { useEffect, useState, type ComponentProps } from "react";
 
-import { apiTokenScopes } from "#/lib/cms-api";
+import {
+  AdminPageHeader,
+  AdminPanel,
+  adminPanelClassName,
+  adminSelectClassName,
+  adminTextareaClassName,
+} from "#/components/admin/admin-ui";
+import { apiTokenScopes } from "#/lib/cms-api-utils";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
@@ -30,6 +31,18 @@ type EmailVerificationStatus = {
     missing: string[];
   };
 };
+type PortabilityStatus = {
+  tone: "success" | "error";
+  message: string;
+};
+type ImportPayload = {
+  data?: {
+    post?: {
+      title?: string;
+    };
+  };
+  error?: string;
+};
 
 const defaultEmailVerificationStatus: EmailVerificationStatus = {
   delivery: {
@@ -43,13 +56,36 @@ const defaultEmailVerificationStatus: EmailVerificationStatus = {
 
 function AdminSettingsPage() {
   const locale = getCurrentLocale();
-  const [siteSettings, setSiteSettings] = useState<SiteSettings>(getSiteSettingsForLocale(locale));
+  const defaultSettings: SiteSettings = {
+    name: "",
+    description: "",
+    url: "",
+    authorName: "",
+    authorBio: "",
+    avatarUrl: "",
+    defaultOgImage: "",
+    socialLinks: [],
+    navigation: [],
+    rssEnabled: true,
+    commentsEnabled: true,
+    commentsRequireApproval: true,
+    commentAutoBlockEnabled: false,
+    commentBlockedKeywords: [],
+    emailVerificationEnabled: false,
+    indexingEnabled: true,
+    themePreset: "maker",
+    layoutPreset: "journal",
+    locales: ["en", "zh"],
+    primaryLanguage: "en",
+  };
+  const [siteSettings, setSiteSettings] = useState<SiteSettings>(defaultSettings);
   const [emailStatus, setEmailStatus] = useState<EmailVerificationStatus>(
     defaultEmailVerificationStatus,
   );
-  const [tokens, setTokens] = useState<ApiToken[]>(apiTokens);
+  const [tokens, setTokens] = useState<ApiToken[]>([]);
   const [secret, setSecret] = useState<string | null>(null);
   const [settingsStatus, setSettingsStatus] = useState<"idle" | "saved" | "error">("idle");
+  const [portabilityStatus, setPortabilityStatus] = useState<PortabilityStatus | null>(null);
 
   useEffect(() => {
     let ignore = false;
@@ -103,7 +139,10 @@ function AdminSettingsPage() {
         description: formData.get("description"),
         authorName: formData.get("authorName"),
         authorBio: formData.get("authorBio"),
+        avatarUrl: formData.get("avatarUrl"),
         defaultOgImage: formData.get("defaultOgImage"),
+        socialLinks: parseLinkLines(formData.get("socialLinks")),
+        navigation: parseLinkLines(formData.get("navigation")),
         themePreset: formData.get("themePreset"),
         primaryLanguage: formData.get("primaryLanguage"),
         rssEnabled: formData.get("rssEnabled") === "on",
@@ -164,6 +203,113 @@ function AdminSettingsPage() {
     setTokens((current) => current.map((token) => (token.id === id ? payload.data : token)));
   };
 
+  const downloadExport = async (format: "json" | "zip") => {
+    setPortabilityStatus(null);
+
+    const response = await fetch(
+      `/api/export?lang=${locale}${format === "zip" ? "&format=zip" : ""}`,
+    );
+
+    if (!response.ok) {
+      setPortabilityStatus({ tone: "error", message: m.admin_export_error() });
+      return;
+    }
+
+    if (format === "zip") {
+      const blob = await response.blob();
+      downloadBlob(blob, responseFilename(response) ?? exportFilename("zip"));
+      setPortabilityStatus({ tone: "success", message: m.admin_export_started() });
+      return;
+    }
+
+    const payload = (await response.json()) as { data?: unknown };
+    const blob = new Blob([`${JSON.stringify(payload.data ?? payload, null, 2)}\n`], {
+      type: "application/json",
+    });
+    downloadBlob(blob, exportFilename("json"));
+    setPortabilityStatus({ tone: "success", message: m.admin_export_started() });
+  };
+
+  const createBackup = async () => {
+    setPortabilityStatus(null);
+    const response = await fetch("/api/backups", { method: "POST" });
+
+    if (!response.ok) {
+      setPortabilityStatus({ tone: "error", message: m.admin_backup_error() });
+      return;
+    }
+
+    setPortabilityStatus({ tone: "success", message: m.admin_backup_created() });
+  };
+
+  const importContent: FormSubmitHandler = async (event) => {
+    event.preventDefault();
+    setPortabilityStatus(null);
+
+    const formData = new FormData(event.currentTarget);
+    const file = formData.get("importFile");
+    const status = formData.get("importStatus");
+
+    if (!(file instanceof File) || file.size === 0) {
+      setPortabilityStatus({ tone: "error", message: m.admin_import_error() });
+      return;
+    }
+
+    const extension = file.name.split(".").pop()?.toLowerCase();
+    const baseBody = {
+      filename: file.name,
+      status: status === "published" ? "published" : "draft",
+      locale,
+    };
+    const request =
+      extension === "zip"
+        ? {
+            endpoint: "/api/import/zip",
+            body: {
+              ...baseBody,
+              contentBase64: await fileToBase64(file),
+            },
+          }
+        : extension === "html" || extension === "htm"
+          ? {
+              endpoint: "/api/import/html",
+              body: {
+                ...baseBody,
+                contentHtml: await file.text(),
+              },
+            }
+          : {
+              endpoint: "/api/import/markdown",
+              body: {
+                ...baseBody,
+                contentMarkdown: await file.text(),
+              },
+            };
+
+    const response = await fetch(request.endpoint, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(request.body),
+    });
+    const payload = (await response.json().catch(() => ({}))) as ImportPayload;
+
+    if (!response.ok) {
+      setPortabilityStatus({
+        tone: "error",
+        message: payload.error || m.admin_import_error(),
+      });
+      return;
+    }
+
+    event.currentTarget.reset();
+    setPortabilityStatus({
+      tone: "success",
+      message: m.admin_import_success({
+        title: payload.data?.post?.title || file.name,
+      }),
+    });
+  };
+
   const emailProviderLabel =
     emailStatus.delivery.provider === "cloudflare"
       ? "Cloudflare Email"
@@ -172,31 +318,44 @@ function AdminSettingsPage() {
         : "";
 
   return (
-    <div className="grid gap-6">
-      <section className="rounded-lg border border-border/80 bg-card p-6 shadow-xs">
+    <div className="grid gap-5">
+      <AdminPageHeader
+        title={m.admin_settings_title()}
+        description={m.admin_settings_help()}
+        actions={
+          settingsStatus !== "idle" ? (
+            <p
+              className={`self-center text-sm ${
+                settingsStatus === "saved" ? "text-success" : "text-destructive"
+              }`}
+            >
+              {settingsStatus === "saved" ? m.admin_settings_saved() : m.admin_settings_error()}
+            </p>
+          ) : null
+        }
+      />
+
+      <section>
         <form
-          key={`${siteSettings.url}-${siteSettings.emailVerificationEnabled}`}
+          key={[
+            siteSettings.url,
+            siteSettings.avatarUrl,
+            siteSettings.emailVerificationEnabled,
+            siteSettings.socialLinks.length,
+            siteSettings.navigation.length,
+          ].join("-")}
           onSubmit={saveSettings}
-          className="grid gap-6"
+          className={`${adminPanelClassName} grid gap-5`}
         >
-          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-            <div>
-              <h1 className="text-2xl font-semibold">{m.admin_settings_title()}</h1>
-              <p className="mt-2 text-sm text-muted-foreground">{m.admin_settings_help()}</p>
-              {settingsStatus !== "idle" ? (
-                <p
-                  className={`mt-2 text-sm ${
-                    settingsStatus === "saved" ? "text-success" : "text-destructive"
-                  }`}
-                >
-                  {settingsStatus === "saved" ? m.admin_settings_saved() : m.admin_settings_error()}
-                </p>
-              ) : null}
-            </div>
+          <div className="flex justify-end">
             <Button type="submit">{m.admin_save_settings()}</Button>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="flex items-center gap-2 md:col-span-2">
+              <UserRoundIcon className="size-4 text-link" />
+              <h2 className="text-sm font-semibold">{m.admin_settings_identity()}</h2>
+            </div>
             <div className="grid gap-2">
               <Label htmlFor="site-name">{m.admin_settings_site_name()}</Label>
               <Input id="site-name" name="siteName" defaultValue={siteSettings.name} />
@@ -218,6 +377,15 @@ function AdminSettingsPage() {
               <Input id="author-name" name="authorName" defaultValue={siteSettings.authorName} />
             </div>
             <div className="grid gap-2">
+              <Label htmlFor="avatar-url">{m.admin_settings_avatar_url()}</Label>
+              <Input
+                id="avatar-url"
+                name="avatarUrl"
+                defaultValue={siteSettings.avatarUrl}
+                placeholder="/avatar.jpg"
+              />
+            </div>
+            <div className="grid gap-2">
               <Label htmlFor="default-og">{m.admin_settings_default_og()}</Label>
               <Input
                 id="default-og"
@@ -229,13 +397,45 @@ function AdminSettingsPage() {
               <Label htmlFor="author-bio">{m.admin_settings_author_bio()}</Label>
               <Input id="author-bio" name="authorBio" defaultValue={siteSettings.authorBio} />
             </div>
+            <fieldset className="grid gap-3 rounded-md border border-border bg-muted/35 p-4 md:col-span-2">
+              <legend className="px-1 text-sm font-medium">
+                <span className="inline-flex items-center gap-2">
+                  <LinkIcon className="size-4 text-link" />
+                  {m.admin_settings_links()}
+                </span>
+              </legend>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-2">
+                  <Label htmlFor="social-links">{m.admin_settings_social_links()}</Label>
+                  <textarea
+                    id="social-links"
+                    name="socialLinks"
+                    defaultValue={formatLinkLines(siteSettings.socialLinks)}
+                    placeholder="GitHub | https://github.com/01mvp/blog-starter"
+                    rows={4}
+                    className={`${adminTextareaClassName} min-h-24`}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="navigation-links">{m.admin_settings_navigation_links()}</Label>
+                  <textarea
+                    id="navigation-links"
+                    name="navigation"
+                    defaultValue={formatLinkLines(siteSettings.navigation)}
+                    placeholder="Blog | /blog"
+                    rows={4}
+                    className={`${adminTextareaClassName} min-h-24`}
+                  />
+                </div>
+              </div>
+            </fieldset>
             <div className="grid gap-2">
               <Label htmlFor="primary-language">{m.admin_settings_language()}</Label>
               <select
                 id="primary-language"
                 name="primaryLanguage"
                 defaultValue={siteSettings.primaryLanguage}
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
+                className={adminSelectClassName}
               >
                 <option value="en">English</option>
                 <option value="zh">中文</option>
@@ -247,24 +447,25 @@ function AdminSettingsPage() {
                 id="theme-preset"
                 name="themePreset"
                 defaultValue={siteSettings.themePreset}
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                className={adminSelectClassName}
               >
-                <option value="maker">Maker</option>
+                <option value="maker">{m.theme_preset_maker()}</option>
                 <option value="apple">{m.theme_preset_apple()}</option>
-                <option value="editorial">{m.theme_preset_editorial()}</option>
+                <option value="claude">{m.theme_preset_claude()}</option>
+                <option value="brutalist">{m.theme_preset_brutalist()}</option>
               </select>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="layout-preset">Homepage layout</Label>
+              <Label htmlFor="layout-preset">{m.admin_settings_layout_preset()}</Label>
               <select
                 id="layout-preset"
                 name="layoutPreset"
                 defaultValue={siteSettings.layoutPreset}
-                className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                className={adminSelectClassName}
               >
-                <option value="shelf">Shelf</option>
-                <option value="developer">Developer</option>
-                <option value="journal">Journal</option>
+                <option value="shelf">{m.layout_preset_shelf()}</option>
+                <option value="developer">{m.layout_preset_developer()}</option>
+                <option value="journal">{m.layout_preset_journal()}</option>
               </select>
             </div>
             <div className="grid content-end gap-2">
@@ -362,7 +563,7 @@ function AdminSettingsPage() {
                   name="commentBlockedKeywords"
                   defaultValue={siteSettings.commentBlockedKeywords.join("\n")}
                   rows={5}
-                  className="min-h-28 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
+                  className={`${adminTextareaClassName} min-h-28`}
                 />
                 <p className="text-xs text-muted-foreground">
                   {m.admin_comments_blocked_keywords_help()}
@@ -373,7 +574,81 @@ function AdminSettingsPage() {
         </form>
       </section>
 
-      <section className="rounded-lg border border-border/80 bg-card p-6 shadow-xs">
+      <AdminPanel>
+        <div className="flex items-start gap-3">
+          <DownloadIcon className="mt-1 size-5 text-link" />
+          <div>
+            <h2 className="text-xl font-semibold">{m.admin_import_export_title()}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {m.admin_import_export_description()}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="grid content-start gap-3 rounded-md border border-border bg-muted/35 p-4">
+            <h3 className="text-sm font-semibold">{m.admin_export_title()}</h3>
+            <div className="flex flex-wrap gap-2">
+              <Button type="button" variant="outline" onClick={() => void downloadExport("json")}>
+                <DownloadIcon />
+                {m.admin_export_json()}
+              </Button>
+              <Button type="button" variant="outline" onClick={() => void downloadExport("zip")}>
+                <DownloadIcon />
+                {m.admin_export_zip()}
+              </Button>
+              <Button type="button" onClick={() => void createBackup()}>
+                {m.admin_create_backup()}
+              </Button>
+            </div>
+          </div>
+
+          <form
+            onSubmit={importContent}
+            className="grid gap-4 rounded-md border border-border bg-muted/35 p-4"
+          >
+            <div className="flex items-center gap-2">
+              <UploadIcon className="size-4 text-link" />
+              <h3 className="text-sm font-semibold">{m.admin_import_title()}</h3>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-[1fr_160px]">
+              <div className="grid gap-2">
+                <Label htmlFor="import-file">{m.admin_import_file()}</Label>
+                <Input
+                  id="import-file"
+                  name="importFile"
+                  type="file"
+                  accept=".md,.mdx,.html,.htm,.zip,text/markdown,text/html,application/zip"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="import-status">{m.admin_import_status()}</Label>
+                <select id="import-status" name="importStatus" className={adminSelectClassName}>
+                  <option value="draft">{m.admin_post_status_draft_label()}</option>
+                  <option value="published">{m.admin_post_status_published_label()}</option>
+                </select>
+              </div>
+            </div>
+            <Button type="submit" className="w-fit">
+              <UploadIcon />
+              {m.admin_import_submit()}
+            </Button>
+          </form>
+        </div>
+
+        {portabilityStatus ? (
+          <p
+            className={`mt-4 text-sm ${
+              portabilityStatus.tone === "success" ? "text-success" : "text-destructive"
+            }`}
+          >
+            {portabilityStatus.message}
+          </p>
+        ) : null}
+      </AdminPanel>
+
+      <AdminPanel>
         <div className="flex items-start gap-3">
           <KeyRoundIcon className="mt-1 size-5 text-link" />
           <div>
@@ -437,7 +712,88 @@ function AdminSettingsPage() {
             </article>
           ))}
         </div>
-      </section>
+      </AdminPanel>
     </div>
   );
+}
+
+function parseLinkLines(value: FormDataEntryValue | null): SiteSettings["socialLinks"] {
+  if (typeof value !== "string") {
+    return [];
+  }
+
+  return value
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const separator = line.indexOf("|");
+      const label = separator >= 0 ? line.slice(0, separator).trim() : "";
+      const href = separator >= 0 ? line.slice(separator + 1).trim() : line;
+
+      if (!href) {
+        return null;
+      }
+
+      return {
+        label: label || linkLabelFromHref(href),
+        href,
+      };
+    })
+    .filter((link): link is SiteSettings["socialLinks"][number] => Boolean(link));
+}
+
+function formatLinkLines(links: SiteSettings["socialLinks"]) {
+  return links.map((link) => `${link.label} | ${link.href}`).join("\n");
+}
+
+function linkLabelFromHref(href: string) {
+  if (href.startsWith("/")) {
+    return href.replace(/^\/+/, "") || "Home";
+  }
+
+  try {
+    return new URL(href).hostname.replace(/^www\./, "");
+  } catch {
+    return href;
+  }
+}
+
+function exportFilename(format: "json" | "zip") {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  return `01mvp-blog-starter-${timestamp}.${format}`;
+}
+
+function responseFilename(response: Response) {
+  const disposition = response.headers.get("content-disposition") ?? "";
+  const match = /filename="([^"]+)"/.exec(disposition);
+
+  return match?.[1];
+}
+
+function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function fileToBase64(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.addEventListener("load", () => {
+      const result = typeof reader.result === "string" ? reader.result : "";
+      resolve(result.split(",")[1] ?? "");
+    });
+    reader.addEventListener("error", () => {
+      reject(reader.error);
+    });
+    reader.readAsDataURL(file);
+  });
 }

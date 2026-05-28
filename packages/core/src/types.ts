@@ -2,7 +2,7 @@ export type ContentStatus = "draft" | "published" | "scheduled" | "archived" | "
 
 export type SupportedLocale = "en" | "zh";
 
-export type ThemePreset = "maker" | "apple" | "editorial";
+export type ThemePreset = "maker" | "apple" | "claude" | "brutalist";
 export type LayoutPreset = "shelf" | "developer" | "journal";
 
 export type LocalizedString = Partial<Record<SupportedLocale, string>>;

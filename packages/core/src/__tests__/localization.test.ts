@@ -7,7 +7,7 @@ import {
   localizePost,
   localizeSiteSettings,
 } from "../index";
-import type { SupportedLocale, Tag, Post, SiteSettings } from "../types";
+import type { Tag, Post, SiteSettings } from "../types";
 
 describe("resolveLocale", () => {
   it('returns "zh" for "zh"', () => {

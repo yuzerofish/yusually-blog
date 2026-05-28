@@ -2,14 +2,10 @@ import type { AuthQueryResult } from "@repo/auth/tanstack/queries";
 import { getSiteSettingsForLocale } from "@repo/core";
 import { Toaster } from "@repo/ui/components/sonner";
 import { ThemeProvider } from "@repo/ui/lib/theme-provider";
-import { a11yDevtoolsPlugin } from "@tanstack/devtools-a11y/react";
-import { TanStackDevtools } from "@tanstack/react-devtools";
-import { formDevtoolsPlugin } from "@tanstack/react-form-devtools";
 import type { QueryClient } from "@tanstack/react-query";
-import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { RootProvider as FumadocsRootProvider } from "fumadocs-ui/provider/tanstack";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
@@ -77,6 +73,54 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   shellComponent: RootDocument,
 });
 
+function DevToolsWrapper() {
+  const [devtools, setDevtools] = useState<React.ReactNode>(null);
+  const loadedRef = useRef(false);
+  const [, startTransition] = useTransition();
+
+  useEffect(() => {
+    if (loadedRef.current) return;
+    loadedRef.current = true;
+
+    void (async () => {
+      const [
+        { TanStackDevtools },
+        { ReactQueryDevtoolsPanel },
+        { TanStackRouterDevtoolsPanel },
+        { formDevtoolsPlugin },
+        { a11yDevtoolsPlugin },
+      ] = await Promise.all([
+        import("@tanstack/react-devtools"),
+        import("@tanstack/react-query-devtools"),
+        import("@tanstack/react-router-devtools"),
+        import("@tanstack/react-form-devtools"),
+        import("@tanstack/devtools-a11y/react"),
+      ]);
+
+      startTransition(() =>
+        setDevtools(
+          <TanStackDevtools
+            plugins={[
+              {
+                name: "TanStack Query",
+                render: <ReactQueryDevtoolsPanel />,
+              },
+              {
+                name: "TanStack Router",
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+              formDevtoolsPlugin(),
+              a11yDevtoolsPlugin(),
+            ]}
+          />,
+        ),
+      );
+    })();
+  }, []);
+
+  return devtools;
+}
+
 function RootDocument({ children }: { readonly children: React.ReactNode }) {
   const locale = getCurrentLocale();
 
@@ -94,20 +138,7 @@ function RootDocument({ children }: { readonly children: React.ReactNode }) {
           </FumadocsRootProvider>
         </ThemeProvider>
 
-        <TanStackDevtools
-          plugins={[
-            {
-              name: "TanStack Query",
-              render: <ReactQueryDevtoolsPanel />,
-            },
-            {
-              name: "TanStack Router",
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-            formDevtoolsPlugin(),
-            a11yDevtoolsPlugin(),
-          ]}
-        />
+        {import.meta.env.DEV ? <DevToolsWrapper /> : null}
 
         <Scripts />
       </body>
