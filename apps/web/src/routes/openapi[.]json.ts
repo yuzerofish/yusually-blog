@@ -596,7 +596,7 @@ export const Route = createFileRoute("/openapi.json")({
               BackupResult: {
                 type: "object",
                 properties: {
-                  trigger: { enum: ["manual", "cron"] },
+                  trigger: { enum: ["manual"] },
                   backup: {
                     type: "object",
                     properties: {

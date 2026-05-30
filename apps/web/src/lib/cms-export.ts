@@ -58,7 +58,7 @@ export async function buildExportZipBundle(locale: SupportedLocale): Promise<Exp
   };
 }
 
-export async function createScheduledBackup(input: { trigger: "manual" | "cron"; cron?: string }) {
+export async function createBackup() {
   const settings = await getD1SiteSettings("en").catch(() => undefined);
   const locale = resolveLocale(settings?.primaryLanguage);
   const bundle = await buildExportZipBundle(locale);
@@ -71,13 +71,12 @@ export async function createScheduledBackup(input: { trigger: "manual" | "cron";
   await notifyBackupCompleted({
     backupKey: backup.key,
     sizeBytes: backup.sizeBytes,
-    trigger: input.trigger,
+    trigger: "manual",
     prunedCount: pruned.deletedKeys.length,
   });
 
   return {
-    trigger: input.trigger,
-    cron: input.cron ?? null,
+    trigger: "manual" as const,
     backup,
     retentionDays,
     prunedKeys: pruned.deletedKeys,

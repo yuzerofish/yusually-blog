@@ -291,7 +291,7 @@ export async function notifyExportCompleted(input: {
 export async function notifyBackupCompleted(input: {
   backupKey: string;
   sizeBytes: number;
-  trigger: "manual" | "cron";
+  trigger: "manual";
   prunedCount: number;
 }) {
   return sendCmsEmail({

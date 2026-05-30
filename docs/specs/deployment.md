@@ -17,7 +17,6 @@ Canonical production target:
 - D1: `blog-starter-cms`, id `b267c97c-72a5-45a1-9f5a-cfd0b8e8067c`
 - R2 storage: `blog-starter-assets`
 - KV: `CMS_CACHE`, id `c1150cc286374ba9919f48f48a985f36`
-- Cron Trigger: `0 3 * * *`
 - Backup retention: 30 days
 - Wrangler config: `apps/web/wrangler.jsonc`
 - Current verified version: `bd7113d3-4755-4c3c-82fb-c78e2531af58`
@@ -77,7 +76,7 @@ The Cloudflare Vite plugin writes the effective deploy config into `apps/web/dis
 
 Because the custom domain is configured in Wrangler, use `https://blog.01mvp.com` for verification.
 
-Wrangler uses `apps/web/src/server.ts` as the Worker entry. It delegates HTTP requests to TanStack Start and exposes a `scheduled` handler for automatic ZIP backups.
+Wrangler uses `apps/web/src/server.ts` as the Worker entry. It delegates HTTP requests to TanStack Start. Backups are manual through `/admin/settings` or `POST /api/backups`.
 
 ## GitHub Comment Login
 

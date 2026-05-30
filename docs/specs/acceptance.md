@@ -10,7 +10,7 @@ This document records the current evidence for the PRD acceptance scope. Dates a
 - D1 migrations include `0001_cloud_blog_cms.sql`, `0002_better_auth_d1.sql`, `0003_pages_projects_management.sql`, `0004_comment_moderation.sql`, `0005_drop_projects.sql`, `0006_drop_legacy_auth_tables.sql`, `0007_drop_pages.sql`, and `0008_post_series.sql`.
 - Email Sending is disabled by default and the core login, publishing, comments, moderation, import, export, backup, and password reset request paths do not depend on it.
 - Blog post pages render canonical, Open Graph, Twitter Card, and JSON-LD `BlogPosting` metadata.
-- The Worker deploy publishes the daily backup Cron Trigger `0 3 * * *`.
+- The default Worker deploy does not publish a backup Cron Trigger. Backups are created manually from the admin UI or `POST /api/backups`.
 - `pnpm deploy:web` runs the build, remote D1 migration, and Wrangler deploy sequence.
 - Unauthenticated ZIP export and backup requests return HTTP 401 JSON responses.
 - Unauthenticated post batch updates return HTTP 401 JSON with `requiredScope: "posts:write"`.

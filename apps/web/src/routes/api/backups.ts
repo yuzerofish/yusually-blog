@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { jsonResponse } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
-import { createScheduledBackup } from "#/lib/cms-export";
+import { createBackup } from "#/lib/cms-export";
 
 export const Route = createFileRoute("/api/backups")({
   server: {
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/api/backups")({
           return accessError;
         }
 
-        const backup = await createScheduledBackup({ trigger: "manual" });
+        const backup = await createBackup();
 
         return jsonResponse(backup, { status: 201 });
       },

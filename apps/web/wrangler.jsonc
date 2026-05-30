@@ -7,9 +7,6 @@
   "observability": {
     "enabled": true,
   },
-  "triggers": {
-    "crons": ["0 3 * * *"],
-  },
   "routes": [{ "pattern": "blog.01mvp.com", "custom_domain": true }],
   "vars": {
     "VITE_BASE_URL": "https://blog.01mvp.com",

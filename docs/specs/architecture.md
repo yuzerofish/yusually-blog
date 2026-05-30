@@ -16,7 +16,6 @@
 - D1 stores posts, comments, site settings, Better Auth identities and sessions, API tokens, tags, and asset metadata.
 - R2 stores uploaded assets, import packages, JSON exports, and full ZIP backups.
 - KV is available as the `CMS_CACHE` binding for cache metadata.
-- Cron Triggers call the custom Worker entry once per day to generate a ZIP backup and prune old backup objects.
 - Turnstile and Cloudflare Email Sending are optional. Empty Turnstile and Email bindings do not block login, publishing, comment moderation, imports, exports, or backups.
 
 ## Internationalization
@@ -46,7 +45,7 @@ Markdown imports parse simple frontmatter and preserve Markdown as the source of
 
 ## Export And Backup Flow
 
-JSON export remains the lightweight API response for automation. ZIP export packages Markdown, HTML, site settings, posts, comments, assets, tags, and a manifest under `export/`, stores the archive in R2, and rewrites known local asset URLs to relative paths inside the archive. Manual backups use `POST /api/backups`; scheduled backups use the same ZIP builder from the Worker `scheduled` handler.
+JSON export remains the lightweight API response for automation. ZIP export packages Markdown, HTML, site settings, posts, comments, assets, tags, and a manifest under `export/`, stores the archive in R2, and rewrites known local asset URLs to relative paths inside the archive. Manual backups use `POST /api/backups` and the same ZIP builder.
 
 ## Email Flow
 

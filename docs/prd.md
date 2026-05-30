@@ -151,7 +151,6 @@ TanStack Start + Cloudflare Workers + D1 + R2
 对象存储：Cloudflare R2
 缓存：Cloudflare Cache API / KV
 防垃圾：Cloudflare Turnstile
-定时任务：Cron Triggers
 队列：Cloudflare Queues，可选
 邮件：Cloudflare Email Service，可选增强
 部署：Wrangler / Cloudflare API / Cloudflare Skill
@@ -1195,8 +1194,7 @@ OpenAPI 评论审核
 忘记密码邮件
 可选邮箱验证码登录
 导入导出完成通知
-每日 / 每周自动备份
-Cron Triggers
+手动备份
 备份 ZIP 存 R2
 备份保留策略
 ```
