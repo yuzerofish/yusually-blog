@@ -1,4 +1,9 @@
-import { type Comment, type Post, type SiteSettings } from "@repo/core";
+import {
+  defaultAiCommentModerationRules,
+  type Comment,
+  type Post,
+  type SiteSettings,
+} from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Label } from "@repo/ui/components/label";
 import { Link, createFileRoute } from "@tanstack/react-router";
@@ -36,6 +41,8 @@ type CommentSettings = Pick<
   | "commentsRequireApproval"
   | "commentAutoBlockEnabled"
   | "commentBlockedKeywords"
+  | "aiCommentModerationEnabled"
+  | "aiCommentModerationRules"
 >;
 
 const commentStatuses: Array<Comment["status"]> = ["pending", "approved", "spam", "deleted"];
@@ -44,6 +51,8 @@ const defaultCommentSettings: CommentSettings = {
   commentsRequireApproval: true,
   commentAutoBlockEnabled: false,
   commentBlockedKeywords: [],
+  aiCommentModerationEnabled: false,
+  aiCommentModerationRules: defaultAiCommentModerationRules,
 };
 
 function AdminCommentsPage() {
@@ -152,6 +161,10 @@ function AdminCommentsPage() {
         commentsRequireApproval: formData.get("commentsRequireApproval") === "on",
         commentAutoBlockEnabled: formData.get("commentAutoBlockEnabled") === "on",
         commentBlockedKeywords: parseCommentBlockedKeywords(formData.get("commentBlockedKeywords")),
+        aiCommentModerationEnabled: formData.get("aiCommentModerationEnabled") === "on",
+        aiCommentModerationRules:
+          formValueString(formData.get("aiCommentModerationRules")).trim() ||
+          defaultAiCommentModerationRules,
       }),
     }).catch(() => null);
 
@@ -199,6 +212,8 @@ function AdminCommentsPage() {
     commentSettings.commentsRequireApproval,
     commentSettings.commentAutoBlockEnabled,
     commentSettings.commentBlockedKeywords.join("\n"),
+    commentSettings.aiCommentModerationEnabled,
+    commentSettings.aiCommentModerationRules,
   ].join("|");
 
   const toggleAllVisible = () => {
@@ -308,6 +323,15 @@ function AdminCommentsPage() {
                 />
                 {m.admin_comments_auto_block()}
               </label>
+              <label className="flex items-center gap-2 text-sm sm:col-span-2">
+                <input
+                  type="checkbox"
+                  name="aiCommentModerationEnabled"
+                  defaultChecked={commentSettings.aiCommentModerationEnabled}
+                  className="size-4 rounded border-input"
+                />
+                {locale === "zh" ? "使用 AI 辅助审核评论" : "Use AI to help review comments"}
+              </label>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="comment-blocked-keywords">
@@ -322,6 +346,23 @@ function AdminCommentsPage() {
               />
               <p className="text-xs text-muted-foreground">
                 {m.admin_comments_blocked_keywords_help()}
+              </p>
+            </div>
+            <div className="grid gap-2 lg:col-span-2">
+              <Label htmlFor="ai-comment-moderation-rules">
+                {locale === "zh" ? "AI 审核规则" : "AI review rules"}
+              </Label>
+              <textarea
+                id="ai-comment-moderation-rules"
+                name="aiCommentModerationRules"
+                defaultValue={commentSettings.aiCommentModerationRules}
+                rows={4}
+                className={`${adminTextareaClassName} min-h-28`}
+              />
+              <p className="text-xs text-muted-foreground">
+                {locale === "zh"
+                  ? "启用 AI 审核且已配置模型后，新评论会按这些规则辅助判断。模型异常时会回到原有审核逻辑。"
+                  : "When AI review and a model are configured, new comments are checked against these rules. If the model fails, the existing moderation flow remains in place."}
               </p>
             </div>
           </div>
@@ -536,6 +577,8 @@ function pickCommentSettings(settings: SiteSettings): CommentSettings {
     commentsRequireApproval: settings.commentsRequireApproval,
     commentAutoBlockEnabled: settings.commentAutoBlockEnabled,
     commentBlockedKeywords: settings.commentBlockedKeywords,
+    aiCommentModerationEnabled: settings.aiCommentModerationEnabled,
+    aiCommentModerationRules: settings.aiCommentModerationRules,
   };
 }
 
@@ -546,6 +589,10 @@ function parseCommentBlockedKeywords(value: FormDataEntryValue | null) {
         .map((item) => item.trim())
         .filter(Boolean)
     : [];
+}
+
+function formValueString(value: FormDataEntryValue | null) {
+  return typeof value === "string" ? value : "";
 }
 
 function commentStatusLabel(status: Comment["status"]) {

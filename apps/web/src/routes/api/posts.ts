@@ -4,6 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createPostPreview, getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { createD1Post, listD1Posts } from "#/lib/cms-d1";
+import { applyPublishingAutomation } from "#/lib/content-automation.server";
 
 export const Route = createFileRoute("/api/posts")({
   server: {
@@ -52,10 +53,12 @@ export const Route = createFileRoute("/api/posts")({
           }
         }
 
-        const post = await createD1Post({
+        const locale = resolveLocale(body.locale);
+        const postInput = await applyPublishingAutomation({
           ...body,
-          locale: resolveLocale(body.locale),
+          locale,
         });
+        const post = await createD1Post(postInput);
 
         return jsonResponse(
           {

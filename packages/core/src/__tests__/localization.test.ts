@@ -172,6 +172,8 @@ describe("localizeSiteSettings", () => {
     commentsRequireApproval: true,
     commentAutoBlockEnabled: false,
     commentBlockedKeywords: [],
+    aiCommentModerationEnabled: false,
+    aiCommentModerationRules: "",
     emailVerificationEnabled: false,
     indexingEnabled: true,
     themePreset: "maker",

@@ -5,12 +5,16 @@ import { ThemeProvider } from "@repo/ui/lib/theme-provider";
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { RootProvider as FumadocsRootProvider } from "fumadocs-ui/provider/tanstack";
+import Prism from "prismjs";
 import { useEffect, useRef, useState, useTransition } from "react";
 
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
 import appCss from "#/styles.css?url";
+
+Prism.manual = true;
+(globalThis as typeof globalThis & { Prism?: typeof Prism }).Prism = Prism;
 
 interface MyRouterContext {
   queryClient: QueryClient;

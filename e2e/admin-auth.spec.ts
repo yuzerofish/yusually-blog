@@ -54,6 +54,25 @@ test.describe("Admin authentication", () => {
     }
   });
 
+  test("loads the new post editor without client runtime errors", async ({ page }) => {
+    const pageErrors: string[] = [];
+    page.on("pageerror", (error) => pageErrors.push(error.message));
+
+    await logInAsLocalAdmin(page);
+
+    const response = await page.goto("/admin/posts/new", { waitUntil: "domcontentloaded" });
+    expect(response?.status(), "new post editor should not return a server error").toBeLessThan(
+      500,
+    );
+    await expect(page.getByRole("heading", { name: "New post" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Editor" })).toBeVisible();
+    await expect(page.locator('[contenteditable="true"]').first()).toBeVisible({
+      timeout: 15_000,
+    });
+    await expect(page.getByText("Something went wrong")).toHaveCount(0);
+    expect(pageErrors).toEqual([]);
+  });
+
   test("logs in with the native form fallback", async ({ browser }) => {
     const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
     const page = await context.newPage();

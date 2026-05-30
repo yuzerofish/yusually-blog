@@ -1,7 +1,7 @@
 import { type ContentStatus, type Post } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, SparklesIcon } from "lucide-react";
 import { useEffect, useState, type ComponentProps } from "react";
 import { toast } from "sonner";
 
@@ -14,6 +14,8 @@ import { m } from "#/paraglide/messages.js";
 type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
 
 const defaultMarkdown = "# New post\n\nStart writing in Markdown.";
+const aiSettingsEndpoint = "/api/admin/ai-settings";
+const aiPublishNoticeStorageKey = "blogcms:ai-publish-automation-notice-dismissed";
 
 interface PostEditorPageProps {
   postId?: string;
@@ -32,6 +34,9 @@ export function PostEditorPage({ postId }: PostEditorPageProps) {
   const [editorMode, setEditorMode] = useState<"editor" | "source" | "preview">("editor");
   const [editorState, setEditorState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [markdown, setMarkdown] = useState(defaultMarkdown);
+  const [aiAutomationConfigured, setAiAutomationConfigured] = useState(false);
+  const [showAiPublishNotice, setShowAiPublishNotice] = useState(false);
+  const [dismissAiPublishNotice, setDismissAiPublishNotice] = useState(false);
   const [fallbackPublishedAtIso] = useState(() =>
     new Date(Date.now() + 60 * 60 * 1000).toISOString(),
   );
@@ -84,13 +89,39 @@ export function PostEditorPage({ postId }: PostEditorPageProps) {
     };
   }, [locale, postId]);
 
-  const handleEditorSubmit: FormSubmitHandler = async (event) => {
-    event.preventDefault();
-    setEditorState("saving");
+  useEffect(() => {
+    let ignore = false;
 
-    const formData = new FormData(event.currentTarget);
-    const submitter = (event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
-    const status = (submitter?.value as ContentStatus | undefined) ?? "draft";
+    void fetch(aiSettingsEndpoint)
+      .then((response) => (response.ok ? response.json() : undefined))
+      .then((payload) => {
+        if (!ignore) {
+          setAiAutomationConfigured(normalizeAiAutomationConfigured(payload));
+        }
+      })
+      .catch(() => undefined);
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  const currentLoadResult = postId && loadResult?.postId === postId ? loadResult : null;
+  const editingPost =
+    currentLoadResult?.state === "ready" && "post" in currentLoadResult
+      ? currentLoadResult.post
+      : null;
+  const loadState = postId ? (currentLoadResult?.state ?? "loading") : "ready";
+  const pageTitle = postId ? m.admin_editor_edit_title() : m.admin_new_post();
+
+  const submitEditorForm = async ({
+    formData,
+    status,
+  }: {
+    formData: FormData;
+    status: ContentStatus;
+  }) => {
+    setEditorState("saving");
     const endpoint = editingPost
       ? `/api/posts/${editingPost.id}?lang=${locale}`
       : `/api/posts?lang=${locale}`;
@@ -162,13 +193,33 @@ export function PostEditorPage({ postId }: PostEditorPageProps) {
     }
   };
 
-  const currentLoadResult = postId && loadResult?.postId === postId ? loadResult : null;
-  const editingPost =
-    currentLoadResult?.state === "ready" && "post" in currentLoadResult
-      ? currentLoadResult.post
-      : null;
-  const loadState = postId ? (currentLoadResult?.state ?? "loading") : "ready";
-  const pageTitle = postId ? m.admin_editor_edit_title() : m.admin_new_post();
+  const handleEditorSubmit: FormSubmitHandler = async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const submitter = (event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
+    const status = (submitter?.value as ContentStatus | undefined) ?? "draft";
+
+    if (
+      status === "published" &&
+      aiAutomationConfigured &&
+      editingPost?.status !== "published" &&
+      !hasDismissedAiPublishNotice()
+    ) {
+      setDismissAiPublishNotice(false);
+      setShowAiPublishNotice(true);
+    }
+
+    await submitEditorForm({ formData, status });
+  };
+
+  const closeAiPublishNotice = () => {
+    if (dismissAiPublishNotice) {
+      rememberAiPublishNoticeDismissed();
+    }
+
+    setShowAiPublishNotice(false);
+  };
 
   return (
     <section className="grid gap-5">
@@ -186,6 +237,15 @@ export function PostEditorPage({ postId }: PostEditorPageProps) {
           </Button>
         }
       />
+
+      {showAiPublishNotice ? (
+        <AiPublishNoticeModal
+          locale={locale}
+          dismissChecked={dismissAiPublishNotice}
+          onDismissCheckedChange={setDismissAiPublishNotice}
+          onClose={closeAiPublishNotice}
+        />
+      ) : null}
 
       {loadState === "loading" ? (
         <div
@@ -222,6 +282,70 @@ export function PostEditorPage({ postId }: PostEditorPageProps) {
   );
 }
 
+function AiPublishNoticeModal({
+  dismissChecked,
+  locale,
+  onDismissCheckedChange,
+  onClose,
+}: {
+  dismissChecked: boolean;
+  locale: "en" | "zh";
+  onDismissCheckedChange: (checked: boolean) => void;
+  onClose: () => void;
+}) {
+  const copy = getAiPublishNoticeCopy(locale);
+
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-background/75 px-4 py-8 backdrop-blur-sm">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ai-publish-notice-title"
+        className="w-full max-w-md rounded-md border border-border bg-card p-5 shadow-lg"
+      >
+        <div className="flex items-start gap-3">
+          <span className="grid size-9 shrink-0 place-items-center rounded-md bg-muted text-link">
+            <SparklesIcon className="size-4" />
+          </span>
+          <div className="min-w-0">
+            <h2 id="ai-publish-notice-title" className="text-lg font-semibold">
+              {copy.title}
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">{copy.description}</p>
+          </div>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {copy.items.map((item) => (
+            <span
+              key={item}
+              className="rounded-md border border-border bg-muted/45 px-2 py-1 text-xs font-medium text-muted-foreground"
+            >
+              {item}
+            </span>
+          ))}
+        </div>
+
+        <label className="mt-5 flex min-h-9 items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={dismissChecked}
+            onChange={(event) => onDismissCheckedChange(event.currentTarget.checked)}
+            className="size-4 rounded border-input"
+          />
+          {copy.doNotRemind}
+        </label>
+
+        <div className="mt-5 flex flex-wrap justify-end gap-2">
+          <Button type="button" onClick={onClose}>
+            {copy.confirm}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function parseTagNames(value: string) {
   return value
     .split(/[,\n]/)
@@ -237,6 +361,87 @@ function datetimeLocalToIso(value: string) {
   const date = new Date(value);
 
   return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+}
+
+function hasDismissedAiPublishNotice() {
+  try {
+    return window.localStorage.getItem(aiPublishNoticeStorageKey) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function rememberAiPublishNoticeDismissed() {
+  try {
+    window.localStorage.setItem(aiPublishNoticeStorageKey, "true");
+  } catch {
+    // Ignore storage errors so publishing remains available.
+  }
+}
+
+function normalizeAiAutomationConfigured(payload: unknown) {
+  const root = asRecord(payload);
+  const record = asRecord(root?.data) ?? root;
+
+  if (!record) {
+    return false;
+  }
+
+  const configured = readBoolean(record, ["configured", "enabled", "ready"]);
+  const apiKeyConfigured =
+    readBoolean(record, ["apiKeyConfigured", "hasApiKey", "keyConfigured"]) ?? configured ?? false;
+  const model = readString(record, ["model", "modelName"]);
+
+  return configured ?? Boolean(apiKeyConfigured && model);
+}
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return typeof value === "object" && value !== null ? (value as Record<string, unknown>) : null;
+}
+
+function readString(record: Record<string, unknown>, keys: string[]) {
+  for (const key of keys) {
+    const value = record[key];
+
+    if (typeof value === "string" && value.trim()) {
+      return value;
+    }
+  }
+
+  return undefined;
+}
+
+function readBoolean(record: Record<string, unknown>, keys: string[]) {
+  for (const key of keys) {
+    const value = record[key];
+
+    if (typeof value === "boolean") {
+      return value;
+    }
+  }
+
+  return undefined;
+}
+
+function getAiPublishNoticeCopy(locale: "en" | "zh") {
+  if (locale === "zh") {
+    return {
+      confirm: "知道了",
+      description: "发布后会自动生成摘要、Slug 和标签，并同步生成英文版本。",
+      doNotRemind: "不再提醒",
+      items: ["摘要", "Slug 和标签", "英文版本"],
+      title: "发布时会自动补全文章信息",
+    };
+  }
+
+  return {
+    confirm: "Got it",
+    description:
+      "Publishing will automatically generate the summary, slug, tags, and English version.",
+    doNotRemind: "Do not remind me again",
+    items: ["Summary", "Slug and tags", "English version"],
+    title: "Publishing will complete post details automatically",
+  };
 }
 
 function getPostEditorCopy(locale: "en" | "zh") {

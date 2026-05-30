@@ -15,6 +15,9 @@ export const defaultCommentBlockedKeywords = [
   "invoice",
 ];
 
+export const defaultAiCommentModerationRules =
+  "判断这条博客评论是否适合公开展示。拦截广告、诈骗、钓鱼、辱骂、仇恨、色情、暴力威胁、隐私泄露、无意义灌水和明显 SEO 外链。普通反对意见、批评、提问、纠错、补充信息应该允许。";
+
 type ModerationSettings = Pick<
   SiteSettings,
   "commentAutoBlockEnabled" | "commentBlockedKeywords" | "commentsRequireApproval"
@@ -53,4 +56,38 @@ export function findBlockedCommentKeyword(body: string, keywords: string[]) {
   return normalizeCommentBlockedKeywords(keywords).find((keyword) =>
     normalizedBody.includes(keyword.toLowerCase()),
   );
+}
+
+export function applyAiCommentModerationDecision({
+  baseStatus,
+  decision,
+  requireApproval,
+}: {
+  baseStatus: CommentStatus;
+  decision: string | undefined;
+  requireApproval: boolean;
+}): CommentStatus {
+  if (baseStatus === "spam" || baseStatus === "deleted") {
+    return baseStatus;
+  }
+
+  const normalized = decision?.trim().toLowerCase();
+
+  if (!normalized) {
+    return baseStatus;
+  }
+
+  if (["spam", "reject", "block"].includes(normalized)) {
+    return "spam";
+  }
+
+  if (["review", "pending", "uncertain"].includes(normalized)) {
+    return "pending";
+  }
+
+  if (["approve", "allow"].includes(normalized)) {
+    return requireApproval ? "pending" : "approved";
+  }
+
+  return baseStatus;
 }

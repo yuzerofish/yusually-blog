@@ -6,15 +6,19 @@ import { Label } from "@repo/ui/components/label";
 import { cn } from "@repo/ui/lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import {
+  BotIcon,
   CircleAlertIcon,
   CircleCheckIcon,
   DownloadIcon,
   ExternalLinkIcon,
   KeyRoundIcon,
+  Loader2Icon,
   LinkIcon,
   MailIcon,
   Settings2Icon,
   ShieldCheckIcon,
+  SparklesIcon,
+  Trash2Icon,
   UploadIcon,
   UserRoundIcon,
 } from "lucide-react";
@@ -67,7 +71,7 @@ type AdvancedConfigItem = {
   title: string;
 };
 type PortabilityStatus = {
-  tone: "success" | "error";
+  tone: "success" | "error" | "info";
   message: string;
 };
 type ImportPayload = {
@@ -78,6 +82,13 @@ type ImportPayload = {
   };
   error?: string;
 };
+type AiProviderSettings = {
+  apiKeyConfigured: boolean;
+  baseUrl: string;
+  configured: boolean;
+  model: string;
+};
+type AiActionState = "idle" | "saving" | "testing" | "clearing";
 
 const defaultEmailVerificationStatus: EmailVerificationStatus = {
   delivery: {
@@ -99,10 +110,20 @@ const defaultAdvancedConfigStatus: AdvancedConfigStatus = {
     missing: [],
   },
 };
+const defaultAiProviderSettings: AiProviderSettings = {
+  apiKeyConfigured: false,
+  baseUrl: "",
+  configured: false,
+  model: "",
+};
+const aiSettingsEndpoint = "/api/admin/ai-settings";
+const aiSettingsTestEndpoint = `${aiSettingsEndpoint}/test`;
+const aiSettingsKeyEndpoint = `${aiSettingsEndpoint}/api-key`;
 
 function AdminSettingsPage() {
   const locale = getCurrentLocale();
   const actionCopy = getSettingsActionCopy(locale);
+  const aiCopy = getAiProviderCopy(locale);
   const defaultSettings: SiteSettings = {
     name: "",
     description: "",
@@ -118,6 +139,8 @@ function AdminSettingsPage() {
     commentsRequireApproval: true,
     commentAutoBlockEnabled: false,
     commentBlockedKeywords: [],
+    aiCommentModerationEnabled: false,
+    aiCommentModerationRules: "",
     emailVerificationEnabled: false,
     indexingEnabled: true,
     themePreset: "maker",
@@ -132,10 +155,15 @@ function AdminSettingsPage() {
   const [advancedConfig, setAdvancedConfig] = useState<AdvancedConfigStatus>(
     defaultAdvancedConfigStatus,
   );
+  const [aiProviderSettings, setAiProviderSettings] =
+    useState<AiProviderSettings>(defaultAiProviderSettings);
+  const [aiApiKey, setAiApiKey] = useState("");
+  const [aiActionState, setAiActionState] = useState<AiActionState>("idle");
   const [tokens, setTokens] = useState<ApiToken[]>([]);
   const [secret, setSecret] = useState<string | null>(null);
   const [settingsStatus, setSettingsStatus] = useState<"idle" | "saved" | "error">("idle");
   const [portabilityStatus, setPortabilityStatus] = useState<PortabilityStatus | null>(null);
+  const [exportFormat, setExportFormat] = useState<"json" | "zip" | null>(null);
 
   useEffect(() => {
     let ignore = false;
@@ -145,8 +173,11 @@ function AdminSettingsPage() {
       fetch("/api/admin/email-status").then((response) =>
         response.ok ? response.json() : undefined,
       ),
+      fetch(aiSettingsEndpoint)
+        .then((response) => (response.ok ? response.json() : undefined))
+        .catch(() => undefined),
       fetch("/api/tokens").then((response) => (response.ok ? response.json() : undefined)),
-    ]).then(([sitePayload, emailPayload, tokenPayload]) => {
+    ]).then(([sitePayload, emailPayload, aiPayload, tokenPayload]) => {
       const siteData = (sitePayload as { data?: SiteSettings } | undefined)?.data;
       const emailData = (emailPayload as { data?: EmailVerificationStatus } | undefined)?.data;
       const advancedData = (
@@ -154,6 +185,7 @@ function AdminSettingsPage() {
           | { advanced?: AdvancedConfigStatus; data?: EmailVerificationStatus }
           | undefined
       )?.advanced;
+      const aiData = aiPayload as unknown;
       const tokenData = (tokenPayload as { data?: ApiToken[] } | undefined)?.data;
 
       if (!ignore && siteData) {
@@ -166,6 +198,10 @@ function AdminSettingsPage() {
 
       if (!ignore && advancedData) {
         setAdvancedConfig(advancedData);
+      }
+
+      if (!ignore && aiData) {
+        setAiProviderSettings(normalizeAiProviderSettings(aiData));
       }
 
       if (!ignore && tokenData) {
@@ -268,8 +304,114 @@ function AdminSettingsPage() {
     toast.success(actionCopy.tokenRevoked);
   };
 
+  const saveAiProviderSettings: FormSubmitHandler = async (event) => {
+    event.preventDefault();
+    const nextBaseUrl = aiProviderSettings.baseUrl.trim();
+    const nextModel = aiProviderSettings.model.trim();
+    const nextApiKey = aiApiKey.trim();
+
+    setAiActionState("saving");
+
+    const response = await fetch(aiSettingsEndpoint, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        baseUrl: nextBaseUrl,
+        model: nextModel,
+        ...(nextApiKey ? { apiKey: nextApiKey } : {}),
+      }),
+    }).catch(() => null);
+
+    if (!response?.ok) {
+      setAiActionState("idle");
+      toast.error(aiCopy.saveError, {
+        description: response
+          ? await getResponseErrorMessage(response, aiCopy.saveError)
+          : actionCopy.networkError,
+      });
+      return;
+    }
+
+    const payload = await response.json().catch(() => ({}));
+    const normalized = normalizeAiProviderSettings(payload);
+    const apiKeyConfigured =
+      normalized.apiKeyConfigured || Boolean(nextApiKey) || aiProviderSettings.apiKeyConfigured;
+    const savedBaseUrl = normalized.baseUrl || nextBaseUrl;
+    const savedModel = normalized.model || nextModel;
+
+    setAiProviderSettings({
+      apiKeyConfigured,
+      baseUrl: savedBaseUrl,
+      configured: normalized.configured || Boolean(apiKeyConfigured && savedBaseUrl && savedModel),
+      model: savedModel,
+    });
+    setAiApiKey("");
+    setAiActionState("idle");
+    toast.success(aiCopy.saved);
+  };
+
+  const testAiProviderConnection = async () => {
+    setAiActionState("testing");
+
+    const response = await fetch(aiSettingsTestEndpoint, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        baseUrl: aiProviderSettings.baseUrl.trim(),
+        model: aiProviderSettings.model.trim(),
+        ...(aiApiKey.trim() ? { apiKey: aiApiKey.trim() } : {}),
+      }),
+    }).catch(() => null);
+
+    if (!response?.ok) {
+      setAiActionState("idle");
+      toast.error(aiCopy.testError, {
+        description: response
+          ? await getResponseErrorMessage(response, aiCopy.testError)
+          : actionCopy.networkError,
+      });
+      return;
+    }
+
+    setAiActionState("idle");
+    toast.success(aiCopy.tested);
+  };
+
+  const clearAiProviderKey = async () => {
+    setAiActionState("clearing");
+
+    const response = await fetch(aiSettingsKeyEndpoint, { method: "DELETE" }).catch(() => null);
+
+    if (!response?.ok) {
+      setAiActionState("idle");
+      toast.error(aiCopy.clearError, {
+        description: response
+          ? await getResponseErrorMessage(response, aiCopy.clearError)
+          : actionCopy.networkError,
+      });
+      return;
+    }
+
+    setAiProviderSettings((current) => ({
+      ...current,
+      apiKeyConfigured: false,
+      configured: false,
+    }));
+    setAiApiKey("");
+    setAiActionState("idle");
+    toast.success(aiCopy.keyCleared);
+  };
+
   const downloadExport = async (format: "json" | "zip") => {
-    setPortabilityStatus(null);
+    if (exportFormat) {
+      return;
+    }
+
+    setExportFormat(format);
+    setPortabilityStatus({
+      tone: "info",
+      message: format === "zip" ? actionCopy.exportPreparingZip : actionCopy.exportPreparingJson,
+    });
 
     const response = await fetch(
       `/api/export?lang=${locale}${format === "zip" ? "&format=zip" : ""}`,
@@ -282,6 +424,7 @@ function AdminSettingsPage() {
           ? await getResponseErrorMessage(response, actionCopy.exportError)
           : actionCopy.networkError,
       });
+      setExportFormat(null);
       return;
     }
 
@@ -290,6 +433,7 @@ function AdminSettingsPage() {
       downloadBlob(blob, responseFilename(response) ?? exportFilename("zip"));
       setPortabilityStatus({ tone: "success", message: m.admin_export_started() });
       toast.success(actionCopy.exportStarted);
+      setExportFormat(null);
       return;
     }
 
@@ -300,6 +444,7 @@ function AdminSettingsPage() {
     downloadBlob(blob, exportFilename("json"));
     setPortabilityStatus({ tone: "success", message: m.admin_export_started() });
     toast.success(actionCopy.exportStarted);
+    setExportFormat(null);
   };
 
   const createBackup = async () => {
@@ -400,6 +545,11 @@ function AdminSettingsPage() {
         : "";
   const advancedItems = getAdvancedConfigItems(locale, advancedConfig);
   const advancedCopy = getAdvancedConfigCopy(locale);
+  const aiBusy = aiActionState !== "idle";
+  const aiConnectionReady =
+    aiProviderSettings.baseUrl.trim().length > 0 &&
+    aiProviderSettings.model.trim().length > 0 &&
+    (aiProviderSettings.apiKeyConfigured || aiApiKey.trim().length > 0);
 
   return (
     <div className="grid gap-5">
@@ -615,6 +765,160 @@ function AdminSettingsPage() {
 
       <AdminPanel>
         <div className="flex items-start gap-3">
+          <BotIcon className="mt-1 size-5 text-link" />
+          <div>
+            <h2 className="text-xl font-semibold">{aiCopy.title}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">{aiCopy.description}</p>
+          </div>
+        </div>
+
+        <form onSubmit={saveAiProviderSettings} className="mt-6 grid gap-5">
+          <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(220px,0.55fr)]">
+            <div className="grid gap-2">
+              <Label htmlFor="ai-base-url">{aiCopy.baseUrl}</Label>
+              <Input
+                id="ai-base-url"
+                name="baseUrl"
+                type="url"
+                required
+                value={aiProviderSettings.baseUrl}
+                placeholder="https://api.openai.com/v1"
+                onChange={(event) =>
+                  setAiProviderSettings((current) => ({
+                    ...current,
+                    baseUrl: event.currentTarget.value,
+                    configured: Boolean(
+                      current.apiKeyConfigured &&
+                      event.currentTarget.value.trim() &&
+                      current.model.trim(),
+                    ),
+                  }))
+                }
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="ai-model">{aiCopy.model}</Label>
+              <Input
+                id="ai-model"
+                name="model"
+                required
+                value={aiProviderSettings.model}
+                placeholder="gpt-4o-mini"
+                onChange={(event) =>
+                  setAiProviderSettings((current) => ({
+                    ...current,
+                    configured: Boolean(
+                      current.apiKeyConfigured &&
+                      current.baseUrl.trim() &&
+                      event.currentTarget.value.trim(),
+                    ),
+                    model: event.currentTarget.value,
+                  }))
+                }
+              />
+            </div>
+            <div className="grid gap-2 md:col-span-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <Label htmlFor="ai-api-key">{aiCopy.apiKey}</Label>
+                <span
+                  className={cn(
+                    "inline-flex min-h-7 items-center gap-1 rounded-md border px-2 text-xs font-medium",
+                    aiProviderSettings.apiKeyConfigured
+                      ? "border-success/25 bg-success/10 text-success"
+                      : "border-border bg-muted text-muted-foreground",
+                  )}
+                >
+                  {aiProviderSettings.apiKeyConfigured ? (
+                    <CircleCheckIcon className="size-3.5" />
+                  ) : (
+                    <CircleAlertIcon className="size-3.5" />
+                  )}
+                  {aiProviderSettings.apiKeyConfigured ? aiCopy.keyConfigured : aiCopy.keyMissing}
+                </span>
+              </div>
+              <Input
+                id="ai-api-key"
+                name="apiKey"
+                type="password"
+                autoComplete="new-password"
+                required={!aiProviderSettings.apiKeyConfigured}
+                value={aiApiKey}
+                placeholder={
+                  aiProviderSettings.apiKeyConfigured
+                    ? aiCopy.apiKeyPlaceholderConfigured
+                    : "sk-..."
+                }
+                onChange={(event) => setAiApiKey(event.currentTarget.value)}
+              />
+              <p className="text-xs leading-5 text-muted-foreground">{aiCopy.apiKeyHelp}</p>
+            </div>
+          </div>
+
+          <div className="grid gap-3 rounded-md border border-border bg-muted/35 p-4 md:grid-cols-[1fr_auto] md:items-center">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <SparklesIcon className="size-4 text-link" />
+                <h3 className="text-sm font-semibold">{aiCopy.automationTitle}</h3>
+                <span
+                  className={cn(
+                    "inline-flex min-h-7 items-center rounded-md border px-2 text-xs font-medium",
+                    aiProviderSettings.configured
+                      ? "border-success/25 bg-success/10 text-success"
+                      : "border-border bg-background text-muted-foreground",
+                  )}
+                >
+                  {aiProviderSettings.configured ? aiCopy.automationReady : aiCopy.automationOff}
+                </span>
+              </div>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                {aiCopy.automationDescription}
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-1.5 md:justify-end">
+              {aiCopy.automationItems.map((item) => (
+                <span
+                  key={item}
+                  className="rounded-md border border-border bg-background px-2 py-1 text-xs font-medium text-muted-foreground"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <Button type="submit" disabled={aiBusy}>
+              {aiActionState === "saving" ? <Loader2Icon className="animate-spin" /> : null}
+              {aiProviderSettings.apiKeyConfigured ? aiCopy.update : aiCopy.save}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={aiBusy || !aiConnectionReady}
+              onClick={() => void testAiProviderConnection()}
+            >
+              {aiActionState === "testing" ? <Loader2Icon className="animate-spin" /> : null}
+              {aiCopy.test}
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={aiBusy || !aiProviderSettings.apiKeyConfigured}
+              onClick={() => void clearAiProviderKey()}
+            >
+              {aiActionState === "clearing" ? (
+                <Loader2Icon className="animate-spin" />
+              ) : (
+                <Trash2Icon />
+              )}
+              {aiCopy.clearKey}
+            </Button>
+          </div>
+        </form>
+      </AdminPanel>
+
+      <AdminPanel>
+        <div className="flex items-start gap-3">
           <Settings2Icon className="mt-1 size-5 text-link" />
           <div>
             <h2 className="text-xl font-semibold">{advancedCopy.title}</h2>
@@ -701,12 +1005,30 @@ function AdminSettingsPage() {
           <div className="grid content-start gap-3 rounded-md border border-border bg-muted/35 p-4">
             <h3 className="text-sm font-semibold">{m.admin_export_title()}</h3>
             <div className="flex flex-wrap gap-2">
-              <Button type="button" variant="outline" onClick={() => void downloadExport("json")}>
-                <DownloadIcon />
+              <Button
+                type="button"
+                variant="outline"
+                disabled={Boolean(exportFormat)}
+                onClick={() => void downloadExport("json")}
+              >
+                {exportFormat === "json" ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  <DownloadIcon />
+                )}
                 {m.admin_export_json()}
               </Button>
-              <Button type="button" variant="outline" onClick={() => void downloadExport("zip")}>
-                <DownloadIcon />
+              <Button
+                type="button"
+                variant="outline"
+                disabled={Boolean(exportFormat)}
+                onClick={() => void downloadExport("zip")}
+              >
+                {exportFormat === "zip" ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  <DownloadIcon />
+                )}
                 {m.admin_export_zip()}
               </Button>
               <Button type="button" onClick={() => void createBackup()}>
@@ -752,7 +1074,11 @@ function AdminSettingsPage() {
         {portabilityStatus ? (
           <p
             className={`mt-4 text-sm ${
-              portabilityStatus.tone === "success" ? "text-success" : "text-destructive"
+              portabilityStatus.tone === "success"
+                ? "text-success"
+                : portabilityStatus.tone === "error"
+                  ? "text-destructive"
+                  : "text-muted-foreground"
             }`}
           >
             {portabilityStatus.message}
@@ -885,6 +1211,8 @@ function getSettingsActionCopy(locale: "en" | "zh") {
       backupCreated: "备份已创建",
       backupError: "备份创建失败",
       exportError: "导出失败",
+      exportPreparingJson: "正在准备导出数据，完成后会自动下载。",
+      exportPreparingZip: "正在后台创建导出包，完成后会自动下载。",
       exportStarted: "导出已开始",
       importError: "导入失败",
       importSuccess: (title: string) => `“${title}”已导入`,
@@ -902,6 +1230,9 @@ function getSettingsActionCopy(locale: "en" | "zh") {
     backupCreated: "Backup created",
     backupError: "Backup could not be created",
     exportError: "Export failed",
+    exportPreparingJson: "Preparing export data. The download will start automatically.",
+    exportPreparingZip:
+      "Creating the ZIP export in the background. The download will start automatically.",
     exportStarted: "Export started",
     importError: "Import failed",
     importSuccess: (title: string) => `"${title}" imported`,
@@ -912,6 +1243,68 @@ function getSettingsActionCopy(locale: "en" | "zh") {
     tokenCreated: "Token created. Save the secret now.",
     tokenRevokeError: "Token could not be revoked",
     tokenRevoked: "Token revoked",
+  };
+}
+
+function getAiProviderCopy(locale: ReturnType<typeof getCurrentLocale>) {
+  if (locale === "zh") {
+    return {
+      apiKey: "API Key",
+      apiKeyHelp: "留空会保留当前密钥；输入新密钥会替换已有密钥。",
+      apiKeyPlaceholderConfigured: "已保存密钥，留空表示不修改",
+      automationDescription:
+        "配置完成后，发布文章时会自动生成摘要、Slug、标签，并同步生成英文版本。",
+      automationItems: ["摘要", "Slug 和标签", "英文版本"],
+      automationOff: "未启用",
+      automationReady: "自动生效",
+      automationTitle: "内容自动化",
+      baseUrl: "Base URL",
+      clearError: "API Key 清除失败",
+      clearKey: "清除 Key",
+      description:
+        "可选配置 OpenAI-compatible Chat 模型。配置后，编辑器发布流程会默认使用内容自动化能力。",
+      keyCleared: "API Key 已清除",
+      keyConfigured: "Key 已保存",
+      keyMissing: "未保存 Key",
+      model: "Model name",
+      save: "保存配置",
+      saveError: "AI 配置保存失败",
+      saved: "AI 配置已保存",
+      test: "测试连接",
+      testError: "AI 连接测试失败",
+      tested: "AI 连接测试通过",
+      title: "AI Provider",
+      update: "更新配置",
+    };
+  }
+
+  return {
+    apiKey: "API key",
+    apiKeyHelp: "Leave blank to keep the current key; enter a new key to replace it.",
+    apiKeyPlaceholderConfigured: "Key is saved. Leave blank to keep it.",
+    automationDescription:
+      "When configured, publishing a post automatically generates the summary, slug, tags, and English version.",
+    automationItems: ["Summary", "Slug and tags", "English version"],
+    automationOff: "Not active",
+    automationReady: "Runs automatically",
+    automationTitle: "Content automation",
+    baseUrl: "Base URL",
+    clearError: "API key could not be cleared",
+    clearKey: "Clear key",
+    description:
+      "Optionally connect an OpenAI-compatible chat model. Once configured, the editor uses content automation during publishing.",
+    keyCleared: "API key cleared",
+    keyConfigured: "Key saved",
+    keyMissing: "No key saved",
+    model: "Model name",
+    save: "Save provider",
+    saveError: "AI settings could not be saved",
+    saved: "AI settings saved",
+    test: "Test connection",
+    testError: "AI connection test failed",
+    tested: "AI connection test passed",
+    title: "AI Provider",
+    update: "Update provider",
   };
 }
 
@@ -963,6 +1356,58 @@ function getAdvancedConfigCopy(locale: ReturnType<typeof getCurrentLocale>) {
       "Turnstile is not fully configured. Comments still use login, rate limits, and moderation.",
     turnstileTitle: "Cloudflare Turnstile",
   };
+}
+
+function normalizeAiProviderSettings(payload: unknown): AiProviderSettings {
+  const root = asRecord(payload);
+  const record = asRecord(root?.data) ?? root;
+
+  if (!record) {
+    return defaultAiProviderSettings;
+  }
+
+  const baseUrl = readString(record, ["baseUrl", "baseURL", "apiBaseUrl"]) ?? "";
+  const model = readString(record, ["model", "modelName"]) ?? "";
+  const configuredValue = readBoolean(record, ["configured", "enabled", "ready"]);
+  const apiKeyConfigured =
+    readBoolean(record, ["apiKeyConfigured", "hasApiKey", "keyConfigured"]) ??
+    configuredValue ??
+    false;
+
+  return {
+    apiKeyConfigured,
+    baseUrl,
+    configured: configuredValue ?? Boolean(apiKeyConfigured && baseUrl && model),
+    model,
+  };
+}
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return typeof value === "object" && value !== null ? (value as Record<string, unknown>) : null;
+}
+
+function readString(record: Record<string, unknown>, keys: string[]) {
+  for (const key of keys) {
+    const value = record[key];
+
+    if (typeof value === "string") {
+      return value;
+    }
+  }
+
+  return undefined;
+}
+
+function readBoolean(record: Record<string, unknown>, keys: string[]) {
+  for (const key of keys) {
+    const value = record[key];
+
+    if (typeof value === "boolean") {
+      return value;
+    }
+  }
+
+  return undefined;
 }
 
 function parseLinkLines(value: FormDataEntryValue | null): SiteSettings["socialLinks"] {

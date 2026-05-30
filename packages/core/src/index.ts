@@ -1,7 +1,12 @@
 import { siteSettings } from "./demo-data";
 import type { Comment, Post, Series, SiteSettings, SupportedLocale, Tag } from "./types";
 
-export { getCommentInitialStatus, normalizeCommentBlockedKeywords } from "./comment-moderation";
+export {
+  applyAiCommentModerationDecision,
+  defaultAiCommentModerationRules,
+  getCommentInitialStatus,
+  normalizeCommentBlockedKeywords,
+} from "./comment-moderation";
 export { htmlToText, markdownToText, renderMarkdownToHtml, sanitizeHtml } from "./markdown";
 export {
   assertPassword,

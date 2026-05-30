@@ -20,6 +20,7 @@ import {
   drizzleRowToComment,
 } from "./cms-d1-shared";
 import { getCmsDb } from "./cms-db";
+import { resolveAiCommentStatus } from "./comment-ai-moderation.server";
 
 // ---------------------------------------------------------------------------
 // Comments
@@ -79,6 +80,15 @@ export async function createD1Comment(input: CommentInput): Promise<D1Result<Com
   }
 
   const now = new Date().toISOString();
+  const baseStatus = getCommentInitialStatus({ body, settings: currentSettings });
+  const status = currentSettings.aiCommentModerationEnabled
+    ? await resolveAiCommentStatus({
+        baseStatus,
+        body,
+        requireApproval: currentSettings.commentsRequireApproval,
+        rules: currentSettings.aiCommentModerationRules,
+      })
+    : baseStatus;
   const comment: Comment = {
     id: `comment_${crypto.randomUUID()}`,
     postId: post.id,
@@ -88,7 +98,7 @@ export async function createD1Comment(input: CommentInput): Promise<D1Result<Com
     authorEmailHash: await digestText(authorEmail),
     authorWebsite,
     body,
-    status: getCommentInitialStatus({ body, settings: currentSettings }),
+    status,
     createdAt: now,
   };
 

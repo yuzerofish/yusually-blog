@@ -239,6 +239,10 @@ export async function updateD1Post(idOrSlug: string, input: PostInput) {
         ? markdownToText(contentMarkdown)
         : post.contentText;
   const status = input.status ?? post.status;
+  const slug =
+    !localizedUpdate && input.slug !== undefined
+      ? await uniqueD1Slug(slugify(input.slug.trim()), post.id)
+      : post.slug;
   const now = new Date().toISOString();
   const inputPublishedAt =
     input.publishedAt !== undefined ? normalizeDateInput(input.publishedAt) : undefined;
@@ -274,6 +278,7 @@ export async function updateD1Post(idOrSlug: string, input: PostInput) {
     .update(schema.posts)
     .set({
       title,
+      slug,
       excerpt,
       coverImage: input.coverImage !== undefined ? input.coverImage.trim() : post.coverImage,
       contentMarkdown,
@@ -442,15 +447,19 @@ async function attachD1Relations(
 // Slug uniqueness
 // ---------------------------------------------------------------------------
 
-async function uniqueD1Slug(base: string) {
+async function uniqueD1Slug(base: string, currentPostId?: string) {
   const normalized = base || "untitled-post";
   let candidate = normalized;
   let index = 2;
 
-  while (await getD1PostBySlug(candidate, true)) {
+  while (true) {
+    const existing = await getD1PostBySlug(candidate, true);
+
+    if (!existing || existing.id === currentPostId) {
+      return candidate;
+    }
+
     candidate = `${normalized}-${index}`;
     index += 1;
   }
-
-  return candidate;
 }

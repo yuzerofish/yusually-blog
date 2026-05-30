@@ -66,6 +66,7 @@ import { Route as ApiAdminMeRouteImport } from './routes/api/admin/me'
 import { Route as ApiAdminLogoutRouteImport } from './routes/api/admin/logout'
 import { Route as ApiAdminLoginRouteImport } from './routes/api/admin/login'
 import { Route as ApiAdminEmailStatusRouteImport } from './routes/api/admin/email-status'
+import { Route as ApiAdminAiSettingsRouteImport } from './routes/api/admin/ai-settings'
 import { Route as AuthAdminUsersRouteImport } from './routes/_auth/admin/users'
 import { Route as AuthAdminSettingsRouteImport } from './routes/_auth/admin/settings'
 import { Route as AuthAdminSeriesRouteImport } from './routes/_auth/admin/series'
@@ -79,6 +80,8 @@ import { Route as ApiCommentsIdDeleteRouteImport } from './routes/api/comments/$
 import { Route as ApiCommentsIdApproveRouteImport } from './routes/api/comments/$id/approve'
 import { Route as ApiCommentAuthGithubStartRouteImport } from './routes/api/comment-auth/github/start'
 import { Route as ApiAdminUsersIdRouteImport } from './routes/api/admin/users/$id'
+import { Route as ApiAdminAiSettingsTestRouteImport } from './routes/api/admin/ai-settings/test'
+import { Route as ApiAdminAiSettingsApiKeyRouteImport } from './routes/api/admin/ai-settings/api-key'
 import { Route as AuthAdminPostsNewRouteImport } from './routes/_auth/admin/posts/new'
 import { Route as AuthAdminPostsPostIdRouteImport } from './routes/_auth/admin/posts/$postId'
 
@@ -366,6 +369,11 @@ const ApiAdminEmailStatusRoute = ApiAdminEmailStatusRouteImport.update({
   path: '/api/admin/email-status',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminAiSettingsRoute = ApiAdminAiSettingsRouteImport.update({
+  id: '/api/admin/ai-settings',
+  path: '/api/admin/ai-settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthAdminUsersRoute = AuthAdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -432,6 +440,17 @@ const ApiAdminUsersIdRoute = ApiAdminUsersIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ApiAdminUsersRoute,
 } as any)
+const ApiAdminAiSettingsTestRoute = ApiAdminAiSettingsTestRouteImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => ApiAdminAiSettingsRoute,
+} as any)
+const ApiAdminAiSettingsApiKeyRoute =
+  ApiAdminAiSettingsApiKeyRouteImport.update({
+    id: '/api-key',
+    path: '/api-key',
+    getParentRoute: () => ApiAdminAiSettingsRoute,
+  } as any)
 const AuthAdminPostsNewRoute = AuthAdminPostsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -480,6 +499,7 @@ export interface FileRoutesByFullPath {
   '/admin/series': typeof AuthAdminSeriesRoute
   '/admin/settings': typeof AuthAdminSettingsRoute
   '/admin/users': typeof AuthAdminUsersRoute
+  '/api/admin/ai-settings': typeof ApiAdminAiSettingsRouteWithChildren
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
@@ -507,6 +527,8 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AuthAppIndexRoute
   '/admin/posts/$postId': typeof AuthAdminPostsPostIdRoute
   '/admin/posts/new': typeof AuthAdminPostsNewRoute
+  '/api/admin/ai-settings/api-key': typeof ApiAdminAiSettingsApiKeyRoute
+  '/api/admin/ai-settings/test': typeof ApiAdminAiSettingsTestRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
   '/api/comment-auth/github/start': typeof ApiCommentAuthGithubStartRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
@@ -549,6 +571,7 @@ export interface FileRoutesByTo {
   '/admin/series': typeof AuthAdminSeriesRoute
   '/admin/settings': typeof AuthAdminSettingsRoute
   '/admin/users': typeof AuthAdminUsersRoute
+  '/api/admin/ai-settings': typeof ApiAdminAiSettingsRouteWithChildren
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
@@ -576,6 +599,8 @@ export interface FileRoutesByTo {
   '/app': typeof AuthAppIndexRoute
   '/admin/posts/$postId': typeof AuthAdminPostsPostIdRoute
   '/admin/posts/new': typeof AuthAdminPostsNewRoute
+  '/api/admin/ai-settings/api-key': typeof ApiAdminAiSettingsApiKeyRoute
+  '/api/admin/ai-settings/test': typeof ApiAdminAiSettingsTestRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
   '/api/comment-auth/github/start': typeof ApiCommentAuthGithubStartRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
@@ -624,6 +649,7 @@ export interface FileRoutesById {
   '/_auth/admin/series': typeof AuthAdminSeriesRoute
   '/_auth/admin/settings': typeof AuthAdminSettingsRoute
   '/_auth/admin/users': typeof AuthAdminUsersRoute
+  '/api/admin/ai-settings': typeof ApiAdminAiSettingsRouteWithChildren
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
@@ -651,6 +677,8 @@ export interface FileRoutesById {
   '/_auth/app/': typeof AuthAppIndexRoute
   '/_auth/admin/posts/$postId': typeof AuthAdminPostsPostIdRoute
   '/_auth/admin/posts/new': typeof AuthAdminPostsNewRoute
+  '/api/admin/ai-settings/api-key': typeof ApiAdminAiSettingsApiKeyRoute
+  '/api/admin/ai-settings/test': typeof ApiAdminAiSettingsTestRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
   '/api/comment-auth/github/start': typeof ApiCommentAuthGithubStartRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
@@ -698,6 +726,7 @@ export interface FileRouteTypes {
     | '/admin/series'
     | '/admin/settings'
     | '/admin/users'
+    | '/api/admin/ai-settings'
     | '/api/admin/email-status'
     | '/api/admin/login'
     | '/api/admin/logout'
@@ -725,6 +754,8 @@ export interface FileRouteTypes {
     | '/app/'
     | '/admin/posts/$postId'
     | '/admin/posts/new'
+    | '/api/admin/ai-settings/api-key'
+    | '/api/admin/ai-settings/test'
     | '/api/admin/users/$id'
     | '/api/comment-auth/github/start'
     | '/api/comments/$id/approve'
@@ -767,6 +798,7 @@ export interface FileRouteTypes {
     | '/admin/series'
     | '/admin/settings'
     | '/admin/users'
+    | '/api/admin/ai-settings'
     | '/api/admin/email-status'
     | '/api/admin/login'
     | '/api/admin/logout'
@@ -794,6 +826,8 @@ export interface FileRouteTypes {
     | '/app'
     | '/admin/posts/$postId'
     | '/admin/posts/new'
+    | '/api/admin/ai-settings/api-key'
+    | '/api/admin/ai-settings/test'
     | '/api/admin/users/$id'
     | '/api/comment-auth/github/start'
     | '/api/comments/$id/approve'
@@ -841,6 +875,7 @@ export interface FileRouteTypes {
     | '/_auth/admin/series'
     | '/_auth/admin/settings'
     | '/_auth/admin/users'
+    | '/api/admin/ai-settings'
     | '/api/admin/email-status'
     | '/api/admin/login'
     | '/api/admin/logout'
@@ -868,6 +903,8 @@ export interface FileRouteTypes {
     | '/_auth/app/'
     | '/_auth/admin/posts/$postId'
     | '/_auth/admin/posts/new'
+    | '/api/admin/ai-settings/api-key'
+    | '/api/admin/ai-settings/test'
     | '/api/admin/users/$id'
     | '/api/comment-auth/github/start'
     | '/api/comments/$id/approve'
@@ -905,6 +942,7 @@ export interface RootRouteChildren {
   BlogIndexRoute: typeof BlogIndexRoute
   SeriesIndexRoute: typeof SeriesIndexRoute
   TagsIndexRoute: typeof TagsIndexRoute
+  ApiAdminAiSettingsRoute: typeof ApiAdminAiSettingsRouteWithChildren
   ApiAdminEmailStatusRoute: typeof ApiAdminEmailStatusRoute
   ApiAdminLoginRoute: typeof ApiAdminLoginRoute
   ApiAdminLogoutRoute: typeof ApiAdminLogoutRoute
@@ -1328,6 +1366,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminEmailStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/ai-settings': {
+      id: '/api/admin/ai-settings'
+      path: '/api/admin/ai-settings'
+      fullPath: '/api/admin/ai-settings'
+      preLoaderRoute: typeof ApiAdminAiSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth/admin/users': {
       id: '/_auth/admin/users'
       path: '/users'
@@ -1418,6 +1463,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/admin/users/$id'
       preLoaderRoute: typeof ApiAdminUsersIdRouteImport
       parentRoute: typeof ApiAdminUsersRoute
+    }
+    '/api/admin/ai-settings/test': {
+      id: '/api/admin/ai-settings/test'
+      path: '/test'
+      fullPath: '/api/admin/ai-settings/test'
+      preLoaderRoute: typeof ApiAdminAiSettingsTestRouteImport
+      parentRoute: typeof ApiAdminAiSettingsRoute
+    }
+    '/api/admin/ai-settings/api-key': {
+      id: '/api/admin/ai-settings/api-key'
+      path: '/api-key'
+      fullPath: '/api/admin/ai-settings/api-key'
+      preLoaderRoute: typeof ApiAdminAiSettingsApiKeyRouteImport
+      parentRoute: typeof ApiAdminAiSettingsRoute
     }
     '/_auth/admin/posts/new': {
       id: '/_auth/admin/posts/new'
@@ -1584,6 +1643,19 @@ const ApiTokensRouteWithChildren = ApiTokensRoute._addFileChildren(
   ApiTokensRouteChildren,
 )
 
+interface ApiAdminAiSettingsRouteChildren {
+  ApiAdminAiSettingsApiKeyRoute: typeof ApiAdminAiSettingsApiKeyRoute
+  ApiAdminAiSettingsTestRoute: typeof ApiAdminAiSettingsTestRoute
+}
+
+const ApiAdminAiSettingsRouteChildren: ApiAdminAiSettingsRouteChildren = {
+  ApiAdminAiSettingsApiKeyRoute: ApiAdminAiSettingsApiKeyRoute,
+  ApiAdminAiSettingsTestRoute: ApiAdminAiSettingsTestRoute,
+}
+
+const ApiAdminAiSettingsRouteWithChildren =
+  ApiAdminAiSettingsRoute._addFileChildren(ApiAdminAiSettingsRouteChildren)
+
 interface ApiAdminUsersRouteChildren {
   ApiAdminUsersIdRoute: typeof ApiAdminUsersIdRoute
 }
@@ -1624,6 +1696,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogIndexRoute: BlogIndexRoute,
   SeriesIndexRoute: SeriesIndexRoute,
   TagsIndexRoute: TagsIndexRoute,
+  ApiAdminAiSettingsRoute: ApiAdminAiSettingsRouteWithChildren,
   ApiAdminEmailStatusRoute: ApiAdminEmailStatusRoute,
   ApiAdminLoginRoute: ApiAdminLoginRoute,
   ApiAdminLogoutRoute: ApiAdminLogoutRoute,

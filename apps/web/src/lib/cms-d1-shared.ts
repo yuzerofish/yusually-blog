@@ -95,6 +95,8 @@ export type SiteSettingsInput = Partial<
     | "commentsRequireApproval"
     | "commentAutoBlockEnabled"
     | "commentBlockedKeywords"
+    | "aiCommentModerationEnabled"
+    | "aiCommentModerationRules"
     | "emailVerificationEnabled"
     | "indexingEnabled"
     | "themePreset"
@@ -255,6 +257,11 @@ export function normalizeSiteSettings(
       input.commentBlockedKeywords !== undefined
         ? normalizeCommentBlockedKeywords(input.commentBlockedKeywords)
         : base.commentBlockedKeywords,
+    aiCommentModerationEnabled: input.aiCommentModerationEnabled ?? base.aiCommentModerationEnabled,
+    aiCommentModerationRules: cleanString(
+      input.aiCommentModerationRules,
+      base.aiCommentModerationRules,
+    ),
     emailVerificationEnabled: input.emailVerificationEnabled ?? base.emailVerificationEnabled,
     indexingEnabled: input.indexingEnabled ?? base.indexingEnabled,
     themePreset: normalizeThemePreset(input.themePreset ?? input.theme, base.themePreset),

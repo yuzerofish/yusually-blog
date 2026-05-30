@@ -4,6 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { deleteD1Post, getD1PostByIdOrSlug, updateD1Post } from "#/lib/cms-d1";
+import { applyPublishingAutomation } from "#/lib/content-automation.server";
 
 export const Route = createFileRoute("/api/posts/$id")({
   server: {
@@ -47,7 +48,10 @@ export const Route = createFileRoute("/api/posts/$id")({
           return jsonResponse({ error: "Post not found" }, { status: 404 });
         }
 
-        const updated = await updateD1Post(post.id, body);
+        const updated = await updateD1Post(
+          post.id,
+          await applyPublishingAutomation({ ...body, locale }, post),
+        );
 
         return jsonResponse({
           data: updated ? localizePost(updated, locale) : post,

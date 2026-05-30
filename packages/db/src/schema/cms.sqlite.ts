@@ -8,6 +8,12 @@ export const siteSettings = sqliteTable("site_settings", {
   updatedAt: text("updated_at").notNull(),
 });
 
+export const serverSettings = sqliteTable("server_settings", {
+  key: text("key").primaryKey(),
+  value: text("value", { mode: "json" }).notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
 export const series = sqliteTable(
   "series",
   {
