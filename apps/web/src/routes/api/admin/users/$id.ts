@@ -1,9 +1,15 @@
-import { type CommentUserStatus, type UserRole } from "@repo/core";
+import { type CommentUserStatus, type EmailPreference, type UserRole } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { countAdminUsers, getAdminUserFromRequest } from "#/lib/admin-auth";
 import { jsonResponse, readJsonBody } from "#/lib/cms-api";
-import { getCmsUserById, isCommentUserStatus, isUserRole, updateCmsUser } from "#/lib/cms-users";
+import {
+  getCmsUserById,
+  isCommentUserStatus,
+  isEmailPreference,
+  isUserRole,
+  updateCmsUser,
+} from "#/lib/cms-users";
 
 export const Route = createFileRoute("/api/admin/users/$id")({
   server: {
@@ -15,9 +21,19 @@ export const Route = createFileRoute("/api/admin/users/$id")({
           return jsonResponse({ error: "Admin authentication required" }, { status: 401 });
         }
 
-        const rawBody = await readJsonBody<{ commentStatus?: unknown; role?: unknown }>(request);
+        const rawBody = await readJsonBody<{
+          commentStatus?: unknown;
+          emailPreference?: unknown;
+          marketingOptOut?: unknown;
+          role?: unknown;
+        }>(request);
         const body = rawBody && typeof rawBody === "object" ? rawBody : {};
-        const updates: { commentStatus?: CommentUserStatus; role?: UserRole } = {};
+        const updates: {
+          commentStatus?: CommentUserStatus;
+          emailPreference?: EmailPreference;
+          marketingOptOut?: boolean;
+          role?: UserRole;
+        } = {};
 
         if ("commentStatus" in body) {
           if (!isCommentUserStatus(body.commentStatus)) {
@@ -35,7 +51,28 @@ export const Route = createFileRoute("/api/admin/users/$id")({
           updates.role = body.role;
         }
 
-        if (!updates.commentStatus && !updates.role) {
+        if ("emailPreference" in body) {
+          if (!isEmailPreference(body.emailPreference)) {
+            return jsonResponse({ error: "Invalid email preference" }, { status: 400 });
+          }
+
+          updates.emailPreference = body.emailPreference;
+        }
+
+        if ("marketingOptOut" in body) {
+          if (typeof body.marketingOptOut !== "boolean") {
+            return jsonResponse({ error: "Invalid marketing preference" }, { status: 400 });
+          }
+
+          updates.marketingOptOut = body.marketingOptOut;
+        }
+
+        if (
+          !updates.commentStatus &&
+          !updates.role &&
+          !updates.emailPreference &&
+          updates.marketingOptOut === undefined
+        ) {
           return jsonResponse({ error: "No user update provided" }, { status: 400 });
         }
 

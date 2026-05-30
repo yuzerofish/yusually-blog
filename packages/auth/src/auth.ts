@@ -49,6 +49,18 @@ export function createBlogAuth(database: AuthDatabase, env: BlogAuthEnv) {
           required: true,
           defaultValue: "active",
         },
+        emailPreference: {
+          type: "string",
+          input: false,
+          required: true,
+          defaultValue: "none",
+        },
+        marketingOptOut: {
+          type: "boolean",
+          input: false,
+          required: true,
+          defaultValue: false,
+        },
       },
     },
 

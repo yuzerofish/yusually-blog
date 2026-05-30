@@ -14,6 +14,14 @@ export const user = sqliteTable("user", {
     .default("active")
     .notNull(),
   commentStatusUpdatedAt: text("comment_status_updated_at"),
+  emailPreference: text("email_preference", {
+    enum: ["none", "instant_posts", "biweekly_digest"],
+  })
+    .default("none")
+    .notNull(),
+  emailPreferenceUpdatedAt: text("email_preference_updated_at"),
+  marketingOptOut: integer("marketing_opt_out", { mode: "boolean" }).default(false).notNull(),
+  unsubscribeTokenHash: text("unsubscribe_token_hash"),
   emailVerified: integer("email_verified", { mode: "boolean" }).default(false).notNull(),
   image: text("image"),
   createdAt: integer("created_at", { mode: "timestamp_ms" }).default(nowMs).notNull(),

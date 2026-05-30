@@ -175,6 +175,8 @@ describe("localizeSiteSettings", () => {
     aiCommentModerationEnabled: false,
     aiCommentModerationRules: "",
     emailVerificationEnabled: false,
+    emailNotificationsEnabled: false,
+    manualEmailBroadcastsEnabled: false,
     indexingEnabled: true,
     themePreset: "maker",
     layoutPreset: "shelf",

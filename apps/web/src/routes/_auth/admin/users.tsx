@@ -3,6 +3,7 @@ import {
   type CmsUser,
   type Comment,
   type CommentUserStatus,
+  type EmailPreference,
   type Post,
   type UserRole,
 } from "@repo/core";
@@ -11,6 +12,7 @@ import { Label } from "@repo/ui/components/label";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import {
   EyeIcon,
+  MailIcon,
   type LucideIcon,
   MessageSquareTextIcon,
   SearchIcon,
@@ -95,6 +97,7 @@ function AdminUsersPage() {
       admin: rows.filter((user) => user.role === "admin").length,
       muted: rows.filter((user) => user.commentStatus === "muted").length,
       reader: rows.filter((user) => user.role === "reader").length,
+      subscribed: rows.filter((user) => user.emailPreference !== "none").length,
       total: rows.length,
     }),
     [rows],
@@ -134,7 +137,12 @@ function AdminUsersPage() {
 
   const updateUser = async (
     user: CmsUser,
-    input: { readonly commentStatus?: CommentUserStatus; readonly role?: UserRole },
+    input: {
+      readonly commentStatus?: CommentUserStatus;
+      readonly emailPreference?: EmailPreference;
+      readonly marketingOptOut?: boolean;
+      readonly role?: UserRole;
+    },
     successMessage: (updatedUser: CmsUser) => string,
   ) => {
     setPendingUserId(user.id);
@@ -178,6 +186,12 @@ function AdminUsersPage() {
     );
   };
 
+  const updateEmailPreference = async (user: CmsUser, emailPreference: EmailPreference) => {
+    await updateUser(user, { emailPreference }, (updatedUser) =>
+      copy.emailUpdateSuccess(updatedUser.name, updatedUser.emailPreference),
+    );
+  };
+
   return (
     <section className="grid gap-5">
       <AdminPageHeader
@@ -200,7 +214,7 @@ function AdminUsersPage() {
         <UserMetric label={m.admin_users_total()} value={stats.total} icon={UserRoundIcon} />
         <UserMetric label={m.admin_users_role_reader()} value={stats.reader} icon={UserRoundIcon} />
         <UserMetric label={m.admin_users_role_admin()} value={stats.admin} icon={ShieldIcon} />
-        <UserMetric label={m.admin_users_status_muted()} value={stats.muted} icon={VolumeXIcon} />
+        <UserMetric label={copy.emailSubscribers} value={stats.subscribed} icon={MailIcon} />
       </div>
 
       <AdminPanel>
@@ -276,6 +290,12 @@ function AdminUsersPage() {
                         {commentAccessLabel(user.commentStatus)}
                       </StatusBadge>
                       <StatusBadge tone="neutral">{roleLabel(user.role)}</StatusBadge>
+                      <StatusBadge tone={user.emailPreference === "none" ? "neutral" : "active"}>
+                        {emailPreferenceLabel(user.emailPreference, copy)}
+                      </StatusBadge>
+                      {user.marketingOptOut ? (
+                        <StatusBadge tone="muted">{copy.optionalEmailOptOut}</StatusBadge>
+                      ) : null}
                       {isCurrentAdmin ? (
                         <StatusBadge tone="neutral">{copy.currentAccount}</StatusBadge>
                       ) : null}
@@ -348,7 +368,7 @@ function AdminUsersPage() {
                   </div>
                 </div>
 
-                <div className="mt-4 grid gap-3 border-t border-border/80 pt-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
+                <div className="mt-4 grid gap-3 border-t border-border/80 pt-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
                   <UserFact
                     label={m.admin_users_comments()}
                     value={m.admin_users_comments_count({ count: user.commentCount })}
@@ -369,6 +389,26 @@ function AdminUsersPage() {
                         : m.admin_users_status_not_changed()
                     }
                   />
+                  <div className="grid gap-1">
+                    <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                      {copy.emailUpdates}
+                    </p>
+                    <select
+                      value={user.emailPreference}
+                      disabled={pendingUserId === user.id}
+                      onChange={(event) =>
+                        void updateEmailPreference(
+                          user,
+                          event.currentTarget.value as EmailPreference,
+                        )
+                      }
+                      className={adminSelectClassName}
+                    >
+                      <option value="none">{copy.emailNone}</option>
+                      <option value="instant_posts">{copy.emailInstant}</option>
+                      <option value="biweekly_digest">{copy.emailDigest}</option>
+                    </select>
+                  </div>
                 </div>
 
                 {commentsExpanded ? (
@@ -526,6 +566,18 @@ function commentAccessLabel(status: CommentUserStatus) {
   return status === "muted" ? m.admin_users_status_muted() : m.admin_users_status_active();
 }
 
+function emailPreferenceLabel(emailPreference: EmailPreference, copy: UsersActionCopy) {
+  if (emailPreference === "instant_posts") {
+    return copy.emailInstant;
+  }
+
+  if (emailPreference === "biweekly_digest") {
+    return copy.emailDigest;
+  }
+
+  return copy.emailNone;
+}
+
 function moderationStatusLabel(status: Comment["status"]) {
   switch (status) {
     case "approved":
@@ -573,12 +625,28 @@ function getUsersActionCopy(locale: "en" | "zh") {
       commentHistory: "按发布时间倒序显示",
       currentAccount: "当前账号",
       currentAdminRoleLocked: "不能在这里修改当前登录管理员的角色。",
+      emailDigest: "双周摘要",
+      emailInstant: "每篇文章",
+      emailNone: "不接收博客邮件",
+      emailSubscribers: "邮件订阅",
+      emailUpdates: "博客更新邮件",
+      emailUpdateSuccess: (name: string, emailPreference: EmailPreference) => {
+        const label =
+          emailPreference === "instant_posts"
+            ? "每篇文章"
+            : emailPreference === "biweekly_digest"
+              ? "双周摘要"
+              : "不接收博客邮件";
+
+        return `“${name}”已更新为${label}`;
+      },
       hideComments: "收起评论",
       lastAdminRoleLocked: "至少需要保留一个管理员。",
       makeAdmin: "设为管理员",
       makeReader: "设为读者",
       networkError: "网络异常，请稍后再试。",
       noUserComments: "这个用户还没有发表过评论。",
+      optionalEmailOptOut: "已退订可选邮件",
       roleUpdateSuccess: (name: string, role: UserRole) =>
         role === "admin" ? `“${name}”已设为管理员` : `“${name}”已设为读者`,
       updateError: "用户状态更新失败",
@@ -594,12 +662,28 @@ function getUsersActionCopy(locale: "en" | "zh") {
     commentHistory: "Newest first",
     currentAccount: "You",
     currentAdminRoleLocked: "The signed-in admin role cannot be changed here.",
+    emailDigest: "Biweekly digest",
+    emailInstant: "Every post",
+    emailNone: "No blog emails",
+    emailSubscribers: "Email subscribers",
+    emailUpdates: "Blog update emails",
+    emailUpdateSuccess: (name: string, emailPreference: EmailPreference) => {
+      const label =
+        emailPreference === "instant_posts"
+          ? "every post"
+          : emailPreference === "biweekly_digest"
+            ? "biweekly digest"
+            : "no blog emails";
+
+      return `"${name}" email updates set to ${label}`;
+    },
     hideComments: "Hide comments",
     lastAdminRoleLocked: "At least one admin is required.",
     makeAdmin: "Make admin",
     makeReader: "Make reader",
     networkError: "Network error. Try again in a moment.",
     noUserComments: "This user has not posted comments yet.",
+    optionalEmailOptOut: "Optional emails off",
     roleUpdateSuccess: (name: string, role: UserRole) =>
       role === "admin" ? `"${name}" is now an admin` : `"${name}" is now a reader`,
     updateError: "User status could not be updated",

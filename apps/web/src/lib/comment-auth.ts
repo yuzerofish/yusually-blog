@@ -7,6 +7,7 @@ import {
   normalizeEmail,
   toIsoString,
   type CommentUserStatus,
+  type EmailPreference,
 } from "@repo/core";
 import { createAuthDb } from "@repo/db";
 import { user as authUserTable } from "@repo/db/schema";
@@ -51,12 +52,15 @@ export type CommentUser = {
   avatarUrl: string | null;
   provider: "email" | "github";
   commentStatus: CommentUserStatus;
+  emailPreference: EmailPreference;
+  marketingOptOut: boolean;
   createdAt: string;
   lastLoginAt: string | null;
 };
 
 type CommentUserInput = {
   email?: string;
+  emailPreference?: unknown;
   name?: string;
   password?: string;
 };
@@ -68,6 +72,8 @@ type BetterAuthUser = {
   emailVerified?: boolean;
   image?: string | null;
   commentStatus?: CommentUserStatus;
+  emailPreference?: EmailPreference;
+  marketingOptOut?: boolean;
   createdAt?: Date | string | number;
 };
 
@@ -162,7 +168,14 @@ export async function signupCommentUser(input: CommentUserInput, request: Reques
   });
 
   try {
-    await authDb.update(authUserTable).set({ role: "reader" }).where(eq(authUserTable.id, user.id));
+    await authDb
+      .update(authUserTable)
+      .set({
+        role: "reader",
+        emailPreference: isEmailPreference(input.emailPreference) ? input.emailPreference : "none",
+        emailPreferenceUpdatedAt: new Date().toISOString(),
+      })
+      .where(eq(authUserTable.id, user.id));
     await context.internalAdapter.linkAccount({
       userId: user.id,
       accountId: user.id,
@@ -218,8 +231,10 @@ export async function loginCommentUser(
     } as const;
   }
 
+  const persistedUser = await getAuthUserById(payload.user.id);
+
   return {
-    data: await toCommentUser(payload.user),
+    data: await toCommentUser({ ...payload.user, ...persistedUser }),
     headers: extractSetCookieHeaders(response),
   } as const;
 }
@@ -279,6 +294,8 @@ export function publicCommentUser(user: CommentUser) {
     avatarUrl: user.avatarUrl,
     provider: user.provider,
     commentStatus: user.commentStatus,
+    emailPreference: user.emailPreference,
+    marketingOptOut: user.marketingOptOut,
   };
 }
 
@@ -291,9 +308,15 @@ async function toCommentUser(user: BetterAuthUser): Promise<CommentUser> {
     avatarUrl: user.image ?? null,
     provider: await resolvePrimaryProvider(user.id),
     commentStatus: user.commentStatus ?? "active",
+    emailPreference: user.emailPreference ?? "none",
+    marketingOptOut: user.marketingOptOut ?? false,
     createdAt: toIsoString(user.createdAt),
     lastLoginAt: null,
   };
+}
+
+function isEmailPreference(value: unknown): value is EmailPreference {
+  return value === "none" || value === "instant_posts" || value === "biweekly_digest";
 }
 
 async function getAuthUserById(id: string) {

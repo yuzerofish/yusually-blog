@@ -30,6 +30,8 @@ export const siteSettings: SiteSettings = {
   aiCommentModerationRules:
     "判断这条博客评论是否适合公开展示。拦截广告、诈骗、钓鱼、辱骂、仇恨、色情、暴力威胁、隐私泄露、无意义灌水和明显 SEO 外链。普通反对意见、批评、提问、纠错、补充信息应该允许。",
   emailVerificationEnabled: false,
+  emailNotificationsEnabled: false,
+  manualEmailBroadcastsEnabled: false,
   indexingEnabled: true,
   themePreset: "maker",
   layoutPreset: "shelf",

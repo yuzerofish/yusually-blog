@@ -5,6 +5,10 @@ import { getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { deleteD1Post, getD1PostByIdOrSlug, updateD1Post } from "#/lib/cms-d1";
 import { applyPublishingAutomation } from "#/lib/content-automation.server";
+import {
+  notifyPostPublishedSubscribers,
+  shouldNotifyPostPublication,
+} from "#/lib/email-notifications";
 
 export const Route = createFileRoute("/api/posts/$id")({
   server: {
@@ -52,9 +56,14 @@ export const Route = createFileRoute("/api/posts/$id")({
           post.id,
           await applyPublishingAutomation({ ...body, locale }, post),
         );
+        const responsePost = updated ?? post;
+
+        if (updated && shouldNotifyPostPublication(post, updated)) {
+          await notifyPostPublishedSubscribers(updated).catch(() => undefined);
+        }
 
         return jsonResponse({
-          data: updated ? localizePost(updated, locale) : post,
+          data: localizePost(responsePost, locale),
           requiredScope: "posts:write",
         });
       },

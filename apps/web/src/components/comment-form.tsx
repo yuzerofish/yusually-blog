@@ -2,9 +2,10 @@ import { SiGithub } from "@icons-pack/react-simple-icons";
 import { Button, buttonVariants } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
-import { LoaderCircleIcon, LogOutIcon } from "lucide-react";
+import { LoaderCircleIcon, LogOutIcon, MailIcon } from "lucide-react";
 import { useEffect, useState, type ComponentProps } from "react";
 
+import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
 type CommentFormProps = {
@@ -18,6 +19,7 @@ type CommentFormProps = {
 type SubmitState = "idle" | "submitting" | "success" | "error";
 type AuthState = "idle" | "submitting" | "error" | "verification";
 type AuthMode = "login" | "signup";
+type EmailPreference = "none" | "instant_posts" | "biweekly_digest";
 type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
 
 type CommentAuthUser = {
@@ -27,6 +29,8 @@ type CommentAuthUser = {
   avatarUrl: string | null;
   provider: "email" | "github";
   commentStatus?: "active" | "muted";
+  emailPreference: EmailPreference;
+  marketingOptOut: boolean;
 };
 
 export function CommentForm({
@@ -41,6 +45,10 @@ export function CommentForm({
   const [authMode, setAuthMode] = useState<AuthMode>("login");
   const [user, setUser] = useState<CommentAuthUser | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [emailPreferenceStatus, setEmailPreferenceStatus] = useState<"idle" | "saving" | "saved">(
+    "idle",
+  );
+  const emailCopy = getCommentEmailPreferenceCopy(getCurrentLocale());
 
   useEffect(() => {
     let ignore = false;
@@ -107,6 +115,7 @@ export function CommentForm({
       body: JSON.stringify({
         name: formData.get("name"),
         email: formData.get("email"),
+        emailPreference: formData.get("emailPreference"),
         password: formData.get("password"),
       }),
     });
@@ -129,6 +138,31 @@ export function CommentForm({
     setUser(payload.data);
     setAuthState("idle");
     form.reset();
+  };
+
+  const updateEmailPreference = async (emailPreference: EmailPreference) => {
+    setEmailPreferenceStatus("saving");
+    const response = await fetch("/api/account/email-preferences", {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ emailPreference }),
+    }).catch(() => null);
+
+    if (!response?.ok) {
+      setEmailPreferenceStatus("idle");
+      return;
+    }
+
+    const payload = (await response.json()) as {
+      data?: { emailPreference: EmailPreference; marketingOptOut: boolean };
+    };
+
+    if (payload.data) {
+      setUser((current) => (current ? { ...current, ...payload.data } : current));
+    }
+
+    setEmailPreferenceStatus("saved");
+    window.setTimeout(() => setEmailPreferenceStatus("idle"), 1800);
   };
 
   const handleLogout = async () => {
@@ -196,6 +230,21 @@ export function CommentForm({
                 required
               />
             </div>
+            {authMode === "signup" ? (
+              <div className="grid gap-2">
+                <Label htmlFor="comment-auth-email-preference">{emailCopy.label}</Label>
+                <select
+                  id="comment-auth-email-preference"
+                  name="emailPreference"
+                  defaultValue="none"
+                  className="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
+                >
+                  <option value="none">{emailCopy.none}</option>
+                  <option value="instant_posts">{emailCopy.instant}</option>
+                  <option value="biweekly_digest">{emailCopy.digest}</option>
+                </select>
+              </div>
+            ) : null}
             <div className="flex flex-wrap items-center gap-3">
               <Button type="submit" disabled={authState === "submitting"}>
                 {authState === "submitting" ? (
@@ -259,6 +308,32 @@ export function CommentForm({
           {m.sign_out()}
         </button>
       </div>
+      <div className="grid gap-2 rounded-md border border-border bg-muted/30 p-3 text-sm sm:grid-cols-[minmax(0,1fr)_minmax(190px,0.6fr)] sm:items-center">
+        <div className="flex items-start gap-2 text-muted-foreground">
+          <MailIcon className="mt-0.5 size-4 text-link" />
+          <div>
+            <p className="font-medium text-foreground">{emailCopy.title}</p>
+            <p className="mt-1 text-xs leading-5">{emailCopy.description}</p>
+          </div>
+        </div>
+        <div className="grid gap-1">
+          <select
+            value={user.emailPreference}
+            onChange={(event) =>
+              void updateEmailPreference(event.currentTarget.value as EmailPreference)
+            }
+            disabled={emailPreferenceStatus === "saving"}
+            className="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
+          >
+            <option value="none">{emailCopy.none}</option>
+            <option value="instant_posts">{emailCopy.instant}</option>
+            <option value="biweekly_digest">{emailCopy.digest}</option>
+          </select>
+          {emailPreferenceStatus === "saved" ? (
+            <p className="text-xs text-success">{emailCopy.saved}</p>
+          ) : null}
+        </div>
+      </div>
       {replyingTo ? (
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 pb-3 text-sm text-muted-foreground">
           <span>{m.comment_replying_to({ name: replyingTo })}</span>
@@ -310,4 +385,28 @@ function githubLoginHref(postSlug: string) {
       : `${window.location.pathname}${window.location.search}#comments`;
 
   return `/api/comment-auth/github/start?redirectTo=${encodeURIComponent(redirectTo)}`;
+}
+
+function getCommentEmailPreferenceCopy(locale: ReturnType<typeof getCurrentLocale>) {
+  if (locale === "zh") {
+    return {
+      description: "选择这个账号接收新文章邮件的频率。",
+      digest: "每 2 周摘要",
+      instant: "每篇新文章",
+      label: "博客更新邮件",
+      none: "不接收博客邮件",
+      saved: "邮件偏好已保存",
+      title: "博客更新邮件",
+    };
+  }
+
+  return {
+    description: "Choose how often this account receives new post emails.",
+    digest: "Biweekly digest",
+    instant: "Every new post",
+    label: "Blog update emails",
+    none: "No blog emails",
+    saved: "Email preference saved",
+    title: "Blog update emails",
+  };
 }

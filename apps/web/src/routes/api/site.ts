@@ -29,11 +29,26 @@ export const Route = createFileRoute("/api/site")({
 
         const body = await readJsonBody<Parameters<typeof updateD1SiteSettings>[0]>(request);
 
-        if (body.emailVerificationEnabled === true && !getEmailDeliveryStatus().configured) {
+        const emailDelivery = getEmailDeliveryStatus();
+
+        if (body.emailVerificationEnabled === true && !emailDelivery.configured) {
           return jsonResponse(
             {
               error:
                 "Configure Cloudflare Email Sending or Resend before enabling email verification.",
+            },
+            { status: 400 },
+          );
+        }
+
+        if (
+          (body.emailNotificationsEnabled === true || body.manualEmailBroadcastsEnabled === true) &&
+          !emailDelivery.configured
+        ) {
+          return jsonResponse(
+            {
+              error:
+                "Configure Cloudflare Email Sending or Resend before enabling optional email notifications.",
             },
             { status: 400 },
           );

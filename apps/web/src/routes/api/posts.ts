@@ -5,6 +5,10 @@ import { createPostPreview, getApiLocale, jsonResponse, readJsonBody } from "#/l
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { createD1Post, listD1Posts } from "#/lib/cms-d1";
 import { applyPublishingAutomation } from "#/lib/content-automation.server";
+import {
+  notifyPostPublishedSubscribers,
+  shouldNotifyPostPublication,
+} from "#/lib/email-notifications";
 
 export const Route = createFileRoute("/api/posts")({
   server: {
@@ -59,6 +63,10 @@ export const Route = createFileRoute("/api/posts")({
           locale,
         });
         const post = await createD1Post(postInput);
+
+        if (shouldNotifyPostPublication(null, post)) {
+          await notifyPostPublishedSubscribers(post).catch(() => undefined);
+        }
 
         return jsonResponse(
           {

@@ -5,6 +5,10 @@ import { requireCmsAccess } from "#/lib/cms-authz";
 import { createD1Post } from "#/lib/cms-d1";
 import { notifyImportCompleted } from "#/lib/cms-email";
 import { parseMarkdownImport, type ImportPostInput } from "#/lib/cms-import";
+import {
+  notifyPostPublishedSubscribers,
+  shouldNotifyPostPublication,
+} from "#/lib/email-notifications";
 
 export const Route = createFileRoute("/api/import/markdown")({
   server: {
@@ -41,6 +45,9 @@ export const Route = createFileRoute("/api/import/markdown")({
           post,
           siteUrl: new URL(request.url).origin,
         });
+        if (shouldNotifyPostPublication(null, post)) {
+          await notifyPostPublishedSubscribers(post).catch(() => undefined);
+        }
 
         return jsonResponse(
           {

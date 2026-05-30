@@ -189,3 +189,68 @@ export const apiTokens = sqliteTable(
   },
   (table) => [uniqueIndex("api_tokens_hash_idx").on(table.tokenHash)],
 );
+
+export const emailNotificationDeliveries = sqliteTable(
+  "email_notification_deliveries",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => authUser.id, { onDelete: "cascade" }),
+    postId: text("post_id").references(() => posts.id, { onDelete: "cascade" }),
+    notificationType: text("notification_type", {
+      enum: ["instant_post", "biweekly_digest", "manual_broadcast"],
+    }).notNull(),
+    subject: text("subject").notNull(),
+    status: text("status", { enum: ["pending", "sent", "failed"] })
+      .notNull()
+      .default("pending"),
+    messageId: text("message_id"),
+    error: text("error"),
+    createdAt: text("created_at").notNull(),
+    sentAt: text("sent_at"),
+  },
+  (table) => [
+    uniqueIndex("email_delivery_post_user_type_idx").on(
+      table.userId,
+      table.postId,
+      table.notificationType,
+    ),
+    index("email_delivery_user_idx").on(table.userId, table.createdAt),
+    index("email_delivery_status_idx").on(table.status, table.createdAt),
+  ],
+);
+
+export const emailDigestRuns = sqliteTable(
+  "email_digest_runs",
+  {
+    id: text("id").primaryKey(),
+    periodStart: text("period_start").notNull(),
+    periodEnd: text("period_end").notNull(),
+    status: text("status", { enum: ["sent", "failed", "skipped"] }).notNull(),
+    postCount: integer("post_count").notNull().default(0),
+    recipientCount: integer("recipient_count").notNull().default(0),
+    error: text("error"),
+    createdAt: text("created_at").notNull(),
+    completedAt: text("completed_at"),
+  },
+  (table) => [index("email_digest_period_idx").on(table.periodEnd)],
+);
+
+export const emailBroadcasts = sqliteTable(
+  "email_broadcasts",
+  {
+    id: text("id").primaryKey(),
+    subject: text("subject").notNull(),
+    message: text("message").notNull(),
+    status: text("status", { enum: ["sent", "failed"] }).notNull(),
+    recipientCount: integer("recipient_count").notNull().default(0),
+    error: text("error"),
+    createdByUserId: text("created_by_user_id").references(() => authUser.id, {
+      onDelete: "set null",
+    }),
+    createdAt: text("created_at").notNull(),
+    sentAt: text("sent_at"),
+  },
+  (table) => [index("email_broadcast_created_idx").on(table.createdAt)],
+);

@@ -89,6 +89,7 @@ type AiProviderSettings = {
   model: string;
 };
 type AiActionState = "idle" | "saving" | "testing" | "clearing";
+type BroadcastActionState = "idle" | "previewing" | "sending";
 
 const defaultEmailVerificationStatus: EmailVerificationStatus = {
   delivery: {
@@ -124,6 +125,7 @@ function AdminSettingsPage() {
   const locale = getCurrentLocale();
   const actionCopy = getSettingsActionCopy(locale);
   const aiCopy = getAiProviderCopy(locale);
+  const emailCopy = getEmailFeatureCopy(locale);
   const defaultSettings: SiteSettings = {
     name: "",
     description: "",
@@ -142,6 +144,8 @@ function AdminSettingsPage() {
     aiCommentModerationEnabled: false,
     aiCommentModerationRules: "",
     emailVerificationEnabled: false,
+    emailNotificationsEnabled: false,
+    manualEmailBroadcastsEnabled: false,
     indexingEnabled: true,
     themePreset: "maker",
     layoutPreset: "journal",
@@ -162,6 +166,11 @@ function AdminSettingsPage() {
   const [tokens, setTokens] = useState<ApiToken[]>([]);
   const [secret, setSecret] = useState<string | null>(null);
   const [settingsStatus, setSettingsStatus] = useState<"idle" | "saved" | "error">("idle");
+  const [broadcastAudienceCount, setBroadcastAudienceCount] = useState(0);
+  const [broadcastSubject, setBroadcastSubject] = useState("");
+  const [broadcastMessage, setBroadcastMessage] = useState("");
+  const [broadcastTestEmail, setBroadcastTestEmail] = useState("");
+  const [broadcastActionState, setBroadcastActionState] = useState<BroadcastActionState>("idle");
   const [portabilityStatus, setPortabilityStatus] = useState<PortabilityStatus | null>(null);
   const [exportFormat, setExportFormat] = useState<"json" | "zip" | null>(null);
 
@@ -177,7 +186,10 @@ function AdminSettingsPage() {
         .then((response) => (response.ok ? response.json() : undefined))
         .catch(() => undefined),
       fetch("/api/tokens").then((response) => (response.ok ? response.json() : undefined)),
-    ]).then(([sitePayload, emailPayload, aiPayload, tokenPayload]) => {
+      fetch("/api/admin/email-broadcasts").then((response) =>
+        response.ok ? response.json() : undefined,
+      ),
+    ]).then(([sitePayload, emailPayload, aiPayload, tokenPayload, broadcastPayload]) => {
       const siteData = (sitePayload as { data?: SiteSettings } | undefined)?.data;
       const emailData = (emailPayload as { data?: EmailVerificationStatus } | undefined)?.data;
       const advancedData = (
@@ -187,6 +199,8 @@ function AdminSettingsPage() {
       )?.advanced;
       const aiData = aiPayload as unknown;
       const tokenData = (tokenPayload as { data?: ApiToken[] } | undefined)?.data;
+      const broadcastData = (broadcastPayload as { data?: { audienceCount?: number } } | undefined)
+        ?.data;
 
       if (!ignore && siteData) {
         setSiteSettings(siteData);
@@ -206,6 +220,10 @@ function AdminSettingsPage() {
 
       if (!ignore && tokenData) {
         setTokens(tokenData);
+      }
+
+      if (!ignore && broadcastData) {
+        setBroadcastAudienceCount(broadcastData.audienceCount ?? 0);
       }
     });
 
@@ -235,6 +253,10 @@ function AdminSettingsPage() {
         rssEnabled: formData.get("rssEnabled") === "on",
         emailVerificationEnabled:
           emailStatus.delivery.configured && formData.get("emailVerificationEnabled") === "on",
+        emailNotificationsEnabled:
+          emailStatus.delivery.configured && formData.get("emailNotificationsEnabled") === "on",
+        manualEmailBroadcastsEnabled:
+          emailStatus.delivery.configured && formData.get("manualEmailBroadcastsEnabled") === "on",
         indexingEnabled: formData.get("indexingEnabled") === "on",
         layoutPreset: formData.get("layoutPreset"),
       }),
@@ -257,6 +279,51 @@ function AdminSettingsPage() {
     );
     setSettingsStatus("saved");
     toast.success(actionCopy.settingsSaved);
+  };
+
+  const submitBroadcast = async (action: "preview" | "send") => {
+    if (broadcastActionState !== "idle") {
+      return;
+    }
+
+    setBroadcastActionState(action === "preview" ? "previewing" : "sending");
+
+    const response = await fetch("/api/admin/email-broadcasts", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        action,
+        subject: broadcastSubject,
+        message: broadcastMessage,
+        testEmail: broadcastTestEmail,
+      }),
+    }).catch(() => null);
+
+    setBroadcastActionState("idle");
+
+    if (!response?.ok) {
+      toast.error(emailCopy.broadcastError, {
+        description: response
+          ? await getResponseErrorMessage(response, emailCopy.broadcastError)
+          : actionCopy.networkError,
+      });
+      return;
+    }
+
+    const payload = (await response.json()) as {
+      data?: { recipientCount?: number };
+    };
+
+    toast.success(
+      action === "preview"
+        ? emailCopy.previewSent
+        : emailCopy.broadcastSent(payload.data?.recipientCount ?? 0),
+    );
+
+    if (action === "send") {
+      setBroadcastSubject("");
+      setBroadcastMessage("");
+    }
   };
 
   const createToken: FormSubmitHandler = async (event) => {
@@ -575,6 +642,8 @@ function AdminSettingsPage() {
             siteSettings.url,
             siteSettings.avatarUrl,
             siteSettings.emailVerificationEnabled,
+            siteSettings.emailNotificationsEnabled,
+            siteSettings.manualEmailBroadcastsEnabled,
             siteSettings.socialLinks.length,
             siteSettings.navigation.length,
           ].join("-")}
@@ -749,6 +818,56 @@ function AdminSettingsPage() {
                   </span>
                 </Label>
               </div>
+              <div
+                className={`flex items-start gap-3 text-sm ${
+                  emailStatus.delivery.configured ? "" : "opacity-65"
+                }`}
+              >
+                <input
+                  id="email-notifications-enabled"
+                  type="checkbox"
+                  name="emailNotificationsEnabled"
+                  defaultChecked={
+                    siteSettings.emailNotificationsEnabled && emailStatus.delivery.configured
+                  }
+                  disabled={!emailStatus.delivery.configured}
+                  className="mt-0.5 size-4 rounded border-input"
+                />
+                <Label
+                  htmlFor="email-notifications-enabled"
+                  className="grid gap-1 text-sm leading-5 font-normal"
+                >
+                  <span>{emailCopy.blogUpdates}</span>
+                  <span className="text-xs leading-5 text-muted-foreground">
+                    {emailCopy.blogUpdatesHelp}
+                  </span>
+                </Label>
+              </div>
+              <div
+                className={`flex items-start gap-3 text-sm ${
+                  emailStatus.delivery.configured ? "" : "opacity-65"
+                }`}
+              >
+                <input
+                  id="manual-email-broadcasts-enabled"
+                  type="checkbox"
+                  name="manualEmailBroadcastsEnabled"
+                  defaultChecked={
+                    siteSettings.manualEmailBroadcastsEnabled && emailStatus.delivery.configured
+                  }
+                  disabled={!emailStatus.delivery.configured}
+                  className="mt-0.5 size-4 rounded border-input"
+                />
+                <Label
+                  htmlFor="manual-email-broadcasts-enabled"
+                  className="grid gap-1 text-sm leading-5 font-normal"
+                >
+                  <span>{emailCopy.manualBroadcasts}</span>
+                  <span className="text-xs leading-5 text-muted-foreground">
+                    {emailCopy.manualBroadcastsHelp}
+                  </span>
+                </Label>
+              </div>
               <p
                 className={`text-xs ${
                   emailStatus.delivery.configured ? "text-success" : "text-muted-foreground"
@@ -762,6 +881,109 @@ function AdminSettingsPage() {
           </div>
         </form>
       </section>
+
+      <AdminPanel>
+        <div className="flex items-start gap-3">
+          <MailIcon className="mt-1 size-5 text-link" />
+          <div>
+            <h2 className="text-xl font-semibold">{emailCopy.broadcastTitle}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {emailCopy.broadcastDescription(broadcastAudienceCount)}
+            </p>
+          </div>
+        </div>
+
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            void submitBroadcast("send");
+          }}
+          className="mt-6 grid gap-4"
+        >
+          <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(220px,0.45fr)]">
+            <div className="grid gap-2">
+              <Label htmlFor="broadcast-subject">{emailCopy.broadcastSubject}</Label>
+              <Input
+                id="broadcast-subject"
+                value={broadcastSubject}
+                onChange={(event) => setBroadcastSubject(event.currentTarget.value)}
+                placeholder={emailCopy.broadcastSubjectPlaceholder}
+                disabled={
+                  !siteSettings.manualEmailBroadcastsEnabled ||
+                  !emailStatus.delivery.configured ||
+                  broadcastActionState !== "idle"
+                }
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="broadcast-test-email">{emailCopy.previewRecipient}</Label>
+              <Input
+                id="broadcast-test-email"
+                value={broadcastTestEmail}
+                onChange={(event) => setBroadcastTestEmail(event.currentTarget.value)}
+                placeholder="you@example.com"
+                disabled={!emailStatus.delivery.configured || broadcastActionState !== "idle"}
+              />
+            </div>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="broadcast-message">{emailCopy.broadcastMessage}</Label>
+            <textarea
+              id="broadcast-message"
+              value={broadcastMessage}
+              onChange={(event) => setBroadcastMessage(event.currentTarget.value)}
+              className={`${adminTextareaClassName} min-h-32`}
+              placeholder={emailCopy.broadcastMessagePlaceholder}
+              disabled={
+                !siteSettings.manualEmailBroadcastsEnabled ||
+                !emailStatus.delivery.configured ||
+                broadcastActionState !== "idle"
+              }
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={
+                !siteSettings.manualEmailBroadcastsEnabled ||
+                !emailStatus.delivery.configured ||
+                !broadcastSubject.trim() ||
+                !broadcastMessage.trim() ||
+                broadcastActionState !== "idle"
+              }
+              onClick={() => void submitBroadcast("preview")}
+            >
+              {broadcastActionState === "previewing" ? (
+                <Loader2Icon className="size-4 animate-spin" />
+              ) : (
+                <MailIcon className="size-4" />
+              )}
+              {emailCopy.sendPreview}
+            </Button>
+            <Button
+              type="submit"
+              disabled={
+                !siteSettings.manualEmailBroadcastsEnabled ||
+                !emailStatus.delivery.configured ||
+                !broadcastSubject.trim() ||
+                !broadcastMessage.trim() ||
+                broadcastActionState !== "idle"
+              }
+            >
+              {broadcastActionState === "sending" ? (
+                <Loader2Icon className="size-4 animate-spin" />
+              ) : (
+                <MailIcon className="size-4" />
+              )}
+              {emailCopy.sendBroadcast}
+            </Button>
+          </div>
+          {!emailStatus.delivery.configured || !siteSettings.manualEmailBroadcastsEnabled ? (
+            <p className="text-xs text-muted-foreground">{emailCopy.broadcastDisabled}</p>
+          ) : null}
+        </form>
+      </AdminPanel>
 
       <AdminPanel>
         <div className="flex items-start gap-3">
@@ -1355,6 +1577,53 @@ function getAdvancedConfigCopy(locale: ReturnType<typeof getCurrentLocale>) {
     turnstileMissing:
       "Turnstile is not fully configured. Comments still use login, rate limits, and moderation.",
     turnstileTitle: "Cloudflare Turnstile",
+  };
+}
+
+function getEmailFeatureCopy(locale: ReturnType<typeof getCurrentLocale>) {
+  if (locale === "zh") {
+    return {
+      blogUpdates: "启用博客更新邮件",
+      blogUpdatesHelp: "只发送给主动选择“每篇文章”或“双周摘要”的已验证用户。",
+      broadcastDescription: (count: number) =>
+        `手动发送站点公告给未退订的已验证注册用户。当前可接收用户：${count}。`,
+      broadcastDisabled: "需要先配置邮件服务，并在站点设置里启用手动公告。",
+      broadcastError: "邮件公告发送失败",
+      broadcastMessage: "正文",
+      broadcastMessagePlaceholder: "写给注册用户的站点公告。",
+      broadcastSent: (count: number) => `邮件公告已发送给 ${count} 个用户。`,
+      broadcastSubject: "主题",
+      broadcastSubjectPlaceholder: "站点公告",
+      broadcastTitle: "站点公告",
+      manualBroadcasts: "允许手动发送站点公告",
+      manualBroadcastsHelp: "公告会发送给未退订的已验证注册用户，并包含退订链接。",
+      previewRecipient: "预览收件人",
+      previewSent: "预览邮件已发送",
+      sendBroadcast: "发送公告",
+      sendPreview: "发送预览",
+    };
+  }
+
+  return {
+    blogUpdates: "Enable blog update emails",
+    blogUpdatesHelp: "Only sends to verified users who choose instant posts or biweekly digest.",
+    broadcastDescription: (count: number) =>
+      `Send a manual site announcement to verified registered users who have not opted out. Current audience: ${count}.`,
+    broadcastDisabled: "Configure email delivery and enable manual announcements first.",
+    broadcastError: "Email announcement could not be sent",
+    broadcastMessage: "Message",
+    broadcastMessagePlaceholder: "Write the site announcement for registered users.",
+    broadcastSent: (count: number) => `Announcement sent to ${count} users.`,
+    broadcastSubject: "Subject",
+    broadcastSubjectPlaceholder: "Site announcement",
+    broadcastTitle: "Site announcements",
+    manualBroadcasts: "Allow manual site announcements",
+    manualBroadcastsHelp:
+      "Announcements go to verified registered users who have not opted out and include an unsubscribe link.",
+    previewRecipient: "Preview recipient",
+    previewSent: "Preview email sent",
+    sendBroadcast: "Send announcement",
+    sendPreview: "Send preview",
   };
 }
 

@@ -4,6 +4,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { getD1PostByIdOrSlug, updateD1Post } from "#/lib/cms-d1";
+import {
+  notifyPostPublishedSubscribers,
+  shouldNotifyPostPublication,
+} from "#/lib/email-notifications";
 
 const batchStatusByAction = {
   publish: "published",
@@ -54,6 +58,10 @@ export const Route = createFileRoute("/api/posts/batch")({
           const updated = await updateD1Post(post.id, { status, locale });
 
           if (updated) {
+            if (shouldNotifyPostPublication(post, updated)) {
+              await notifyPostPublishedSubscribers(updated).catch(() => undefined);
+            }
+
             updatedPosts.push(localizePost(updated, locale));
           }
         }

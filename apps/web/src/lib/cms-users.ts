@@ -1,5 +1,11 @@
 import "@tanstack/react-start/server-only";
-import { toIsoString, type CmsUser, type CommentUserStatus, type UserRole } from "@repo/core";
+import {
+  toIsoString,
+  type CmsUser,
+  type CommentUserStatus,
+  type EmailPreference,
+  type UserRole,
+} from "@repo/core";
 import { createAuthDb } from "@repo/db";
 import { account as authAccountTable, user as authUserTable } from "@repo/db/schema";
 import * as cmsSchema from "@repo/db/schema/cms";
@@ -18,6 +24,10 @@ export function isCommentUserStatus(value: unknown): value is CommentUserStatus 
 
 export function isUserRole(value: unknown): value is UserRole {
   return value === "admin" || value === "reader";
+}
+
+export function isEmailPreference(value: unknown): value is EmailPreference {
+  return value === "none" || value === "instant_posts" || value === "biweekly_digest";
 }
 
 export async function listCmsUsers(): Promise<CmsUser[]> {
@@ -127,6 +137,8 @@ export async function updateCmsUser(
   id: string,
   input: {
     readonly commentStatus?: CommentUserStatus;
+    readonly emailPreference?: EmailPreference;
+    readonly marketingOptOut?: boolean;
     readonly role?: UserRole;
   },
 ): Promise<CmsUser | null> {
@@ -145,6 +157,24 @@ export async function updateCmsUser(
 
   if (input.role && input.role !== existing.role) {
     nextValues.role = input.role;
+  }
+
+  if (input.emailPreference && input.emailPreference !== existing.emailPreference) {
+    nextValues.emailPreference = input.emailPreference;
+    nextValues.emailPreferenceUpdatedAt = new Date().toISOString();
+
+    if (input.emailPreference !== "none") {
+      nextValues.marketingOptOut = false;
+    }
+  }
+
+  if (input.marketingOptOut !== undefined && input.marketingOptOut !== existing.marketingOptOut) {
+    nextValues.marketingOptOut = input.marketingOptOut;
+    nextValues.emailPreferenceUpdatedAt = new Date().toISOString();
+
+    if (input.marketingOptOut) {
+      nextValues.emailPreference = "none";
+    }
   }
 
   if (!Object.keys(nextValues).length) {
@@ -176,6 +206,9 @@ function toCmsUser(
     image: user.image,
     commentStatus: user.commentStatus,
     commentStatusUpdatedAt: user.commentStatusUpdatedAt,
+    emailPreference: user.emailPreference,
+    emailPreferenceUpdatedAt: user.emailPreferenceUpdatedAt,
+    marketingOptOut: user.marketingOptOut,
     providers: options.providers?.length ? options.providers : ["unknown"],
     commentCount: options.commentStats?.count ?? 0,
     lastCommentAt: options.commentStats?.lastCommentAt ?? null,

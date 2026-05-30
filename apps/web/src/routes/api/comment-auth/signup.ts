@@ -7,7 +7,12 @@ export const Route = createFileRoute("/api/comment-auth/signup")({
   server: {
     handlers: {
       POST: async ({ request }: { request: Request }) => {
-        const body = await readJsonBody<{ email: string; name: string; password: string }>(request);
+        const body = await readJsonBody<{
+          email: string;
+          emailPreference?: unknown;
+          name: string;
+          password: string;
+        }>(request);
         const result = await signupCommentUser(body, request).catch((error: unknown) => ({
           error: error instanceof Error ? error.message : "Signup failed",
         }));

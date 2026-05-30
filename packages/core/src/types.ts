@@ -73,6 +73,8 @@ export type UserRole = "admin" | "reader";
 
 export type CommentUserStatus = "active" | "muted";
 
+export type EmailPreference = "none" | "instant_posts" | "biweekly_digest";
+
 export type CmsUser = {
   id: string;
   name: string;
@@ -82,6 +84,9 @@ export type CmsUser = {
   image: string | null;
   commentStatus: CommentUserStatus;
   commentStatusUpdatedAt: string | null;
+  emailPreference: EmailPreference;
+  emailPreferenceUpdatedAt: string | null;
+  marketingOptOut: boolean;
   providers: Array<"email" | "github" | "unknown">;
   commentCount: number;
   lastCommentAt: string | null;
@@ -139,6 +144,8 @@ export type SiteSettings = {
   aiCommentModerationEnabled: boolean;
   aiCommentModerationRules: string;
   emailVerificationEnabled: boolean;
+  emailNotificationsEnabled: boolean;
+  manualEmailBroadcastsEnabled: boolean;
   indexingEnabled: boolean;
   themePreset: ThemePreset;
   layoutPreset: LayoutPreset;

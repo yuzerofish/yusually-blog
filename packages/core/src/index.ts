@@ -31,6 +31,7 @@ export type {
   CommentUserStatus,
   ContentStatus,
   CmsUser,
+  EmailPreference,
   LayoutPreset,
   Post,
   Series,

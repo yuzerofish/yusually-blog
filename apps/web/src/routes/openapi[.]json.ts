@@ -247,6 +247,8 @@ export const Route = createFileRoute("/openapi.json")({
                           aiCommentModerationEnabled: { type: "boolean" },
                           aiCommentModerationRules: { type: "string" },
                           emailVerificationEnabled: { type: "boolean" },
+                          emailNotificationsEnabled: { type: "boolean" },
+                          manualEmailBroadcastsEnabled: { type: "boolean" },
                           indexingEnabled: { type: "boolean" },
                         },
                       },

@@ -50,6 +50,7 @@ import { Route as ApiPostsIdRouteImport } from './routes/api/posts/$id'
 import { Route as ApiImportZipRouteImport } from './routes/api/import/zip'
 import { Route as ApiImportMarkdownRouteImport } from './routes/api/import/markdown'
 import { Route as ApiImportHtmlRouteImport } from './routes/api/import/html'
+import { Route as ApiEmailUnsubscribeRouteImport } from './routes/api/email/unsubscribe'
 import { Route as ApiCommentAuthVerifyEmailRouteImport } from './routes/api/comment-auth/verify-email'
 import { Route as ApiCommentAuthSignupRouteImport } from './routes/api/comment-auth/signup'
 import { Route as ApiCommentAuthMeRouteImport } from './routes/api/comment-auth/me'
@@ -66,7 +67,9 @@ import { Route as ApiAdminMeRouteImport } from './routes/api/admin/me'
 import { Route as ApiAdminLogoutRouteImport } from './routes/api/admin/logout'
 import { Route as ApiAdminLoginRouteImport } from './routes/api/admin/login'
 import { Route as ApiAdminEmailStatusRouteImport } from './routes/api/admin/email-status'
+import { Route as ApiAdminEmailBroadcastsRouteImport } from './routes/api/admin/email-broadcasts'
 import { Route as ApiAdminAiSettingsRouteImport } from './routes/api/admin/ai-settings'
+import { Route as ApiAccountEmailPreferencesRouteImport } from './routes/api/account/email-preferences'
 import { Route as AuthAdminUsersRouteImport } from './routes/_auth/admin/users'
 import { Route as AuthAdminSettingsRouteImport } from './routes/_auth/admin/settings'
 import { Route as AuthAdminSeriesRouteImport } from './routes/_auth/admin/series'
@@ -288,6 +291,11 @@ const ApiImportHtmlRoute = ApiImportHtmlRouteImport.update({
   path: '/api/import/html',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiEmailUnsubscribeRoute = ApiEmailUnsubscribeRouteImport.update({
+  id: '/api/email/unsubscribe',
+  path: '/api/email/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCommentAuthVerifyEmailRoute =
   ApiCommentAuthVerifyEmailRouteImport.update({
     id: '/api/comment-auth/verify-email',
@@ -369,11 +377,22 @@ const ApiAdminEmailStatusRoute = ApiAdminEmailStatusRouteImport.update({
   path: '/api/admin/email-status',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminEmailBroadcastsRoute = ApiAdminEmailBroadcastsRouteImport.update({
+  id: '/api/admin/email-broadcasts',
+  path: '/api/admin/email-broadcasts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAdminAiSettingsRoute = ApiAdminAiSettingsRouteImport.update({
   id: '/api/admin/ai-settings',
   path: '/api/admin/ai-settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAccountEmailPreferencesRoute =
+  ApiAccountEmailPreferencesRouteImport.update({
+    id: '/api/account/email-preferences',
+    path: '/api/account/email-preferences',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthAdminUsersRoute = AuthAdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -499,7 +518,9 @@ export interface FileRoutesByFullPath {
   '/admin/series': typeof AuthAdminSeriesRoute
   '/admin/settings': typeof AuthAdminSettingsRoute
   '/admin/users': typeof AuthAdminUsersRoute
+  '/api/account/email-preferences': typeof ApiAccountEmailPreferencesRoute
   '/api/admin/ai-settings': typeof ApiAdminAiSettingsRouteWithChildren
+  '/api/admin/email-broadcasts': typeof ApiAdminEmailBroadcastsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
@@ -516,6 +537,7 @@ export interface FileRoutesByFullPath {
   '/api/comment-auth/me': typeof ApiCommentAuthMeRoute
   '/api/comment-auth/signup': typeof ApiCommentAuthSignupRoute
   '/api/comment-auth/verify-email': typeof ApiCommentAuthVerifyEmailRoute
+  '/api/email/unsubscribe': typeof ApiEmailUnsubscribeRoute
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
   '/api/import/zip': typeof ApiImportZipRoute
@@ -571,7 +593,9 @@ export interface FileRoutesByTo {
   '/admin/series': typeof AuthAdminSeriesRoute
   '/admin/settings': typeof AuthAdminSettingsRoute
   '/admin/users': typeof AuthAdminUsersRoute
+  '/api/account/email-preferences': typeof ApiAccountEmailPreferencesRoute
   '/api/admin/ai-settings': typeof ApiAdminAiSettingsRouteWithChildren
+  '/api/admin/email-broadcasts': typeof ApiAdminEmailBroadcastsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
@@ -588,6 +612,7 @@ export interface FileRoutesByTo {
   '/api/comment-auth/me': typeof ApiCommentAuthMeRoute
   '/api/comment-auth/signup': typeof ApiCommentAuthSignupRoute
   '/api/comment-auth/verify-email': typeof ApiCommentAuthVerifyEmailRoute
+  '/api/email/unsubscribe': typeof ApiEmailUnsubscribeRoute
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
   '/api/import/zip': typeof ApiImportZipRoute
@@ -649,7 +674,9 @@ export interface FileRoutesById {
   '/_auth/admin/series': typeof AuthAdminSeriesRoute
   '/_auth/admin/settings': typeof AuthAdminSettingsRoute
   '/_auth/admin/users': typeof AuthAdminUsersRoute
+  '/api/account/email-preferences': typeof ApiAccountEmailPreferencesRoute
   '/api/admin/ai-settings': typeof ApiAdminAiSettingsRouteWithChildren
+  '/api/admin/email-broadcasts': typeof ApiAdminEmailBroadcastsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
@@ -666,6 +693,7 @@ export interface FileRoutesById {
   '/api/comment-auth/me': typeof ApiCommentAuthMeRoute
   '/api/comment-auth/signup': typeof ApiCommentAuthSignupRoute
   '/api/comment-auth/verify-email': typeof ApiCommentAuthVerifyEmailRoute
+  '/api/email/unsubscribe': typeof ApiEmailUnsubscribeRoute
   '/api/import/html': typeof ApiImportHtmlRoute
   '/api/import/markdown': typeof ApiImportMarkdownRoute
   '/api/import/zip': typeof ApiImportZipRoute
@@ -726,7 +754,9 @@ export interface FileRouteTypes {
     | '/admin/series'
     | '/admin/settings'
     | '/admin/users'
+    | '/api/account/email-preferences'
     | '/api/admin/ai-settings'
+    | '/api/admin/email-broadcasts'
     | '/api/admin/email-status'
     | '/api/admin/login'
     | '/api/admin/logout'
@@ -743,6 +773,7 @@ export interface FileRouteTypes {
     | '/api/comment-auth/me'
     | '/api/comment-auth/signup'
     | '/api/comment-auth/verify-email'
+    | '/api/email/unsubscribe'
     | '/api/import/html'
     | '/api/import/markdown'
     | '/api/import/zip'
@@ -798,7 +829,9 @@ export interface FileRouteTypes {
     | '/admin/series'
     | '/admin/settings'
     | '/admin/users'
+    | '/api/account/email-preferences'
     | '/api/admin/ai-settings'
+    | '/api/admin/email-broadcasts'
     | '/api/admin/email-status'
     | '/api/admin/login'
     | '/api/admin/logout'
@@ -815,6 +848,7 @@ export interface FileRouteTypes {
     | '/api/comment-auth/me'
     | '/api/comment-auth/signup'
     | '/api/comment-auth/verify-email'
+    | '/api/email/unsubscribe'
     | '/api/import/html'
     | '/api/import/markdown'
     | '/api/import/zip'
@@ -875,7 +909,9 @@ export interface FileRouteTypes {
     | '/_auth/admin/series'
     | '/_auth/admin/settings'
     | '/_auth/admin/users'
+    | '/api/account/email-preferences'
     | '/api/admin/ai-settings'
+    | '/api/admin/email-broadcasts'
     | '/api/admin/email-status'
     | '/api/admin/login'
     | '/api/admin/logout'
@@ -892,6 +928,7 @@ export interface FileRouteTypes {
     | '/api/comment-auth/me'
     | '/api/comment-auth/signup'
     | '/api/comment-auth/verify-email'
+    | '/api/email/unsubscribe'
     | '/api/import/html'
     | '/api/import/markdown'
     | '/api/import/zip'
@@ -942,7 +979,9 @@ export interface RootRouteChildren {
   BlogIndexRoute: typeof BlogIndexRoute
   SeriesIndexRoute: typeof SeriesIndexRoute
   TagsIndexRoute: typeof TagsIndexRoute
+  ApiAccountEmailPreferencesRoute: typeof ApiAccountEmailPreferencesRoute
   ApiAdminAiSettingsRoute: typeof ApiAdminAiSettingsRouteWithChildren
+  ApiAdminEmailBroadcastsRoute: typeof ApiAdminEmailBroadcastsRoute
   ApiAdminEmailStatusRoute: typeof ApiAdminEmailStatusRoute
   ApiAdminLoginRoute: typeof ApiAdminLoginRoute
   ApiAdminLogoutRoute: typeof ApiAdminLogoutRoute
@@ -958,6 +997,7 @@ export interface RootRouteChildren {
   ApiCommentAuthMeRoute: typeof ApiCommentAuthMeRoute
   ApiCommentAuthSignupRoute: typeof ApiCommentAuthSignupRoute
   ApiCommentAuthVerifyEmailRoute: typeof ApiCommentAuthVerifyEmailRoute
+  ApiEmailUnsubscribeRoute: typeof ApiEmailUnsubscribeRoute
   ApiImportHtmlRoute: typeof ApiImportHtmlRoute
   ApiImportMarkdownRoute: typeof ApiImportMarkdownRoute
   ApiImportZipRoute: typeof ApiImportZipRoute
@@ -1254,6 +1294,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiImportHtmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/email/unsubscribe': {
+      id: '/api/email/unsubscribe'
+      path: '/api/email/unsubscribe'
+      fullPath: '/api/email/unsubscribe'
+      preLoaderRoute: typeof ApiEmailUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/comment-auth/verify-email': {
       id: '/api/comment-auth/verify-email'
       path: '/api/comment-auth/verify-email'
@@ -1366,11 +1413,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminEmailStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/email-broadcasts': {
+      id: '/api/admin/email-broadcasts'
+      path: '/api/admin/email-broadcasts'
+      fullPath: '/api/admin/email-broadcasts'
+      preLoaderRoute: typeof ApiAdminEmailBroadcastsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/admin/ai-settings': {
       id: '/api/admin/ai-settings'
       path: '/api/admin/ai-settings'
       fullPath: '/api/admin/ai-settings'
       preLoaderRoute: typeof ApiAdminAiSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/account/email-preferences': {
+      id: '/api/account/email-preferences'
+      path: '/api/account/email-preferences'
+      fullPath: '/api/account/email-preferences'
+      preLoaderRoute: typeof ApiAccountEmailPreferencesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/admin/users': {
@@ -1696,7 +1757,9 @@ const rootRouteChildren: RootRouteChildren = {
   BlogIndexRoute: BlogIndexRoute,
   SeriesIndexRoute: SeriesIndexRoute,
   TagsIndexRoute: TagsIndexRoute,
+  ApiAccountEmailPreferencesRoute: ApiAccountEmailPreferencesRoute,
   ApiAdminAiSettingsRoute: ApiAdminAiSettingsRouteWithChildren,
+  ApiAdminEmailBroadcastsRoute: ApiAdminEmailBroadcastsRoute,
   ApiAdminEmailStatusRoute: ApiAdminEmailStatusRoute,
   ApiAdminLoginRoute: ApiAdminLoginRoute,
   ApiAdminLogoutRoute: ApiAdminLogoutRoute,
@@ -1712,6 +1775,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCommentAuthMeRoute: ApiCommentAuthMeRoute,
   ApiCommentAuthSignupRoute: ApiCommentAuthSignupRoute,
   ApiCommentAuthVerifyEmailRoute: ApiCommentAuthVerifyEmailRoute,
+  ApiEmailUnsubscribeRoute: ApiEmailUnsubscribeRoute,
   ApiImportHtmlRoute: ApiImportHtmlRoute,
   ApiImportMarkdownRoute: ApiImportMarkdownRoute,
   ApiImportZipRoute: ApiImportZipRoute,
@@ -1721,12 +1785,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

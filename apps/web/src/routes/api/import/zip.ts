@@ -6,6 +6,10 @@ import { createD1Post } from "#/lib/cms-d1";
 import { notifyImportCompleted } from "#/lib/cms-email";
 import { parseZipImport, type ZipImportInput } from "#/lib/cms-import";
 import { storeImportPackage } from "#/lib/cms-r2";
+import {
+  notifyPostPublishedSubscribers,
+  shouldNotifyPostPublication,
+} from "#/lib/email-notifications";
 
 export const Route = createFileRoute("/api/import/zip")({
   server: {
@@ -59,6 +63,9 @@ export const Route = createFileRoute("/api/import/zip")({
           post,
           siteUrl: new URL(request.url).origin,
         });
+        if (shouldNotifyPostPublication(null, post)) {
+          await notifyPostPublishedSubscribers(post).catch(() => undefined);
+        }
 
         return jsonResponse(
           {

@@ -98,6 +98,8 @@ export type SiteSettingsInput = Partial<
     | "aiCommentModerationEnabled"
     | "aiCommentModerationRules"
     | "emailVerificationEnabled"
+    | "emailNotificationsEnabled"
+    | "manualEmailBroadcastsEnabled"
     | "indexingEnabled"
     | "themePreset"
     | "layoutPreset"
@@ -263,6 +265,9 @@ export function normalizeSiteSettings(
       base.aiCommentModerationRules,
     ),
     emailVerificationEnabled: input.emailVerificationEnabled ?? base.emailVerificationEnabled,
+    emailNotificationsEnabled: input.emailNotificationsEnabled ?? base.emailNotificationsEnabled,
+    manualEmailBroadcastsEnabled:
+      input.manualEmailBroadcastsEnabled ?? base.manualEmailBroadcastsEnabled,
     indexingEnabled: input.indexingEnabled ?? base.indexingEnabled,
     themePreset: normalizeThemePreset(input.themePreset ?? input.theme, base.themePreset),
     layoutPreset: normalizeLayoutPreset(input.layoutPreset, base.layoutPreset),
