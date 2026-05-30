@@ -1,10 +1,16 @@
-import { localizeComment, resolveLocale } from "@repo/core";
+import { localizeComment, resolveLocale, type Comment } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
+import { waitUntil } from "cloudflare:workers";
 
 import { CreateCommentSchema, validateBody } from "#/lib/api-validation";
 import { getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
-import { createD1Comment, getD1PostBySlug, listD1Comments } from "#/lib/cms-d1";
+import {
+  createD1Comment,
+  listD1Comments,
+  resolveD1CommentAiModeration,
+  type D1CommentAiModerationTask,
+} from "#/lib/cms-d1";
 import { notifyCommentCreated } from "#/lib/cms-email";
 import { getCommentUserFromRequest } from "#/lib/comment-auth";
 import { checkCommentRateLimit, getClientIp, verifyTurnstile } from "#/lib/comment-guard";
@@ -80,36 +86,23 @@ export const Route = createFileRoute("/api/comments")({
           parentId: body.parentId || null,
           locale: resolveLocale(new URL(request.url).searchParams.get("lang") ?? undefined),
         };
-        const persistedPost = await getD1PostBySlug(commentInput.postSlug);
-
-        if (!persistedPost) {
-          return jsonResponse(
-            { error: "Post not found or comments are disabled" },
-            { status: 400 },
-          );
-        }
-
         const persistedResult = await createD1Comment(commentInput);
-        const result =
-          "data" in persistedResult
-            ? { comment: persistedResult.data }
-            : { error: persistedResult.error };
 
-        if ("error" in result) {
-          return jsonResponse({ error: result.error }, { status: 400 });
+        if ("error" in persistedResult) {
+          return jsonResponse({ error: persistedResult.error }, { status: 400 });
         }
 
-        if (result.comment.status !== "spam") {
-          await notifyCommentCreated({
-            comment: result.comment,
-            postTitle: persistedPost?.title ?? commentInput.postSlug,
-            siteUrl: new URL(request.url).origin,
-          });
-        }
+        const { aiModeration, comment, postTitle } = persistedResult.data;
+        queueCommentCreatedEffects({
+          aiModeration,
+          comment,
+          postTitle,
+          siteUrl: new URL(request.url).origin,
+        });
 
         return jsonResponse(
           {
-            data: result.comment,
+            data: comment,
           },
           { status: 201 },
         );
@@ -117,3 +110,33 @@ export const Route = createFileRoute("/api/comments")({
     },
   },
 });
+
+function queueCommentCreatedEffects(input: {
+  comment: Comment;
+  postTitle: string;
+  siteUrl: string;
+  aiModeration: D1CommentAiModerationTask | null;
+}) {
+  waitUntil(
+    (async () => {
+      const finalComment = input.aiModeration
+        ? await resolveD1CommentAiModeration({
+            comment: input.comment,
+            moderation: input.aiModeration,
+          })
+        : input.comment;
+
+      if (finalComment.status === "spam") {
+        return;
+      }
+
+      await notifyCommentCreated({
+        comment: finalComment,
+        postTitle: input.postTitle,
+        siteUrl: input.siteUrl,
+      });
+    })().catch((error: unknown) => {
+      console.error("Comment post-create effects failed", error);
+    }),
+  );
+}

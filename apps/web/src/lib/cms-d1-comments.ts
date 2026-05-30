@@ -26,7 +26,22 @@ import { resolveAiCommentStatus } from "./comment-ai-moderation.server";
 // Comments
 // ---------------------------------------------------------------------------
 
-export async function createD1Comment(input: CommentInput): Promise<D1Result<Comment>> {
+export type D1CommentAiModerationTask = {
+  baseStatus: CommentStatus;
+  body: string;
+  requireApproval: boolean;
+  rules: string;
+};
+
+export type D1CommentCreateResult = {
+  comment: Comment;
+  postTitle: string;
+  aiModeration: D1CommentAiModerationTask | null;
+};
+
+export async function createD1Comment(
+  input: CommentInput,
+): Promise<D1Result<D1CommentCreateResult>> {
   const currentSettings = await getD1SiteSettings();
   const post = await getD1PostBySlug(input.postSlug);
 
@@ -81,14 +96,16 @@ export async function createD1Comment(input: CommentInput): Promise<D1Result<Com
 
   const now = new Date().toISOString();
   const baseStatus = getCommentInitialStatus({ body, settings: currentSettings });
-  const status = currentSettings.aiCommentModerationEnabled
-    ? await resolveAiCommentStatus({
-        baseStatus,
-        body,
-        requireApproval: currentSettings.commentsRequireApproval,
-        rules: currentSettings.aiCommentModerationRules,
-      })
-    : baseStatus;
+  const aiModeration =
+    currentSettings.aiCommentModerationEnabled && baseStatus !== "spam" && baseStatus !== "deleted"
+      ? {
+          baseStatus,
+          body,
+          requireApproval: currentSettings.commentsRequireApproval,
+          rules: currentSettings.aiCommentModerationRules,
+        }
+      : null;
+  const status = aiModeration ? "pending" : baseStatus;
   const comment: Comment = {
     id: `comment_${crypto.randomUUID()}`,
     postId: post.id,
@@ -123,7 +140,13 @@ export async function createD1Comment(input: CommentInput): Promise<D1Result<Com
     updatedAt: now,
   });
 
-  return { data: comment };
+  return {
+    data: {
+      comment,
+      postTitle: post.title,
+      aiModeration,
+    },
+  };
 }
 
 export async function listD1ApprovedComments(postId: string) {
@@ -137,7 +160,7 @@ export async function listD1ApprovedComments(postId: string) {
   return rows.map(drizzleRowToComment);
 }
 
-export async function moderateD1Comment(id: string, status: Exclude<CommentStatus, "pending">) {
+export async function updateD1CommentStatus(id: string, status: CommentStatus) {
   const db = getCmsDb();
 
   await db
@@ -148,6 +171,31 @@ export async function moderateD1Comment(id: string, status: Exclude<CommentStatu
   const rows = await db.select().from(schema.comments).where(eq(schema.comments.id, id)).limit(1);
 
   return rows[0] ? drizzleRowToComment(rows[0]) : undefined;
+}
+
+export function moderateD1Comment(id: string, status: Exclude<CommentStatus, "pending">) {
+  return updateD1CommentStatus(id, status);
+}
+
+export async function resolveD1CommentAiModeration({
+  comment,
+  moderation,
+}: {
+  comment: Comment;
+  moderation: D1CommentAiModerationTask;
+}) {
+  const status = await resolveAiCommentStatus({
+    baseStatus: moderation.baseStatus,
+    body: moderation.body,
+    requireApproval: moderation.requireApproval,
+    rules: moderation.rules,
+  });
+
+  if (status === comment.status) {
+    return comment;
+  }
+
+  return (await updateD1CommentStatus(comment.id, status)) ?? { ...comment, status };
 }
 
 export async function listD1Comments() {
