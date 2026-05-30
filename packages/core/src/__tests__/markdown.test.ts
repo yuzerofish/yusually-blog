@@ -18,6 +18,15 @@ describe("renderMarkdownToHtml", () => {
     expect(html).toContain("item two");
   });
 
+  it("renders ordered lists", () => {
+    const md = "1. item one\n2. item two";
+    const html = renderMarkdownToHtml(md);
+    expect(html).toContain("<ol>");
+    expect(html).toContain("<li>");
+    expect(html).toContain("item one");
+    expect(html).toContain("item two");
+  });
+
   it("renders code blocks", () => {
     const md = "```js\nconst x = 1;\n```";
     const html = renderMarkdownToHtml(md);
@@ -40,13 +49,11 @@ describe("renderMarkdownToHtml", () => {
     expect(html).toContain("Example</a>");
   });
 
-  it("renders image-like syntax (link regex processes first)", () => {
-    // The inlineMarkdown function applies link regex before image regex,
-    // so ![Alt](url) has its [Alt](url) portion converted to a link first.
+  it("renders images", () => {
     const md = "![Alt text](https://example.com/img.png)";
     const html = renderMarkdownToHtml(md);
-    expect(html).toContain('<a href="https://example.com/img.png"');
-    expect(html).toContain("Alt text</a>");
+    expect(html).toContain('<img src="https://example.com/img.png" alt="Alt text" />');
+    expect(html).not.toContain("<a ");
   });
 
   it("renders blockquotes", () => {

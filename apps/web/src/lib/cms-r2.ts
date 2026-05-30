@@ -11,6 +11,17 @@ type AssetUploadInput = {
   attachedPostId?: string | null;
 };
 
+export const MAX_ASSET_UPLOAD_BYTES = 10 * 1024 * 1024;
+
+const maxAssetRequestBytes = Math.ceil(MAX_ASSET_UPLOAD_BYTES * 1.5) + 64 * 1024;
+
+export class AssetUploadTooLargeError extends Error {
+  constructor() {
+    super(`Asset uploads are limited to ${formatBytes(MAX_ASSET_UPLOAD_BYTES)}.`);
+    this.name = "AssetUploadTooLargeError";
+  }
+}
+
 type R2StatusBucket = Pick<(typeof env)["CMS_STORAGE"], "list">;
 
 export type R2BucketStatus = {
@@ -31,6 +42,8 @@ export type R2StorageStatus = {
 export async function readAssetUpload(request: Request): Promise<AssetUploadInput> {
   const contentType = request.headers.get("content-type") ?? "";
 
+  assertRequestWithinUploadLimit(request, contentType);
+
   if (contentType.includes("multipart/form-data")) {
     const formData = await request.formData();
     const file = formData.get("file");
@@ -38,6 +51,8 @@ export async function readAssetUpload(request: Request): Promise<AssetUploadInpu
     if (!(file instanceof File)) {
       throw new Error("Upload requires a file field.");
     }
+
+    assertSizeWithinUploadLimit(file.size);
 
     return {
       filename: file.name,
@@ -62,11 +77,15 @@ export async function readAssetUpload(request: Request): Promise<AssetUploadInpu
     throw new Error("Upload requires contentBase64, dataUrl, or multipart file data.");
   }
 
+  assertSizeWithinUploadLimit(estimatedBase64DecodedBytes(contentBase64));
+  const data = decodeBase64(contentBase64);
+  assertSizeWithinUploadLimit(data.byteLength);
+
   return {
     filename: body.filename?.trim() || "upload.bin",
     contentType:
       parsedDataUrl?.contentType ?? body.contentType?.trim() ?? "application/octet-stream",
-    data: decodeBase64(contentBase64),
+    data,
     attachedPostId: body.attachedPostId ?? null,
   };
 }
@@ -76,6 +95,8 @@ export async function uploadAssetToR2(input: AssetUploadInput) {
   const key = uploadObjectKey(filename);
   const url = `/uploads/${key.replace(/^uploads\//, "")}`;
   const sizeBytes = await byteLength(input.data);
+
+  assertSizeWithinUploadLimit(sizeBytes);
 
   await env.CMS_STORAGE.put(key, input.data, {
     httpMetadata: {
@@ -266,6 +287,40 @@ function decodeBase64(value: string) {
   }
 
   return bytes;
+}
+
+function assertRequestWithinUploadLimit(request: Request, contentType: string) {
+  const rawContentLength = request.headers.get("content-length");
+
+  if (!rawContentLength) {
+    return;
+  }
+
+  const contentLength = Number(rawContentLength);
+  const maxRequestBytes = contentType.includes("multipart/form-data")
+    ? MAX_ASSET_UPLOAD_BYTES + 64 * 1024
+    : maxAssetRequestBytes;
+
+  if (Number.isFinite(contentLength) && contentLength > maxRequestBytes) {
+    throw new AssetUploadTooLargeError();
+  }
+}
+
+function assertSizeWithinUploadLimit(size: number) {
+  if (size > MAX_ASSET_UPLOAD_BYTES) {
+    throw new AssetUploadTooLargeError();
+  }
+}
+
+function estimatedBase64DecodedBytes(value: string) {
+  const normalized = value.replace(/\s/g, "");
+  const padding = normalized.endsWith("==") ? 2 : normalized.endsWith("=") ? 1 : 0;
+
+  return Math.floor((normalized.length * 3) / 4) - padding;
+}
+
+function formatBytes(value: number) {
+  return `${Math.round(value / 1024 / 1024)} MiB`;
 }
 
 async function byteLength(data: ArrayBuffer | Uint8Array | Blob) {

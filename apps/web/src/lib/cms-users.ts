@@ -126,13 +126,6 @@ export async function getCmsUserById(id: string): Promise<CmsUser | null> {
   });
 }
 
-export async function updateCmsUserCommentStatus(
-  id: string,
-  commentStatus: CommentUserStatus,
-): Promise<CmsUser | null> {
-  return updateCmsUser(id, { commentStatus });
-}
-
 export async function updateCmsUser(
   id: string,
   input: {

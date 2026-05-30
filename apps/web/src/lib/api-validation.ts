@@ -1,5 +1,34 @@
 import { z } from "zod";
 
+const ContentStatusSchema = z.enum(["draft", "published", "scheduled", "archived", "deleted"]);
+const ContentSourceSchema = z.enum([
+  "editor",
+  "markdown_upload",
+  "html_upload",
+  "api",
+  "cli",
+  "ai",
+  "import",
+]);
+const SupportedLocaleSchema = z.enum(["en", "zh"]);
+const LocalizedStringSchema = z
+  .object({
+    en: z.string().optional(),
+    zh: z.string().optional(),
+  })
+  .strict();
+const PostI18nSchema = z
+  .object({
+    title: LocalizedStringSchema.optional(),
+    excerpt: LocalizedStringSchema.optional(),
+    contentMarkdown: LocalizedStringSchema.optional(),
+    contentHtml: LocalizedStringSchema.optional(),
+    contentText: LocalizedStringSchema.optional(),
+    seoTitle: LocalizedStringSchema.optional(),
+    seoDescription: LocalizedStringSchema.optional(),
+  })
+  .strict();
+
 /**
  * Schema for POST /api/comments — comment creation body.
  *
@@ -19,6 +48,43 @@ export const CreateCommentSchema = z.object({
     z.string().optional(),
   ),
 });
+
+export const PostWriteSchema = z
+  .object({
+    title: z.string().optional(),
+    slug: z.string().optional(),
+    excerpt: z.string().optional(),
+    coverImage: z.string().optional(),
+    contentMarkdown: z.string().optional(),
+    contentHtml: z.string().optional(),
+    status: ContentStatusSchema.optional(),
+    source: ContentSourceSchema.optional(),
+    featured: z.boolean().optional(),
+    pinned: z.boolean().optional(),
+    commentsEnabled: z.boolean().optional(),
+    seoTitle: z.string().optional(),
+    seoDescription: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    seriesId: z.string().nullable().optional(),
+    seriesSlug: z.string().nullable().optional(),
+    seriesName: z.string().nullable().optional(),
+    publishedAt: z.string().optional(),
+    locale: SupportedLocaleSchema.optional(),
+    i18n: PostI18nSchema.optional(),
+  })
+  .strict();
+
+export const PostPatchSchema = PostWriteSchema.refine((value) => Object.keys(value).length > 0, {
+  message: "Provide at least one post field to update.",
+});
+
+export const BatchPostSchema = z
+  .object({
+    ids: z.array(z.string().min(1)).min(1).max(50),
+    action: z.enum(["publish", "draft", "archive", "delete"]),
+    locale: SupportedLocaleSchema.optional(),
+  })
+  .strict();
 
 /**
  * Run a zod parse and return either the validated data or a 400 Response.

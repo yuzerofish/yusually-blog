@@ -62,10 +62,26 @@ async function requestPasswordReset(email: string | undefined, request: Request)
 }
 
 async function confirmPasswordReset(token: string, password: string | undefined) {
-  const email = await env.CMS_CACHE.get(passwordResetKey(token.trim()));
+  const normalizedToken = token.trim();
+
+  if (!normalizedToken) {
+    return jsonResponse({ error: "Password reset link is invalid or expired." }, { status: 400 });
+  }
+
+  const tokenKey = passwordResetKey(normalizedToken);
+  const email = await env.CMS_CACHE.get(tokenKey);
 
   if (!email) {
     return jsonResponse({ error: "Password reset link is invalid or expired." }, { status: 400 });
+  }
+
+  try {
+    await env.CMS_CACHE.delete(tokenKey);
+  } catch {
+    return jsonResponse(
+      { error: "Password reset could not be confirmed. Request a new reset link." },
+      { status: 503 },
+    );
   }
 
   const result = await resetAdminPassword(email, password);
@@ -73,8 +89,6 @@ async function confirmPasswordReset(token: string, password: string | undefined)
   if ("error" in result) {
     return jsonResponse({ error: result.error }, { status: 400 });
   }
-
-  await env.CMS_CACHE.delete(passwordResetKey(token.trim()));
 
   return jsonResponse({
     data: publicAdminUser(result.data),

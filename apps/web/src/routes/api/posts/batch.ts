@@ -1,6 +1,7 @@
 import { localizePost, type ContentStatus, type Post } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
+import { BatchPostSchema, validateBody } from "#/lib/api-validation";
 import { getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { getD1PostByIdOrSlug, updateD1Post } from "#/lib/cms-d1";
@@ -20,15 +21,17 @@ export const Route = createFileRoute("/api/posts/batch")({
   server: {
     handlers: {
       POST: async ({ request }: { request: Request }) => {
-        const body = await readJsonBody<{
-          ids: string[];
-          action: keyof typeof batchStatusByAction;
-          locale: string;
-        }>(request);
         const accessError = await requireCmsAccess(request, "posts:write");
 
         if (accessError) {
           return accessError;
+        }
+
+        const rawBody = await readJsonBody<Record<string, unknown>>(request);
+        const [body, validationError] = validateBody(BatchPostSchema, rawBody);
+
+        if (validationError) {
+          return validationError;
         }
 
         if (body.action === "publish") {
@@ -39,12 +42,7 @@ export const Route = createFileRoute("/api/posts/batch")({
           }
         }
 
-        const status = body.action ? batchStatusByAction[body.action] : undefined;
-
-        if (!status || !Array.isArray(body.ids) || body.ids.length === 0) {
-          return jsonResponse({ error: "Provide ids and a valid batch action." }, { status: 400 });
-        }
-
+        const status = batchStatusByAction[body.action];
         const locale = getApiLocale(request);
         const updatedPosts: Post[] = [];
 

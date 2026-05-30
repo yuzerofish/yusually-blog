@@ -1,6 +1,7 @@
 import { localizePost, resolveLocale } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
+import { PostWriteSchema, validateBody } from "#/lib/api-validation";
 import { createPostPreview, getApiLocale, jsonResponse, readJsonBody } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { createD1Post, listD1Posts } from "#/lib/cms-d1";
@@ -42,11 +43,17 @@ export const Route = createFileRoute("/api/posts")({
         });
       },
       POST: async ({ request }: { request: Request }) => {
-        const body = await readJsonBody<Parameters<typeof createPostPreview>[0]>(request);
         const accessError = await requireCmsAccess(request, "posts:write");
 
         if (accessError) {
           return accessError;
+        }
+
+        const rawBody = await readJsonBody<Parameters<typeof createPostPreview>[0]>(request);
+        const [body, validationError] = validateBody(PostWriteSchema, rawBody);
+
+        if (validationError) {
+          return validationError;
         }
 
         if (body.status === "published" || body.status === "scheduled") {

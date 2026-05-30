@@ -7,7 +7,7 @@ import {
   digestText,
 } from "@repo/core";
 import * as schema from "@repo/db/schema/cms";
-import { eq, and, ne, desc, asc } from "drizzle-orm";
+import { eq, and, desc, asc } from "drizzle-orm";
 
 import { getD1SiteSettings } from "./cms-d1-assets";
 import { getD1PostBySlug } from "./cms-d1-posts";
@@ -79,7 +79,7 @@ export async function createD1Comment(
             and(
               eq(schema.comments.id, parentId),
               eq(schema.comments.postId, post.id),
-              ne(schema.comments.status, "deleted"),
+              eq(schema.comments.status, "approved"),
             ),
           )
           .limit(1)

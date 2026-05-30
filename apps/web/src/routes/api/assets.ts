@@ -3,7 +3,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { jsonResponse } from "#/lib/cms-api";
 import { requireCmsAccess } from "#/lib/cms-authz";
 import { listD1Assets } from "#/lib/cms-d1";
-import { getR2StorageStatus, readAssetUpload, uploadAssetToR2 } from "#/lib/cms-r2";
+import {
+  AssetUploadTooLargeError,
+  getR2StorageStatus,
+  readAssetUpload,
+  uploadAssetToR2,
+} from "#/lib/cms-r2";
 
 export const Route = createFileRoute("/api/assets")({
   server: {
@@ -32,21 +37,38 @@ export const Route = createFileRoute("/api/assets")({
           return accessError;
         }
 
-        const upload = await readAssetUpload(request).catch(() => null);
+        let upload: Awaited<ReturnType<typeof readAssetUpload>>;
 
-        if (!upload) {
+        try {
+          upload = await readAssetUpload(request);
+        } catch (error) {
           return jsonResponse(
             {
-              error: "Upload requires a file.",
+              error:
+                error instanceof AssetUploadTooLargeError
+                  ? error.message
+                  : "Upload requires a file.",
               requiredScope: "assets:write",
             },
-            { status: 400 },
+            { status: error instanceof AssetUploadTooLargeError ? 413 : 400 },
           );
         }
 
-        const asset = await uploadAssetToR2(upload).catch(() => null);
+        try {
+          const asset = await uploadAssetToR2(upload);
 
-        if (!asset) {
+          return jsonResponse({ data: asset, requiredScope: "assets:write" }, { status: 201 });
+        } catch (error) {
+          if (error instanceof AssetUploadTooLargeError) {
+            return jsonResponse(
+              {
+                error: error.message,
+                requiredScope: "assets:write",
+              },
+              { status: 413 },
+            );
+          }
+
           const storage = await getR2StorageStatus();
           const status = storage.status === "ready" ? 500 : 503;
 
@@ -62,8 +84,6 @@ export const Route = createFileRoute("/api/assets")({
             { status },
           );
         }
-
-        return jsonResponse({ data: asset, requiredScope: "assets:write" }, { status: 201 });
       },
     },
   },

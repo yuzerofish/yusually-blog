@@ -1,21 +1,32 @@
 import { escapeHtml } from "./utils";
 
-const blockTags = new Set(["blockquote", "h1", "h2", "h3", "li", "p", "pre", "ul"]);
+const blockTags = new Set(["blockquote", "h1", "h2", "h3", "li", "ol", "p", "pre", "ul"]);
 
 export function renderMarkdownToHtml(markdown: string) {
   const lines = markdown.replace(/\r\n/g, "\n").split("\n");
   const html: string[] = [];
   let listItems: string[] = [];
+  let listTag: "ol" | "ul" | null = null;
   let codeLines: string[] = [];
   let inCodeBlock = false;
 
   const flushList = () => {
-    if (listItems.length === 0) {
+    if (listItems.length === 0 || !listTag) {
       return;
     }
 
-    html.push(`<ul>${listItems.map((item) => `<li>${item}</li>`).join("")}</ul>`);
+    html.push(`<${listTag}>${listItems.map((item) => `<li>${item}</li>`).join("")}</${listTag}>`);
     listItems = [];
+    listTag = null;
+  };
+
+  const pushListItem = (tag: "ol" | "ul", item: string) => {
+    if (listTag && listTag !== tag) {
+      flushList();
+    }
+
+    listTag = tag;
+    listItems.push(item);
   };
 
   const flushCode = () => {
@@ -76,7 +87,12 @@ export function renderMarkdownToHtml(markdown: string) {
     }
 
     if (/^[-*]\s+/.test(trimmed)) {
-      listItems.push(inlineMarkdown(trimmed.replace(/^[-*]\s+/, "")));
+      pushListItem("ul", inlineMarkdown(trimmed.replace(/^[-*]\s+/, "")));
+      continue;
+    }
+
+    if (/^\d+\.\s+/.test(trimmed)) {
+      pushListItem("ol", inlineMarkdown(trimmed.replace(/^\d+\.\s+/, "")));
       continue;
     }
 
@@ -119,11 +135,11 @@ function inlineMarkdown(value: string) {
     .replace(/`([^`]+)`/g, "<code>$1</code>")
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
     .replace(/\*([^*]+)\*/g, "<em>$1</em>")
+    .replace(/!\[([^\]]*)]\((https?:\/\/[^)\s]+|\/[^)\s]+)\)/g, '<img src="$2" alt="$1" />')
     .replace(
-      /\[([^\]]+)]\((https?:\/\/[^)\s]+|\/[^)\s]+)\)/g,
+      /(?<!!)\[([^\]]+)]\((https?:\/\/[^)\s]+|\/[^)\s]+)\)/g,
       '<a href="$2" rel="noreferrer">$1</a>',
-    )
-    .replace(/!\[([^\]]*)]\((https?:\/\/[^)\s]+|\/[^)\s]+)\)/g, '<img src="$2" alt="$1" />');
+    );
 }
 
 export function htmlToText(html: string) {
