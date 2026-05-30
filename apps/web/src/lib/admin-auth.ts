@@ -191,7 +191,7 @@ export async function getAdminUserFromRequest(
 ) {
   const session = await auth.api.getSession({
     headers: request.headers,
-    query,
+    query: { ...query, disableCookieCache: true },
   });
 
   return session?.user && isAdminUser(session.user) ? toAdminUser(session.user) : null;

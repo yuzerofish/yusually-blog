@@ -17,6 +17,12 @@ type ScheduledEvent = {
 
 export default {
   fetch(request: Request, _env: CloudflareBindings, _ctx: WorkerExecutionContext) {
+    const crossOriginWrite = rejectCrossOriginWrite(request);
+
+    if (crossOriginWrite) {
+      return crossOriginWrite;
+    }
+
     return paraglideMiddleware(request, () => handler.fetch(request));
   },
   scheduled(_event: ScheduledEvent, _env: CloudflareBindings, ctx: WorkerExecutionContext) {
@@ -27,3 +33,25 @@ export default {
     );
   },
 };
+
+function rejectCrossOriginWrite(request: Request) {
+  if (request.method === "GET" || request.method === "HEAD" || request.method === "OPTIONS") {
+    return null;
+  }
+
+  const origin = request.headers.get("origin");
+
+  if (!origin) {
+    return null;
+  }
+
+  try {
+    if (new URL(origin).origin === new URL(request.url).origin) {
+      return null;
+    }
+  } catch {
+    // Invalid Origin headers are rejected below.
+  }
+
+  return Response.json({ error: "Cross-origin write requests are not allowed" }, { status: 403 });
+}

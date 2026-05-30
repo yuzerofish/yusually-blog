@@ -668,13 +668,12 @@ function getHomeCopy(locale: SupportedLocale) {
         },
         {
           title: "图床（R2 存储）",
-          description:
-            "粘贴即上传，10 GB 免费，下载流量不计费。开通需绑定信用卡，免费额度内不扣款。",
+          description: "10 GB 免费存储，下载流量不计费。开通需绑定信用卡，免费额度内不扣款。",
           icon: CloudIcon,
         },
         {
           title: "评论系统",
-          description: "自研评论，审核后公开，内置 Turnstile 防垃圾，不依赖第三方。",
+          description: "内置评论，不依赖第三方。支持审核、关键词拦截，也可接入 AI 自动审核。",
           icon: MessageSquareTextIcon,
         },
         {
