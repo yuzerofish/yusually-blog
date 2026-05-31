@@ -11,6 +11,7 @@ const ContentSourceSchema = z.enum([
   "import",
 ]);
 const SupportedLocaleSchema = z.enum(["en", "zh"]);
+const EmailPreferenceSchema = z.enum(["none", "instant_posts", "biweekly_digest"]);
 const TrimmedRequiredStringSchema = z.preprocess(
   (value) => (typeof value === "string" ? value.trim() : value),
   z.string(),
@@ -122,6 +123,17 @@ export const BatchPostSchema = z
     locale: SupportedLocaleSchema.optional(),
   })
   .strict();
+
+export const AccountEmailPreferencesPatchSchema = z
+  .object({
+    emailPreference: EmailPreferenceSchema.optional(),
+    marketingOptOut: z.boolean().optional(),
+    commentReplyNotificationsEnabled: z.boolean().optional(),
+  })
+  .strict()
+  .refine((value) => Object.keys(value).length > 0, {
+    message: "Provide at least one email preference field.",
+  });
 
 /**
  * Run a zod parse and return either the validated data or a 400 Response.

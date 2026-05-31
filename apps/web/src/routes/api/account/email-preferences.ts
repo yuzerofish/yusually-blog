@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { AccountEmailPreferencesPatchSchema, validateBody } from "#/lib/api-validation";
 import { auth } from "#/lib/auth";
 import { jsonResponse, readJsonBody } from "#/lib/cms-api";
-import { getCmsUserById, isEmailPreference, updateCmsUser } from "#/lib/cms-users";
+import { getCmsUserById, updateCmsUser } from "#/lib/cms-users";
 
 type EmailPreferenceUpdate = {
+  commentReplyNotificationsEnabled?: boolean;
   emailPreference?: Parameters<typeof updateCmsUser>[1]["emailPreference"];
   marketingOptOut?: boolean;
 };
@@ -21,6 +23,7 @@ export const Route = createFileRoute("/api/account/email-preferences")({
 
         return jsonResponse({
           data: {
+            commentReplyNotificationsEnabled: user.commentReplyNotificationsEnabled,
             emailPreference: user.emailPreference,
             marketingOptOut: user.marketingOptOut,
           },
@@ -33,33 +36,23 @@ export const Route = createFileRoute("/api/account/email-preferences")({
           return jsonResponse({ error: "Authentication required" }, { status: 401 });
         }
 
-        const rawBody = await readJsonBody<{
-          emailPreference?: unknown;
-          marketingOptOut?: unknown;
-        }>(request);
-        const body = rawBody && typeof rawBody === "object" ? rawBody : {};
-        const updates: EmailPreferenceUpdate = {};
+        const rawBody = await readJsonBody(request);
+        const [body, validationError] = validateBody(
+          AccountEmailPreferencesPatchSchema,
+          rawBody && typeof rawBody === "object" ? rawBody : {},
+        );
 
-        if ("emailPreference" in body) {
-          if (!isEmailPreference(body.emailPreference)) {
-            return jsonResponse({ error: "Invalid email preference" }, { status: 400 });
-          }
-
-          updates.emailPreference = body.emailPreference;
+        if (validationError) {
+          return validationError;
         }
 
-        if ("marketingOptOut" in body) {
-          if (typeof body.marketingOptOut !== "boolean") {
-            return jsonResponse({ error: "Invalid announcement preference" }, { status: 400 });
-          }
-
-          updates.marketingOptOut = body.marketingOptOut;
-        }
-
+        const updates: EmailPreferenceUpdate = body;
         const updated = await updateCmsUser(user.id, updates);
 
         return jsonResponse({
           data: {
+            commentReplyNotificationsEnabled:
+              updated?.commentReplyNotificationsEnabled ?? user.commentReplyNotificationsEnabled,
             emailPreference: updated?.emailPreference ?? user.emailPreference,
             marketingOptOut: updated?.marketingOptOut ?? user.marketingOptOut,
           },

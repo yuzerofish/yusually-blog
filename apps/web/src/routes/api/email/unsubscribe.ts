@@ -1,15 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { unsubscribeCommentReplyEmails } from "#/lib/comment-reply-notifications";
 import { unsubscribeOptionalEmails } from "#/lib/email-notifications";
 
 export const Route = createFileRoute("/api/email/unsubscribe")({
   server: {
     handlers: {
       GET: async ({ request }: { request: Request }) => {
-        const token = new URL(request.url).searchParams.get("token") ?? "";
-        const ok = token ? await unsubscribeOptionalEmails(token) : false;
+        const url = new URL(request.url);
+        const token = url.searchParams.get("token") ?? "";
+        const kind =
+          url.searchParams.get("type") === "comment_replies" ? "comment_replies" : "optional";
+        const ok = token
+          ? kind === "comment_replies"
+            ? await unsubscribeCommentReplyEmails(token)
+            : await unsubscribeOptionalEmails(token)
+          : false;
 
-        return new Response(unsubscribeHtml(ok), {
+        return new Response(unsubscribeHtml(ok, kind), {
           headers: { "content-type": "text/html; charset=utf-8" },
           status: ok ? 200 : 400,
         });
@@ -18,11 +26,9 @@ export const Route = createFileRoute("/api/email/unsubscribe")({
   },
 });
 
-function unsubscribeHtml(ok: boolean) {
+function unsubscribeHtml(ok: boolean, kind: "comment_replies" | "optional") {
   const title = ok ? "Email unsubscribed" : "Unsubscribe link expired";
-  const body = ok
-    ? "You will no longer receive optional blog update or announcement emails."
-    : "This unsubscribe link is invalid or has expired. You can update email preferences after signing in.";
+  const body = getUnsubscribeBody(ok, kind);
 
   return `<!doctype html>
 <html lang="en">
@@ -46,4 +52,16 @@ function unsubscribeHtml(ok: boolean) {
     </main>
   </body>
 </html>`;
+}
+
+function getUnsubscribeBody(ok: boolean, kind: "comment_replies" | "optional") {
+  if (!ok) {
+    return "This unsubscribe link is invalid or has expired. You can update email preferences after signing in.";
+  }
+
+  if (kind === "comment_replies") {
+    return "You will no longer receive email notifications when someone replies to your comments.";
+  }
+
+  return "You will no longer receive optional blog update or announcement emails.";
 }

@@ -130,6 +130,7 @@ export async function updateCmsUser(
   id: string,
   input: {
     readonly commentStatus?: CommentUserStatus;
+    readonly commentReplyNotificationsEnabled?: boolean;
     readonly emailPreference?: EmailPreference;
     readonly marketingOptOut?: boolean;
     readonly role?: UserRole;
@@ -150,6 +151,13 @@ export async function updateCmsUser(
 
   if (input.role && input.role !== existing.role) {
     nextValues.role = input.role;
+  }
+
+  if (
+    input.commentReplyNotificationsEnabled !== undefined &&
+    input.commentReplyNotificationsEnabled !== existing.commentReplyNotificationsEnabled
+  ) {
+    nextValues.commentReplyNotificationsEnabled = input.commentReplyNotificationsEnabled;
   }
 
   if (input.emailPreference && input.emailPreference !== existing.emailPreference) {
@@ -202,6 +210,7 @@ function toCmsUser(
     emailPreference: user.emailPreference,
     emailPreferenceUpdatedAt: user.emailPreferenceUpdatedAt,
     marketingOptOut: user.marketingOptOut,
+    commentReplyNotificationsEnabled: user.commentReplyNotificationsEnabled,
     providers: options.providers?.length ? options.providers : ["unknown"],
     commentCount: options.commentStats?.count ?? 0,
     lastCommentAt: options.commentStats?.lastCommentAt ?? null,

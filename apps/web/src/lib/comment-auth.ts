@@ -52,6 +52,7 @@ export type CommentUser = {
   avatarUrl: string | null;
   provider: "email" | "github";
   commentStatus: CommentUserStatus;
+  commentReplyNotificationsEnabled: boolean;
   emailPreference: EmailPreference;
   marketingOptOut: boolean;
   createdAt: string;
@@ -72,6 +73,7 @@ type BetterAuthUser = {
   emailVerified?: boolean;
   image?: string | null;
   commentStatus?: CommentUserStatus;
+  commentReplyNotificationsEnabled?: boolean;
   emailPreference?: EmailPreference;
   marketingOptOut?: boolean;
   createdAt?: Date | string | number;
@@ -294,6 +296,7 @@ export function publicCommentUser(user: CommentUser) {
     avatarUrl: user.avatarUrl,
     provider: user.provider,
     commentStatus: user.commentStatus,
+    commentReplyNotificationsEnabled: user.commentReplyNotificationsEnabled,
     emailPreference: user.emailPreference,
     marketingOptOut: user.marketingOptOut,
   };
@@ -308,6 +311,7 @@ async function toCommentUser(user: BetterAuthUser): Promise<CommentUser> {
     avatarUrl: user.image ?? null,
     provider: await resolvePrimaryProvider(user.id),
     commentStatus: user.commentStatus ?? "active",
+    commentReplyNotificationsEnabled: user.commentReplyNotificationsEnabled ?? true,
     emailPreference: user.emailPreference ?? "none",
     marketingOptOut: user.marketingOptOut ?? false,
     createdAt: toIsoString(user.createdAt),

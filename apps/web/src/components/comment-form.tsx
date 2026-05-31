@@ -29,6 +29,7 @@ type CommentAuthUser = {
   avatarUrl: string | null;
   provider: "email" | "github";
   commentStatus?: "active" | "muted";
+  commentReplyNotificationsEnabled: boolean;
   emailPreference: EmailPreference;
   marketingOptOut: boolean;
 };
@@ -140,12 +141,14 @@ export function CommentForm({
     form.reset();
   };
 
-  const updateEmailPreference = async (emailPreference: EmailPreference) => {
+  const updateEmailPreference = async (
+    input: Partial<Pick<CommentAuthUser, "commentReplyNotificationsEnabled" | "emailPreference">>,
+  ) => {
     setEmailPreferenceStatus("saving");
     const response = await fetch("/api/account/email-preferences", {
       method: "PATCH",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ emailPreference }),
+      body: JSON.stringify(input),
     }).catch(() => null);
 
     if (!response?.ok) {
@@ -154,7 +157,11 @@ export function CommentForm({
     }
 
     const payload = (await response.json()) as {
-      data?: { emailPreference: EmailPreference; marketingOptOut: boolean };
+      data?: {
+        commentReplyNotificationsEnabled: boolean;
+        emailPreference: EmailPreference;
+        marketingOptOut: boolean;
+      };
     };
 
     if (payload.data) {
@@ -320,7 +327,9 @@ export function CommentForm({
           <select
             value={user.emailPreference}
             onChange={(event) =>
-              void updateEmailPreference(event.currentTarget.value as EmailPreference)
+              void updateEmailPreference({
+                emailPreference: event.currentTarget.value as EmailPreference,
+              })
             }
             disabled={emailPreferenceStatus === "saving"}
             className="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
@@ -332,6 +341,20 @@ export function CommentForm({
           {emailPreferenceStatus === "saved" ? (
             <p className="text-xs text-success">{emailCopy.saved}</p>
           ) : null}
+          <label className="flex items-start gap-2 text-xs leading-5 text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={user.commentReplyNotificationsEnabled}
+              disabled={emailPreferenceStatus === "saving"}
+              onChange={(event) =>
+                void updateEmailPreference({
+                  commentReplyNotificationsEnabled: event.currentTarget.checked,
+                })
+              }
+              className="mt-0.5 size-3.5 rounded border-input accent-primary"
+            />
+            <span>{emailCopy.commentReplies}</span>
+          </label>
         </div>
       </div>
       {replyingTo ? (
@@ -390,6 +413,7 @@ function githubLoginHref(postSlug: string) {
 function getCommentEmailPreferenceCopy(locale: ReturnType<typeof getCurrentLocale>) {
   if (locale === "zh") {
     return {
+      commentReplies: "有人回复我的评论时通知我",
       description: "选择这个账号接收新文章邮件的频率。",
       digest: "每 2 周摘要",
       instant: "每篇新文章",
@@ -401,6 +425,7 @@ function getCommentEmailPreferenceCopy(locale: ReturnType<typeof getCurrentLocal
   }
 
   return {
+    commentReplies: "Notify me when someone replies to my comments",
     description: "Choose how often this account receives new post emails.",
     digest: "Biweekly digest",
     instant: "Every new post",

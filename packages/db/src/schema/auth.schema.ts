@@ -22,6 +22,12 @@ export const user = sqliteTable("user", {
   emailPreferenceUpdatedAt: text("email_preference_updated_at"),
   marketingOptOut: integer("marketing_opt_out", { mode: "boolean" }).default(false).notNull(),
   unsubscribeTokenHash: text("unsubscribe_token_hash"),
+  commentReplyNotificationsEnabled: integer("comment_reply_notifications_enabled", {
+    mode: "boolean",
+  })
+    .default(true)
+    .notNull(),
+  commentReplyUnsubscribeTokenHash: text("comment_reply_unsubscribe_token_hash"),
   emailVerified: integer("email_verified", { mode: "boolean" }).default(false).notNull(),
   image: text("image"),
   createdAt: integer("created_at", { mode: "timestamp_ms" }).default(nowMs).notNull(),

@@ -14,6 +14,7 @@ import {
 import { notifyCommentCreated } from "#/lib/cms-email";
 import { getCommentUserFromRequest } from "#/lib/comment-auth";
 import { checkCommentRateLimit, getClientIp, verifyTurnstile } from "#/lib/comment-guard";
+import { notifyCommentReplyCreated } from "#/lib/comment-reply-notifications";
 
 export const Route = createFileRoute("/api/comments")({
   server: {
@@ -135,6 +136,10 @@ function queueCommentCreatedEffects(input: {
         postTitle: input.postTitle,
         siteUrl: input.siteUrl,
       });
+
+      if (finalComment.status === "approved") {
+        await notifyCommentReplyCreated(finalComment);
+      }
     })().catch((error: unknown) => {
       console.error("Comment post-create effects failed", error);
     }),

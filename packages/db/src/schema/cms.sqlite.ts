@@ -198,8 +198,9 @@ export const emailNotificationDeliveries = sqliteTable(
       .notNull()
       .references(() => authUser.id, { onDelete: "cascade" }),
     postId: text("post_id").references(() => posts.id, { onDelete: "cascade" }),
+    commentId: text("comment_id").references(() => comments.id, { onDelete: "cascade" }),
     notificationType: text("notification_type", {
-      enum: ["instant_post", "biweekly_digest", "manual_broadcast"],
+      enum: ["instant_post", "biweekly_digest", "manual_broadcast", "comment_reply"],
     }).notNull(),
     subject: text("subject").notNull(),
     status: text("status", { enum: ["pending", "sent", "failed"] })
@@ -214,6 +215,11 @@ export const emailNotificationDeliveries = sqliteTable(
     uniqueIndex("email_delivery_post_user_type_idx").on(
       table.userId,
       table.postId,
+      table.notificationType,
+    ),
+    uniqueIndex("email_delivery_comment_user_type_idx").on(
+      table.userId,
+      table.commentId,
       table.notificationType,
     ),
     index("email_delivery_user_idx").on(table.userId, table.createdAt),

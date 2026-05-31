@@ -61,6 +61,12 @@ export function createBlogAuth(database: AuthDatabase, env: BlogAuthEnv) {
           required: true,
           defaultValue: false,
         },
+        commentReplyNotificationsEnabled: {
+          type: "boolean",
+          input: false,
+          required: true,
+          defaultValue: true,
+        },
       },
     },
 

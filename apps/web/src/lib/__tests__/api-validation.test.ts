@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 
 import {
+  AccountEmailPreferencesPatchSchema,
   BatchPostSchema,
   CreateCommentSchema,
   PostPatchSchema,
@@ -182,6 +183,35 @@ describe("BatchPostSchema", () => {
     const result = BatchPostSchema.safeParse({
       action: "archive",
       ids: ["post_1", " post_1 "],
+    });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe("AccountEmailPreferencesPatchSchema", () => {
+  it("accepts a comment reply notification toggle", () => {
+    const result = AccountEmailPreferencesPatchSchema.safeParse({
+      commentReplyNotificationsEnabled: false,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts blog email and announcement preference updates", () => {
+    const result = AccountEmailPreferencesPatchSchema.safeParse({
+      emailPreference: "biweekly_digest",
+      marketingOptOut: true,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects an empty preference update", () => {
+    const result = AccountEmailPreferencesPatchSchema.safeParse({});
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects invalid comment reply notification values", () => {
+    const result = AccountEmailPreferencesPatchSchema.safeParse({
+      commentReplyNotificationsEnabled: "false",
     });
     expect(result.success).toBe(false);
   });

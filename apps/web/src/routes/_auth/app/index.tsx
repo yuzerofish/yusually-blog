@@ -15,6 +15,7 @@ function AppIndex() {
   const { user } = useAuthSuspense();
   const locale = getCurrentLocale();
   const copy = getAccountEmailCopy(locale);
+  const [commentReplyNotificationsEnabled, setCommentReplyNotificationsEnabled] = useState(true);
   const [emailPreference, setEmailPreference] = useState<EmailPreference>("none");
   const [marketingOptOut, setMarketingOptOut] = useState(false);
   const [status, setStatus] = useState<"idle" | "saving" | "saved">("idle");
@@ -28,6 +29,7 @@ function AppIndex() {
         const data = (payload as { data?: AccountEmailPreferences } | undefined)?.data;
 
         if (!ignore && data) {
+          setCommentReplyNotificationsEnabled(data.commentReplyNotificationsEnabled);
           setEmailPreference(data.emailPreference);
           setMarketingOptOut(data.marketingOptOut);
         }
@@ -54,6 +56,7 @@ function AppIndex() {
     const payload = (await response.json()) as { data?: AccountEmailPreferences };
 
     if (payload.data) {
+      setCommentReplyNotificationsEnabled(payload.data.commentReplyNotificationsEnabled);
       setEmailPreference(payload.data.emailPreference);
       setMarketingOptOut(payload.data.marketingOptOut);
     }
@@ -111,6 +114,26 @@ function AppIndex() {
             {marketingOptOut ? copy.allowAnnouncements : copy.stopAnnouncements}
           </Button>
         </div>
+        <div className="mt-4 flex items-start gap-3 rounded-md border border-border bg-muted/30 p-3">
+          <input
+            id="account-comment-reply-notifications"
+            type="checkbox"
+            checked={commentReplyNotificationsEnabled}
+            disabled={status === "saving"}
+            onChange={(event) =>
+              void savePreference({
+                commentReplyNotificationsEnabled: event.currentTarget.checked,
+              })
+            }
+            className="mt-1 size-4 rounded border-input accent-primary"
+          />
+          <label htmlFor="account-comment-reply-notifications">
+            <span className="font-medium">{copy.commentReplies}</span>
+            <span className="mt-1 block text-muted-foreground">
+              {copy.commentRepliesDescription}
+            </span>
+          </label>
+        </div>
         {status === "saved" ? <p className="mt-3 text-success">{copy.saved}</p> : null}
       </section>
     </div>
@@ -120,6 +143,7 @@ function AppIndex() {
 type EmailPreference = "none" | "instant_posts" | "biweekly_digest";
 
 type AccountEmailPreferences = {
+  commentReplyNotificationsEnabled: boolean;
   emailPreference: EmailPreference;
   marketingOptOut: boolean;
 };
@@ -129,6 +153,8 @@ function getAccountEmailCopy(locale: ReturnType<typeof getCurrentLocale>) {
     return {
       allowAnnouncements: "恢复站点公告",
       blogFrequency: "博客更新频率",
+      commentReplies: "评论回复通知",
+      commentRepliesDescription: "有人回复你的评论时发送邮件。",
       description: "管理这个账号接收博客更新和站点公告的方式。",
       digest: "每 2 周摘要",
       instant: "每篇新文章",
@@ -142,6 +168,8 @@ function getAccountEmailCopy(locale: ReturnType<typeof getCurrentLocale>) {
   return {
     allowAnnouncements: "Allow announcements",
     blogFrequency: "Blog update frequency",
+    commentReplies: "Comment reply notifications",
+    commentRepliesDescription: "Send an email when someone replies to one of your comments.",
     description: "Manage how this account receives blog updates and site announcements.",
     digest: "Biweekly digest",
     instant: "Every new post",
