@@ -6,7 +6,7 @@ export const Route = createFileRoute("/_auth/admin")({
   component: AdminShell,
   beforeLoad: ({ context }) => {
     if (context.user?.role !== "admin") {
-      throw redirect({ to: "/login" });
+      throw redirect({ to: "/app" });
     }
   },
 });

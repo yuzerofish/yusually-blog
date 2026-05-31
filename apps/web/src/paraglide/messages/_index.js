@@ -4977,7 +4977,7 @@ export const signup_error = /** @type {((inputs?: Signup_ErrorInputs, options?: 
 /**
 * | output |
 * | --- |
-* | "Create your {name} admin account" |
+* | "Create your {name} account" |
 *
 * @param {Signup_GreetingInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options

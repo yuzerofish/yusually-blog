@@ -91,7 +91,7 @@ export function SiteShell({
             />
             <ThemeToggle />
             {githubLink ? <HeaderGitHubLink link={githubLink} /> : null}
-            <HeaderAuthAction locale={locale} />
+            <HeaderAuthAction />
           </div>
         </div>
       </header>
@@ -207,9 +207,8 @@ function HeaderGitHubLink({ link }: { readonly link: SocialLink }) {
   );
 }
 
-function HeaderAuthAction({ locale }: { readonly locale: string }) {
+function HeaderAuthAction() {
   const { user, isPending } = useAuth();
-  const adminLabel = locale === "zh" ? "后台" : "Admin";
 
   if (isPending) {
     return (
@@ -229,14 +228,14 @@ function HeaderAuthAction({ locale }: { readonly locale: string }) {
   if (user) {
     return (
       <Button
-        render={<Link to="/admin" />}
+        render={<Link to="/app" />}
         variant="outline"
         size="sm"
         nativeButton={false}
         className="min-w-14 px-3 font-semibold"
-        aria-label={adminLabel}
+        aria-label={m.account_title()}
       >
-        {adminLabel}
+        {m.account_title()}
       </Button>
     );
   }

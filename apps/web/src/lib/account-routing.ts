@@ -1,10 +1,6 @@
 import type { UserRole } from "@repo/core";
 
-export function redirectForRole(user: { readonly role: UserRole }, redirectTo = "/app") {
-  if (user.role === "admin") {
-    return redirectTo === "/app" ? "/admin" : redirectTo;
-  }
-
+export function redirectForRole(_user: { readonly role: UserRole }, redirectTo = "/app") {
   if (redirectTo.startsWith("/admin")) {
     return "/app";
   }

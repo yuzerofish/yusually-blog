@@ -329,7 +329,7 @@
   "signup": "Sign up",
   "signup_confirm_password": "Confirm Password",
   "signup_error": "An error occurred while signing up.",
-  "signup_greeting": "Create your {name} admin account",
+  "signup_greeting": "Create your {name} account",
   "signup_has_account": "Already have an account?",
   "signup_name": "Name",
   "signup_password_mismatch": "Passwords do not match.",

@@ -1673,7 +1673,7 @@ export const signup_error = /** @type {(inputs: Signup_ErrorInputs) => Localized
 };
 
 export const signup_greeting = /** @type {(inputs: Signup_GreetingInputs) => LocalizedString} */ (i) => {
-	return /** @type {LocalizedString} */ (`创建 ${i?.name} 管理员账号`)
+	return /** @type {LocalizedString} */ (`创建 ${i?.name} 账号`)
 };
 
 export const signup_has_account = /** @type {(inputs: Signup_Has_AccountInputs) => LocalizedString} */ () => {

@@ -112,7 +112,7 @@ function LoginForm() {
           ) : null}
           <div className="grid gap-3">
             <a
-              href={adminSocialLoginHref("github", redirectUrl)}
+              href={accountSocialLoginHref("github", redirectUrl)}
               aria-disabled={isLoginPending}
               onClick={(event) => handleSocialLogin("GitHub", event)}
               className={buttonVariants({
@@ -132,7 +132,7 @@ function LoginForm() {
                 : m.login_with_provider({ provider: "GitHub" })}
             </a>
             <a
-              href={adminSocialLoginHref("google", redirectUrl)}
+              href={accountSocialLoginHref("google", redirectUrl)}
               aria-disabled={isLoginPending}
               onClick={(event) => handleSocialLogin("Google", event)}
               className={buttonVariants({
@@ -205,6 +205,6 @@ function LoginForm() {
   );
 }
 
-function adminSocialLoginHref(provider: "github" | "google", redirectTo: string) {
+function accountSocialLoginHref(provider: "github" | "google", redirectTo: string) {
   return `/api/account/login/${provider}/start?redirectTo=${encodeURIComponent(redirectTo)}`;
 }

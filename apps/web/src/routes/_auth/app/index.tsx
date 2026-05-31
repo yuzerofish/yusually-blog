@@ -1,7 +1,7 @@
 import { useAuthSuspense } from "@repo/auth/tanstack/hooks";
 import { Button } from "@repo/ui/components/button";
-import { createFileRoute } from "@tanstack/react-router";
-import { MailIcon } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRightIcon, MailIcon, ShieldCheckIcon, UserRoundIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { getCurrentLocale } from "#/lib/i18n";
@@ -15,6 +15,8 @@ function AppIndex() {
   const { user } = useAuthSuspense();
   const locale = getCurrentLocale();
   const copy = getAccountEmailCopy(locale);
+  const pageCopy = getAccountPageCopy(locale);
+  const isAdmin = user?.role === "admin";
   const [commentReplyNotificationsEnabled, setCommentReplyNotificationsEnabled] = useState(true);
   const [emailPreference, setEmailPreference] = useState<EmailPreference>("none");
   const [marketingOptOut, setMarketingOptOut] = useState(false);
@@ -67,13 +69,66 @@ function AppIndex() {
 
   return (
     <div className="grid gap-5 text-sm">
-      <div className="flex flex-col items-center gap-3 text-center">
-        <h1 className="text-2xl font-semibold">{m.account_title()}</h1>
-        <p className="text-muted-foreground">{m.account_signed_in_as()}</p>
-        <span className="rounded-md border bg-card px-3 py-2 font-mono text-xs text-card-foreground">
-          {user?.name}
-        </span>
-      </div>
+      <header className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+            {pageCopy.eyebrow}
+          </p>
+          <h1 className="mt-1 text-2xl font-semibold">{m.account_title()}</h1>
+          <p className="mt-2 max-w-2xl text-muted-foreground">{pageCopy.description}</p>
+        </div>
+        {isAdmin ? (
+          <Button render={<Link to="/admin" />} nativeButton={false} className="w-full sm:w-auto">
+            <ShieldCheckIcon className="size-4" />
+            {m.open_admin()}
+            <ArrowRightIcon className="size-4" />
+          </Button>
+        ) : null}
+      </header>
+
+      <section className="grid gap-3 md:grid-cols-[1.2fr_0.8fr]">
+        <div className="rounded-md border bg-card p-4">
+          <div className="flex items-start gap-3">
+            <UserRoundIcon className="mt-1 size-5 text-link" />
+            <div className="min-w-0">
+              <h2 className="font-semibold">{pageCopy.profileTitle}</h2>
+              <p className="mt-1 text-muted-foreground">{m.account_signed_in_as()}</p>
+            </div>
+          </div>
+          <dl className="mt-4 grid gap-3">
+            <div className="grid gap-1">
+              <dt className="text-xs font-semibold text-muted-foreground uppercase">
+                {pageCopy.nameLabel}
+              </dt>
+              <dd className="font-medium break-words">{user?.name}</dd>
+            </div>
+            <div className="grid gap-1">
+              <dt className="text-xs font-semibold text-muted-foreground uppercase">
+                {pageCopy.emailLabel}
+              </dt>
+              <dd className="font-mono text-xs break-all">{user?.email}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div className="rounded-md border bg-card p-4">
+          <div className="flex items-start gap-3">
+            <ShieldCheckIcon className="mt-1 size-5 text-link" />
+            <div>
+              <h2 className="font-semibold">{pageCopy.accessTitle}</h2>
+              <p className="mt-1 text-muted-foreground">
+                {isAdmin ? pageCopy.adminAccessDescription : pageCopy.readerAccessDescription}
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 rounded-md border bg-muted/30 px-3 py-2">
+            <span className="text-xs font-semibold text-muted-foreground uppercase">
+              {pageCopy.roleLabel}
+            </span>
+            <p className="mt-1 font-medium">{isAdmin ? pageCopy.adminRole : pageCopy.readerRole}</p>
+          </div>
+        </div>
+      </section>
 
       <section className="rounded-md border bg-card p-4 text-left">
         <div className="flex items-start gap-3">
@@ -147,6 +202,42 @@ type AccountEmailPreferences = {
   emailPreference: EmailPreference;
   marketingOptOut: boolean;
 };
+
+function getAccountPageCopy(locale: ReturnType<typeof getCurrentLocale>) {
+  if (locale === "zh") {
+    return {
+      accessTitle: "访问权限",
+      adminAccessDescription: "这个账号可以进入后台管理文章、评论、资源和站点设置。",
+      adminRole: "管理员",
+      description:
+        "这是所有登录用户的统一入口。管理员可以从这里进入后台，普通用户可以管理评论和邮件设置。",
+      emailLabel: "邮箱",
+      eyebrow: "账号中心",
+      nameLabel: "姓名",
+      profileTitle: "个人资料",
+      readerAccessDescription: "这个账号可以阅读、评论，并管理自己的邮件偏好。",
+      readerRole: "普通用户",
+      roleLabel: "角色",
+    };
+  }
+
+  return {
+    accessTitle: "Access",
+    adminAccessDescription:
+      "This account can open the admin area to manage posts, comments, assets, and site settings.",
+    adminRole: "Admin",
+    description:
+      "A single account area for every signed-in user. Admin accounts can open the admin area from here; reader accounts can manage comments and email settings.",
+    emailLabel: "Email",
+    eyebrow: "Account center",
+    nameLabel: "Name",
+    profileTitle: "Profile",
+    readerAccessDescription:
+      "This account can read, comment, and manage its own email preferences.",
+    readerRole: "Reader",
+    roleLabel: "Role",
+  };
+}
 
 function getAccountEmailCopy(locale: ReturnType<typeof getCurrentLocale>) {
   if (locale === "zh") {

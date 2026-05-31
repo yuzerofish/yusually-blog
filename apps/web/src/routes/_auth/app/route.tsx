@@ -24,11 +24,11 @@ function AppLayout() {
           <ThemeToggle />
         </div>
       </div>
-      <div className="w-full max-w-3xl rounded-md border p-2">
+      <main className="w-full max-w-4xl">
         <Outlet />
-      </div>
+      </main>
 
-      <div className="flex w-full max-w-3xl flex-wrap justify-between gap-2 text-sm">
+      <div className="flex w-full max-w-4xl flex-wrap justify-between gap-2 text-sm">
         <div className="flex flex-col gap-0.5">{m.account_management_note()}</div>
         <SignOutButton />
       </div>
