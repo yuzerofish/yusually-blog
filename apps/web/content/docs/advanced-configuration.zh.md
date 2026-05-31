@@ -1,9 +1,9 @@
 ---
 title: 进阶配置
-description: 可选的邮件、GitHub OAuth 和 Turnstile 配置。
+description: 可选的邮件、评论 OAuth 和 Turnstile 配置。
 ---
 
-初始模板不强制配置邮件发送、GitHub OAuth 或 Cloudflare Turnstile。后台设置页只检测这些可选集成是否已经配置，不会写入 Cloudflare secrets、创建 OAuth app，或修改第三方服务账号。
+初始模板不强制配置邮件发送、评论 OAuth 或 Cloudflare Turnstile。后台设置页只检测这些可选集成是否已经配置，不会写入 Cloudflare secrets、创建 OAuth app，或修改第三方服务账号。
 
 修改 Cloudflare vars、secrets 或 bindings 后，重新部署 Worker，再刷新 `/admin/settings`。
 
@@ -91,6 +91,35 @@ pnpm --filter @repo/web exec wrangler secret put GITHUB_CLIENT_SECRET --config w
 
 本地开发时，把两个值放入 `apps/web/.env`。
 
+## Google OAuth
+
+Google OAuth 为读者评论提供另一种一键登录方式。未配置 Google OAuth 时，邮箱密码登录和已配置的 GitHub 登录仍然可用。
+
+创建 Google OAuth client，并把 callback URL 加到 authorized redirect URIs：
+
+```txt
+http://localhost:3000/api/auth/callback/google
+https://your-domain.com/api/auth/callback/google
+```
+
+把 client id 放到 Wrangler var 或 Cloudflare dashboard 变量：
+
+```jsonc
+{
+  "vars": {
+    "GOOGLE_CLIENT_ID": "your-client-id",
+  },
+}
+```
+
+把 client secret 写成 Wrangler secret：
+
+```sh
+pnpm --filter @repo/web exec wrangler secret put GOOGLE_CLIENT_SECRET --config wrangler.jsonc
+```
+
+本地开发时，把两个值放入 `apps/web/.env`。
+
 ## Cloudflare Turnstile
 
 Turnstile 是可选的评论防滥用校验。未配置 Turnstile 时，评论仍然需要读者会话，并继续使用服务端限流和审核。
@@ -124,6 +153,7 @@ pnpm --filter @repo/web exec wrangler secret put CMS_TURNSTILE_SECRET_KEY --conf
 
 - 邮件发送：`CMS_EMAIL` binding 加邮件变量，或 Resend 变量和 secret
 - GitHub OAuth：`GITHUB_CLIENT_ID` 和 `GITHUB_CLIENT_SECRET`
+- Google OAuth：`GOOGLE_CLIENT_ID` 和 `GOOGLE_CLIENT_SECRET`
 - Turnstile：`VITE_TURNSTILE_SITE_KEY` 和 `CMS_TURNSTILE_SECRET_KEY`
 
 外部参考：
@@ -131,3 +161,4 @@ pnpm --filter @repo/web exec wrangler secret put CMS_TURNSTILE_SECRET_KEY --conf
 - [Cloudflare Email Service Workers API](https://developers.cloudflare.com/email-service/api/send-emails/workers-api/)
 - [Cloudflare Turnstile get started](https://developers.cloudflare.com/turnstile/get-started/)
 - [GitHub OAuth app setup](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app)
+- [Google OAuth client setup](https://support.google.com/cloud/answer/6158849)

@@ -88,7 +88,7 @@ export type CmsUser = {
   emailPreferenceUpdatedAt: string | null;
   marketingOptOut: boolean;
   commentReplyNotificationsEnabled: boolean;
-  providers: Array<"email" | "github" | "unknown">;
+  providers: Array<"email" | "github" | "google" | "unknown">;
   commentCount: number;
   lastCommentAt: string | null;
   createdAt: string;

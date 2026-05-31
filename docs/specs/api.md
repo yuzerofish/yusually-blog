@@ -47,6 +47,7 @@ Feeds and public metadata use current D1 site settings and localized content whe
 - `POST /api/comment-auth/signup`
 - `POST /api/comment-auth/logout`
 - `GET /api/comment-auth/github/start`
+- `GET /api/comment-auth/google/start`
 - `GET /api/comment-auth/verify-email`
 - `GET /api/admin/email-status`
 - `GET /api/tokens`
@@ -79,7 +80,7 @@ Feeds and public metadata use current D1 site settings and localized content whe
 
 `GET /api/comments` returns the moderation queue and requires `comments:moderate`. `POST /api/comments` requires a comment-user session, accepts optional `parentId` for replies, applies honeypot, Turnstile when configured, per-IP rate limits, body length limits, link limits, and sets the initial status from site moderation settings. Keyword matches are marked `spam`; otherwise comments are `pending` when manual approval is enabled or `approved` when it is disabled.
 
-`/api/comment-auth/*` is the comment-facing wrapper over Better Auth. Email/password login and signup use Better Auth credential accounts. When email verification is enabled in admin settings and an email provider is configured, signup sends a verification link through `/api/comment-auth/verify-email` and email/password login is blocked until the account is verified. GitHub login starts at `/api/comment-auth/github/start` and returns through Better Auth at `/api/auth/callback/github`.
+`/api/comment-auth/*` is the comment-facing wrapper over Better Auth. Email/password login and signup use Better Auth credential accounts. When email verification is enabled in admin settings and an email provider is configured, signup sends a verification link through `/api/comment-auth/verify-email` and email/password login is blocked until the account is verified. GitHub login starts at `/api/comment-auth/github/start` and returns through Better Auth at `/api/auth/callback/github`; Google login uses `/api/comment-auth/google/start` and `/api/auth/callback/google`.
 
 `GET /api/export` returns JSON data and writes a backup JSON object to R2. `GET /api/export?format=zip` returns a ZIP archive with Markdown posts, HTML posts, JSON manifests, comments, settings, series, tags, and bundled R2 assets; the ZIP is also written under the `exports/` prefix in the storage bucket.
 

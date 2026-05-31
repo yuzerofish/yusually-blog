@@ -20,6 +20,7 @@ export {
   normalizeEmail,
   parseJson,
   slugify,
+  splitSetCookieHeader,
   toIsoString,
 } from "./utils";
 export type {

@@ -67,13 +67,14 @@ Better Auth 表由 `0002_better_auth_d1.sql` 创建；评论作者关联由 `000
 
 本地开发读取 `apps/web/.env`。Cloudflare preview 和 production 读取 Wrangler vars 与 secrets。
 
-公开站点地址、备份保留时间、邮件发送、Turnstile、鉴权密钥和 GitHub OAuth 都放在 Wrangler vars 与 secrets 里。变量名以 `apps/web/wrangler.jsonc` 为准。
+公开站点地址、备份保留时间、邮件发送、Turnstile、鉴权密钥和评论 OAuth 都放在 Wrangler vars 与 secrets 里。变量名以 `apps/web/wrangler.jsonc` 为准。
 
-生产环境把 `BETTER_AUTH_SECRET` 和 `GITHUB_CLIENT_SECRET` 写成 Wrangler secret：
+生产环境把 `BETTER_AUTH_SECRET` 和已启用 OAuth provider 的 secret 写成 Wrangler secret：
 
 ```sh
 pnpm --filter @repo/web exec wrangler secret put BETTER_AUTH_SECRET --config wrangler.jsonc
 pnpm --filter @repo/web exec wrangler secret put GITHUB_CLIENT_SECRET --config wrangler.jsonc
+pnpm --filter @repo/web exec wrangler secret put GOOGLE_CLIENT_SECRET --config wrangler.jsonc
 ```
 
 ## 可选 Email Sending
@@ -92,18 +93,20 @@ Cloudflare Email Sending 默认关闭，因为出站邮件需要 Workers Paid。
 
 启用生产邮件前，先查看 Cloudflare 的 [Email Service pricing](https://developers.cloudflare.com/email-service/platform/pricing/) 和 [Email Service limits](https://developers.cloudflare.com/email-service/platform/limits/)。
 
-## GitHub 评论登录
+## 社交账号评论登录
 
-GitHub OAuth 是推荐的读者评论登录方式。每个需要独立 callback URL 的环境创建一个 GitHub OAuth app：
+GitHub 和 Google OAuth 为读者评论提供一键登录。为每个 provider 和需要独立 callback URL 的环境创建 OAuth app/client：
 
 ```txt
 http://localhost:3000/api/auth/callback/github
+http://localhost:3000/api/auth/callback/google
 https://blog.01mvp.com/api/auth/callback/github
+https://blog.01mvp.com/api/auth/callback/google
 ```
 
-GitHub OAuth app 只有一个 authorization callback URL，所以本地和生产通常使用两个 OAuth app。
+GitHub OAuth app 只有一个 authorization callback URL，所以本地和生产通常使用两个 OAuth app。Google OAuth client 可以配置多个 authorized redirect URIs，但本地和生产分开会让 secret 轮换更清楚。
 
-`GITHUB_CLIENT_ID` 可以放在对应的 Wrangler 配置或 Cloudflare dashboard。没有配置 GitHub OAuth 时，邮箱和密码登录仍然可用。
+`GITHUB_CLIENT_ID` 和 `GOOGLE_CLIENT_ID` 可以放在对应的 Wrangler 配置或 Cloudflare dashboard。任一 OAuth provider 未配置时，邮箱和密码登录仍然可用。
 
 ## 评论审核
 

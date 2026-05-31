@@ -228,5 +228,9 @@ function providerIdToUserProvider(providerId: string): CmsUser["providers"][numb
     return "github";
   }
 
+  if (providerId === "google") {
+    return "google";
+  }
+
   return "unknown";
 }

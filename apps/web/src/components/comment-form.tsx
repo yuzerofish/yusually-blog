@@ -1,4 +1,4 @@
-import { SiGithub } from "@icons-pack/react-simple-icons";
+import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
 import { Button, buttonVariants } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
@@ -27,7 +27,7 @@ type CommentAuthUser = {
   name: string;
   email: string;
   avatarUrl: string | null;
-  provider: "email" | "github";
+  provider: "email" | "github" | "google";
   commentStatus?: "active" | "muted";
   commentReplyNotificationsEnabled: boolean;
   emailPreference: EmailPreference;
@@ -54,7 +54,7 @@ export function CommentForm({
   useEffect(() => {
     let ignore = false;
 
-    void fetch("/api/comment-auth/me")
+    void fetch("/api/comment-auth/me", { credentials: "same-origin" })
       .then(async (response) =>
         response.ok ? ((await response.json()) as { data?: CommentAuthUser | null }) : undefined,
       )
@@ -86,6 +86,7 @@ export function CommentForm({
 
     const response = await fetch("/api/comments", {
       method: "POST",
+      credentials: "same-origin",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         postSlug,
@@ -112,6 +113,7 @@ export function CommentForm({
     const formData = new FormData(form);
     const response = await fetch(`/api/comment-auth/${authMode}`, {
       method: "POST",
+      credentials: "same-origin",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         name: formData.get("name"),
@@ -147,6 +149,7 @@ export function CommentForm({
     setEmailPreferenceStatus("saving");
     const response = await fetch("/api/account/email-preferences", {
       method: "PATCH",
+      credentials: "same-origin",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(input),
     }).catch(() => null);
@@ -173,7 +176,7 @@ export function CommentForm({
   };
 
   const handleLogout = async () => {
-    await fetch("/api/comment-auth/logout", { method: "POST" });
+    await fetch("/api/comment-auth/logout", { method: "POST", credentials: "same-origin" });
     setUser(null);
   };
 
@@ -196,11 +199,18 @@ export function CommentForm({
 
         <div className="grid gap-3">
           <a
-            href={githubLoginHref(postSlug)}
+            href={socialLoginHref("github", postSlug)}
             className={buttonVariants({ variant: "secondary", className: "w-full justify-center" })}
           >
             <SiGithub className="size-4" />
             {m.comment_continue_github()}
+          </a>
+          <a
+            href={socialLoginHref("google", postSlug)}
+            className={buttonVariants({ variant: "secondary", className: "w-full justify-center" })}
+          >
+            <SiGoogle className="size-4" />
+            {m.comment_continue_google()}
           </a>
 
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
@@ -401,13 +411,13 @@ export function CommentForm({
   );
 }
 
-function githubLoginHref(postSlug: string) {
+function socialLoginHref(provider: "github" | "google", postSlug: string) {
   const redirectTo =
     typeof window === "undefined"
       ? `/blog/${postSlug}#comments`
       : `${window.location.pathname}${window.location.search}#comments`;
 
-  return `/api/comment-auth/github/start?redirectTo=${encodeURIComponent(redirectTo)}`;
+  return `/api/comment-auth/${provider}/start?redirectTo=${encodeURIComponent(redirectTo)}`;
 }
 
 function getCommentEmailPreferenceCopy(locale: ReturnType<typeof getCurrentLocale>) {

@@ -9,6 +9,8 @@ export const auth = createBlogAuth(createAuthDb(database), {
   baseURL: getAuthBaseURL(),
   githubClientId: env.GITHUB_CLIENT_ID,
   githubClientSecret: env.GITHUB_CLIENT_SECRET,
+  googleClientId: env.GOOGLE_CLIENT_ID,
+  googleClientSecret: env.GOOGLE_CLIENT_SECRET,
   secret: getBetterAuthSecret(),
 });
 

@@ -247,6 +247,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Comment_Account_MutedInputs */
 /** @typedef {{}} Comment_Account_Muted_DescriptionInputs */
 /** @typedef {{}} Comment_Continue_GithubInputs */
+/** @typedef {{}} Comment_Continue_GoogleInputs */
 /** @typedef {{}} Comment_EmailInputs */
 /** @typedef {{}} Comment_Email_Verification_SentInputs */
 /** @typedef {{}} Comment_ErrorInputs */
@@ -3785,6 +3786,20 @@ export const comment_continue_github = /** @type {((inputs?: Comment_Continue_Gi
 /**
 * | output |
 * | --- |
+* | "Continue with Google" |
+*
+* @param {Comment_Continue_GoogleInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const comment_continue_google = /** @type {((inputs?: Comment_Continue_GoogleInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_Continue_GoogleInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "en") return __en.comment_continue_google(inputs)
+	return __zh.comment_continue_google(inputs)
+});
+/**
+* | output |
+* | --- |
 * | "Email" |
 *
 * @param {Comment_EmailInputs} inputs
@@ -3827,7 +3842,7 @@ export const comment_error = /** @type {((inputs?: Comment_ErrorInputs, options?
 /**
 * | output |
 * | --- |
-* | "Sign in with GitHub or email before posting a comment." |
+* | "Sign in with GitHub, Google, or email before posting a comment." |
 *
 * @param {Comment_Login_DescriptionInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options

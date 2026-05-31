@@ -70,6 +70,9 @@
       },
       "GITHUB_CLIENT_SECRET": {
         "description": "Optional GitHub OAuth secret for comment login. Leave empty if GitHub login is disabled."
+      },
+      "GOOGLE_CLIENT_SECRET": {
+        "description": "Optional Google OAuth secret for comment login. Leave empty if Google login is disabled."
       }
     }
   }

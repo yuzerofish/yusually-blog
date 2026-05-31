@@ -3431,6 +3431,20 @@ export const comment_continue_github: ((inputs?: Comment_Continue_GithubInputs, 
 /**
 * | output |
 * | --- |
+* | "Continue with Google" |
+*
+* @param {Comment_Continue_GoogleInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const comment_continue_google: ((inputs?: Comment_Continue_GoogleInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Comment_Continue_GoogleInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
 * | "Email" |
 *
 * @param {Comment_EmailInputs} inputs
@@ -3473,7 +3487,7 @@ export const comment_error: ((inputs?: Comment_ErrorInputs, options?: {
 /**
 * | output |
 * | --- |
-* | "Sign in with GitHub or email before posting a comment." |
+* | "Sign in with GitHub, Google, or email before posting a comment." |
 *
 * @param {Comment_Login_DescriptionInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -5138,6 +5152,7 @@ export type Comment_Auth_LoadingInputs = {};
 export type Comment_Account_MutedInputs = {};
 export type Comment_Account_Muted_DescriptionInputs = {};
 export type Comment_Continue_GithubInputs = {};
+export type Comment_Continue_GoogleInputs = {};
 export type Comment_EmailInputs = {};
 export type Comment_Email_Verification_SentInputs = {};
 export type Comment_ErrorInputs = {};

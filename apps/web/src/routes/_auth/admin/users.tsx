@@ -609,6 +609,10 @@ function providerLabel(providers: CmsUser["providers"]) {
       return "GitHub";
     }
 
+    if (provider === "google") {
+      return "Google";
+    }
+
     if (provider === "email") {
       return m.admin_users_provider_email();
     }

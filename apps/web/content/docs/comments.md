@@ -7,18 +7,20 @@ Comments are enabled as a reader-facing feature, but posting requires a reader s
 
 ## Login Options
 
-GitHub OAuth is the preferred login method for reader comments. Email/password login is available as a fallback.
+GitHub and Google OAuth are one-click login methods for reader comments. Email/password login is available as a fallback.
 
-Create a GitHub OAuth app for each environment that needs its own callback URL:
+Create an OAuth app/client for each provider and environment that needs its own callback URL:
 
 ```txt
 http://localhost:3000/api/auth/callback/github
+http://localhost:3000/api/auth/callback/google
 https://your-domain.com/api/auth/callback/github
+https://your-domain.com/api/auth/callback/google
 ```
 
-GitHub OAuth apps have one authorization callback URL, so local and production usually use separate OAuth apps.
+GitHub OAuth apps have one authorization callback URL, so local and production usually use separate OAuth apps. Google OAuth clients allow multiple authorized redirect URIs, but separate local and production clients make secret rotation cleaner.
 
-Set `GITHUB_CLIENT_ID` in Wrangler vars or the Cloudflare dashboard. Store `GITHUB_CLIENT_SECRET` as a Wrangler secret for production and in `apps/web/.env` for local development.
+Set `GITHUB_CLIENT_ID` and `GOOGLE_CLIENT_ID` in Wrangler vars or the Cloudflare dashboard. Store `GITHUB_CLIENT_SECRET` and `GOOGLE_CLIENT_SECRET` as Wrangler secrets for production and in `apps/web/.env` for local development.
 
 ## Moderation Defaults
 

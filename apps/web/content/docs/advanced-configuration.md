@@ -1,9 +1,9 @@
 ---
 title: Advanced configuration
-description: Optional email, GitHub OAuth, and Turnstile setup.
+description: Optional email, comment OAuth, and Turnstile setup.
 ---
 
-The starter does not require email delivery, GitHub OAuth, or Cloudflare Turnstile for the first run. The admin settings page only detects whether these optional integrations are configured. It does not write Cloudflare secrets, create OAuth apps, or change provider accounts.
+The starter does not require email delivery, comment OAuth, or Cloudflare Turnstile for the first run. The admin settings page only detects whether these optional integrations are configured. It does not write Cloudflare secrets, create OAuth apps, or change provider accounts.
 
 After changing Cloudflare vars, secrets, or bindings, redeploy the Worker and refresh `/admin/settings`.
 
@@ -91,6 +91,35 @@ pnpm --filter @repo/web exec wrangler secret put GITHUB_CLIENT_SECRET --config w
 
 For local development, put both values in `apps/web/.env`.
 
+## Google OAuth
+
+Google OAuth adds another one-click reader login option for comments. Email/password and any configured GitHub login remain available when Google OAuth is not configured.
+
+Create a Google OAuth client and add the callback URLs as authorized redirect URIs:
+
+```txt
+http://localhost:3000/api/auth/callback/google
+https://your-domain.com/api/auth/callback/google
+```
+
+Set the client id as a Wrangler var or dashboard variable:
+
+```jsonc
+{
+  "vars": {
+    "GOOGLE_CLIENT_ID": "your-client-id",
+  },
+}
+```
+
+Store the client secret as a Wrangler secret:
+
+```sh
+pnpm --filter @repo/web exec wrangler secret put GOOGLE_CLIENT_SECRET --config wrangler.jsonc
+```
+
+For local development, put both values in `apps/web/.env`.
+
 ## Cloudflare Turnstile
 
 Turnstile is optional spam protection for comment submission. Comments still require a reader session and still use server-side rate limits and moderation when Turnstile is not configured.
@@ -124,6 +153,7 @@ Open `/admin/settings` and review Advanced configuration. The status checks:
 
 - email delivery: `CMS_EMAIL` binding plus email vars, or Resend vars and secret
 - GitHub OAuth: `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`
+- Google OAuth: `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`
 - Turnstile: `VITE_TURNSTILE_SITE_KEY` and `CMS_TURNSTILE_SECRET_KEY`
 
 External references:
@@ -131,3 +161,4 @@ External references:
 - [Cloudflare Email Service Workers API](https://developers.cloudflare.com/email-service/api/send-emails/workers-api/)
 - [Cloudflare Turnstile get started](https://developers.cloudflare.com/turnstile/get-started/)
 - [GitHub OAuth app setup](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app)
+- [Google OAuth client setup](https://support.google.com/cloud/answer/6158849)

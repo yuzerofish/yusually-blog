@@ -1,4 +1,4 @@
-import { SiGithub } from "@icons-pack/react-simple-icons";
+import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
 import { type ApiToken, type ApiTokenScope, type SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
@@ -58,10 +58,11 @@ type OptionalEnvStatus = {
 type AdvancedConfigStatus = {
   email: EmailVerificationStatus["delivery"];
   github: OptionalEnvStatus;
+  google: OptionalEnvStatus;
   turnstile: OptionalEnvStatus;
 };
 type AdvancedConfigItem = {
-  id: "email" | "github" | "turnstile";
+  id: "email" | "github" | "google" | "turnstile";
   configured: boolean;
   description: string;
   detail: string;
@@ -103,6 +104,10 @@ const defaultEmailVerificationStatus: EmailVerificationStatus = {
 const defaultAdvancedConfigStatus: AdvancedConfigStatus = {
   email: defaultEmailVerificationStatus.delivery,
   github: {
+    configured: false,
+    missing: [],
+  },
+  google: {
     configured: false,
     missing: [],
   },
@@ -1415,6 +1420,16 @@ function getAdvancedConfigItems(
       title: copy.githubTitle,
     },
     {
+      id: "google",
+      configured: status.google.configured,
+      description: copy.googleDescription,
+      detail: status.google.configured ? copy.googleConfigured : copy.googleMissing,
+      docsHref: `${docsPrefix}/advanced-configuration#google-oauth`,
+      icon: SiGoogle,
+      missing: status.google.missing,
+      title: copy.googleTitle,
+    },
+    {
       id: "turnstile",
       configured: status.turnstile.configured,
       description: copy.turnstileDescription,
@@ -1535,7 +1550,7 @@ function getAdvancedConfigCopy(locale: ReturnType<typeof getCurrentLocale>) {
     return {
       configured: "已配置",
       description:
-        "这些集成默认可不配置。后台只检测当前环境变量和绑定状态，真正的 Cloudflare、GitHub 或邮件服务配置在文档里完成。",
+        "这些集成默认可不配置。后台只检测当前环境变量和绑定状态，真正的 Cloudflare、GitHub、Google 或邮件服务配置在文档里完成。",
       docs: "查看文档",
       emailConfigured: (provider: string) => `已检测到邮件服务：${provider}。`,
       emailDescription: "用于密码重置、后台通知、导入导出通知，以及可选的评论账号邮箱验证。",
@@ -1545,6 +1560,10 @@ function getAdvancedConfigCopy(locale: ReturnType<typeof getCurrentLocale>) {
       githubDescription: "为读者评论提供 GitHub 登录；未配置时仍可使用邮箱和密码登录。",
       githubMissing: "未检测到 GitHub OAuth 环境变量。",
       githubTitle: "GitHub 登录",
+      googleConfigured: "已检测到 Google OAuth client id 和 secret。",
+      googleDescription: "为读者评论提供 Google 登录；未配置时仍可使用其他登录方式。",
+      googleMissing: "未检测到 Google OAuth 环境变量。",
+      googleTitle: "Google 登录",
       needsSetup: "未配置",
       title: "进阶配置",
       turnstileConfigured: "已检测到 Turnstile site key 和 secret key，评论提交会启用校验。",
@@ -1557,7 +1576,7 @@ function getAdvancedConfigCopy(locale: ReturnType<typeof getCurrentLocale>) {
   return {
     configured: "Configured",
     description:
-      "These integrations are optional by default. The admin area only detects current environment variables and bindings; setup happens in Cloudflare, GitHub, or the email provider.",
+      "These integrations are optional by default. The admin area only detects current environment variables and bindings; setup happens in Cloudflare, GitHub, Google, or the email provider.",
     docs: "Open docs",
     emailConfigured: (provider: string) => `Email provider detected: ${provider}.`,
     emailDescription:
@@ -1570,6 +1589,11 @@ function getAdvancedConfigCopy(locale: ReturnType<typeof getCurrentLocale>) {
       "Adds GitHub login for reader comments; email/password login remains available without it.",
     githubMissing: "GitHub OAuth environment variables were not detected.",
     githubTitle: "GitHub login",
+    googleConfigured: "Google OAuth client id and secret were detected.",
+    googleDescription:
+      "Adds Google login for reader comments; other login methods remain available without it.",
+    googleMissing: "Google OAuth environment variables were not detected.",
+    googleTitle: "Google login",
     needsSetup: "Needs setup",
     title: "Advanced configuration",
     turnstileConfigured: "Turnstile site key and secret key were detected for comment checks.",

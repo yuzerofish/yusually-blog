@@ -50,7 +50,7 @@ export type CommentUser = {
   email: string;
   emailHash: string;
   avatarUrl: string | null;
-  provider: "email" | "github";
+  provider: CommentAuthProvider;
   commentStatus: CommentUserStatus;
   commentReplyNotificationsEnabled: boolean;
   emailPreference: EmailPreference;
@@ -58,6 +58,9 @@ export type CommentUser = {
   createdAt: string;
   lastLoginAt: string | null;
 };
+
+type SocialCommentProvider = "github" | "google";
+type CommentAuthProvider = "email" | SocialCommentProvider;
 
 type CommentUserInput = {
   email?: string;
@@ -218,7 +221,7 @@ export async function loginCommentUser(
 ) {
   const response = await callAuthEndpoint(
     "/api/auth/sign-in/email",
-    { email: normalizeEmail(input.email), password: input.password ?? "" },
+    { email: normalizeEmail(input.email), password: input.password ?? "", rememberMe: true },
     request,
   );
   const payload = await readAuthPayload<AuthUserPayload>(response);
@@ -250,8 +253,22 @@ export async function logoutCommentUser(request: Request) {
 }
 
 export async function redirectToGitHubForCommentLogin(request: Request) {
-  if (!hasGitHubProvider()) {
-    return Response.json({ error: "GitHub login is not configured" }, { status: 503 });
+  return redirectToSocialProviderForCommentLogin("github", request);
+}
+
+export async function redirectToGoogleForCommentLogin(request: Request) {
+  return redirectToSocialProviderForCommentLogin("google", request);
+}
+
+async function redirectToSocialProviderForCommentLogin(
+  provider: SocialCommentProvider,
+  request: Request,
+) {
+  if (!hasSocialProvider(provider)) {
+    return Response.json(
+      { error: `${providerDisplayName(provider)} login is not configured` },
+      { status: 503 },
+    );
   }
 
   const url = new URL(request.url);
@@ -259,14 +276,14 @@ export async function redirectToGitHubForCommentLogin(request: Request) {
   const callbackURL = new URL(redirectTo, request.url).toString();
   const errorCallbackURL = new URL(redirectTo, request.url);
 
-  errorCallbackURL.searchParams.set("commentAuth", "github_error");
+  errorCallbackURL.searchParams.set("commentAuth", `${provider}_error`);
 
   const response = await callAuthEndpoint(
     "/api/auth/sign-in/social",
     {
       callbackURL,
       errorCallbackURL: errorCallbackURL.toString(),
-      provider: "github",
+      provider,
     },
     request,
   );
@@ -274,7 +291,7 @@ export async function redirectToGitHubForCommentLogin(request: Request) {
 
   if (!response.ok || !payload?.url) {
     return Response.json(
-      { error: authErrorMessage(payload, "GitHub login failed") },
+      { error: authErrorMessage(payload, `${providerDisplayName(provider)} login failed`) },
       { status: response.ok ? 500 : response.status },
     );
   }
@@ -331,7 +348,15 @@ async function resolvePrimaryProvider(userId: string): Promise<CommentUser["prov
   const context = await auth.$context;
   const accounts = await context.internalAdapter.findAccounts(userId);
 
-  return accounts.some((account) => account.providerId === "github") ? "github" : "email";
+  if (accounts.some((account) => account.providerId === "github")) {
+    return "github";
+  }
+
+  if (accounts.some((account) => account.providerId === "google")) {
+    return "google";
+  }
+
+  return "email";
 }
 
 function toBetterAuthUser(value: unknown) {
@@ -348,8 +373,16 @@ function toBetterAuthUser(value: unknown) {
   return null;
 }
 
-function hasGitHubProvider() {
-  return Boolean(env.GITHUB_CLIENT_ID?.trim() && env.GITHUB_CLIENT_SECRET?.trim());
+function hasSocialProvider(provider: SocialCommentProvider) {
+  if (provider === "github") {
+    return Boolean(env.GITHUB_CLIENT_ID?.trim() && env.GITHUB_CLIENT_SECRET?.trim());
+  }
+
+  return Boolean(env.GOOGLE_CLIENT_ID?.trim() && env.GOOGLE_CLIENT_SECRET?.trim());
+}
+
+function providerDisplayName(provider: SocialCommentProvider) {
+  return provider === "github" ? "GitHub" : "Google";
 }
 
 function safeRedirectPath(value: string) {

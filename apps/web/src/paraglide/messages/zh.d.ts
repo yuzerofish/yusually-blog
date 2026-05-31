@@ -244,6 +244,7 @@
 /** @typedef {{}} Comment_Account_MutedInputs */
 /** @typedef {{}} Comment_Account_Muted_DescriptionInputs */
 /** @typedef {{}} Comment_Continue_GithubInputs */
+/** @typedef {{}} Comment_Continue_GoogleInputs */
 /** @typedef {{}} Comment_EmailInputs */
 /** @typedef {{}} Comment_Email_Verification_SentInputs */
 /** @typedef {{}} Comment_ErrorInputs */
@@ -592,6 +593,7 @@ export const comment_auth_loading: (inputs: Comment_Auth_LoadingInputs) => Local
 export const comment_account_muted: (inputs: Comment_Account_MutedInputs) => LocalizedString;
 export const comment_account_muted_description: (inputs: Comment_Account_Muted_DescriptionInputs) => LocalizedString;
 export const comment_continue_github: (inputs: Comment_Continue_GithubInputs) => LocalizedString;
+export const comment_continue_google: (inputs: Comment_Continue_GoogleInputs) => LocalizedString;
 export const comment_email: (inputs: Comment_EmailInputs) => LocalizedString;
 export const comment_email_verification_sent: (inputs: Comment_Email_Verification_SentInputs) => LocalizedString;
 export const comment_error: (inputs: Comment_ErrorInputs) => LocalizedString;
@@ -963,6 +965,7 @@ export type Comment_Auth_LoadingInputs = {};
 export type Comment_Account_MutedInputs = {};
 export type Comment_Account_Muted_DescriptionInputs = {};
 export type Comment_Continue_GithubInputs = {};
+export type Comment_Continue_GoogleInputs = {};
 export type Comment_EmailInputs = {};
 export type Comment_Email_Verification_SentInputs = {};
 export type Comment_ErrorInputs = {};

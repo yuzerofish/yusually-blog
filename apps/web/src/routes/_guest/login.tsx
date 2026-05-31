@@ -1,6 +1,7 @@
+import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
 import { authQueryOptions, type AuthQueryResult } from "@repo/auth/tanstack/queries";
 import { getSiteSettingsForLocale } from "@repo/core";
-import { Button } from "@repo/ui/components/button";
+import { Button, buttonVariants } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -29,6 +30,7 @@ function LoginForm() {
     mutationFn: async (data: { email: string; password: string }) => {
       const response = await fetch("/api/admin/login", {
         method: "POST",
+        credentials: "same-origin",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(data),
       });
@@ -80,6 +82,33 @@ function LoginForm() {
               {m.login_error()}
             </p>
           ) : null}
+          <div className="grid gap-3">
+            <a
+              href={adminSocialLoginHref("github", redirectUrl)}
+              className={buttonVariants({
+                variant: "secondary",
+                className: "w-full justify-center",
+              })}
+            >
+              <SiGithub className="size-4" />
+              {m.login_with_provider({ provider: "GitHub" })}
+            </a>
+            <a
+              href={adminSocialLoginHref("google", redirectUrl)}
+              className={buttonVariants({
+                variant: "secondary",
+                className: "w-full justify-center",
+              })}
+            >
+              <SiGoogle className="size-4" />
+              {m.login_with_provider({ provider: "Google" })}
+            </a>
+          </div>
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <span className="h-px flex-1 bg-border" />
+            {m.login_alternative()}
+            <span className="h-px flex-1 bg-border" />
+          </div>
           <div className="flex flex-col gap-5">
             <div className="grid gap-2">
               <Label htmlFor="email">{m.login_email()}</Label>
@@ -126,4 +155,8 @@ function LoginForm() {
       </div>
     </div>
   );
+}
+
+function adminSocialLoginHref(provider: "github" | "google", redirectTo: string) {
+  return `/api/admin/login/${provider}/start?redirectTo=${encodeURIComponent(redirectTo)}`;
 }

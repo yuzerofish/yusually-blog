@@ -32,7 +32,7 @@
 
 - Public routes: home, blog list, post detail, tags, about, RSS, feed, sitemap, robots, API docs, and OpenAPI JSON.
 - Admin routes: overview, posts, assets, comments, settings, and scoped API tokens.
-- Admin and reader auth use the shared Better Auth tables on D1. The `user.role` column marks admin users; reader accounts can use GitHub OAuth or email/password.
+- Admin and reader auth use the shared Better Auth tables on D1. The `user.role` column marks admin users; reader accounts can use GitHub OAuth, Google OAuth, or email/password.
 - Automation tokens are stored hashed in D1 and checked by scope.
 
 ## Automation Flow

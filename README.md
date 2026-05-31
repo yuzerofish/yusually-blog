@@ -41,6 +41,7 @@ Required production secrets:
 
 - `BETTER_AUTH_SECRET`: generate with `pnpm auth:secret`
 - `GITHUB_CLIENT_SECRET`: optional unless GitHub comment login is enabled
+- `GOOGLE_CLIENT_SECRET`: optional unless Google comment login is enabled
 
 ## Automatic Deploys
 

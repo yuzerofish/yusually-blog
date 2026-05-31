@@ -81,12 +81,15 @@ import { Route as ApiTokensIdRevokeRouteImport } from './routes/api/tokens/$id/r
 import { Route as ApiCommentsIdSpamRouteImport } from './routes/api/comments/$id/spam'
 import { Route as ApiCommentsIdDeleteRouteImport } from './routes/api/comments/$id/delete'
 import { Route as ApiCommentsIdApproveRouteImport } from './routes/api/comments/$id/approve'
+import { Route as ApiCommentAuthGoogleStartRouteImport } from './routes/api/comment-auth/google/start'
 import { Route as ApiCommentAuthGithubStartRouteImport } from './routes/api/comment-auth/github/start'
 import { Route as ApiAdminUsersIdRouteImport } from './routes/api/admin/users/$id'
 import { Route as ApiAdminAiSettingsTestRouteImport } from './routes/api/admin/ai-settings/test'
 import { Route as ApiAdminAiSettingsApiKeyRouteImport } from './routes/api/admin/ai-settings/api-key'
 import { Route as AuthAdminPostsNewRouteImport } from './routes/_auth/admin/posts/new'
 import { Route as AuthAdminPostsPostIdRouteImport } from './routes/_auth/admin/posts/$postId'
+import { Route as ApiAdminLoginSocialCompleteRouteImport } from './routes/api/admin/login/social/complete'
+import { Route as ApiAdminLoginProviderStartRouteImport } from './routes/api/admin/login/$provider/start'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -448,6 +451,12 @@ const ApiCommentsIdApproveRoute = ApiCommentsIdApproveRouteImport.update({
   path: '/$id/approve',
   getParentRoute: () => ApiCommentsRoute,
 } as any)
+const ApiCommentAuthGoogleStartRoute =
+  ApiCommentAuthGoogleStartRouteImport.update({
+    id: '/api/comment-auth/google/start',
+    path: '/api/comment-auth/google/start',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCommentAuthGithubStartRoute =
   ApiCommentAuthGithubStartRouteImport.update({
     id: '/api/comment-auth/github/start',
@@ -480,6 +489,18 @@ const AuthAdminPostsPostIdRoute = AuthAdminPostsPostIdRouteImport.update({
   path: '/$postId',
   getParentRoute: () => AuthAdminPostsRoute,
 } as any)
+const ApiAdminLoginSocialCompleteRoute =
+  ApiAdminLoginSocialCompleteRouteImport.update({
+    id: '/social/complete',
+    path: '/social/complete',
+    getParentRoute: () => ApiAdminLoginRoute,
+  } as any)
+const ApiAdminLoginProviderStartRoute =
+  ApiAdminLoginProviderStartRouteImport.update({
+    id: '/$provider/start',
+    path: '/$provider/start',
+    getParentRoute: () => ApiAdminLoginRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -522,7 +543,7 @@ export interface FileRoutesByFullPath {
   '/api/admin/ai-settings': typeof ApiAdminAiSettingsRouteWithChildren
   '/api/admin/email-broadcasts': typeof ApiAdminEmailBroadcastsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
-  '/api/admin/login': typeof ApiAdminLoginRoute
+  '/api/admin/login': typeof ApiAdminLoginRouteWithChildren
   '/api/admin/logout': typeof ApiAdminLogoutRoute
   '/api/admin/me': typeof ApiAdminMeRoute
   '/api/admin/password': typeof ApiAdminPasswordRoute
@@ -553,11 +574,14 @@ export interface FileRoutesByFullPath {
   '/api/admin/ai-settings/test': typeof ApiAdminAiSettingsTestRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
   '/api/comment-auth/github/start': typeof ApiCommentAuthGithubStartRoute
+  '/api/comment-auth/google/start': typeof ApiCommentAuthGoogleStartRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
   '/api/comments/$id/delete': typeof ApiCommentsIdDeleteRoute
   '/api/comments/$id/spam': typeof ApiCommentsIdSpamRoute
   '/api/tokens/$id/revoke': typeof ApiTokensIdRevokeRoute
   '/admin/posts/': typeof AuthAdminPostsIndexRoute
+  '/api/admin/login/$provider/start': typeof ApiAdminLoginProviderStartRoute
+  '/api/admin/login/social/complete': typeof ApiAdminLoginSocialCompleteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -597,7 +621,7 @@ export interface FileRoutesByTo {
   '/api/admin/ai-settings': typeof ApiAdminAiSettingsRouteWithChildren
   '/api/admin/email-broadcasts': typeof ApiAdminEmailBroadcastsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
-  '/api/admin/login': typeof ApiAdminLoginRoute
+  '/api/admin/login': typeof ApiAdminLoginRouteWithChildren
   '/api/admin/logout': typeof ApiAdminLogoutRoute
   '/api/admin/me': typeof ApiAdminMeRoute
   '/api/admin/password': typeof ApiAdminPasswordRoute
@@ -628,11 +652,14 @@ export interface FileRoutesByTo {
   '/api/admin/ai-settings/test': typeof ApiAdminAiSettingsTestRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
   '/api/comment-auth/github/start': typeof ApiCommentAuthGithubStartRoute
+  '/api/comment-auth/google/start': typeof ApiCommentAuthGoogleStartRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
   '/api/comments/$id/delete': typeof ApiCommentsIdDeleteRoute
   '/api/comments/$id/spam': typeof ApiCommentsIdSpamRoute
   '/api/tokens/$id/revoke': typeof ApiTokensIdRevokeRoute
   '/admin/posts': typeof AuthAdminPostsIndexRoute
+  '/api/admin/login/$provider/start': typeof ApiAdminLoginProviderStartRoute
+  '/api/admin/login/social/complete': typeof ApiAdminLoginSocialCompleteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -678,7 +705,7 @@ export interface FileRoutesById {
   '/api/admin/ai-settings': typeof ApiAdminAiSettingsRouteWithChildren
   '/api/admin/email-broadcasts': typeof ApiAdminEmailBroadcastsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
-  '/api/admin/login': typeof ApiAdminLoginRoute
+  '/api/admin/login': typeof ApiAdminLoginRouteWithChildren
   '/api/admin/logout': typeof ApiAdminLogoutRoute
   '/api/admin/me': typeof ApiAdminMeRoute
   '/api/admin/password': typeof ApiAdminPasswordRoute
@@ -709,11 +736,14 @@ export interface FileRoutesById {
   '/api/admin/ai-settings/test': typeof ApiAdminAiSettingsTestRoute
   '/api/admin/users/$id': typeof ApiAdminUsersIdRoute
   '/api/comment-auth/github/start': typeof ApiCommentAuthGithubStartRoute
+  '/api/comment-auth/google/start': typeof ApiCommentAuthGoogleStartRoute
   '/api/comments/$id/approve': typeof ApiCommentsIdApproveRoute
   '/api/comments/$id/delete': typeof ApiCommentsIdDeleteRoute
   '/api/comments/$id/spam': typeof ApiCommentsIdSpamRoute
   '/api/tokens/$id/revoke': typeof ApiTokensIdRevokeRoute
   '/_auth/admin/posts/': typeof AuthAdminPostsIndexRoute
+  '/api/admin/login/$provider/start': typeof ApiAdminLoginProviderStartRoute
+  '/api/admin/login/social/complete': typeof ApiAdminLoginSocialCompleteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -789,11 +819,14 @@ export interface FileRouteTypes {
     | '/api/admin/ai-settings/test'
     | '/api/admin/users/$id'
     | '/api/comment-auth/github/start'
+    | '/api/comment-auth/google/start'
     | '/api/comments/$id/approve'
     | '/api/comments/$id/delete'
     | '/api/comments/$id/spam'
     | '/api/tokens/$id/revoke'
     | '/admin/posts/'
+    | '/api/admin/login/$provider/start'
+    | '/api/admin/login/social/complete'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -864,11 +897,14 @@ export interface FileRouteTypes {
     | '/api/admin/ai-settings/test'
     | '/api/admin/users/$id'
     | '/api/comment-auth/github/start'
+    | '/api/comment-auth/google/start'
     | '/api/comments/$id/approve'
     | '/api/comments/$id/delete'
     | '/api/comments/$id/spam'
     | '/api/tokens/$id/revoke'
     | '/admin/posts'
+    | '/api/admin/login/$provider/start'
+    | '/api/admin/login/social/complete'
   id:
     | '__root__'
     | '/'
@@ -944,11 +980,14 @@ export interface FileRouteTypes {
     | '/api/admin/ai-settings/test'
     | '/api/admin/users/$id'
     | '/api/comment-auth/github/start'
+    | '/api/comment-auth/google/start'
     | '/api/comments/$id/approve'
     | '/api/comments/$id/delete'
     | '/api/comments/$id/spam'
     | '/api/tokens/$id/revoke'
     | '/_auth/admin/posts/'
+    | '/api/admin/login/$provider/start'
+    | '/api/admin/login/social/complete'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -983,7 +1022,7 @@ export interface RootRouteChildren {
   ApiAdminAiSettingsRoute: typeof ApiAdminAiSettingsRouteWithChildren
   ApiAdminEmailBroadcastsRoute: typeof ApiAdminEmailBroadcastsRoute
   ApiAdminEmailStatusRoute: typeof ApiAdminEmailStatusRoute
-  ApiAdminLoginRoute: typeof ApiAdminLoginRoute
+  ApiAdminLoginRoute: typeof ApiAdminLoginRouteWithChildren
   ApiAdminLogoutRoute: typeof ApiAdminLogoutRoute
   ApiAdminMeRoute: typeof ApiAdminMeRoute
   ApiAdminPasswordRoute: typeof ApiAdminPasswordRoute
@@ -1003,6 +1042,7 @@ export interface RootRouteChildren {
   ApiImportZipRoute: typeof ApiImportZipRoute
   ZhDocsSplatRoute: typeof ZhDocsSplatRoute
   ApiCommentAuthGithubStartRoute: typeof ApiCommentAuthGithubStartRoute
+  ApiCommentAuthGoogleStartRoute: typeof ApiCommentAuthGoogleStartRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1511,6 +1551,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCommentsIdApproveRouteImport
       parentRoute: typeof ApiCommentsRoute
     }
+    '/api/comment-auth/google/start': {
+      id: '/api/comment-auth/google/start'
+      path: '/api/comment-auth/google/start'
+      fullPath: '/api/comment-auth/google/start'
+      preLoaderRoute: typeof ApiCommentAuthGoogleStartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/comment-auth/github/start': {
       id: '/api/comment-auth/github/start'
       path: '/api/comment-auth/github/start'
@@ -1552,6 +1599,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/posts/$postId'
       preLoaderRoute: typeof AuthAdminPostsPostIdRouteImport
       parentRoute: typeof AuthAdminPostsRoute
+    }
+    '/api/admin/login/social/complete': {
+      id: '/api/admin/login/social/complete'
+      path: '/social/complete'
+      fullPath: '/api/admin/login/social/complete'
+      preLoaderRoute: typeof ApiAdminLoginSocialCompleteRouteImport
+      parentRoute: typeof ApiAdminLoginRoute
+    }
+    '/api/admin/login/$provider/start': {
+      id: '/api/admin/login/$provider/start'
+      path: '/$provider/start'
+      fullPath: '/api/admin/login/$provider/start'
+      preLoaderRoute: typeof ApiAdminLoginProviderStartRouteImport
+      parentRoute: typeof ApiAdminLoginRoute
     }
   }
 }
@@ -1717,6 +1778,20 @@ const ApiAdminAiSettingsRouteChildren: ApiAdminAiSettingsRouteChildren = {
 const ApiAdminAiSettingsRouteWithChildren =
   ApiAdminAiSettingsRoute._addFileChildren(ApiAdminAiSettingsRouteChildren)
 
+interface ApiAdminLoginRouteChildren {
+  ApiAdminLoginProviderStartRoute: typeof ApiAdminLoginProviderStartRoute
+  ApiAdminLoginSocialCompleteRoute: typeof ApiAdminLoginSocialCompleteRoute
+}
+
+const ApiAdminLoginRouteChildren: ApiAdminLoginRouteChildren = {
+  ApiAdminLoginProviderStartRoute: ApiAdminLoginProviderStartRoute,
+  ApiAdminLoginSocialCompleteRoute: ApiAdminLoginSocialCompleteRoute,
+}
+
+const ApiAdminLoginRouteWithChildren = ApiAdminLoginRoute._addFileChildren(
+  ApiAdminLoginRouteChildren,
+)
+
 interface ApiAdminUsersRouteChildren {
   ApiAdminUsersIdRoute: typeof ApiAdminUsersIdRoute
 }
@@ -1761,7 +1836,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAdminAiSettingsRoute: ApiAdminAiSettingsRouteWithChildren,
   ApiAdminEmailBroadcastsRoute: ApiAdminEmailBroadcastsRoute,
   ApiAdminEmailStatusRoute: ApiAdminEmailStatusRoute,
-  ApiAdminLoginRoute: ApiAdminLoginRoute,
+  ApiAdminLoginRoute: ApiAdminLoginRouteWithChildren,
   ApiAdminLogoutRoute: ApiAdminLogoutRoute,
   ApiAdminMeRoute: ApiAdminMeRoute,
   ApiAdminPasswordRoute: ApiAdminPasswordRoute,
@@ -1781,6 +1856,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiImportZipRoute: ApiImportZipRoute,
   ZhDocsSplatRoute: ZhDocsSplatRoute,
   ApiCommentAuthGithubStartRoute: ApiCommentAuthGithubStartRoute,
+  ApiCommentAuthGoogleStartRoute: ApiCommentAuthGoogleStartRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -65,6 +65,15 @@ type AuthUserPayload = {
   code?: string;
 };
 
+type SocialSignInPayload = {
+  url?: string;
+  message?: string;
+  error?: string;
+  code?: string;
+};
+
+type AdminSocialProvider = "github" | "google";
+
 const authDb = createAuthDb(env.CMS_DB as Parameters<typeof createAuthDb>[0]);
 
 export async function countAdminUsers() {
@@ -155,7 +164,7 @@ export async function loginAdmin(input: { email?: string; password?: string }, r
   const email = normalizeEmail(input.email);
   const response = await callAuthEndpoint(
     "/api/auth/sign-in/email",
-    { email, password: input.password ?? "" },
+    { email, password: input.password ?? "", rememberMe: true },
     request,
   );
   const payload = await readAuthPayload<AuthUserPayload>(response);
@@ -171,6 +180,62 @@ export async function loginAdmin(input: { email?: string; password?: string }, r
   return {
     data: toAdminUser(payload.user),
     headers: extractSetCookieHeaders(response),
+  } as const;
+}
+
+export async function redirectToAdminSocialLogin(provider: AdminSocialProvider, request: Request) {
+  if (!hasSocialProvider(provider)) {
+    return { error: `${providerDisplayName(provider)} login is not configured` } as const;
+  }
+
+  const url = new URL(request.url);
+  const redirectTo = safeRedirectPath(url.searchParams.get("redirectTo") ?? "/admin");
+  const callbackURL = new URL("/api/admin/login/social/complete", request.url);
+  const errorCallbackURL = new URL("/login", request.url);
+
+  callbackURL.searchParams.set("redirectTo", redirectTo);
+  errorCallbackURL.searchParams.set("error", "1");
+
+  const response = await callAuthEndpoint(
+    "/api/auth/sign-in/social",
+    {
+      callbackURL: callbackURL.toString(),
+      errorCallbackURL: errorCallbackURL.toString(),
+      provider,
+    },
+    request,
+  );
+  const payload = await readAuthPayload<SocialSignInPayload>(response);
+
+  if (!response.ok || !payload?.url) {
+    return {
+      error: authErrorMessage(payload, `${providerDisplayName(provider)} login failed`),
+    } as const;
+  }
+
+  return {
+    data: payload.url,
+    headers: extractSetCookieHeaders(response),
+  } as const;
+}
+
+export async function completeAdminSocialLogin(request: Request) {
+  const url = new URL(request.url);
+  const redirectTo = safeRedirectPath(url.searchParams.get("redirectTo") ?? "/admin");
+  const user = await getAdminUserFromRequest(request);
+
+  if (user) {
+    return {
+      data: redirectTo,
+      headers: new Headers(),
+    } as const;
+  }
+
+  const logout = await logoutAdmin(request);
+
+  return {
+    error: "Social login is not linked to an admin account",
+    headers: logout.headers,
   } as const;
 }
 
@@ -229,4 +294,24 @@ function toAdminUser(user: BetterAuthUser): AdminUser {
     createdAt: toIsoString(user.createdAt),
     lastLoginAt: null,
   };
+}
+
+function hasSocialProvider(provider: AdminSocialProvider) {
+  if (provider === "github") {
+    return Boolean(env.GITHUB_CLIENT_ID?.trim() && env.GITHUB_CLIENT_SECRET?.trim());
+  }
+
+  return Boolean(env.GOOGLE_CLIENT_ID?.trim() && env.GOOGLE_CLIENT_SECRET?.trim());
+}
+
+function providerDisplayName(provider: AdminSocialProvider) {
+  return provider === "github" ? "GitHub" : "Google";
+}
+
+function safeRedirectPath(value: string) {
+  if (!value.startsWith("/") || value.startsWith("//")) {
+    return "/admin";
+  }
+
+  return value;
 }

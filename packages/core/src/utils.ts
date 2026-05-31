@@ -88,11 +88,41 @@ export function extractSetCookieHeaders(response: Response) {
   const cookies = getSetCookie ? getSetCookie.call(response.headers) : [];
   const fallback = response.headers.get("set-cookie");
 
-  for (const cookie of cookies.length ? cookies : fallback ? [fallback] : []) {
+  for (const cookie of cookies.length ? cookies : fallback ? splitSetCookieHeader(fallback) : []) {
     headers.append("set-cookie", cookie);
   }
 
   return headers;
+}
+
+export function splitSetCookieHeader(value: string) {
+  const cookies: string[] = [];
+  let start = 0;
+  let quoted = false;
+
+  for (let index = 0; index < value.length; index += 1) {
+    const char = value[index];
+
+    if (char === '"') {
+      quoted = !quoted;
+      continue;
+    }
+
+    if (char !== "," || quoted) {
+      continue;
+    }
+
+    if (!/^\s*[!#$%&'*+\-.^_`|~0-9A-Za-z]+=/.test(value.slice(index + 1))) {
+      continue;
+    }
+
+    cookies.push(value.slice(start, index).trim());
+    start = index + 1;
+  }
+
+  cookies.push(value.slice(start).trim());
+
+  return cookies.filter(Boolean);
 }
 
 export function authErrorMessage(

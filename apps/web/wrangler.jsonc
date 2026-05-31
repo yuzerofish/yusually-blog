@@ -21,7 +21,8 @@
     "CMS_PASSWORD_RESET_TTL_MINUTES": "30",
     "CMS_TURNSTILE_SECRET_KEY": "",
     "VITE_TURNSTILE_SITE_KEY": "",
-    "GITHUB_CLIENT_ID": "",
+    "GITHUB_CLIENT_ID": "Ov23liY1bJAHyGhDejaU",
+    "GOOGLE_CLIENT_ID": "245095604871-dpncspolt7dn6efot4h8duvd57nh90q1.apps.googleusercontent.com",
   },
   "send_email": [
     {

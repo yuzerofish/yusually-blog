@@ -402,6 +402,12 @@ export const Route = createFileRoute("/openapi.json")({
                 responses: { "302": { description: "Redirect to GitHub OAuth" } },
               },
             },
+            "/api/comment-auth/google/start": {
+              get: {
+                summary: "Start Google comment login",
+                responses: { "302": { description: "Redirect to Google OAuth" } },
+              },
+            },
             "/api/admin/email-status": {
               get: {
                 summary: "Read outbound email configuration status",

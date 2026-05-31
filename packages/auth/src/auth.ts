@@ -9,6 +9,8 @@ export type BlogAuthEnv = {
   baseURL?: string;
   githubClientId?: string;
   githubClientSecret?: string;
+  googleClientId?: string;
+  googleClientSecret?: string;
   secret?: string;
 };
 
@@ -18,6 +20,9 @@ const authSchema = {
   account,
   verification,
 };
+
+const SESSION_EXPIRES_IN = 60 * 60 * 24 * 30;
+const SESSION_UPDATE_AGE = 60 * 60 * 24;
 
 export function createBlogAuth(database: AuthDatabase, env: BlogAuthEnv) {
   const baseURL = normalizeBaseURL(env.baseURL);
@@ -75,6 +80,8 @@ export function createBlogAuth(database: AuthDatabase, env: BlogAuthEnv) {
 
     // https://www.better-auth.com/docs/concepts/session-management#session-caching
     session: {
+      expiresIn: SESSION_EXPIRES_IN,
+      updateAge: SESSION_UPDATE_AGE,
       cookieCache: {
         enabled: true,
         maxAge: 5 * 60,
@@ -96,17 +103,28 @@ export function createBlogAuth(database: AuthDatabase, env: BlogAuthEnv) {
 function getSocialProviders(env: BlogAuthEnv) {
   const githubClientId = env.githubClientId?.trim();
   const githubClientSecret = env.githubClientSecret?.trim();
+  const googleClientId = env.googleClientId?.trim();
+  const googleClientSecret = env.googleClientSecret?.trim();
+  const providers: {
+    github?: { clientId: string; clientSecret: string };
+    google?: { clientId: string; clientSecret: string };
+  } = {};
 
-  if (!githubClientId || !githubClientSecret) {
-    return undefined;
-  }
-
-  return {
-    github: {
+  if (githubClientId && githubClientSecret) {
+    providers.github = {
       clientId: githubClientId,
       clientSecret: githubClientSecret,
-    },
-  };
+    };
+  }
+
+  if (googleClientId && googleClientSecret) {
+    providers.google = {
+      clientId: googleClientId,
+      clientSecret: googleClientSecret,
+    };
+  }
+
+  return Object.keys(providers).length ? providers : undefined;
 }
 
 function normalizeBaseURL(value: string | undefined) {

@@ -78,23 +78,26 @@ Because the custom domain is configured in Wrangler, use `https://blog.01mvp.com
 
 Wrangler uses `apps/web/src/server.ts` as the Worker entry. It delegates HTTP requests to TanStack Start. Backups are manual through `/admin/settings` or `POST /api/backups`.
 
-## GitHub Comment Login
+## Social Comment Login
 
-Create a GitHub OAuth app and set callback URLs for each environment:
+Create GitHub and Google OAuth apps/clients and set callback URLs for each environment:
 
 ```txt
 http://localhost:3000/api/auth/callback/github
+http://localhost:3000/api/auth/callback/google
 https://blog.01mvp.com/api/auth/callback/github
+https://blog.01mvp.com/api/auth/callback/google
 ```
 
-Set `GITHUB_CLIENT_ID` in `apps/web/wrangler.jsonc` or the Cloudflare dashboard. Store the auth and GitHub secrets with Wrangler:
+Set `GITHUB_CLIENT_ID` and `GOOGLE_CLIENT_ID` in `apps/web/wrangler.jsonc` or the Cloudflare dashboard. Store the auth and enabled OAuth provider secrets with Wrangler:
 
 ```sh
 pnpm --filter @repo/web exec wrangler secret put BETTER_AUTH_SECRET --config wrangler.jsonc
 pnpm --filter @repo/web exec wrangler secret put GITHUB_CLIENT_SECRET --config wrangler.jsonc
+pnpm --filter @repo/web exec wrangler secret put GOOGLE_CLIENT_SECRET --config wrangler.jsonc
 ```
 
-For local development, set `BETTER_AUTH_SECRET`, `GITHUB_CLIENT_ID`, and `GITHUB_CLIENT_SECRET` in `apps/web/.env`. Email/password comment login works without GitHub, but GitHub is the preferred default for reader comments.
+For local development, set `BETTER_AUTH_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` in `apps/web/.env`. Email/password comment login works without either OAuth provider.
 
 ## Optional Email Sending
 
@@ -123,7 +126,7 @@ Email Sending is a paid optional feature. Cloudflare's current pricing requires 
 
 Resend can be used for outbound email by setting `RESEND_API_KEY` and `RESEND_FROM_EMAIL` instead of the Cloudflare `send_email` binding. `CMS_EMAIL_FROM` is also accepted as the Resend sender fallback.
 
-Email verification remains disabled by default. It can be enabled from `/admin/settings` only when Cloudflare Email Sending or Resend is configured. The free core keeps GitHub OAuth, email/password login, direct admin password reset, publishing, comments, moderation, imports, exports, and backups usable without outbound email.
+Email verification remains disabled by default. It can be enabled from `/admin/settings` only when Cloudflare Email Sending or Resend is configured. The free core keeps social OAuth, email/password login, direct admin password reset, publishing, comments, moderation, imports, exports, and backups usable without outbound email.
 
 Operational limits to account for before enabling production email:
 

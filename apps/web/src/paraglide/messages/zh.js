@@ -245,6 +245,7 @@
 /** @typedef {{}} Comment_Account_MutedInputs */
 /** @typedef {{}} Comment_Account_Muted_DescriptionInputs */
 /** @typedef {{}} Comment_Continue_GithubInputs */
+/** @typedef {{}} Comment_Continue_GoogleInputs */
 /** @typedef {{}} Comment_EmailInputs */
 /** @typedef {{}} Comment_Email_Verification_SentInputs */
 /** @typedef {{}} Comment_ErrorInputs */
@@ -1330,6 +1331,10 @@ export const comment_continue_github = /** @type {(inputs: Comment_Continue_Gith
 	return /** @type {LocalizedString} */ (`使用 GitHub 继续`)
 };
 
+export const comment_continue_google = /** @type {(inputs: Comment_Continue_GoogleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`使用 Google 继续`)
+};
+
 export const comment_email = /** @type {(inputs: Comment_EmailInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`邮箱`)
 };
@@ -1343,7 +1348,7 @@ export const comment_error = /** @type {(inputs: Comment_ErrorInputs) => Localiz
 };
 
 export const comment_login_description = /** @type {(inputs: Comment_Login_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`请先用 GitHub 或邮箱登录，再发表评论。`)
+	return /** @type {LocalizedString} */ (`请先用 GitHub、Google 或邮箱登录，再发表评论。`)
 };
 
 export const comment_login_required = /** @type {(inputs: Comment_Login_RequiredInputs) => LocalizedString} */ () => {

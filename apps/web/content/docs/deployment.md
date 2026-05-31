@@ -67,13 +67,14 @@ Better Auth tables are created by `0002_better_auth_d1.sql`; comment moderation 
 
 Local development reads `apps/web/.env`. Cloudflare preview and production read Wrangler vars plus secrets.
 
-Keep the public site URL, backup retention, email delivery, Turnstile, auth secret, and GitHub OAuth values in Wrangler vars and secrets. Use `apps/web/wrangler.jsonc` as the source of truth for exact variable names.
+Keep the public site URL, backup retention, email delivery, Turnstile, auth secret, and comment OAuth values in Wrangler vars and secrets. Use `apps/web/wrangler.jsonc` as the source of truth for exact variable names.
 
-Set `BETTER_AUTH_SECRET` and `GITHUB_CLIENT_SECRET` as Wrangler secrets in production:
+Set `BETTER_AUTH_SECRET` and enabled OAuth provider secrets as Wrangler secrets in production:
 
 ```sh
 pnpm --filter @repo/web exec wrangler secret put BETTER_AUTH_SECRET --config wrangler.jsonc
 pnpm --filter @repo/web exec wrangler secret put GITHUB_CLIENT_SECRET --config wrangler.jsonc
+pnpm --filter @repo/web exec wrangler secret put GOOGLE_CLIENT_SECRET --config wrangler.jsonc
 ```
 
 ## Optional Email Sending
@@ -92,18 +93,20 @@ Current Cloudflare limits include:
 
 Check Cloudflare's [Email Service pricing](https://developers.cloudflare.com/email-service/platform/pricing/) and [Email Service limits](https://developers.cloudflare.com/email-service/platform/limits/) before enabling production email.
 
-## GitHub Comment Login
+## Social Comment Login
 
-GitHub OAuth is the recommended reader login method for comments. Create a GitHub OAuth app for each environment that needs its own callback URL:
+GitHub and Google OAuth add one-click reader login methods for comments. Create an OAuth app/client for each provider and environment that needs its own callback URL:
 
 ```txt
 http://localhost:3000/api/auth/callback/github
+http://localhost:3000/api/auth/callback/google
 https://blog.01mvp.com/api/auth/callback/github
+https://blog.01mvp.com/api/auth/callback/google
 ```
 
-GitHub OAuth apps have one authorization callback URL, so local and production usually use separate OAuth apps.
+GitHub OAuth apps have one authorization callback URL, so local and production usually use separate OAuth apps. Google OAuth clients allow multiple authorized redirect URIs, but separate local and production clients still make secret rotation cleaner.
 
-Set `GITHUB_CLIENT_ID` in the matching Wrangler config or Cloudflare dashboard. Email/password reader login still works when GitHub OAuth is not configured.
+Set `GITHUB_CLIENT_ID` and `GOOGLE_CLIENT_ID` in the matching Wrangler config or Cloudflare dashboard. Email/password reader login still works when either OAuth provider is not configured.
 
 ## Comment Moderation
 
