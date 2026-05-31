@@ -1,6 +1,8 @@
 import { authQueryOptions } from "@repo/auth/tanstack/queries";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
+import { getServerAuthUser } from "#/lib/route-auth";
+
 /**
  * This is the _auth layout, which enables 'protected routes'
  * for all child routes under _auth (e.g. _auth/app/*)
@@ -10,6 +12,16 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 export const Route = createFileRoute("/_auth")({
   component: Outlet,
   beforeLoad: async ({ context }) => {
+    const serverUser = await getServerAuthUser();
+
+    if (serverUser !== undefined) {
+      if (!serverUser) {
+        throw redirect({ to: "/login" });
+      }
+
+      return { user: serverUser };
+    }
+
     /**
      * beforeLoad runs on every navigation and prefetch, so we use TanStack Query
      * for client-side caching to speed up navigation, reducing client-to-server calls.
