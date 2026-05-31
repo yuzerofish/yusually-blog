@@ -19,7 +19,7 @@ export async function readJsonOrFormBody<TBody extends object>(
 }
 
 export function isFormPost(request: Request) {
-  const contentType = request.headers.get("content-type") ?? "";
+  const contentType = (request.headers.get("content-type") ?? "").toLowerCase();
 
   return (
     contentType.includes("application/x-www-form-urlencoded") ||
@@ -28,7 +28,10 @@ export function isFormPost(request: Request) {
 }
 
 export function formRedirect(location: string, init?: ResponseInit) {
-  const headers = new Headers({ "cache-control": "no-store", location });
+  const headers = new Headers({
+    "cache-control": "no-store",
+    location: sanitizeRedirect(location),
+  });
 
   if (init?.headers) {
     const inputHeaders = new Headers(init.headers);
@@ -51,4 +54,8 @@ export function formRedirect(location: string, init?: ResponseInit) {
     status: init?.status ?? 303,
     headers,
   });
+}
+
+function sanitizeRedirect(location: string) {
+  return location.replace(/[\r\n]/g, "");
 }

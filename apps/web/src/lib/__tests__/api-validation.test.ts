@@ -36,6 +36,14 @@ describe("CreateCommentSchema", () => {
     }
   });
 
+  it("trims postSlug before validation", () => {
+    const result = CreateCommentSchema.safeParse({ ...validComment, postSlug: "  my-post  " });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.postSlug).toBe("my-post");
+    }
+  });
+
   it("rejects when postSlug is empty", () => {
     const result = CreateCommentSchema.safeParse({ ...validComment, postSlug: "" });
     expect(result.success).toBe(false);
@@ -43,6 +51,11 @@ describe("CreateCommentSchema", () => {
 
   it("rejects when body is too short (1 char)", () => {
     const result = CreateCommentSchema.safeParse({ ...validComment, body: "x" });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a body with only whitespace", () => {
+    const result = CreateCommentSchema.safeParse({ ...validComment, body: "   " });
     expect(result.success).toBe(false);
   });
 
@@ -72,6 +85,41 @@ describe("CreateCommentSchema", () => {
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.turnstileToken).toBeUndefined();
+    }
+  });
+
+  it("normalizes an empty turnstileToken to undefined", () => {
+    const result = CreateCommentSchema.safeParse({ ...validComment, turnstileToken: "   " });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.turnstileToken).toBeUndefined();
+    }
+  });
+
+  it("trims turnstileToken when provided", () => {
+    const result = CreateCommentSchema.safeParse({
+      ...validComment,
+      turnstileToken: "  cf-token  ",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.turnstileToken).toBe("cf-token");
+    }
+  });
+
+  it("normalizes an empty parentId to null", () => {
+    const result = CreateCommentSchema.safeParse({ ...validComment, parentId: "   " });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.parentId).toBeNull();
+    }
+  });
+
+  it("trims parentId when provided", () => {
+    const result = CreateCommentSchema.safeParse({ ...validComment, parentId: " comment-1 " });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.parentId).toBe("comment-1");
     }
   });
 });
@@ -111,10 +159,29 @@ describe("BatchPostSchema", () => {
     expect(result.success).toBe(true);
   });
 
+  it("trims post ids in a batch action", () => {
+    const result = BatchPostSchema.safeParse({
+      action: "publish",
+      ids: [" post_1 ", "post_2"],
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.ids).toEqual(["post_1", "post_2"]);
+    }
+  });
+
   it("rejects more than 50 ids", () => {
     const result = BatchPostSchema.safeParse({
       action: "archive",
       ids: Array.from({ length: 51 }, (_, index) => `post_${index}`),
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects duplicate ids after trimming", () => {
+    const result = BatchPostSchema.safeParse({
+      action: "archive",
+      ids: ["post_1", " post_1 "],
     });
     expect(result.success).toBe(false);
   });

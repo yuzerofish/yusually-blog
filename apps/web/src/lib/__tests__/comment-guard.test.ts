@@ -26,7 +26,7 @@ function makeRequest(headers: Record<string, string> = {}): Request {
 describe("getClientIp", () => {
   it("prefers cf-connecting-ip over other headers", () => {
     const req = makeRequest({
-      "cf-connecting-ip": "1.2.3.4",
+      "cf-connecting-ip": " 1.2.3.4 ",
       "x-forwarded-for": "5.6.7.8",
       "x-real-ip": "9.10.11.12",
     });
@@ -51,6 +51,16 @@ describe("getClientIp", () => {
   it("trims whitespace from x-forwarded-for", () => {
     const req = makeRequest({ "x-forwarded-for": "  10.0.0.99 , 10.0.0.1" });
     expect(getClientIp(req)).toBe("10.0.0.99");
+  });
+
+  it("skips empty x-forwarded-for entries", () => {
+    const req = makeRequest({ "x-forwarded-for": " , 10.0.0.99" });
+    expect(getClientIp(req)).toBe("10.0.0.99");
+  });
+
+  it("trims x-real-ip before returning it", () => {
+    const req = makeRequest({ "x-real-ip": " 192.168.1.1 " });
+    expect(getClientIp(req)).toBe("192.168.1.1");
   });
 });
 
@@ -104,6 +114,27 @@ describe("checkCommentRateLimit", () => {
     const result = await checkCommentRateLimit({ ip: "1.2.3.4", postSlug: "post-1" });
     expect(result).toEqual({ ok: true });
   });
+
+  it("treats malformed KV counters as zero", async () => {
+    mockCacheStore.set("ratelimit:ip:1.2.3.4", "not-a-number");
+    const result = await checkCommentRateLimit({ ip: "1.2.3.4", postSlug: "post-1" });
+    expect(result).toEqual({ ok: true });
+    expect(mockCacheStore.get("ratelimit:ip:1.2.3.4")).toBe("1");
+  });
+
+  it("clamps negative KV counters to zero", async () => {
+    mockCacheStore.set("ratelimit:ip:1.2.3.4", "-4");
+    const result = await checkCommentRateLimit({ ip: "1.2.3.4", postSlug: "post-1" });
+    expect(result).toEqual({ ok: true });
+    expect(mockCacheStore.get("ratelimit:ip:1.2.3.4")).toBe("1");
+  });
+
+  it("floors decimal KV counters before incrementing", async () => {
+    mockCacheStore.set("ratelimit:ip:1.2.3.4", "1.9");
+    const result = await checkCommentRateLimit({ ip: "1.2.3.4", postSlug: "post-1" });
+    expect(result).toEqual({ ok: true });
+    expect(mockCacheStore.get("ratelimit:ip:1.2.3.4")).toBe("2");
+  });
 });
 
 describe("verifyTurnstile", () => {
@@ -152,11 +183,20 @@ describe("verifyTurnstile", () => {
     expect(result).toEqual({ ok: false, error: "Turnstile token is required" });
   });
 
+  it("rejects when token is whitespace only", async () => {
+    mockEnv.CMS_TURNSTILE_SECRET_KEY = "secret-key";
+    mockEnv.VITE_TURNSTILE_SITE_KEY = "site-key";
+    const result = await verifyTurnstile({ token: "   ", request: makeRequest() });
+    expect(result).toEqual({ ok: false, error: "Turnstile token is required" });
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
   it("returns ok when Turnstile API responds with success", async () => {
     mockEnv.CMS_TURNSTILE_SECRET_KEY = "secret-key";
     mockEnv.VITE_TURNSTILE_SITE_KEY = "site-key";
     mockFetch.mockResolvedValueOnce({
       json: async () => ({ success: true }),
+      ok: true,
     });
     const result = await verifyTurnstile({ token: "valid-token", request: makeRequest() });
     expect(result).toEqual({ ok: true });
@@ -164,6 +204,9 @@ describe("verifyTurnstile", () => {
       "https://challenges.cloudflare.com/turnstile/v0/siteverify",
       expect.objectContaining({ method: "POST" }),
     );
+    const [, init] = mockFetch.mock.calls[0]!;
+    const formData = (init as RequestInit).body as FormData;
+    expect(formData.get("response")).toBe("valid-token");
   });
 
   it("returns error when Turnstile API responds with failure", async () => {
@@ -173,6 +216,38 @@ describe("verifyTurnstile", () => {
       json: async () => ({ success: false }),
     });
     const result = await verifyTurnstile({ token: "bad-token", request: makeRequest() });
+    expect(result).toEqual({ ok: false, error: "Turnstile verification failed" });
+  });
+
+  it("returns error when Turnstile API returns a non-2xx response", async () => {
+    mockEnv.CMS_TURNSTILE_SECRET_KEY = "secret-key";
+    mockEnv.VITE_TURNSTILE_SITE_KEY = "site-key";
+    mockFetch.mockResolvedValueOnce({
+      json: async () => ({ success: true }),
+      ok: false,
+    });
+    const result = await verifyTurnstile({ token: "valid-token", request: makeRequest() });
+    expect(result).toEqual({ ok: false, error: "Turnstile verification failed" });
+  });
+
+  it("returns error when Turnstile API returns invalid JSON", async () => {
+    mockEnv.CMS_TURNSTILE_SECRET_KEY = "secret-key";
+    mockEnv.VITE_TURNSTILE_SITE_KEY = "site-key";
+    mockFetch.mockResolvedValueOnce({
+      json: async () => {
+        throw new Error("bad json");
+      },
+      ok: true,
+    });
+    const result = await verifyTurnstile({ token: "valid-token", request: makeRequest() });
+    expect(result).toEqual({ ok: false, error: "Turnstile verification failed" });
+  });
+
+  it("returns error when Turnstile fetch throws", async () => {
+    mockEnv.CMS_TURNSTILE_SECRET_KEY = "secret-key";
+    mockEnv.VITE_TURNSTILE_SITE_KEY = "site-key";
+    mockFetch.mockRejectedValueOnce(new Error("network down"));
+    const result = await verifyTurnstile({ token: "valid-token", request: makeRequest() });
     expect(result).toEqual({ ok: false, error: "Turnstile verification failed" });
   });
 });

@@ -5,8 +5,8 @@ const CACHE_TTL_SECONDS = 60;
 
 export async function cachedGet<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
   try {
-    const cached = await env.CMS_CACHE.get(key, "json");
-    if (cached) return cached as T;
+    const cached = await env.CMS_CACHE.get<T>(key, "json");
+    if (cached !== null) return cached;
   } catch {
     // KV read failure — fall through to fetcher
   }
@@ -14,7 +14,7 @@ export async function cachedGet<T>(key: string, fetcher: () => Promise<T>): Prom
   const fresh = await fetcher();
 
   // Fire-and-forget put — don't block the response
-  env.CMS_CACHE.put(key, JSON.stringify(fresh), {
+  void env.CMS_CACHE.put(key, JSON.stringify(fresh), {
     expirationTtl: CACHE_TTL_SECONDS,
   }).catch(() => {});
 

@@ -11,6 +11,34 @@ const ContentSourceSchema = z.enum([
   "import",
 ]);
 const SupportedLocaleSchema = z.enum(["en", "zh"]);
+const TrimmedRequiredStringSchema = z.preprocess(
+  (value) => (typeof value === "string" ? value.trim() : value),
+  z.string(),
+);
+const OptionalTrimmedStringSchema = z.preprocess((value) => {
+  if (value === null) {
+    return undefined;
+  }
+
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  const trimmed = value.trim();
+  return trimmed || undefined;
+}, z.string().optional());
+const OptionalNullableTrimmedStringSchema = z.preprocess((value) => {
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  const trimmed = value.trim();
+  return trimmed || null;
+}, z.string().nullable().optional());
 const LocalizedStringSchema = z
   .object({
     en: z.string().optional(),
@@ -39,14 +67,17 @@ const PostI18nSchema = z
  * authenticated session, so they are not part of this input schema.
  */
 export const CreateCommentSchema = z.object({
-  postSlug: z.string().min(1).max(200),
-  body: z.string().min(2).max(4000),
-  parentId: z.string().nullish(),
+  postSlug: TrimmedRequiredStringSchema.pipe(z.string().min(1).max(200)),
+  body: z
+    .string()
+    .min(2)
+    .max(4000)
+    .refine((value) => value.trim().length >= 2, {
+      message: "Comment body must contain at least 2 non-whitespace characters",
+    }),
+  parentId: OptionalNullableTrimmedStringSchema,
   honeypot: z.string().optional().default(""),
-  turnstileToken: z.preprocess(
-    (value) => (value === null ? undefined : value),
-    z.string().optional(),
-  ),
+  turnstileToken: OptionalTrimmedStringSchema,
 });
 
 export const PostWriteSchema = z
@@ -80,7 +111,13 @@ export const PostPatchSchema = PostWriteSchema.refine((value) => Object.keys(val
 
 export const BatchPostSchema = z
   .object({
-    ids: z.array(z.string().min(1)).min(1).max(50),
+    ids: z
+      .array(TrimmedRequiredStringSchema.pipe(z.string().min(1)))
+      .min(1)
+      .max(50)
+      .refine((ids) => new Set(ids).size === ids.length, {
+        message: "Post ids must be unique.",
+      }),
     action: z.enum(["publish", "draft", "archive", "delete"]),
     locale: SupportedLocaleSchema.optional(),
   })

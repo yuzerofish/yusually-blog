@@ -108,6 +108,33 @@ describe("readJsonBody", () => {
     const body = await readJsonBody(request);
     expect(body).toEqual(data);
   });
+
+  it("returns empty object for JSON null", async () => {
+    const request = new Request("http://localhost/api", {
+      method: "POST",
+      body: "null",
+    });
+    const body = await readJsonBody(request);
+    expect(body).toEqual({});
+  });
+
+  it("returns empty object for JSON arrays", async () => {
+    const request = new Request("http://localhost/api", {
+      method: "POST",
+      body: JSON.stringify([{ title: "Hello" }]),
+    });
+    const body = await readJsonBody(request);
+    expect(body).toEqual({});
+  });
+
+  it("returns empty object for JSON strings", async () => {
+    const request = new Request("http://localhost/api", {
+      method: "POST",
+      body: JSON.stringify("hello"),
+    });
+    const body = await readJsonBody(request);
+    expect(body).toEqual({});
+  });
 });
 
 describe("getApiLocale", () => {
@@ -140,5 +167,26 @@ describe("getApiLocale", () => {
       headers: { "accept-language": "en-US,en;q=0.9" },
     });
     expect(getApiLocale(request)).toBe("zh");
+  });
+
+  it("honors Accept-Language q-values", () => {
+    const request = new Request("http://localhost/api", {
+      headers: { "accept-language": "en-US,en;q=0.9,zh-CN;q=0.4" },
+    });
+    expect(getApiLocale(request)).toBe("en");
+  });
+
+  it("ignores languages with q=0", () => {
+    const request = new Request("http://localhost/api", {
+      headers: { "accept-language": "zh-CN;q=0,en-US;q=0.8" },
+    });
+    expect(getApiLocale(request)).toBe("en");
+  });
+
+  it("falls back when Accept-Language has no supported locale", () => {
+    const request = new Request("http://localhost/api", {
+      headers: { "accept-language": "fr-FR,fr;q=0.9" },
+    });
+    expect(getApiLocale(request)).toBe("en");
   });
 });

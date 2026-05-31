@@ -53,6 +53,7 @@ type CmsR2Bucket = {
 
 type CmsKVNamespace = {
   get(key: string): Promise<string | null>;
+  get<TValue = unknown>(key: string, type: "json"): Promise<TValue | null>;
   put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
   delete(key: string): Promise<void>;
 };
@@ -92,4 +93,5 @@ type CloudflareBindings = {
 
 declare module "cloudflare:workers" {
   export const env: CloudflareBindings;
+  export function waitUntil(promise: Promise<unknown>): void;
 }
