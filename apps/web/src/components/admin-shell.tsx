@@ -1,11 +1,14 @@
+import { useAuthSuspense } from "@repo/auth/tanstack/hooks";
 import { getSiteSettingsForLocale, type SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { cn } from "@repo/ui/lib/utils";
 import { Link, Outlet } from "@tanstack/react-router";
 import {
+  ArrowLeftIcon,
   FileTextIcon,
   ImageIcon,
   LibraryIcon,
+  LockKeyholeIcon,
   MessageSquareIcon,
   SettingsIcon,
   SquareLibraryIcon,
@@ -38,12 +41,18 @@ const adminNav = [
 ];
 
 export function AdminShell() {
+  const { user } = useAuthSuspense();
   const locale = getCurrentLocale();
+  const isAdmin = user?.role === "admin";
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(getSiteSettingsForLocale(locale));
   const settingsPreset = resolveStylePreset(siteSettings.themePreset, siteSettings.layoutPreset);
   const { preset, nextPreset, selectPreset, resetPreset } = useStylePreset(settingsPreset);
 
   useEffect(() => {
+    if (!isAdmin) {
+      return;
+    }
+
     let ignore = false;
     const handleSettingsUpdate = (event: Event) => {
       const nextSettings = (event as CustomEvent<SiteSettings>).detail;
@@ -70,7 +79,11 @@ export function AdminShell() {
       ignore = true;
       window.removeEventListener("blogcms:site-settings-updated", handleSettingsUpdate);
     };
-  }, [locale, resetPreset]);
+  }, [isAdmin, locale, resetPreset]);
+
+  if (!isAdmin) {
+    return <AdminAccessDenied locale={locale} siteName={siteSettings.name} />;
+  }
 
   return (
     <div
@@ -100,6 +113,85 @@ export function AdminShell() {
       </main>
     </div>
   );
+}
+
+function AdminAccessDenied({
+  locale,
+  siteName,
+}: {
+  readonly locale: ReturnType<typeof getCurrentLocale>;
+  readonly siteName: string;
+}) {
+  const copy = getAccessDeniedCopy(locale);
+
+  return (
+    <div className="flex min-h-svh flex-col bg-background text-foreground">
+      <header className="border-b border-border">
+        <div className="mx-auto flex min-h-14 max-w-4xl items-center justify-between gap-3 px-4 sm:px-6">
+          <Link to="/" className={siteBrandLinkClassName} title={siteName}>
+            <SiteBrandText name={siteName} />
+          </Link>
+          <div className="flex items-center gap-1">
+            <LanguageToggle />
+            <ThemeToggle />
+          </div>
+        </div>
+      </header>
+
+      <main className="flex flex-1 items-center justify-center px-4 py-10 sm:px-6">
+        <section className="w-full max-w-lg rounded-md border bg-card p-5 shadow-xs">
+          <div className="flex items-start gap-3">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
+              <LockKeyholeIcon className="size-5" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                {copy.eyebrow}
+              </p>
+              <h1 className="mt-1 text-xl font-semibold">{copy.title}</h1>
+              <p className="mt-2 text-sm text-muted-foreground">{copy.description}</p>
+            </div>
+          </div>
+
+          <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+            <Button render={<Link to="/app" />} nativeButton={false} className="w-full sm:w-auto">
+              <ArrowLeftIcon className="size-4" />
+              {copy.accountAction}
+            </Button>
+            <Button
+              render={<Link to="/" />}
+              variant="outline"
+              nativeButton={false}
+              className="w-full sm:w-auto"
+            >
+              {copy.homeAction}
+            </Button>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}
+
+function getAccessDeniedCopy(locale: ReturnType<typeof getCurrentLocale>) {
+  if (locale === "zh") {
+    return {
+      accountAction: "回到账号中心",
+      description: "当前账号没有后台权限。管理员可以在账号中心进入后台。",
+      eyebrow: "无权限",
+      homeAction: "返回首页",
+      title: "无法访问后台",
+    };
+  }
+
+  return {
+    accountAction: "Back to account",
+    description:
+      "This account does not have admin access. Admin users can open the admin area from the account center.",
+    eyebrow: "No access",
+    homeAction: "Back to home",
+    title: "Admin area unavailable",
+  };
 }
 
 function DesktopSidebar({
