@@ -46,9 +46,7 @@ async function readD1SiteSettings() {
     .limit(1);
   const row = rows[0];
 
-  return normalizeSiteSettings(
-    parseJson<SiteSettingsInput>((row?.value as string | null) ?? null) ?? {},
-  );
+  return normalizeSiteSettings(parseStoredSiteSettings(row?.value));
 }
 
 export async function updateD1SiteSettings(input: SiteSettingsInput) {
@@ -68,6 +66,18 @@ export async function updateD1SiteSettings(input: SiteSettingsInput) {
   await invalidateCache("site:settings");
 
   return settings;
+}
+
+function parseStoredSiteSettings(value: unknown): SiteSettingsInput {
+  if (typeof value === "string") {
+    return parseJson<SiteSettingsInput>(value) ?? {};
+  }
+
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    return value as SiteSettingsInput;
+  }
+
+  return {};
 }
 
 // ---------------------------------------------------------------------------
