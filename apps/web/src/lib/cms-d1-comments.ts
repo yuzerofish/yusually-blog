@@ -157,7 +157,10 @@ export async function listD1ApprovedComments(postId: string) {
     .where(and(eq(schema.comments.postId, postId), eq(schema.comments.status, "approved")))
     .orderBy(asc(schema.comments.createdAt));
 
-  return rows.map(drizzleRowToComment);
+  const comments = rows.map(drizzleRowToComment);
+  const approvedIds = new Set(comments.map((comment) => comment.id));
+
+  return comments.filter((comment) => !comment.parentId || approvedIds.has(comment.parentId));
 }
 
 export async function updateD1CommentStatus(id: string, status: CommentStatus) {

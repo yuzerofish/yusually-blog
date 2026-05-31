@@ -1,14 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { jsonResponse } from "#/lib/cms-api";
-import { requireCmsAccess } from "#/lib/cms-authz";
+import { requireAdminSession } from "#/lib/cms-authz";
 import { revokeD1ApiToken } from "#/lib/cms-d1";
 
 export const Route = createFileRoute("/api/tokens/$id/revoke")({
   server: {
     handlers: {
       POST: async ({ params, request }: { params: { id: string }; request: Request }) => {
-        const accessError = await requireCmsAccess(request, "site:write");
+        const accessError = await requireAdminSession(request);
 
         if (accessError) {
           return accessError;

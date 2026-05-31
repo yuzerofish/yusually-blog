@@ -2,13 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { testAiProviderConnection, type AiProviderConfigInput } from "#/lib/ai-provider.server";
 import { jsonResponse, readJsonBody } from "#/lib/cms-api";
-import { requireCmsAccess } from "#/lib/cms-authz";
+import { requireAdminSession } from "#/lib/cms-authz";
 
 export const Route = createFileRoute("/api/admin/ai-settings/test")({
   server: {
     handlers: {
       POST: async ({ request }: { request: Request }) => {
-        const accessError = await requireCmsAccess(request, "site:write");
+        const accessError = await requireAdminSession(request);
 
         if (accessError) {
           return accessError;

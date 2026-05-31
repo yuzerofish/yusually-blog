@@ -53,12 +53,21 @@ export function getApiLocale(request: Request): SupportedLocale {
 export async function readJsonBody<TBody extends object>(
   request: Request,
 ): Promise<Partial<TBody>> {
-  try {
-    const parsed = await request.json();
-    return isPlainJsonObject(parsed) ? (parsed as Partial<TBody>) : ({} as Partial<TBody>);
-  } catch {
+  const text = await request.text();
+
+  if (!text.trim()) {
     return {} as Partial<TBody>;
   }
+
+  let parsed: unknown;
+
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    throw jsonResponse({ error: "Malformed JSON body" }, { status: 400 });
+  }
+
+  return isPlainJsonObject(parsed) ? (parsed as Partial<TBody>) : ({} as Partial<TBody>);
 }
 
 export function importPreview(kind: "markdown" | "html" | "zip", filename: string | undefined) {

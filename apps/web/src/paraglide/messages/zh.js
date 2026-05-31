@@ -1212,7 +1212,7 @@ export const admin_users_unmute = /** @type {(inputs: Admin_Users_UnmuteInputs) 
 };
 
 export const account_management_note = /** @type {(inputs: Account_Management_NoteInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`使用管理后台维护发布、设置和导出。`)
+	return /** @type {LocalizedString} */ (`管理你的评论和邮件偏好。`)
 };
 
 export const account_signed_in_as = /** @type {(inputs: Account_Signed_In_AsInputs) => LocalizedString} */ () => {

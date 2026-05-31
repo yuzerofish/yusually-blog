@@ -5,13 +5,13 @@ export async function getServerAuthUser(): Promise<AuthQueryResult | undefined> 
     return undefined;
   }
 
-  const [{ getRequest }, { getAdminUserFromRequest, publicAdminUser }] = await Promise.all([
+  const [{ getRequest }, { getAccountUserFromRequest }] = await Promise.all([
     import("@tanstack/react-start/server"),
-    import("#/lib/admin-auth"),
+    import("#/lib/account-auth"),
   ]);
-  const user = await getAdminUserFromRequest(getRequest(), {
+  const user = await getAccountUserFromRequest(getRequest(), {
     disableCookieCache: true,
   }).catch(() => null);
 
-  return user ? publicAdminUser(user) : null;
+  return user;
 }

@@ -9,7 +9,7 @@ import {
 } from "#/lib/admin-auth";
 import { formRedirect, isFormPost, readJsonOrFormBody } from "#/lib/auth-form";
 import { jsonResponse } from "#/lib/cms-api";
-import { requireCmsAccess } from "#/lib/cms-authz";
+import { requireAdminSession } from "#/lib/cms-authz";
 import { listCmsUsers } from "#/lib/cms-users";
 
 export const Route = createFileRoute("/api/admin/users")({
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/api/admin/users")({
         const existingAdmins = await countAdminUsers();
 
         if (existingAdmins > 0) {
-          const accessError = await requireCmsAccess(request, "site:write");
+          const accessError = await requireAdminSession(request);
 
           if (accessError) {
             if (formPost) {

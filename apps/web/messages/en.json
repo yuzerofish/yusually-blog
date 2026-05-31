@@ -214,7 +214,7 @@
   "admin_users_title": "Users",
   "admin_users_total": "Total users",
   "admin_users_unmute": "Restore comments",
-  "account_management_note": "Use the admin area to manage publishing, settings, and exports.",
+  "account_management_note": "Manage your comments and email preferences.",
   "account_signed_in_as": "Signed in as",
   "account_title": "Account",
   "api_description": "Use scoped API tokens for publishing, imports, exports, assets, and comment moderation.",

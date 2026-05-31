@@ -55,6 +55,10 @@ export type ZipImportResult = {
   kind: "markdown" | "html" | "gallery";
 };
 
+export type ZipImportOptions = {
+  uploadAssets?: boolean;
+};
+
 type ImportEntry = {
   path: string;
   data: Uint8Array;
@@ -69,6 +73,10 @@ const imageExtensions = new Set([".avif", ".gif", ".jpeg", ".jpg", ".png", ".svg
 const markdownExtensions = new Set([".md", ".mdx"]);
 const htmlExtensions = new Set([".html", ".htm"]);
 const textDecoder = new TextDecoder();
+const maxZipArchiveBytes = 20 * 1024 * 1024;
+const maxZipEntries = 200;
+const maxZipEntryBytes = 10 * 1024 * 1024;
+const maxZipUncompressedBytes = 50 * 1024 * 1024;
 
 export function parseMarkdownImport(input: ImportPostInput): ImportPostInput {
   const filename = input.filename ?? "imported-post.md";
@@ -149,12 +157,18 @@ export function parseHtmlImport(input: ImportPostInput): ImportPostInput {
   };
 }
 
-export async function parseZipImport(input: ZipImportInput): Promise<ZipImportResult> {
+export async function parseZipImport(
+  input: ZipImportInput,
+  options: ZipImportOptions = {},
+): Promise<ZipImportResult> {
   const entries = input.files?.length
     ? entriesFromFileManifest(input.files)
     : await entriesFromZipBase64(input.contentBase64);
   const contentEntries = entries.filter((entry) => !isIgnoredZipPath(entry.path));
-  const assets = await uploadImageEntries(contentEntries);
+  const uploadAssets = options.uploadAssets ?? true;
+  const assets = uploadAssets
+    ? await uploadImageEntries(contentEntries)
+    : previewImageEntries(contentEntries);
   const markdownEntry = selectContentEntry(contentEntries, markdownExtensions);
   const htmlEntry = markdownEntry ? undefined : selectContentEntry(contentEntries, htmlExtensions);
 
@@ -487,6 +501,26 @@ async function uploadImageEntries(entries: ImportEntry[]) {
   return assets;
 }
 
+function previewImageEntries(entries: ImportEntry[]) {
+  return entries
+    .filter((entry) => imageExtensions.has(extensionForPath(entry.path)))
+    .map((entry) => {
+      const filename = filenameForPath(entry.path);
+
+      return {
+        id: `asset_preview_${entry.path}`,
+        key: entry.path,
+        url: entry.path,
+        filename,
+        contentType: entry.contentType,
+        sizeBytes: entry.data.byteLength,
+        createdAt: new Date(0).toISOString(),
+        attachedPostId: null,
+        importPath: entry.path,
+      } satisfies ImportedAsset;
+    });
+}
+
 function selectContentEntry(entries: ImportEntry[], extensions: Set<string>) {
   const candidates = entries.filter((entry) => extensions.has(extensionForPath(entry.path)));
 
@@ -497,12 +531,20 @@ function selectContentEntry(entries: ImportEntry[], extensions: Set<string>) {
 }
 
 function entriesFromFileManifest(files: ZipImportFile[]) {
+  assertZipEntryCount(files.length);
+
+  let totalBytes = 0;
+
   return files
     .map((file) => {
       const path = normalizeZipPath(file.path);
       const data = file.contentBase64
         ? decodeBase64(file.contentBase64)
         : new TextEncoder().encode(file.contentText ?? "");
+
+      assertZipEntrySize(path, data.byteLength);
+      totalBytes += data.byteLength;
+      assertZipTotalSize(totalBytes);
 
       return {
         path,
@@ -518,6 +560,12 @@ async function entriesFromZipBase64(contentBase64: string | undefined) {
     throw new Error("ZIP import requires contentBase64 or files.");
   }
 
+  const archiveSize = Math.floor((contentBase64.length * 3) / 4);
+
+  if (archiveSize > maxZipArchiveBytes) {
+    throw new Error(`ZIP archive must be ${formatBytes(maxZipArchiveBytes)} or smaller.`);
+  }
+
   return parseZipEntries(decodeBase64(contentBase64));
 }
 
@@ -529,8 +577,11 @@ async function parseZipEntries(data: Uint8Array) {
   }
 
   const entryCount = readUint16(data, eocdOffset + 10);
+  assertZipEntryCount(entryCount);
+
   let offset = readUint32(data, eocdOffset + 16);
   const entries: ImportEntry[] = [];
+  let totalUncompressedBytes = 0;
 
   for (let index = 0; index < entryCount; index += 1) {
     if (readUint32(data, offset) !== 0x02014b50) {
@@ -540,6 +591,7 @@ async function parseZipEntries(data: Uint8Array) {
     const flags = readUint16(data, offset + 8);
     const method = readUint16(data, offset + 10);
     const compressedSize = readUint32(data, offset + 20);
+    const uncompressedSize = readUint32(data, offset + 24);
     const filenameLength = readUint16(data, offset + 28);
     const extraLength = readUint16(data, offset + 30);
     const commentLength = readUint16(data, offset + 32);
@@ -557,11 +609,17 @@ async function parseZipEntries(data: Uint8Array) {
       throw new Error(`Encrypted ZIP entries are not supported: ${path}`);
     }
 
+    assertZipEntrySize(path, Math.max(compressedSize, uncompressedSize));
+    totalUncompressedBytes += uncompressedSize;
+    assertZipTotalSize(totalUncompressedBytes);
+
     const localFilenameLength = readUint16(data, localHeaderOffset + 26);
     const localExtraLength = readUint16(data, localHeaderOffset + 28);
     const dataStart = localHeaderOffset + 30 + localFilenameLength + localExtraLength;
     const compressed = data.slice(dataStart, dataStart + compressedSize);
     const inflated = await inflateZipEntry(compressed, method, path);
+
+    assertZipEntrySize(path, inflated.byteLength);
 
     entries.push({
       path,
@@ -571,6 +629,26 @@ async function parseZipEntries(data: Uint8Array) {
   }
 
   return entries;
+}
+
+function assertZipEntryCount(count: number) {
+  if (count > maxZipEntries) {
+    throw new Error(`ZIP import supports up to ${maxZipEntries} files.`);
+  }
+}
+
+function assertZipEntrySize(path: string, size: number) {
+  if (size > maxZipEntryBytes) {
+    throw new Error(`${path || "ZIP entry"} must be ${formatBytes(maxZipEntryBytes)} or smaller.`);
+  }
+}
+
+function assertZipTotalSize(size: number) {
+  if (size > maxZipUncompressedBytes) {
+    throw new Error(
+      `ZIP import contents must be ${formatBytes(maxZipUncompressedBytes)} or smaller.`,
+    );
+  }
 }
 
 function findEndOfCentralDirectory(data: Uint8Array) {
@@ -671,6 +749,10 @@ function contentTypeForPath(path: string) {
   if (extension === ".webp") return "image/webp";
 
   return "application/octet-stream";
+}
+
+function formatBytes(bytes: number) {
+  return `${Math.floor(bytes / 1024 / 1024)} MB`;
 }
 
 function decodeHtmlEntities(value: string) {

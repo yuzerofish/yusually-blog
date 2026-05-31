@@ -2,6 +2,7 @@ import { authQueryOptions } from "@repo/auth/tanstack/queries";
 import { getSiteSettingsForLocale } from "@repo/core";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
+import { redirectForRole } from "#/lib/account-routing";
 import { getCurrentLocale } from "#/lib/i18n";
 import { getServerAuthUser } from "#/lib/route-auth";
 
@@ -10,13 +11,13 @@ export const Route = createFileRoute("/_guest")({
   beforeLoad: async ({ context }) => {
     // Redirect path when user is already present,
     // or after successful login/signup
-    const REDIRECT_URL = "/admin";
+    const REDIRECT_URL = "/app";
     const serverUser = await getServerAuthUser();
 
     if (serverUser !== undefined) {
       if (serverUser) {
         throw redirect({
-          to: REDIRECT_URL,
+          to: redirectForRole(serverUser),
         });
       }
 
@@ -31,7 +32,7 @@ export const Route = createFileRoute("/_guest")({
     });
     if (user) {
       throw redirect({
-        to: REDIRECT_URL,
+        to: redirectForRole(user),
       });
     }
 

@@ -84,23 +84,27 @@ export function CommentForm({
     const formData = new FormData(form);
     const turnstileToken = turnstileSiteKey ? formData.get("cf-turnstile-response") : undefined;
 
-    const response = await fetch("/api/comments", {
-      method: "POST",
-      credentials: "same-origin",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        postSlug,
-        body: formData.get("body"),
-        ...(parentId ? { parentId } : {}),
-        honeypot: formData.get("company"),
-        turnstileToken,
-      }),
-    });
+    try {
+      const response = await fetch("/api/comments", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          postSlug,
+          body: formData.get("body"),
+          ...(parentId ? { parentId } : {}),
+          honeypot: formData.get("company"),
+          turnstileToken,
+        }),
+      });
 
-    setState(response.ok ? "success" : "error");
-    if (response.ok) {
-      form.reset();
-      onCancelReply?.();
+      setState(response.ok ? "success" : "error");
+      if (response.ok) {
+        form.reset();
+        onCancelReply?.();
+      }
+    } catch {
+      setState("error");
     }
   };
 
@@ -111,21 +115,29 @@ export function CommentForm({
     setAuthState("submitting");
     const form = event.currentTarget;
     const formData = new FormData(form);
-    const response = await fetch(`/api/comment-auth/${authMode}`, {
-      method: "POST",
-      credentials: "same-origin",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        name: formData.get("name"),
-        email: formData.get("email"),
-        emailPreference: formData.get("emailPreference"),
-        password: formData.get("password"),
-      }),
-    });
-    const payload = (await response.json()) as {
+    let response: Response;
+    let payload: {
       data?: CommentAuthUser | null;
       verificationRequired?: boolean;
     };
+
+    try {
+      response = await fetch(`/api/comment-auth/${authMode}`, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          name: formData.get("name"),
+          email: formData.get("email"),
+          emailPreference: formData.get("emailPreference"),
+          password: formData.get("password"),
+        }),
+      });
+      payload = (await response.json().catch(() => ({}))) as typeof payload;
+    } catch {
+      setAuthState("error");
+      return;
+    }
 
     if (payload.verificationRequired) {
       setAuthState("verification");

@@ -214,7 +214,7 @@
   "admin_users_title": "用户",
   "admin_users_total": "用户总数",
   "admin_users_unmute": "恢复评论",
-  "account_management_note": "使用管理后台维护发布、设置和导出。",
+  "account_management_note": "管理你的评论和邮件偏好。",
   "account_signed_in_as": "当前登录账号",
   "account_title": "账号",
   "api_description": "使用受限 API Token 进行发布、导入、导出、资源上传和评论审核。",

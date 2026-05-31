@@ -69,6 +69,10 @@ import { Route as ApiAdminLoginRouteImport } from './routes/api/admin/login'
 import { Route as ApiAdminEmailStatusRouteImport } from './routes/api/admin/email-status'
 import { Route as ApiAdminEmailBroadcastsRouteImport } from './routes/api/admin/email-broadcasts'
 import { Route as ApiAdminAiSettingsRouteImport } from './routes/api/admin/ai-settings'
+import { Route as ApiAccountSignupRouteImport } from './routes/api/account/signup'
+import { Route as ApiAccountMeRouteImport } from './routes/api/account/me'
+import { Route as ApiAccountLogoutRouteImport } from './routes/api/account/logout'
+import { Route as ApiAccountLoginRouteImport } from './routes/api/account/login'
 import { Route as ApiAccountEmailPreferencesRouteImport } from './routes/api/account/email-preferences'
 import { Route as AuthAdminUsersRouteImport } from './routes/_auth/admin/users'
 import { Route as AuthAdminSettingsRouteImport } from './routes/_auth/admin/settings'
@@ -90,6 +94,8 @@ import { Route as AuthAdminPostsNewRouteImport } from './routes/_auth/admin/post
 import { Route as AuthAdminPostsPostIdRouteImport } from './routes/_auth/admin/posts/$postId'
 import { Route as ApiAdminLoginSocialCompleteRouteImport } from './routes/api/admin/login/social/complete'
 import { Route as ApiAdminLoginProviderStartRouteImport } from './routes/api/admin/login/$provider/start'
+import { Route as ApiAccountLoginSocialCompleteRouteImport } from './routes/api/account/login/social/complete'
+import { Route as ApiAccountLoginProviderStartRouteImport } from './routes/api/account/login/$provider/start'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -390,6 +396,26 @@ const ApiAdminAiSettingsRoute = ApiAdminAiSettingsRouteImport.update({
   path: '/api/admin/ai-settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAccountSignupRoute = ApiAccountSignupRouteImport.update({
+  id: '/api/account/signup',
+  path: '/api/account/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAccountMeRoute = ApiAccountMeRouteImport.update({
+  id: '/api/account/me',
+  path: '/api/account/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAccountLogoutRoute = ApiAccountLogoutRouteImport.update({
+  id: '/api/account/logout',
+  path: '/api/account/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAccountLoginRoute = ApiAccountLoginRouteImport.update({
+  id: '/api/account/login',
+  path: '/api/account/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAccountEmailPreferencesRoute =
   ApiAccountEmailPreferencesRouteImport.update({
     id: '/api/account/email-preferences',
@@ -501,6 +527,18 @@ const ApiAdminLoginProviderStartRoute =
     path: '/$provider/start',
     getParentRoute: () => ApiAdminLoginRoute,
   } as any)
+const ApiAccountLoginSocialCompleteRoute =
+  ApiAccountLoginSocialCompleteRouteImport.update({
+    id: '/social/complete',
+    path: '/social/complete',
+    getParentRoute: () => ApiAccountLoginRoute,
+  } as any)
+const ApiAccountLoginProviderStartRoute =
+  ApiAccountLoginProviderStartRouteImport.update({
+    id: '/$provider/start',
+    path: '/$provider/start',
+    getParentRoute: () => ApiAccountLoginRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -540,6 +578,10 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AuthAdminSettingsRoute
   '/admin/users': typeof AuthAdminUsersRoute
   '/api/account/email-preferences': typeof ApiAccountEmailPreferencesRoute
+  '/api/account/login': typeof ApiAccountLoginRouteWithChildren
+  '/api/account/logout': typeof ApiAccountLogoutRoute
+  '/api/account/me': typeof ApiAccountMeRoute
+  '/api/account/signup': typeof ApiAccountSignupRoute
   '/api/admin/ai-settings': typeof ApiAdminAiSettingsRouteWithChildren
   '/api/admin/email-broadcasts': typeof ApiAdminEmailBroadcastsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
@@ -580,6 +622,8 @@ export interface FileRoutesByFullPath {
   '/api/comments/$id/spam': typeof ApiCommentsIdSpamRoute
   '/api/tokens/$id/revoke': typeof ApiTokensIdRevokeRoute
   '/admin/posts/': typeof AuthAdminPostsIndexRoute
+  '/api/account/login/$provider/start': typeof ApiAccountLoginProviderStartRoute
+  '/api/account/login/social/complete': typeof ApiAccountLoginSocialCompleteRoute
   '/api/admin/login/$provider/start': typeof ApiAdminLoginProviderStartRoute
   '/api/admin/login/social/complete': typeof ApiAdminLoginSocialCompleteRoute
 }
@@ -618,6 +662,10 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AuthAdminSettingsRoute
   '/admin/users': typeof AuthAdminUsersRoute
   '/api/account/email-preferences': typeof ApiAccountEmailPreferencesRoute
+  '/api/account/login': typeof ApiAccountLoginRouteWithChildren
+  '/api/account/logout': typeof ApiAccountLogoutRoute
+  '/api/account/me': typeof ApiAccountMeRoute
+  '/api/account/signup': typeof ApiAccountSignupRoute
   '/api/admin/ai-settings': typeof ApiAdminAiSettingsRouteWithChildren
   '/api/admin/email-broadcasts': typeof ApiAdminEmailBroadcastsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
@@ -658,6 +706,8 @@ export interface FileRoutesByTo {
   '/api/comments/$id/spam': typeof ApiCommentsIdSpamRoute
   '/api/tokens/$id/revoke': typeof ApiTokensIdRevokeRoute
   '/admin/posts': typeof AuthAdminPostsIndexRoute
+  '/api/account/login/$provider/start': typeof ApiAccountLoginProviderStartRoute
+  '/api/account/login/social/complete': typeof ApiAccountLoginSocialCompleteRoute
   '/api/admin/login/$provider/start': typeof ApiAdminLoginProviderStartRoute
   '/api/admin/login/social/complete': typeof ApiAdminLoginSocialCompleteRoute
 }
@@ -702,6 +752,10 @@ export interface FileRoutesById {
   '/_auth/admin/settings': typeof AuthAdminSettingsRoute
   '/_auth/admin/users': typeof AuthAdminUsersRoute
   '/api/account/email-preferences': typeof ApiAccountEmailPreferencesRoute
+  '/api/account/login': typeof ApiAccountLoginRouteWithChildren
+  '/api/account/logout': typeof ApiAccountLogoutRoute
+  '/api/account/me': typeof ApiAccountMeRoute
+  '/api/account/signup': typeof ApiAccountSignupRoute
   '/api/admin/ai-settings': typeof ApiAdminAiSettingsRouteWithChildren
   '/api/admin/email-broadcasts': typeof ApiAdminEmailBroadcastsRoute
   '/api/admin/email-status': typeof ApiAdminEmailStatusRoute
@@ -742,6 +796,8 @@ export interface FileRoutesById {
   '/api/comments/$id/spam': typeof ApiCommentsIdSpamRoute
   '/api/tokens/$id/revoke': typeof ApiTokensIdRevokeRoute
   '/_auth/admin/posts/': typeof AuthAdminPostsIndexRoute
+  '/api/account/login/$provider/start': typeof ApiAccountLoginProviderStartRoute
+  '/api/account/login/social/complete': typeof ApiAccountLoginSocialCompleteRoute
   '/api/admin/login/$provider/start': typeof ApiAdminLoginProviderStartRoute
   '/api/admin/login/social/complete': typeof ApiAdminLoginSocialCompleteRoute
 }
@@ -785,6 +841,10 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/users'
     | '/api/account/email-preferences'
+    | '/api/account/login'
+    | '/api/account/logout'
+    | '/api/account/me'
+    | '/api/account/signup'
     | '/api/admin/ai-settings'
     | '/api/admin/email-broadcasts'
     | '/api/admin/email-status'
@@ -825,6 +885,8 @@ export interface FileRouteTypes {
     | '/api/comments/$id/spam'
     | '/api/tokens/$id/revoke'
     | '/admin/posts/'
+    | '/api/account/login/$provider/start'
+    | '/api/account/login/social/complete'
     | '/api/admin/login/$provider/start'
     | '/api/admin/login/social/complete'
   fileRoutesByTo: FileRoutesByTo
@@ -863,6 +925,10 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/users'
     | '/api/account/email-preferences'
+    | '/api/account/login'
+    | '/api/account/logout'
+    | '/api/account/me'
+    | '/api/account/signup'
     | '/api/admin/ai-settings'
     | '/api/admin/email-broadcasts'
     | '/api/admin/email-status'
@@ -903,6 +969,8 @@ export interface FileRouteTypes {
     | '/api/comments/$id/spam'
     | '/api/tokens/$id/revoke'
     | '/admin/posts'
+    | '/api/account/login/$provider/start'
+    | '/api/account/login/social/complete'
     | '/api/admin/login/$provider/start'
     | '/api/admin/login/social/complete'
   id:
@@ -946,6 +1014,10 @@ export interface FileRouteTypes {
     | '/_auth/admin/settings'
     | '/_auth/admin/users'
     | '/api/account/email-preferences'
+    | '/api/account/login'
+    | '/api/account/logout'
+    | '/api/account/me'
+    | '/api/account/signup'
     | '/api/admin/ai-settings'
     | '/api/admin/email-broadcasts'
     | '/api/admin/email-status'
@@ -986,6 +1058,8 @@ export interface FileRouteTypes {
     | '/api/comments/$id/spam'
     | '/api/tokens/$id/revoke'
     | '/_auth/admin/posts/'
+    | '/api/account/login/$provider/start'
+    | '/api/account/login/social/complete'
     | '/api/admin/login/$provider/start'
     | '/api/admin/login/social/complete'
   fileRoutesById: FileRoutesById
@@ -1019,6 +1093,10 @@ export interface RootRouteChildren {
   SeriesIndexRoute: typeof SeriesIndexRoute
   TagsIndexRoute: typeof TagsIndexRoute
   ApiAccountEmailPreferencesRoute: typeof ApiAccountEmailPreferencesRoute
+  ApiAccountLoginRoute: typeof ApiAccountLoginRouteWithChildren
+  ApiAccountLogoutRoute: typeof ApiAccountLogoutRoute
+  ApiAccountMeRoute: typeof ApiAccountMeRoute
+  ApiAccountSignupRoute: typeof ApiAccountSignupRoute
   ApiAdminAiSettingsRoute: typeof ApiAdminAiSettingsRouteWithChildren
   ApiAdminEmailBroadcastsRoute: typeof ApiAdminEmailBroadcastsRoute
   ApiAdminEmailStatusRoute: typeof ApiAdminEmailStatusRoute
@@ -1467,6 +1545,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminAiSettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/account/signup': {
+      id: '/api/account/signup'
+      path: '/api/account/signup'
+      fullPath: '/api/account/signup'
+      preLoaderRoute: typeof ApiAccountSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/account/me': {
+      id: '/api/account/me'
+      path: '/api/account/me'
+      fullPath: '/api/account/me'
+      preLoaderRoute: typeof ApiAccountMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/account/logout': {
+      id: '/api/account/logout'
+      path: '/api/account/logout'
+      fullPath: '/api/account/logout'
+      preLoaderRoute: typeof ApiAccountLogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/account/login': {
+      id: '/api/account/login'
+      path: '/api/account/login'
+      fullPath: '/api/account/login'
+      preLoaderRoute: typeof ApiAccountLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/account/email-preferences': {
       id: '/api/account/email-preferences'
       path: '/api/account/email-preferences'
@@ -1613,6 +1719,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/admin/login/$provider/start'
       preLoaderRoute: typeof ApiAdminLoginProviderStartRouteImport
       parentRoute: typeof ApiAdminLoginRoute
+    }
+    '/api/account/login/social/complete': {
+      id: '/api/account/login/social/complete'
+      path: '/social/complete'
+      fullPath: '/api/account/login/social/complete'
+      preLoaderRoute: typeof ApiAccountLoginSocialCompleteRouteImport
+      parentRoute: typeof ApiAccountLoginRoute
+    }
+    '/api/account/login/$provider/start': {
+      id: '/api/account/login/$provider/start'
+      path: '/$provider/start'
+      fullPath: '/api/account/login/$provider/start'
+      preLoaderRoute: typeof ApiAccountLoginProviderStartRouteImport
+      parentRoute: typeof ApiAccountLoginRoute
     }
   }
 }
@@ -1765,6 +1885,20 @@ const ApiTokensRouteWithChildren = ApiTokensRoute._addFileChildren(
   ApiTokensRouteChildren,
 )
 
+interface ApiAccountLoginRouteChildren {
+  ApiAccountLoginProviderStartRoute: typeof ApiAccountLoginProviderStartRoute
+  ApiAccountLoginSocialCompleteRoute: typeof ApiAccountLoginSocialCompleteRoute
+}
+
+const ApiAccountLoginRouteChildren: ApiAccountLoginRouteChildren = {
+  ApiAccountLoginProviderStartRoute: ApiAccountLoginProviderStartRoute,
+  ApiAccountLoginSocialCompleteRoute: ApiAccountLoginSocialCompleteRoute,
+}
+
+const ApiAccountLoginRouteWithChildren = ApiAccountLoginRoute._addFileChildren(
+  ApiAccountLoginRouteChildren,
+)
+
 interface ApiAdminAiSettingsRouteChildren {
   ApiAdminAiSettingsApiKeyRoute: typeof ApiAdminAiSettingsApiKeyRoute
   ApiAdminAiSettingsTestRoute: typeof ApiAdminAiSettingsTestRoute
@@ -1833,6 +1967,10 @@ const rootRouteChildren: RootRouteChildren = {
   SeriesIndexRoute: SeriesIndexRoute,
   TagsIndexRoute: TagsIndexRoute,
   ApiAccountEmailPreferencesRoute: ApiAccountEmailPreferencesRoute,
+  ApiAccountLoginRoute: ApiAccountLoginRouteWithChildren,
+  ApiAccountLogoutRoute: ApiAccountLogoutRoute,
+  ApiAccountMeRoute: ApiAccountMeRoute,
+  ApiAccountSignupRoute: ApiAccountSignupRoute,
   ApiAdminAiSettingsRoute: ApiAdminAiSettingsRouteWithChildren,
   ApiAdminEmailBroadcastsRoute: ApiAdminEmailBroadcastsRoute,
   ApiAdminEmailStatusRoute: ApiAdminEmailStatusRoute,

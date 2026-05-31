@@ -2,13 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { publicAdminUser, resetAdminPassword } from "#/lib/admin-auth";
 import { jsonResponse, readJsonBody } from "#/lib/cms-api";
-import { requireCmsAccess } from "#/lib/cms-authz";
+import { requireAdminSession } from "#/lib/cms-authz";
 
 export const Route = createFileRoute("/api/admin/password")({
   server: {
     handlers: {
       PATCH: async ({ request }: { request: Request }) => {
-        const accessError = await requireCmsAccess(request, "site:write");
+        const accessError = await requireAdminSession(request);
 
         if (accessError) {
           return accessError;

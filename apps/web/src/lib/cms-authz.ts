@@ -4,6 +4,12 @@ import { getAdminUserFromRequest } from "#/lib/admin-auth";
 import { jsonResponse } from "#/lib/cms-api";
 import { verifyD1ApiToken } from "#/lib/cms-d1";
 
+export async function requireAdminSession(request: Request) {
+  const admin = await getAdminUserFromRequest(request).catch(() => null);
+
+  return admin ? null : jsonResponse({ error: "Admin authentication required" }, { status: 401 });
+}
+
 export async function requireCmsAccess(request: Request, scope: ApiTokenScope) {
   const admin = await getAdminUserFromRequest(request).catch(() => null);
 

@@ -10,7 +10,7 @@ export function SignOutButton({ className }: { readonly className?: string }) {
 
   return (
     <form
-      action="/api/admin/logout"
+      action="/api/account/logout"
       method="post"
       className={cn("w-fit", className)}
       onSubmit={() => {

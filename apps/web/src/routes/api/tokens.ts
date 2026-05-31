@@ -1,15 +1,15 @@
-import type { ApiTokenScope } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
 
+import { ApiTokenCreateSchema, validateBody } from "#/lib/api-validation";
 import { jsonResponse, readJsonBody } from "#/lib/cms-api";
-import { requireCmsAccess } from "#/lib/cms-authz";
+import { requireAdminSession } from "#/lib/cms-authz";
 import { createD1ApiToken, listD1ApiTokens } from "#/lib/cms-d1";
 
 export const Route = createFileRoute("/api/tokens")({
   server: {
     handlers: {
       GET: async ({ request }: { request: Request }) => {
-        const accessError = await requireCmsAccess(request, "site:read");
+        const accessError = await requireAdminSession(request);
 
         if (accessError) {
           return accessError;
@@ -22,17 +22,19 @@ export const Route = createFileRoute("/api/tokens")({
         });
       },
       POST: async ({ request }: { request: Request }) => {
-        const accessError = await requireCmsAccess(request, "site:write");
+        const accessError = await requireAdminSession(request);
 
         if (accessError) {
           return accessError;
         }
 
-        const body = await readJsonBody<{
-          name: string;
-          scopes: ApiTokenScope[];
-          expiresAt: string | null;
-        }>(request);
+        const rawBody = await readJsonBody(request);
+        const [body, validationError] = validateBody(ApiTokenCreateSchema, rawBody);
+
+        if (validationError) {
+          return validationError;
+        }
+
         const created = await createD1ApiToken({
           name: body.name,
           scopes: body.scopes,

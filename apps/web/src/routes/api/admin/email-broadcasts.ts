@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { getAdminUserFromRequest } from "#/lib/admin-auth";
 import { jsonResponse, readJsonBody } from "#/lib/cms-api";
-import { requireCmsAccess } from "#/lib/cms-authz";
+import { requireAdminSession } from "#/lib/cms-authz";
 import { getEmailDeliveryStatus } from "#/lib/cms-email";
 import {
   getBroadcastAudienceCount,
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/api/admin/email-broadcasts")({
   server: {
     handlers: {
       GET: async ({ request }: { request: Request }) => {
-        const accessError = await requireCmsAccess(request, "site:read");
+        const accessError = await requireAdminSession(request);
 
         if (accessError) {
           return accessError;
@@ -28,13 +28,18 @@ export const Route = createFileRoute("/api/admin/email-broadcasts")({
         });
       },
       POST: async ({ request }: { request: Request }) => {
-        const accessError = await requireCmsAccess(request, "site:write");
+        const accessError = await requireAdminSession(request);
 
         if (accessError) {
           return accessError;
         }
 
         const admin = await getAdminUserFromRequest(request);
+
+        if (!admin) {
+          return jsonResponse({ error: "Admin authentication required" }, { status: 401 });
+        }
+
         const body = await readJsonBody<{
           action?: "preview" | "send";
           message?: string;

@@ -81,13 +81,18 @@ describe("readJsonBody", () => {
     expect(body).toEqual({ title: "Hello" });
   });
 
-  it("returns empty object for invalid JSON", async () => {
+  it("rejects invalid JSON with a 400 response", async () => {
     const request = new Request("http://localhost/api", {
       method: "POST",
       body: "not-json{{{",
     });
-    const body = await readJsonBody(request);
-    expect(body).toEqual({});
+    const response = await readJsonBody(request).catch((error: unknown) => error);
+
+    expect(response).toBeInstanceOf(Response);
+    expect((response as Response).status).toBe(400);
+    await expect((response as Response).json()).resolves.toEqual({
+      error: "Malformed JSON body",
+    });
   });
 
   it("returns empty object for empty body", async () => {

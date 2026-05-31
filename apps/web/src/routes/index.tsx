@@ -601,10 +601,10 @@ function getHomeCopy(locale: SupportedLocale) {
 
   if (locale === "zh") {
     return {
-      eyebrow: "个人博客 CMS · Cloudflare 托管 · AI 一键部署",
+      eyebrow: "个人博客内容系统 · Cloudflare 托管 · AI 一键部署",
       heroTitle: "搭建你的永久精神家园",
       heroBody:
-        "01mvp-blog-starter 是一套 Cloudflare 原生的个人博客 CMS。后台、评论、图床、RSS 开箱即用，配合 AI Init Skill 可以从初始化到上线自动完成。",
+        "01mvp-blog-starter 是一套 Cloudflare 原生的个人博客内容系统。后台、评论、图床、RSS 开箱即用，配合 AI Init Skill 可以从初始化到上线自动完成。",
       primaryCta: "查看示例内容",
       secondaryCta: "阅读使用文档",
 
@@ -789,10 +789,10 @@ function getHomeCopy(locale: SupportedLocale) {
 
   // ── English ──
   return {
-    eyebrow: "Personal blog CMS · Cloudflare-hosted · AI deployment",
+    eyebrow: "Personal blog system · Cloudflare-hosted · AI deployment",
     heroTitle: "Build your permanent home on the internet",
     heroBody:
-      "01mvp-blog-starter is a Cloudflare-native personal blog CMS. Writing dashboard, comments, image hosting, and RSS ship out of the box, and the AI Init Skill can take it from setup to live deploy.",
+      "01mvp-blog-starter is a Cloudflare-native personal blog system. Writing dashboard, comments, image hosting, and RSS ship out of the box, and the AI Init Skill can take it from setup to live deploy.",
     primaryCta: "View sample content",
     secondaryCta: "Read the docs",
 
@@ -847,7 +847,7 @@ function getHomeCopy(locale: SupportedLocale) {
 
     // ── Core Features ──
     featuresEyebrow: "Core features",
-    featuresTitle: "A full dynamic CMS, not just a static blog.",
+    featuresTitle: "A full dynamic publishing system, not just a static blog.",
     featuresBody:
       "Real database, real admin panel, built-in comments and media management — all on Cloudflare's free tier.",
     features: [

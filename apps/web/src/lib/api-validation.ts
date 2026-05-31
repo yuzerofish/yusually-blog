@@ -1,3 +1,4 @@
+import type { ApiTokenScope } from "@repo/core";
 import { z } from "zod";
 
 const ContentStatusSchema = z.enum(["draft", "published", "scheduled", "archived", "deleted"]);
@@ -12,6 +13,16 @@ const ContentSourceSchema = z.enum([
 ]);
 const SupportedLocaleSchema = z.enum(["en", "zh"]);
 const EmailPreferenceSchema = z.enum(["none", "instant_posts", "biweekly_digest"]);
+const ApiTokenScopeSchema = z.enum([
+  "posts:read",
+  "posts:write",
+  "posts:publish",
+  "assets:write",
+  "comments:moderate",
+  "site:read",
+  "site:write",
+  "export:read",
+] satisfies [ApiTokenScope, ...ApiTokenScope[]]);
 const TrimmedRequiredStringSchema = z.preprocess(
   (value) => (typeof value === "string" ? value.trim() : value),
   z.string(),
@@ -134,6 +145,30 @@ export const AccountEmailPreferencesPatchSchema = z
   .refine((value) => Object.keys(value).length > 0, {
     message: "Provide at least one email preference field.",
   });
+
+export const ApiTokenCreateSchema = z
+  .object({
+    name: TrimmedRequiredStringSchema.pipe(z.string().min(1).max(120)),
+    scopes: z
+      .array(ApiTokenScopeSchema)
+      .min(1)
+      .max(8)
+      .refine((scopes) => new Set(scopes).size === scopes.length, {
+        message: "API token scopes must be unique.",
+      }),
+    expiresAt: z
+      .preprocess(
+        (value) => (value === "" ? null : value),
+        z.iso.datetime({ offset: true }).nullable().optional(),
+      )
+      .refine(
+        (value) => !value || (Number.isFinite(Date.parse(value)) && Date.parse(value) > Date.now()),
+        {
+          message: "API token expiry must be a future ISO datetime.",
+        },
+      ),
+  })
+  .strict();
 
 /**
  * Run a zod parse and return either the validated data or a 400 Response.

@@ -32,8 +32,10 @@ export const Route = createFileRoute("/api/export")({
 
           return new Response(toArrayBuffer(bundle.bytes), {
             headers: {
+              "cache-control": "no-store",
               "content-type": "application/zip",
               "content-disposition": `attachment; filename="${bundle.filename}"`,
+              "x-content-type-options": "nosniff",
               "x-blogcms-backup-key": backup?.key ?? "",
               "x-blogcms-exported-at": bundle.data.exportedAt,
               "x-blogcms-assets-bundled": String(bundle.assetCount),

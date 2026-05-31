@@ -7,13 +7,13 @@ import {
   type AiProviderConfigInput,
 } from "#/lib/ai-provider.server";
 import { jsonResponse, readJsonBody } from "#/lib/cms-api";
-import { requireCmsAccess } from "#/lib/cms-authz";
+import { requireAdminSession } from "#/lib/cms-authz";
 
 export const Route = createFileRoute("/api/admin/ai-settings")({
   server: {
     handlers: {
       GET: async ({ request }: { request: Request }) => {
-        const accessError = await requireCmsAccess(request, "site:read");
+        const accessError = await requireAdminSession(request);
 
         if (accessError) {
           return accessError;
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/api/admin/ai-settings")({
         });
       },
       PUT: async ({ request }: { request: Request }) => {
-        const accessError = await requireCmsAccess(request, "site:write");
+        const accessError = await requireAdminSession(request);
 
         if (accessError) {
           return accessError;
@@ -40,7 +40,7 @@ export const Route = createFileRoute("/api/admin/ai-settings")({
         });
       },
       POST: async ({ request }: { request: Request }) => {
-        const accessError = await requireCmsAccess(request, "site:write");
+        const accessError = await requireAdminSession(request);
 
         if (accessError) {
           return accessError;

@@ -5,7 +5,7 @@ type AdminUser = {
   id: string;
   name: string;
   email: string;
-  role: "admin";
+  role: "admin" | "reader";
   createdAt: string;
   lastLoginAt: string | null;
 };
@@ -15,7 +15,7 @@ export async function _getUser(_query?: {
   disableRefresh?: boolean;
 }) {
   const request = getRequest();
-  const url = new URL("/api/admin/me", request.url);
+  const url = new URL("/api/account/me", request.url);
   const headers = new Headers();
   const cookie = request.headers.get("cookie");
 

@@ -9,6 +9,7 @@ import { BookOpenIcon, EyeIcon, EyeOffIcon, LoaderCircleIcon } from "lucide-reac
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { redirectForRole } from "#/lib/account-routing";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/_guest/signup")({
   component: SignupForm,
 });
 
-type AdminUser = NonNullable<AuthQueryResult>;
+type AccountUser = NonNullable<AuthQueryResult>;
 
 function SignupForm() {
   const { redirectUrl } = Route.useRouteContext();
@@ -28,12 +29,20 @@ function SignupForm() {
 
   const { mutate: signupMutate, isPending } = useMutation({
     mutationFn: async (data: { name: string; email: string; password: string }) => {
-      const response = await fetch("/api/admin/users", {
+      const response = await fetch("/api/account/signup", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(data),
       });
-      const payload = (await response.json()) as { data?: AdminUser; error?: string };
+      const payload = (await response.json()) as {
+        data?: AccountUser | null;
+        error?: string;
+        verificationRequired?: boolean;
+      };
+
+      if (payload.verificationRequired) {
+        return { verificationRequired: true as const };
+      }
 
       if (!response.ok || !payload.data) {
         throw new Error(payload.error || m.signup_error());
@@ -44,9 +53,16 @@ function SignupForm() {
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : m.signup_error());
     },
-    onSuccess: async (user) => {
+    onSuccess: async (result) => {
+      if ("verificationRequired" in result) {
+        toast.success(m.comment_email_verification_sent());
+        await navigate({ to: "/login" });
+        return;
+      }
+
+      const user = result;
       queryClient.setQueryData(authQueryOptions().queryKey, user);
-      await navigate({ to: redirectUrl });
+      await navigate({ to: redirectForRole(user, redirectUrl) });
     },
   });
 
@@ -72,7 +88,7 @@ function SignupForm() {
 
   return (
     <div className="flex flex-col gap-6">
-      <form action="/api/admin/users" method="post" onSubmit={handleSubmit}>
+      <form action="/api/account/signup" method="post" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2">
             <Link to="/" className="flex flex-col items-center gap-2 font-medium">

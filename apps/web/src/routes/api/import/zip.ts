@@ -22,13 +22,14 @@ export const Route = createFileRoute("/api/import/zip")({
         }
 
         const body = await readJsonBody<ZipImportInput>(request);
+        const input = {
+          ...body,
+          locale: body.locale ?? getApiLocale(request),
+        };
         let imported;
 
         try {
-          imported = await parseZipImport({
-            ...body,
-            locale: body.locale ?? getApiLocale(request),
-          });
+          imported = await parseZipImport(input, { uploadAssets: false });
         } catch (error) {
           return jsonResponse(
             { error: error instanceof Error ? error.message : "ZIP import failed" },
@@ -42,6 +43,15 @@ export const Route = createFileRoute("/api/import/zip")({
           if (publishError) {
             return publishError;
           }
+        }
+
+        try {
+          imported = await parseZipImport(input);
+        } catch (error) {
+          return jsonResponse(
+            { error: error instanceof Error ? error.message : "ZIP import failed" },
+            { status: 400 },
+          );
         }
 
         const locale = imported.post.locale ?? getApiLocale(request);

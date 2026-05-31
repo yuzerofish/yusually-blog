@@ -3366,7 +3366,7 @@ export const admin_users_unmute = /** @type {((inputs?: Admin_Users_UnmuteInputs
 /**
 * | output |
 * | --- |
-* | "Use the admin area to manage publishing, settings, and exports." |
+* | "Manage your comments and email preferences." |
 *
 * @param {Account_Management_NoteInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options

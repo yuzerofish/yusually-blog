@@ -117,6 +117,14 @@ export async function clearAiProviderApiKey() {
 export async function testAiProviderConnection(
   input?: AiProviderConfigInput,
 ): Promise<AiChatCompletionResult> {
+  if (input && (await requiresFreshApiKeyForPreview(input))) {
+    return {
+      ok: false,
+      error: "Testing a new AI base URL requires entering an API key.",
+      status: 400,
+    };
+  }
+
   const config = input ? await previewAiProviderConfig(input) : await getConfiguredAiProvider();
 
   if (!config) {
@@ -244,6 +252,19 @@ async function previewAiProviderConfig(input: AiProviderConfigInput) {
   });
 
   return isUsableAiConfig(config) ? config : null;
+}
+
+async function requiresFreshApiKeyForPreview(input: AiProviderConfigInput) {
+  const requestedBaseUrl = normalizeBaseUrl(input.baseUrl);
+  const inputApiKey = normalizeRequiredText(input.apiKey);
+
+  if (!requestedBaseUrl || inputApiKey || input.clearApiKey === true) {
+    return false;
+  }
+
+  const current = normalizeStoredConfig((await readAiProviderRecord())?.value);
+
+  return Boolean(current.apiKey && current.baseUrl && requestedBaseUrl !== current.baseUrl);
 }
 
 async function readAiProviderRecord() {

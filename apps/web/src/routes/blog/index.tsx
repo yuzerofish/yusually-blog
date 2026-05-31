@@ -17,7 +17,11 @@ export const Route = createFileRoute("/blog/")({
     series: typeof search.series === "string" ? search.series : "",
     page: Math.max(1, Number(search.page) || 1),
   }),
-  loaderDeps: ({ search }) => search,
+  loaderDeps: ({ search }) => ({
+    q: search.q,
+    tag: search.tag,
+    series: search.series,
+  }),
   loader: ({ deps }): Promise<BlogIndexPageData> =>
     $getBlogIndexPage({
       data: {
