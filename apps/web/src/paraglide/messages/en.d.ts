@@ -295,6 +295,7 @@
 /** @typedef {{}} Login_Password_PlaceholderInputs */
 /** @typedef {{}} Login_PendingInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Login_Social_ErrorInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Login_Social_PendingInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Login_With_ProviderInputs */
 /** @typedef {{}} Password_Reset_ConfirmInputs */
 /** @typedef {{}} Password_Reset_Confirm_ErrorInputs */
@@ -644,6 +645,7 @@ export const login_password: (inputs: Login_PasswordInputs) => LocalizedString;
 export const login_password_placeholder: (inputs: Login_Password_PlaceholderInputs) => LocalizedString;
 export const login_pending: (inputs: Login_PendingInputs) => LocalizedString;
 export const login_social_error: (inputs: Login_Social_ErrorInputs) => LocalizedString;
+export const login_social_pending: (inputs: Login_Social_PendingInputs) => LocalizedString;
 export const login_with_provider: (inputs: Login_With_ProviderInputs) => LocalizedString;
 export const password_reset_confirm: (inputs: Password_Reset_ConfirmInputs) => LocalizedString;
 export const password_reset_confirm_error: (inputs: Password_Reset_Confirm_ErrorInputs) => LocalizedString;
@@ -1022,6 +1024,9 @@ export type Login_PasswordInputs = {};
 export type Login_Password_PlaceholderInputs = {};
 export type Login_PendingInputs = {};
 export type Login_Social_ErrorInputs = {
+    provider: NonNullable<unknown>;
+};
+export type Login_Social_PendingInputs = {
     provider: NonNullable<unknown>;
 };
 export type Login_With_ProviderInputs = {

@@ -296,6 +296,7 @@
 /** @typedef {{}} Login_Password_PlaceholderInputs */
 /** @typedef {{}} Login_PendingInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Login_Social_ErrorInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Login_Social_PendingInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Login_With_ProviderInputs */
 /** @typedef {{}} Password_Reset_ConfirmInputs */
 /** @typedef {{}} Password_Reset_Confirm_ErrorInputs */
@@ -1533,6 +1534,10 @@ export const login_pending = /** @type {(inputs: Login_PendingInputs) => Localiz
 
 export const login_social_error = /** @type {(inputs: Login_Social_ErrorInputs) => LocalizedString} */ (i) => {
 	return /** @type {LocalizedString} */ (`An error occurred during ${i?.provider} sign-in.`)
+};
+
+export const login_social_pending = /** @type {(inputs: Login_Social_PendingInputs) => LocalizedString} */ (i) => {
+	return /** @type {LocalizedString} */ (`Connecting to ${i?.provider}...`)
 };
 
 export const login_with_provider = /** @type {(inputs: Login_With_ProviderInputs) => LocalizedString} */ (i) => {

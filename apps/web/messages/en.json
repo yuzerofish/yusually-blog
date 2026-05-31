@@ -295,6 +295,7 @@
   "login_password_placeholder": "Enter password here",
   "login_pending": "Logging in...",
   "login_social_error": "An error occurred during {provider} sign-in.",
+  "login_social_pending": "Connecting to {provider}...",
   "login_with_provider": "Login with {provider}",
   "password_reset_confirm": "Update password",
   "password_reset_confirm_error": "Password could not be updated.",

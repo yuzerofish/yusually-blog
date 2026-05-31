@@ -4145,6 +4145,20 @@ export const login_social_error: ((inputs: Login_Social_ErrorInputs, options?: {
 /**
 * | output |
 * | --- |
+* | "Connecting to {provider}..." |
+*
+* @param {Login_Social_PendingInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const login_social_pending: ((inputs: Login_Social_PendingInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Login_Social_PendingInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
 * | "Login with {provider}" |
 *
 * @param {Login_With_ProviderInputs} inputs
@@ -5209,6 +5223,9 @@ export type Login_PasswordInputs = {};
 export type Login_Password_PlaceholderInputs = {};
 export type Login_PendingInputs = {};
 export type Login_Social_ErrorInputs = {
+    provider: NonNullable<unknown>;
+};
+export type Login_Social_PendingInputs = {
     provider: NonNullable<unknown>;
 };
 export type Login_With_ProviderInputs = {

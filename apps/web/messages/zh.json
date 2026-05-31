@@ -295,6 +295,7 @@
   "login_password_placeholder": "请输入密码",
   "login_pending": "正在登录...",
   "login_social_error": "{provider} 登录时出现错误。",
+  "login_social_pending": "正在连接 {provider}...",
   "login_with_provider": "使用 {provider} 登录",
   "password_reset_confirm": "更新密码",
   "password_reset_confirm_error": "密码更新失败。",

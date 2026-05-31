@@ -298,6 +298,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} Login_Password_PlaceholderInputs */
 /** @typedef {{}} Login_PendingInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Login_Social_ErrorInputs */
+/** @typedef {{ provider: NonNullable<unknown> }} Login_Social_PendingInputs */
 /** @typedef {{ provider: NonNullable<unknown> }} Login_With_ProviderInputs */
 /** @typedef {{}} Password_Reset_ConfirmInputs */
 /** @typedef {{}} Password_Reset_Confirm_ErrorInputs */
@@ -4496,6 +4497,20 @@ export const login_social_error = /** @type {((inputs: Login_Social_ErrorInputs,
 	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
 	if (locale === "en") return __en.login_social_error(inputs)
 	return __zh.login_social_error(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Connecting to {provider}..." |
+*
+* @param {Login_Social_PendingInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const login_social_pending = /** @type {((inputs: Login_Social_PendingInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Login_Social_PendingInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "en") return __en.login_social_pending(inputs)
+	return __zh.login_social_pending(inputs)
 });
 /**
 * | output |

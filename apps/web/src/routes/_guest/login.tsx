@@ -7,6 +7,7 @@ import { Label } from "@repo/ui/components/label";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { BookOpenIcon, LoaderCircleIcon } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { redirectForRole } from "#/lib/account-routing";
@@ -26,6 +27,9 @@ function LoginForm() {
   const siteSettings = getSiteSettingsForLocale(getCurrentLocale());
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const [socialPendingProvider, setSocialPendingProvider] = useState<"GitHub" | "Google" | null>(
+    null,
+  );
 
   const { mutate: emailLoginMutate, isPending } = useMutation({
     mutationFn: async (data: { email: string; password: string }) => {
@@ -54,7 +58,7 @@ function LoginForm() {
 
   const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isPending) return;
+    if (isPending || socialPendingProvider) return;
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
@@ -63,6 +67,29 @@ function LoginForm() {
     if (!email || !password) return;
 
     emailLoginMutate({ email, password });
+  };
+
+  const isLoginPending = isPending || Boolean(socialPendingProvider);
+
+  const handleSocialLogin = (
+    provider: "GitHub" | "Google",
+    event: React.MouseEvent<HTMLAnchorElement>,
+  ) => {
+    if (isLoginPending) {
+      event.preventDefault();
+      return;
+    }
+
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+
+    event.preventDefault();
+    const href = event.currentTarget.href;
+    setSocialPendingProvider(provider);
+    window.setTimeout(() => {
+      window.location.assign(href);
+    }, 50);
   };
 
   return (
@@ -86,23 +113,43 @@ function LoginForm() {
           <div className="grid gap-3">
             <a
               href={adminSocialLoginHref("github", redirectUrl)}
+              aria-disabled={isLoginPending}
+              onClick={(event) => handleSocialLogin("GitHub", event)}
               className={buttonVariants({
                 variant: "secondary",
-                className: "w-full justify-center",
+                className: isLoginPending
+                  ? "w-full justify-center pointer-events-none opacity-45"
+                  : "w-full justify-center",
               })}
             >
-              <SiGithub className="size-4" />
-              {m.login_with_provider({ provider: "GitHub" })}
+              {socialPendingProvider === "GitHub" ? (
+                <LoaderCircleIcon className="size-4 animate-spin" />
+              ) : (
+                <SiGithub className="size-4" />
+              )}
+              {socialPendingProvider === "GitHub"
+                ? m.login_social_pending({ provider: "GitHub" })
+                : m.login_with_provider({ provider: "GitHub" })}
             </a>
             <a
               href={adminSocialLoginHref("google", redirectUrl)}
+              aria-disabled={isLoginPending}
+              onClick={(event) => handleSocialLogin("Google", event)}
               className={buttonVariants({
                 variant: "secondary",
-                className: "w-full justify-center",
+                className: isLoginPending
+                  ? "w-full justify-center pointer-events-none opacity-45"
+                  : "w-full justify-center",
               })}
             >
-              <SiGoogle className="size-4" />
-              {m.login_with_provider({ provider: "Google" })}
+              {socialPendingProvider === "Google" ? (
+                <LoaderCircleIcon className="size-4 animate-spin" />
+              ) : (
+                <SiGoogle className="size-4" />
+              )}
+              {socialPendingProvider === "Google"
+                ? m.login_social_pending({ provider: "Google" })
+                : m.login_with_provider({ provider: "Google" })}
             </a>
           </div>
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
@@ -119,7 +166,7 @@ function LoginForm() {
                 type="email"
                 placeholder="hello@example.com"
                 autoComplete="email"
-                readOnly={isPending}
+                readOnly={isLoginPending}
                 required
               />
             </div>
@@ -136,11 +183,11 @@ function LoginForm() {
                 type="password"
                 placeholder={m.login_password_placeholder()}
                 autoComplete="current-password"
-                readOnly={isPending}
+                readOnly={isLoginPending}
                 required
               />
             </div>
-            <Button type="submit" className="mt-2 w-full" size="lg" disabled={isPending}>
+            <Button type="submit" className="mt-2 w-full" size="lg" disabled={isLoginPending}>
               {isPending && <LoaderCircleIcon className="animate-spin" />}
               {isPending ? m.login_pending() : m.login()}
             </Button>
