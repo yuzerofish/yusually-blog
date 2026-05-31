@@ -3,7 +3,6 @@ import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import type { AuthDatabase } from "@repo/db";
 import { account, session, user, verification } from "@repo/db/schema";
 import { betterAuth } from "better-auth/minimal";
-import { tanstackStartCookies } from "better-auth/tanstack-start";
 
 export type BlogAuthEnv = {
   baseURL?: string;
@@ -74,9 +73,6 @@ export function createBlogAuth(database: AuthDatabase, env: BlogAuthEnv) {
         },
       },
     },
-
-    // https://www.better-auth.com/docs/integrations/tanstack#usage-tips
-    plugins: [tanstackStartCookies()],
 
     // https://www.better-auth.com/docs/concepts/session-management#session-caching
     session: {
