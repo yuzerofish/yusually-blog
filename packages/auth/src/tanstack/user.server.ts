@@ -16,6 +16,12 @@ export async function _getUser(_query?: {
 }) {
   const request = getRequest();
   const url = new URL("/api/admin/me", request.url);
+  const headers = new Headers();
+  const cookie = request.headers.get("cookie");
+
+  if (cookie) {
+    headers.set("cookie", cookie);
+  }
 
   if (_query?.disableCookieCache) {
     url.searchParams.set("disableCookieCache", "true");
@@ -26,7 +32,8 @@ export async function _getUser(_query?: {
   }
 
   const response = await fetch(url, {
-    headers: request.headers,
+    cache: "no-store",
+    headers,
   });
 
   if (!response.ok) {
