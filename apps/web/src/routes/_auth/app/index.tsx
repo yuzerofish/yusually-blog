@@ -291,7 +291,7 @@ function getAccountEmailCopy(locale: ReturnType<typeof getCurrentLocale>) {
         {
           description: "每周汇总新文章发送到邮箱。",
           label: "订阅每周博客更新",
-          value: "biweekly_digest",
+          value: "weekly_blog_updates",
         },
       ] satisfies Array<{ description: string; label: string; value: EmailPreference }>,
       commentReplies: "评论回复通知",
@@ -318,7 +318,7 @@ function getAccountEmailCopy(locale: ReturnType<typeof getCurrentLocale>) {
       {
         description: "Get a weekly email with the latest posts.",
         label: "Weekly blog updates",
-        value: "biweekly_digest",
+        value: "weekly_blog_updates",
       },
     ] satisfies Array<{ description: string; label: string; value: EmailPreference }>,
     commentReplies: "Comment reply notifications",

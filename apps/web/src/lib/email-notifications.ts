@@ -10,7 +10,7 @@ import { getD1SiteSettings } from "./cms-d1-assets";
 import { getCmsDb } from "./cms-db";
 import { getEmailDeliveryStatus, sendCmsEmail } from "./cms-email";
 
-const digestWindowDays = 7;
+const weeklyBlogUpdateWindowDays = 7;
 const emailSendConcurrency = 5;
 
 type NotificationRecipient = {
@@ -27,7 +27,7 @@ type BroadcastInput = {
 
 const authDb = createAuthDb(env.CMS_DB as Parameters<typeof createAuthDb>[0]);
 
-export async function sendDueWeeklyBlogDigest() {
+export async function sendDueWeeklyBlogUpdates() {
   const [settings, delivery] = await Promise.all([
     getD1SiteSettings(),
     Promise.resolve(getEmailDeliveryStatus()),
@@ -42,25 +42,31 @@ export async function sendDueWeeklyBlogDigest() {
   }
 
   const now = new Date();
-  const latestRun = await getLatestDigestRun();
+  const latestRun = await getLatestWeeklyBlogUpdateRun();
   const lastPeriodEnd = latestRun ? new Date(latestRun.periodEnd) : null;
 
-  if (lastPeriodEnd && now.getTime() - lastPeriodEnd.getTime() < digestWindowDays * 86400000) {
+  if (
+    lastPeriodEnd &&
+    now.getTime() - lastPeriodEnd.getTime() < weeklyBlogUpdateWindowDays * 86400000
+  ) {
     return { skipped: true, reason: "not_due" as const };
   }
 
   const periodStart =
     lastPeriodEnd && !Number.isNaN(lastPeriodEnd.getTime())
       ? lastPeriodEnd
-      : new Date(now.getTime() - digestWindowDays * 86400000);
+      : new Date(now.getTime() - weeklyBlogUpdateWindowDays * 86400000);
   const periodEnd = now;
-  const posts = await listPostsForDigest(periodStart.toISOString(), periodEnd.toISOString());
-  const recipients = await listRecipientsByPreference("biweekly_digest");
-  const runId = `digest_${crypto.randomUUID()}`;
+  const posts = await listPostsForWeeklyBlogUpdate(
+    periodStart.toISOString(),
+    periodEnd.toISOString(),
+  );
+  const recipients = await listRecipientsByPreference("weekly_blog_updates");
+  const runId = `weekly_update_${crypto.randomUUID()}`;
   const createdAt = now.toISOString();
 
   if (!posts.length || !recipients.length) {
-    await getCmsDb().insert(cmsSchema.emailDigestRuns).values({
+    await getCmsDb().insert(cmsSchema.weeklyBlogUpdateRuns).values({
       id: runId,
       periodStart: periodStart.toISOString(),
       periodEnd: periodEnd.toISOString(),
@@ -77,15 +83,14 @@ export async function sendDueWeeklyBlogDigest() {
   const subject = `${settings.name}: ${posts.length} new ${posts.length === 1 ? "post" : "posts"}`;
   const totals = await runEmailTasks(recipients, async (recipient) => {
     const deliveryId = await createDelivery({
-      notificationType: "biweekly_digest",
-      postId: null,
+      notificationType: "weekly_blog_updates",
       subject,
       userId: recipient.id,
     });
     const result = await sendCmsEmail({
       to: recipient.email,
       subject,
-      ...buildDigestEmail({
+      ...buildWeeklyBlogUpdateEmail({
         posts,
         recipient,
         settings,
@@ -103,7 +108,7 @@ export async function sendDueWeeklyBlogDigest() {
   });
 
   await getCmsDb()
-    .insert(cmsSchema.emailDigestRuns)
+    .insert(cmsSchema.weeklyBlogUpdateRuns)
     .values({
       id: runId,
       periodStart: periodStart.toISOString(),
@@ -183,7 +188,6 @@ export async function sendManualBroadcast(input: BroadcastInput) {
   const totals = await runEmailTasks(recipients, async (recipient) => {
     const deliveryId = await createDelivery({
       notificationType: "manual_broadcast",
-      postId: null,
       subject,
       userId: recipient.id,
     });
@@ -302,8 +306,7 @@ async function runEmailTasks<TRecipient>(
 }
 
 async function createDelivery(input: {
-  notificationType: "biweekly_digest" | "manual_broadcast";
-  postId: string | null;
+  notificationType: "weekly_blog_updates" | "manual_broadcast";
   subject: string;
   userId: string;
 }) {
@@ -312,7 +315,6 @@ async function createDelivery(input: {
   await getCmsDb().insert(cmsSchema.emailNotificationDeliveries).values({
     id,
     userId: input.userId,
-    postId: input.postId,
     notificationType: input.notificationType,
     subject: input.subject,
     status: "pending",
@@ -348,17 +350,17 @@ async function issueUnsubscribeUrl(userId: string, settings: SiteSettings) {
   return url.toString();
 }
 
-async function getLatestDigestRun() {
+async function getLatestWeeklyBlogUpdateRun() {
   const [run] = await getCmsDb()
     .select()
-    .from(cmsSchema.emailDigestRuns)
-    .orderBy(desc(cmsSchema.emailDigestRuns.periodEnd))
+    .from(cmsSchema.weeklyBlogUpdateRuns)
+    .orderBy(desc(cmsSchema.weeklyBlogUpdateRuns.periodEnd))
     .limit(1);
 
   return run;
 }
 
-async function listPostsForDigest(periodStart: string, periodEnd: string) {
+async function listPostsForWeeklyBlogUpdate(periodStart: string, periodEnd: string) {
   const rows = await getCmsDb()
     .select()
     .from(cmsSchema.posts)
@@ -382,7 +384,7 @@ async function listPostsForDigest(periodStart: string, periodEnd: string) {
   }));
 }
 
-function buildDigestEmail(input: {
+function buildWeeklyBlogUpdateEmail(input: {
   posts: Array<{ excerpt: string; publishedAt: string; title: string; url: string }>;
   recipient: NotificationRecipient;
   settings: SiteSettings;
@@ -393,7 +395,7 @@ function buildDigestEmail(input: {
     "",
     `${input.settings.name} published ${input.posts.length} new ${
       input.posts.length === 1 ? "post" : "posts"
-    } in the last ${digestWindowDays} days:`,
+    } in the last ${weeklyBlogUpdateWindowDays} days:`,
     "",
     ...input.posts.flatMap((post) => [
       `- ${post.title}`,
@@ -408,7 +410,7 @@ function buildDigestEmail(input: {
     `<p>Hi ${escapeHtml(input.recipient.name)},</p>`,
     `<p>${escapeHtml(input.settings.name)} published ${input.posts.length} new ${
       input.posts.length === 1 ? "post" : "posts"
-    } in the last ${digestWindowDays} days.</p>`,
+    } in the last ${weeklyBlogUpdateWindowDays} days.</p>`,
     "<ul>",
     ...input.posts.map(
       (post) =>

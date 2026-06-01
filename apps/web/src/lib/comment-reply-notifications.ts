@@ -201,7 +201,6 @@ async function reserveCommentReplyDelivery(input: {
   await getCmsDb().insert(cmsSchema.emailNotificationDeliveries).values({
     id,
     userId: input.userId,
-    postId: null,
     commentId: input.commentId,
     notificationType: "comment_reply",
     subject: input.subject,

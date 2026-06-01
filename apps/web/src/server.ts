@@ -1,6 +1,6 @@
 import handler from "@tanstack/react-start/server-entry";
 
-import { sendDueWeeklyBlogDigest } from "#/lib/email-notifications";
+import { sendDueWeeklyBlogUpdates } from "#/lib/email-notifications";
 import { paraglideMiddleware } from "#/paraglide/server.js";
 
 type WorkerExecutionContext = {
@@ -46,7 +46,7 @@ export default {
     );
   },
   scheduled(_event: ScheduledEvent, _env: CloudflareBindings, ctx: WorkerExecutionContext) {
-    ctx.waitUntil(sendDueWeeklyBlogDigest().then(() => undefined));
+    ctx.waitUntil(sendDueWeeklyBlogUpdates().then(() => undefined));
   },
 };
 

@@ -197,10 +197,9 @@ export const emailNotificationDeliveries = sqliteTable(
     userId: text("user_id")
       .notNull()
       .references(() => authUser.id, { onDelete: "cascade" }),
-    postId: text("post_id").references(() => posts.id, { onDelete: "cascade" }),
     commentId: text("comment_id").references(() => comments.id, { onDelete: "cascade" }),
     notificationType: text("notification_type", {
-      enum: ["biweekly_digest", "manual_broadcast", "comment_reply"],
+      enum: ["weekly_blog_updates", "manual_broadcast", "comment_reply"],
     }).notNull(),
     subject: text("subject").notNull(),
     status: text("status", { enum: ["pending", "sent", "failed"] })
@@ -212,11 +211,6 @@ export const emailNotificationDeliveries = sqliteTable(
     sentAt: text("sent_at"),
   },
   (table) => [
-    uniqueIndex("email_delivery_post_user_type_idx").on(
-      table.userId,
-      table.postId,
-      table.notificationType,
-    ),
     uniqueIndex("email_delivery_comment_user_type_idx").on(
       table.userId,
       table.commentId,
@@ -227,8 +221,8 @@ export const emailNotificationDeliveries = sqliteTable(
   ],
 );
 
-export const emailDigestRuns = sqliteTable(
-  "email_digest_runs",
+export const weeklyBlogUpdateRuns = sqliteTable(
+  "weekly_blog_update_runs",
   {
     id: text("id").primaryKey(),
     periodStart: text("period_start").notNull(),
@@ -240,7 +234,7 @@ export const emailDigestRuns = sqliteTable(
     createdAt: text("created_at").notNull(),
     completedAt: text("completed_at"),
   },
-  (table) => [index("email_digest_period_idx").on(table.periodEnd)],
+  (table) => [index("weekly_blog_update_period_idx").on(table.periodEnd)],
 );
 
 export const emailBroadcasts = sqliteTable(

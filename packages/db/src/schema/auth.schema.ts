@@ -15,7 +15,7 @@ export const user = sqliteTable("user", {
     .notNull(),
   commentStatusUpdatedAt: text("comment_status_updated_at"),
   emailPreference: text("email_preference", {
-    enum: ["none", "biweekly_digest"],
+    enum: ["none", "weekly_blog_updates"],
   })
     .default("none")
     .notNull(),

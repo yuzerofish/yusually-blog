@@ -279,7 +279,7 @@ export function CommentForm({
                   id="comment-auth-email-preference"
                   type="checkbox"
                   name="emailPreference"
-                  value="biweekly_digest"
+                  value="weekly_blog_updates"
                   className="mt-0.5 size-4 rounded border-input accent-primary"
                 />
                 <label htmlFor="comment-auth-email-preference" className="cursor-pointer">
@@ -473,7 +473,7 @@ function getCommentEmailPreferenceCopy(locale: ReturnType<typeof getCurrentLocal
       description: "选择这个账号是否接收每周博客更新。",
       options: [
         { label: "不订阅", value: "none" },
-        { label: "每周更新", value: "biweekly_digest" },
+        { label: "每周更新", value: "weekly_blog_updates" },
       ] satisfies Array<{ label: string; value: EmailPreference }>,
       saved: "邮件偏好已保存",
       title: "博客更新邮件",
@@ -487,7 +487,7 @@ function getCommentEmailPreferenceCopy(locale: ReturnType<typeof getCurrentLocal
     description: "Choose whether this account receives weekly blog updates.",
     options: [
       { label: "No email", value: "none" },
-      { label: "Weekly", value: "biweekly_digest" },
+      { label: "Weekly", value: "weekly_blog_updates" },
     ] satisfies Array<{ label: string; value: EmailPreference }>,
     saved: "Email preference saved",
     title: "Blog update emails",

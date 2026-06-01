@@ -13,10 +13,7 @@ import { env } from "cloudflare:workers";
 import { desc, eq } from "drizzle-orm";
 
 import { getCmsDb } from "./cms-db";
-import {
-  isEmailPreference as isSupportedEmailPreference,
-  normalizeEmailPreference,
-} from "./email-preferences";
+import { isEmailPreference as isSupportedEmailPreference } from "./email-preferences";
 
 type AuthUserRow = typeof authUserTable.$inferSelect;
 
@@ -211,7 +208,7 @@ function toCmsUser(
     image: user.image,
     commentStatus: user.commentStatus,
     commentStatusUpdatedAt: user.commentStatusUpdatedAt,
-    emailPreference: normalizeEmailPreference(user.emailPreference),
+    emailPreference: user.emailPreference,
     emailPreferenceUpdatedAt: user.emailPreferenceUpdatedAt,
     marketingOptOut: user.marketingOptOut,
     commentReplyNotificationsEnabled: user.commentReplyNotificationsEnabled,

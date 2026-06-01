@@ -198,7 +198,7 @@ describe("AccountEmailPreferencesPatchSchema", () => {
 
   it("accepts blog email and announcement preference updates", () => {
     const result = AccountEmailPreferencesPatchSchema.safeParse({
-      emailPreference: "biweekly_digest",
+      emailPreference: "weekly_blog_updates",
       marketingOptOut: true,
     });
     expect(result.success).toBe(true);

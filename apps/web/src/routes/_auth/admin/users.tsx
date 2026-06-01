@@ -405,7 +405,7 @@ function AdminUsersPage() {
                       className={adminSelectClassName}
                     >
                       <option value="none">{copy.emailNone}</option>
-                      <option value="biweekly_digest">{copy.emailDigest}</option>
+                      <option value="weekly_blog_updates">{copy.emailWeeklyUpdates}</option>
                     </select>
                   </div>
                 </div>
@@ -566,8 +566,8 @@ function commentAccessLabel(status: CommentUserStatus) {
 }
 
 function emailPreferenceLabel(emailPreference: EmailPreference, copy: UsersActionCopy) {
-  if (emailPreference === "biweekly_digest") {
-    return copy.emailDigest;
+  if (emailPreference === "weekly_blog_updates") {
+    return copy.emailWeeklyUpdates;
   }
 
   return copy.emailNone;
@@ -624,12 +624,12 @@ function getUsersActionCopy(locale: "en" | "zh") {
       commentHistory: "按发布时间倒序显示",
       currentAccount: "当前账号",
       currentAdminRoleLocked: "不能在这里修改当前登录管理员的角色。",
-      emailDigest: "每周更新",
       emailNone: "不接收博客邮件",
       emailSubscribers: "邮件订阅",
       emailUpdates: "博客更新邮件",
+      emailWeeklyUpdates: "每周更新",
       emailUpdateSuccess: (name: string, emailPreference: EmailPreference) => {
-        const label = emailPreference === "biweekly_digest" ? "每周更新" : "不接收博客邮件";
+        const label = emailPreference === "weekly_blog_updates" ? "每周更新" : "不接收博客邮件";
 
         return `“${name}”已更新为${label}`;
       },
@@ -655,12 +655,12 @@ function getUsersActionCopy(locale: "en" | "zh") {
     commentHistory: "Newest first",
     currentAccount: "You",
     currentAdminRoleLocked: "The signed-in admin role cannot be changed here.",
-    emailDigest: "Weekly updates",
     emailNone: "No blog emails",
     emailSubscribers: "Email subscribers",
     emailUpdates: "Blog update emails",
+    emailWeeklyUpdates: "Weekly updates",
     emailUpdateSuccess: (name: string, emailPreference: EmailPreference) => {
-      const label = emailPreference === "biweekly_digest" ? "weekly updates" : "no blog emails";
+      const label = emailPreference === "weekly_blog_updates" ? "weekly updates" : "no blog emails";
 
       return `"${name}" email updates set to ${label}`;
     },
