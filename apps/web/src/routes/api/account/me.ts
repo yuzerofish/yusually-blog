@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { getAccountUserFromRequest } from "#/lib/account-auth";
+import { getAccountSessionFromRequest } from "#/lib/account-auth";
 import { jsonResponse } from "#/lib/cms-api";
 
 export const Route = createFileRoute("/api/account/me")({
@@ -8,16 +8,16 @@ export const Route = createFileRoute("/api/account/me")({
     handlers: {
       GET: async ({ request }: { request: Request }) => {
         const url = new URL(request.url);
-        const user = await getAccountUserFromRequest(request, {
+        const session = await getAccountSessionFromRequest(request, {
           disableCookieCache: url.searchParams.get("disableCookieCache") === "true",
           disableRefresh: url.searchParams.get("disableRefresh") === "true",
         });
 
-        if (!user) {
-          return jsonResponse({ data: null }, { status: 401 });
+        if (!session.user) {
+          return jsonResponse({ data: null }, { headers: session.headers, status: 401 });
         }
 
-        return jsonResponse({ data: user });
+        return jsonResponse({ data: session.user }, { headers: session.headers });
       },
     },
   },

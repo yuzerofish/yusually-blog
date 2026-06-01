@@ -142,11 +142,33 @@ function resolveSecret(secret: string | undefined, baseURL: string | undefined) 
 }
 
 function getTrustedOrigins(baseURL: string | undefined) {
-  if (!isLocalBaseURL(baseURL)) {
+  const origin = getBaseOrigin(baseURL);
+
+  if (!origin) {
     return undefined;
   }
 
-  return ["http://localhost:*", "http://127.0.0.1:*", "http://[::1]:*"];
+  const origins = new Set([origin]);
+
+  if (isLocalBaseURL(baseURL)) {
+    origins.add("http://localhost:*");
+    origins.add("http://127.0.0.1:*");
+    origins.add("http://[::1]:*");
+  }
+
+  return [...origins];
+}
+
+function getBaseOrigin(baseURL: string | undefined) {
+  if (!baseURL) {
+    return undefined;
+  }
+
+  try {
+    return new URL(baseURL).origin;
+  } catch {
+    return undefined;
+  }
 }
 
 function isLocalBaseURL(baseURL: string | undefined) {

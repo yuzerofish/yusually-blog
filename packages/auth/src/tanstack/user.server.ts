@@ -14,6 +14,14 @@ export async function _getUser(_query?: {
   disableCookieCache?: boolean;
   disableRefresh?: boolean;
 }) {
+  const { user } = await getUserResponse(_query);
+  return user;
+}
+
+export async function getUserResponse(_query?: {
+  disableCookieCache?: boolean;
+  disableRefresh?: boolean;
+}) {
   const request = getRequest();
   const url = new URL("/api/account/me", request.url);
   const headers = new Headers();
@@ -37,9 +45,9 @@ export async function _getUser(_query?: {
   });
 
   if (!response.ok) {
-    return null;
+    return { headers: response.headers, user: null };
   }
 
   const payload = (await response.json()) as { data?: AdminUser | null };
-  return payload.data ?? null;
+  return { headers: response.headers, user: payload.data ?? null };
 }

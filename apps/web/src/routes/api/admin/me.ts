@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { getAdminUserFromRequest, publicAdminUser } from "#/lib/admin-auth";
+import { getAdminSessionFromRequest, publicAdminUser } from "#/lib/admin-auth";
 import { jsonResponse } from "#/lib/cms-api";
 
 export const Route = createFileRoute("/api/admin/me")({
@@ -8,16 +8,16 @@ export const Route = createFileRoute("/api/admin/me")({
     handlers: {
       GET: async ({ request }: { request: Request }) => {
         const url = new URL(request.url);
-        const user = await getAdminUserFromRequest(request, {
+        const session = await getAdminSessionFromRequest(request, {
           disableCookieCache: url.searchParams.get("disableCookieCache") === "true",
           disableRefresh: url.searchParams.get("disableRefresh") === "true",
         });
 
-        if (!user) {
-          return jsonResponse({ data: null }, { status: 401 });
+        if (!session.user) {
+          return jsonResponse({ data: null }, { headers: session.headers, status: 401 });
         }
 
-        return jsonResponse({ data: publicAdminUser(user) });
+        return jsonResponse({ data: publicAdminUser(session.user) }, { headers: session.headers });
       },
     },
   },

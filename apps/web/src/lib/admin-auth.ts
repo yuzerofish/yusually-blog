@@ -12,6 +12,7 @@ import { env } from "cloudflare:workers";
 import { count, eq } from "drizzle-orm";
 
 import { auth } from "#/lib/auth";
+import { getSetCookieValues } from "#/lib/auth-helpers";
 
 async function callAuthEndpoint(path: string, body: object, request: Request) {
   const url = new URL(path, request.url);
@@ -254,12 +255,31 @@ export async function getAdminUserFromRequest(
     disableRefresh?: boolean;
   },
 ) {
+  const { user } = await getAdminSessionFromRequest(request, query);
+  return user;
+}
+
+export async function getAdminSessionFromRequest(
+  request: Request,
+  query?: {
+    disableCookieCache?: boolean;
+    disableRefresh?: boolean;
+  },
+) {
   const session = await auth.api.getSession({
     headers: request.headers,
     query: { ...query, disableCookieCache: true },
+    returnHeaders: true,
   });
+  const headers = extractSessionHeaders(session.headers);
 
-  return session?.user && isAdminUser(session.user) ? toAdminUser(session.user) : null;
+  return {
+    headers,
+    user:
+      session.response?.user && isAdminUser(session.response.user)
+        ? toAdminUser(session.response.user)
+        : null,
+  };
 }
 
 export function publicAdminUser(user: AdminUser) {
@@ -314,4 +334,14 @@ function safeRedirectPath(value: string) {
   }
 
   return value;
+}
+
+function extractSessionHeaders(source: Headers) {
+  const headers = new Headers();
+
+  for (const cookie of getSetCookieValues(source)) {
+    headers.append("set-cookie", cookie);
+  }
+
+  return headers;
 }

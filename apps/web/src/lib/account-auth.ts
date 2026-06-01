@@ -3,6 +3,7 @@ import { authErrorMessage, extractSetCookieHeaders, type CmsUser, type UserRole 
 
 import { redirectForRole } from "#/lib/account-routing";
 import { auth } from "#/lib/auth";
+import { getSetCookieValues } from "#/lib/auth-helpers";
 import { getCmsUserById } from "#/lib/cms-users";
 import { loginCommentUser, signupCommentUser } from "#/lib/comment-auth";
 
@@ -64,18 +65,31 @@ export async function getAccountUserFromRequest(
     disableRefresh?: boolean;
   },
 ) {
+  const { user } = await getAccountSessionFromRequest(request, query);
+  return user;
+}
+
+export async function getAccountSessionFromRequest(
+  request: Request,
+  query?: {
+    disableCookieCache?: boolean;
+    disableRefresh?: boolean;
+  },
+) {
   const session = await auth.api.getSession({
     headers: request.headers,
     query,
+    returnHeaders: true,
   });
+  const headers = extractSessionHeaders(session.headers);
 
-  if (!session?.user?.id) {
-    return null;
+  if (!session.response?.user?.id) {
+    return { headers, user: null };
   }
 
-  const user = await getCmsUserById(session.user.id);
+  const user = await getCmsUserById(session.response.user.id);
 
-  return user ? publicAccountUser(user) : null;
+  return { headers, user: user ? publicAccountUser(user) : null };
 }
 
 export async function loginAccount(
@@ -213,4 +227,14 @@ function safeRedirectPath(value: string) {
   }
 
   return value;
+}
+
+function extractSessionHeaders(source: Headers) {
+  const headers = new Headers();
+
+  for (const cookie of getSetCookieValues(source)) {
+    headers.append("set-cookie", cookie);
+  }
+
+  return headers;
 }

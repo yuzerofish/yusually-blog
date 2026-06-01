@@ -99,22 +99,29 @@ type SocialSignInPayload = {
 const authDb = createAuthDb(env.CMS_DB as Parameters<typeof createAuthDb>[0]);
 
 export async function getCommentUserFromRequest(request: Request) {
+  const { user } = await getCommentSessionFromRequest(request);
+  return user;
+}
+
+export async function getCommentSessionFromRequest(request: Request) {
   const session = await auth.api.getSession({
     headers: request.headers,
+    returnHeaders: true,
   });
+  const headers = extractSessionHeaders(session.headers);
 
-  if (!session?.user) {
-    return null;
+  if (!session.response?.user) {
+    return { headers, user: null };
   }
 
-  const persistedUser = await getAuthUserById(session.user.id);
+  const persistedUser = await getAuthUserById(session.response.user.id);
 
   if (!persistedUser) {
-    return null;
+    return { headers, user: null };
   }
 
   const user = await toCommentUser({
-    ...session.user,
+    ...session.response.user,
     ...persistedUser,
   });
 
@@ -123,10 +130,10 @@ export async function getCommentUserFromRequest(request: Request) {
     !persistedUser.emailVerified &&
     (await isCommentEmailVerificationRequired())
   ) {
-    return null;
+    return { headers, user: null };
   }
 
-  return user;
+  return { headers, user };
 }
 
 export async function signupCommentUser(input: CommentUserInput, request: Request) {
@@ -391,4 +398,14 @@ function safeRedirectPath(value: string) {
   }
 
   return value;
+}
+
+function extractSessionHeaders(source: Headers) {
+  const headers = new Headers();
+
+  for (const cookie of getSetCookieValues(source)) {
+    headers.append("set-cookie", cookie);
+  }
+
+  return headers;
 }

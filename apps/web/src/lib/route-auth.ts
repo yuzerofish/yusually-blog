@@ -4,11 +4,26 @@ import { createIsomorphicFn } from "@tanstack/react-start";
 export const getServerAuthUser = createIsomorphicFn()
   .client(async (): Promise<AuthQueryResult | undefined> => undefined)
   .server(async (): Promise<AuthQueryResult | null> => {
-    const [{ getRequest }, { getAccountUserFromRequest }] = await Promise.all([
+    const [
+      { getRequest, setResponseHeader },
+      { getSetCookieValues },
+      { getAccountSessionFromRequest },
+    ] = await Promise.all([
       import("@tanstack/react-start/server"),
+      import("#/lib/auth-helpers"),
       import("#/lib/account-auth"),
     ]);
-    const user = await getAccountUserFromRequest(getRequest()).catch(() => null);
+    const session = await getAccountSessionFromRequest(getRequest()).catch(() => null);
 
-    return user;
+    if (!session) {
+      return null;
+    }
+
+    const cookies = getSetCookieValues(session.headers);
+
+    if (cookies.length) {
+      setResponseHeader("Set-Cookie", cookies);
+    }
+
+    return session.user;
   });
