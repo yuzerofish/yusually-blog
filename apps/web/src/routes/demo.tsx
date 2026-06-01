@@ -1,14 +1,7 @@
 import { localizeSiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  ArrowRightIcon,
-  BrushIcon,
-  FileTextIcon,
-  LayersIcon,
-  PaletteIcon,
-  SparklesIcon,
-} from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
+import { ArrowRightIcon, FileTextIcon, LeafIcon, SearchIcon, SparklesIcon } from "lucide-react";
 
 import { SiteShell } from "#/components/site-shell";
 import { $getSiteSettingsPageData } from "#/lib/cms-server";
@@ -25,15 +18,15 @@ export const Route = createFileRoute("/demo")({
         {
           title:
             locale === "zh"
-              ? "博客风格 Demo | 01MVP Blog Starter"
-              : "Blog Style Demo | 01MVP Blog Starter",
+              ? "博客首页 Demo | 01MVP Blog Starter"
+              : "Blog Homepage Demo | 01MVP Blog Starter",
         },
         {
           name: "description",
           content:
             locale === "zh"
-              ? "查看 6 种可用于个人博客首页的视觉方向，从极简产品感到黑白个人站都可以继续改造。"
-              : "Explore six homepage directions for a personal blog, from minimal product-style layouts to monochrome personal sites.",
+              ? "六个完整的个人博客首页样例。选择一种气质，把它变成自己的长期写作空间。"
+              : "Six complete personal blog homepage examples. Choose the feeling you want your writing space to carry.",
         },
       ],
     };
@@ -41,32 +34,25 @@ export const Route = createFileRoute("/demo")({
   component: DemoBlogPage,
 });
 
+type DemoKind = "crystal" | "brutalist" | "maker" | "magazine" | "garden" | "terminal";
+
 type DemoPost = {
-  readonly title: string;
   readonly excerpt: string;
   readonly meta: string;
   readonly tag: string;
+  readonly title: string;
 };
 
-type DemoSignal = {
-  readonly label: string;
-  readonly value: string;
-};
-
-type StyleVariant = "saas" | "brutalist" | "maker" | "editorial" | "garden" | "terminal";
-
-type StylePreview = {
-  readonly id: string;
-  readonly variant: StyleVariant;
-  readonly eyebrow: string;
-  readonly name: string;
-  readonly headline: string;
-  readonly description: string;
+type DemoHome = {
   readonly author: string;
+  readonly id: string;
   readonly image: string;
-  readonly tags: readonly string[];
-  readonly stats: readonly DemoSignal[];
+  readonly kind: DemoKind;
+  readonly label: string;
+  readonly line: string;
+  readonly name: string;
   readonly posts: readonly DemoPost[];
+  readonly title: string;
 };
 
 function DemoBlogPage() {
@@ -79,12 +65,11 @@ function DemoBlogPage() {
   return (
     <SiteShell siteSettings={localizedSiteSettings}>
       <div className="bg-background">
-        <section className="border-b border-border bg-muted/35">
-          <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(320px,0.55fr)] lg:px-8 lg:py-16">
-            <div className="flex min-h-[34rem] flex-col justify-between">
+        <section className="border-b border-border bg-background">
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20">
+            <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(320px,0.46fr)] lg:items-end">
               <div>
-                <p className="inline-flex items-center gap-2 text-sm font-semibold tracking-wide text-link uppercase">
-                  <PaletteIcon className="size-4" />
+                <p className="text-sm font-semibold tracking-wide text-link uppercase">
                   {copy.eyebrow}
                 </p>
                 <h1 className="mt-5 max-w-4xl text-5xl leading-[0.96] font-semibold text-balance sm:text-6xl lg:text-7xl">
@@ -93,347 +78,321 @@ function DemoBlogPage() {
                 <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
                   {copy.description}
                 </p>
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <Button
-                    render={<a href="#style-gallery" aria-label={copy.primaryAction} />}
-                    nativeButton={false}
-                    size="lg"
-                  >
-                    <BrushIcon />
-                    {copy.primaryAction}
-                  </Button>
-                  <Button
-                    render={<a href={docsHref} aria-label={copy.docsAction} />}
-                    variant="outline"
-                    nativeButton={false}
-                    size="lg"
-                  >
-                    <FileTextIcon />
-                    {copy.docsAction}
-                  </Button>
+              </div>
+
+              <nav className="border border-border bg-muted/30 p-4" aria-label={copy.choiceTitle}>
+                <p className="text-sm font-semibold">{copy.choiceTitle}</p>
+                <div className="mt-4 grid gap-2">
+                  {copy.styles.map((style, index) => (
+                    <a
+                      key={style.id}
+                      href={`#${style.id}`}
+                      className="grid min-h-12 grid-cols-[2rem_minmax(0,1fr)] items-center gap-3 border border-border bg-background px-3 text-sm transition hover:border-foreground"
+                    >
+                      <span className="text-xs font-semibold text-muted-foreground">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <span className="truncate font-semibold">{style.name}</span>
+                    </a>
+                  ))}
                 </div>
-              </div>
-
-              <div className="mt-10 grid gap-3 border-y border-border py-5 sm:grid-cols-3">
-                {copy.signals.map((signal) => (
-                  <div key={signal.label}>
-                    <p className="text-2xl font-semibold">{signal.value}</p>
-                    <p className="mt-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                      {signal.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
+              </nav>
             </div>
 
-            <HeroStyleBoard label={copy.boardLabel} styles={copy.styles} />
-          </div>
-        </section>
-
-        <section id="style-gallery" className="border-b border-border">
-          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-            <div className="grid gap-5 lg:grid-cols-[0.38fr_0.62fr] lg:items-end">
-              <div>
-                <p className="text-sm font-semibold text-link uppercase">{copy.galleryEyebrow}</p>
-                <h2 className="mt-3 text-3xl leading-tight font-semibold text-balance">
-                  {copy.galleryTitle}
-                </h2>
-              </div>
-              <p className="max-w-2xl text-sm leading-6 text-muted-foreground lg:justify-self-end">
-                {copy.galleryDescription}
-              </p>
-            </div>
-
-            <div className="mt-8 grid gap-5 xl:grid-cols-2">
-              {copy.styles.map((style, index) => (
-                <StylePreviewCard key={style.id} index={index} style={style} />
-              ))}
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Button
+                render={<a href="#crystal-home" aria-label={copy.primaryAction} />}
+                nativeButton={false}
+                size="lg"
+              >
+                <SparklesIcon />
+                {copy.primaryAction}
+              </Button>
+              <Button
+                render={<a href={docsHref} aria-label={copy.docsAction} />}
+                variant="outline"
+                nativeButton={false}
+                size="lg"
+              >
+                <FileTextIcon />
+                {copy.docsAction}
+              </Button>
             </div>
           </div>
         </section>
 
-        <section className="bg-muted/35">
-          <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[minmax(0,0.72fr)_minmax(320px,0.42fr)] lg:px-8 lg:py-16">
-            <div className="border-y border-border">
-              {copy.customization.map((item, index) => (
-                <div
-                  key={item.title}
-                  className="grid gap-4 border-b border-border py-5 last:border-b-0 sm:grid-cols-[72px_minmax(0,1fr)]"
-                >
-                  <span className="text-sm font-semibold text-muted-foreground">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <div>
-                    <h3 className="text-xl font-semibold">{item.title}</h3>
-                    <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                      {item.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <aside className="flex flex-col justify-between border border-border bg-background p-5">
-              <div>
-                <p className="inline-flex items-center gap-2 text-sm font-semibold text-link uppercase">
-                  <SparklesIcon className="size-4" />
-                  {copy.sidebarEyebrow}
-                </p>
-                <h2 className="mt-3 text-3xl leading-tight font-semibold text-balance">
-                  {copy.sidebarTitle}
-                </h2>
-                <p className="mt-4 text-sm leading-6 text-muted-foreground">{copy.sidebarBody}</p>
-              </div>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Button
-                  render={<a href={docsHref} aria-label={copy.docsAction} />}
-                  nativeButton={false}
-                >
-                  <FileTextIcon />
-                  {copy.docsAction}
-                </Button>
-                <Button
-                  render={<Link to="/blog" search={{ q: "", tag: "", series: "", page: 1 }} />}
-                  variant="outline"
-                  nativeButton={false}
-                >
-                  {copy.articlesAction}
-                  <ArrowRightIcon />
-                </Button>
-              </div>
-            </aside>
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="space-y-6">
+            {copy.styles.map((style) => (
+              <HomepageScene
+                key={style.id}
+                chooseText={copy.chooseText}
+                docsHref={docsHref}
+                style={style}
+              />
+            ))}
           </div>
-        </section>
+        </div>
       </div>
     </SiteShell>
   );
 }
 
-function HeroStyleBoard({
-  label,
-  styles,
-}: {
-  readonly label: string;
-  readonly styles: readonly StylePreview[];
-}) {
-  return (
-    <aside className="flex min-h-[34rem] flex-col justify-between border border-border bg-background p-4">
-      <div>
-        <div className="flex items-center justify-between gap-3 border-b border-border pb-4">
-          <p className="text-sm font-semibold">{label}</p>
-          <LayersIcon className="size-5 text-muted-foreground" />
-        </div>
-        <div className="mt-4 grid gap-2">
-          {styles.map((style, index) => (
-            <a
-              key={style.id}
-              href={`#${style.id}`}
-              className="grid min-h-16 grid-cols-[40px_minmax(0,1fr)] items-center gap-3 border border-border bg-muted/35 px-3 transition hover:border-foreground hover:bg-background"
-            >
-              <span className="text-xs font-semibold text-muted-foreground">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <span className="min-w-0">
-                <span className="block truncate text-sm font-semibold">{style.name}</span>
-                <span className="mt-1 block truncate text-xs text-muted-foreground">
-                  {style.eyebrow}
-                </span>
-              </span>
-            </a>
-          ))}
-        </div>
-      </div>
-      <div className="mt-5 border-t border-border pt-4">
-        <div className="grid grid-cols-6 gap-1">
-          {styles.map((style) => (
-            <span
-              key={style.id}
-              className={styleSwatchClassName[style.variant]}
-              aria-label={style.name}
-            />
-          ))}
-        </div>
-      </div>
-    </aside>
-  );
-}
-
-function StylePreviewCard({
-  index,
+function HomepageScene({
+  chooseText,
+  docsHref,
   style,
 }: {
-  readonly index: number;
-  readonly style: StylePreview;
+  readonly chooseText: string;
+  readonly docsHref: string;
+  readonly style: DemoHome;
 }) {
-  return (
-    <article
-      id={style.id}
-      className="scroll-mt-24 overflow-hidden border border-border bg-background"
-    >
-      <div className="grid gap-5 p-5 sm:grid-cols-[minmax(0,1fr)_minmax(190px,0.68fr)]">
-        <div>
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-xs font-semibold tracking-wide text-link uppercase">
-              {String(index + 1).padStart(2, "0")} / {style.eyebrow}
-            </p>
-            <span className={styleSwatchClassName[style.variant]} />
-          </div>
-          <h3 className="mt-4 text-3xl leading-tight font-semibold text-balance">{style.name}</h3>
-          <p className="mt-4 text-sm leading-6 text-muted-foreground">{style.description}</p>
-        </div>
-
-        <div className="sm:border-l sm:border-border sm:pl-5">
-          <div className="flex flex-wrap gap-2">
-            {style.tags.map((tag) => (
-              <span key={tag} className="border border-border bg-muted/40 px-2.5 py-1 text-xs">
-                {tag}
-              </span>
-            ))}
-          </div>
-          <div className="mt-5 grid grid-cols-3 gap-3 border-t border-border pt-4">
-            {style.stats.map((stat) => (
-              <div key={stat.label}>
-                <p className="text-lg font-semibold">{stat.value}</p>
-                <p className="mt-1 text-[11px] leading-tight text-muted-foreground uppercase">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <StyleMockup style={style} />
-    </article>
-  );
-}
-
-function StyleMockup({ style }: { readonly style: StylePreview }) {
-  switch (style.variant) {
-    case "saas":
-      return <SaasMockup style={style} />;
+  switch (style.kind) {
+    case "crystal":
+      return <CrystalHome chooseText={chooseText} docsHref={docsHref} style={style} />;
     case "brutalist":
-      return <BrutalistMockup style={style} />;
+      return <BrutalistHome chooseText={chooseText} docsHref={docsHref} style={style} />;
     case "maker":
-      return <MakerMockup style={style} />;
-    case "editorial":
-      return <EditorialMockup style={style} />;
+      return <MakerHome chooseText={chooseText} docsHref={docsHref} style={style} />;
+    case "magazine":
+      return <MagazineHome chooseText={chooseText} docsHref={docsHref} style={style} />;
     case "garden":
-      return <GardenMockup style={style} />;
+      return <GardenHome chooseText={chooseText} docsHref={docsHref} style={style} />;
     case "terminal":
-      return <TerminalMockup style={style} />;
+      return <TerminalHome chooseText={chooseText} docsHref={docsHref} style={style} />;
   }
 }
 
-function SaasMockup({ style }: { readonly style: StylePreview }) {
+function ChooseLink({
+  className,
+  docsHref,
+  text,
+}: {
+  readonly className?: string;
+  readonly docsHref: string;
+  readonly text: string;
+}) {
   return (
-    <div className="min-h-[28rem] bg-[#f4f6fb] p-3 text-slate-950">
-      <div className="grid h-full gap-3 md:grid-cols-[112px_minmax(0,1fr)]">
-        <aside className="border border-slate-200 bg-white/90 p-3 shadow-sm">
-          <div className="h-2.5 w-16 rounded-full bg-slate-950" />
-          <div className="mt-5 space-y-2">
-            {["Home", "Notes", "Ideas", "Archive"].map((item, index) => (
-              <div
+    <a
+      href={docsHref}
+      className={
+        className ??
+        "inline-flex min-h-11 items-center gap-2 border border-current px-4 text-sm font-semibold transition hover:opacity-75"
+      }
+    >
+      {text}
+      <ArrowRightIcon className="size-4" />
+    </a>
+  );
+}
+
+function CrystalHome({
+  chooseText,
+  docsHref,
+  style,
+}: {
+  readonly chooseText: string;
+  readonly docsHref: string;
+  readonly style: DemoHome;
+}) {
+  return (
+    <section
+      id={style.id}
+      className="scroll-mt-24 overflow-hidden border border-[#d6deeb] bg-[#f4f6fb] text-[#111827]"
+    >
+      <div className="grid min-h-[760px] lg:grid-cols-[220px_minmax(0,1fr)]">
+        <aside className="border-b border-[#dde5f0] bg-white/80 p-5 shadow-[0_16px_50px_rgba(31,41,55,0.08)] backdrop-blur lg:border-r lg:border-b-0">
+          <div className="flex items-center gap-2">
+            <span className="size-8 rounded-lg bg-[#111827]" />
+            <span className="font-semibold tracking-tight">{style.author}</span>
+          </div>
+          <nav className="mt-10 grid gap-1 text-sm text-[#6b7280]">
+            {["Home", "Letters", "Notes", "Archive"].map((item, index) => (
+              <span
                 key={item}
                 className={
                   index === 0
-                    ? "rounded-md bg-blue-50 px-2 py-2 text-xs font-semibold text-blue-700"
-                    : "rounded-md px-2 py-2 text-xs text-slate-500"
+                    ? "rounded-lg bg-[#eaf2ff] px-3 py-2 font-semibold text-[#2563eb]"
+                    : "rounded-lg px-3 py-2"
                 }
               >
                 {index === 0 ? "✨ " : ""}
                 {item}
-              </div>
-            ))}
-          </div>
-        </aside>
-        <div className="space-y-3">
-          <div className="border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="flex items-center justify-between gap-3">
-              <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                {style.author}
               </span>
-              <span className="text-xs text-slate-400">📌 weekly memo</span>
-            </div>
-            <h4 className="mt-6 text-2xl leading-tight font-semibold tracking-tight">
-              {style.headline}
-            </h4>
-            <p className="mt-3 max-w-sm text-sm leading-6 text-slate-500">
-              {style.posts[0].excerpt}
-            </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-[1fr_140px]">
-            <div className="space-y-2">
-              {style.posts.map((post) => (
-                <div key={post.title} className="border border-slate-200 bg-white p-3 shadow-sm">
-                  <p className="text-xs font-semibold text-blue-700">{post.tag}</p>
-                  <p className="mt-2 text-sm leading-tight font-semibold">{post.title}</p>
-                </div>
-              ))}
-            </div>
-            <img
-              src={style.image}
-              alt=""
-              loading="lazy"
-              className="hidden h-full min-h-40 w-full object-cover sm:block"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function BrutalistMockup({ style }: { readonly style: StylePreview }) {
-  return (
-    <div className="min-h-[28rem] bg-[#f0e733] p-4 text-black">
-      <div className="grid min-h-full border-4 border-black bg-white shadow-[8px_8px_0_#000]">
-        <div className="grid border-b-4 border-black sm:grid-cols-[1fr_120px]">
-          <div className="p-4">
-            <p className="font-mono text-xs font-black uppercase">{style.author}</p>
-            <h4 className="mt-5 text-4xl leading-[0.9] font-black uppercase">{style.headline}</h4>
-          </div>
-          <div className="flex items-center justify-center border-t-4 border-black bg-[#ff4f3a] p-4 font-mono text-xl font-black uppercase sm:border-t-0 sm:border-l-4">
-            New
-          </div>
-        </div>
-        <div className="grid gap-0 sm:grid-cols-[0.9fr_1fr]">
-          <img src={style.image} alt="" loading="lazy" className="h-full min-h-48 object-cover" />
-          <div className="divide-y-4 divide-black border-t-4 border-black sm:border-t-0 sm:border-l-4">
-            {style.posts.map((post) => (
-              <div key={post.title} className="p-4">
-                <p className="font-mono text-[11px] font-black uppercase">{post.meta}</p>
-                <p className="mt-2 text-xl leading-tight font-black">{post.title}</p>
-              </div>
             ))}
-          </div>
+          </nav>
+          <p className="mt-10 rounded-lg border border-[#dde5f0] bg-[#f8fafc] p-3 text-xs leading-5 text-[#64748b]">
+            {style.line}
+          </p>
+        </aside>
+
+        <div className="p-4 sm:p-6 lg:p-8">
+          <header className="flex items-center justify-between gap-3 rounded-lg border border-[#dbe4f0] bg-white/90 px-4 py-3 shadow-sm">
+            <span className="flex items-center gap-2 text-sm text-[#64748b]">
+              <SearchIcon className="size-4" />
+              Search the archive
+            </span>
+            <ChooseLink
+              docsHref={docsHref}
+              text={chooseText}
+              className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-[#2563eb] px-4 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(37,99,235,0.22)] transition hover:bg-[#1d4ed8]"
+            />
+          </header>
+
+          <main className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_280px]">
+            <article className="rounded-lg border border-[#dbe4f0] bg-white p-6 shadow-sm">
+              <p className="inline-flex rounded-full bg-[#eaf2ff] px-3 py-1 text-xs font-semibold text-[#2563eb]">
+                {style.label}
+              </p>
+              <h2 className="mt-7 max-w-2xl text-5xl leading-[0.96] font-semibold tracking-tight text-balance">
+                {style.title}
+              </h2>
+              <p className="mt-5 max-w-xl text-base leading-7 text-[#64748b]">
+                {style.posts[0]?.excerpt}
+              </p>
+              <div className="mt-8 grid gap-3 sm:grid-cols-3">
+                {style.posts.map((post) => (
+                  <article
+                    key={post.title}
+                    className="rounded-lg border border-[#e2e8f0] bg-[#f8fafc] p-4 transition hover:-translate-y-0.5 hover:bg-white"
+                  >
+                    <p className="text-xs font-semibold text-[#2563eb]">{post.tag}</p>
+                    <h3 className="mt-3 text-lg leading-tight font-semibold">{post.title}</h3>
+                    <p className="mt-4 text-xs text-[#94a3b8]">{post.meta}</p>
+                  </article>
+                ))}
+              </div>
+            </article>
+
+            <aside className="grid gap-5">
+              <img
+                src={style.image}
+                alt=""
+                loading="lazy"
+                className="h-64 w-full rounded-lg border border-[#dbe4f0] object-cover shadow-sm"
+              />
+              <div className="rounded-lg border border-[#dbe4f0] bg-white p-5 shadow-sm">
+                <p className="text-xs font-semibold text-[#64748b] uppercase">Now reading</p>
+                <p className="mt-3 text-2xl leading-tight font-semibold">
+                  A quieter front door for a louder life.
+                </p>
+              </div>
+            </aside>
+          </main>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
-function MakerMockup({ style }: { readonly style: StylePreview }) {
+function BrutalistHome({
+  chooseText,
+  docsHref,
+  style,
+}: {
+  readonly chooseText: string;
+  readonly docsHref: string;
+  readonly style: DemoHome;
+}) {
   return (
-    <div className="min-h-[28rem] bg-white p-5 text-black">
-      <div className="mx-auto max-w-xl">
-        <header className="flex items-center justify-between gap-4 border-b border-black/20 pb-3">
-          <p className="text-lg font-black tracking-tight">{style.author}</p>
-          <nav className="flex gap-4 text-xs font-medium text-black/60">
-            <span>Blog</span>
-            <span>Notes</span>
-            <span>Projects</span>
+    <section
+      id={style.id}
+      className="scroll-mt-24 border-4 border-black bg-[#f2ea27] p-3 text-black"
+    >
+      <div className="min-h-[760px] border-4 border-black bg-[#fbfaf2] shadow-[10px_10px_0_#000]">
+        <header className="grid border-b-4 border-black md:grid-cols-[1fr_auto]">
+          <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 px-5 py-4 font-mono text-xs font-black uppercase">
+            <span>{style.author}</span>
+            <span>Manifesto</span>
+            <span>Field Notes</span>
+            <span>Archive</span>
+          </nav>
+          <ChooseLink
+            docsHref={docsHref}
+            text={chooseText}
+            className="inline-flex min-h-12 items-center justify-center gap-2 border-t-4 border-black bg-[#ff4b39] px-5 font-mono text-sm font-black uppercase md:border-t-0 md:border-l-4"
+          />
+        </header>
+
+        <main className="grid min-h-[520px] lg:grid-cols-[1fr_0.72fr]">
+          <div className="p-5 lg:p-8">
+            <p className="inline-block border-4 border-black bg-white px-3 py-2 font-mono text-xs font-black uppercase">
+              {style.label}
+            </p>
+            <h2 className="mt-8 max-w-3xl text-6xl leading-[0.86] font-black tracking-tight text-balance uppercase lg:text-8xl">
+              {style.title}
+            </h2>
+            <p className="mt-7 max-w-xl text-xl leading-8 font-bold">{style.line}</p>
+          </div>
+          <img
+            src={style.image}
+            alt=""
+            loading="lazy"
+            className="h-72 w-full border-t-4 border-black object-cover contrast-125 grayscale lg:h-full lg:border-t-0 lg:border-l-4"
+          />
+        </main>
+
+        <div className="grid border-t-4 border-black md:grid-cols-3">
+          {style.posts.map((post) => (
+            <article
+              key={post.title}
+              className="min-h-48 border-b-4 border-black p-5 last:border-b-0 md:border-r-4 md:border-b-0 md:last:border-r-0"
+            >
+              <p className="font-mono text-xs font-black uppercase">{post.meta}</p>
+              <h3 className="mt-5 text-3xl leading-none font-black">{post.title}</h3>
+              <p className="mt-5 text-sm leading-6 font-semibold">{post.excerpt}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MakerHome({
+  chooseText,
+  docsHref,
+  style,
+}: {
+  readonly chooseText: string;
+  readonly docsHref: string;
+  readonly style: DemoHome;
+}) {
+  return (
+    <section
+      id={style.id}
+      className="scroll-mt-24 border border-black/15 bg-white px-5 py-6 text-black sm:px-8 lg:px-12 lg:py-10"
+    >
+      <div className="mx-auto min-h-[760px] max-w-5xl">
+        <header className="flex flex-wrap items-center justify-between gap-4 border-b border-black/20 pb-4">
+          <p className="text-xl font-black tracking-tight">{style.author}</p>
+          <nav className="flex flex-wrap gap-5 text-sm font-medium text-black/60">
+            <span>随笔</span>
+            <span>碎碎念</span>
+            <span>作品集</span>
+            <span>关于我</span>
           </nav>
         </header>
-        <div className="grid gap-5 border-b border-black/20 py-6 sm:grid-cols-[1fr_120px]">
+
+        <main className="grid gap-9 border-b border-black/20 py-10 lg:grid-cols-[minmax(0,1fr)_220px]">
           <div>
-            <p className="inline-flex border border-black/20 bg-black px-2 py-1 font-mono text-[11px] font-semibold tracking-wide text-white uppercase">
-              Personal site
+            <p className="inline-flex border border-black/20 bg-black px-3 py-1 text-xs font-semibold tracking-[0.14em] text-white uppercase">
+              {style.label}
             </p>
-            <h4 className="mt-5 text-4xl leading-none font-bold tracking-tight">
-              {style.headline}
-            </h4>
-            <p className="mt-4 text-sm leading-6 text-black/62">{style.posts[0].excerpt}</p>
+            <h2 className="mt-6 max-w-3xl text-5xl leading-[0.95] font-bold tracking-tight text-balance sm:text-6xl">
+              {style.title}
+            </h2>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-black/62">{style.line}</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <ChooseLink docsHref={docsHref} text={chooseText} />
+              <a
+                href="/blog"
+                className="inline-flex min-h-11 items-center gap-2 border border-black/20 px-4 text-sm font-semibold transition hover:bg-black hover:text-white"
+              >
+                全部文章
+                <ArrowRightIcon className="size-4" />
+              </a>
+            </div>
           </div>
           <img
             src={style.image}
@@ -441,130 +400,232 @@ function MakerMockup({ style }: { readonly style: StylePreview }) {
             loading="lazy"
             className="aspect-square w-full border border-black/20 object-cover grayscale"
           />
+        </main>
+
+        <div className="grid gap-8 py-8 lg:grid-cols-[1fr_0.8fr]">
+          <section className="divide-y divide-black/15 border-y border-black/20">
+            {style.posts.map((post) => (
+              <article key={post.title} className="grid gap-3 py-5 sm:grid-cols-[1fr_110px]">
+                <div>
+                  <p className="text-xs font-semibold text-black/48">{post.tag}</p>
+                  <h3 className="mt-2 text-2xl leading-tight font-bold">{post.title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-black/58">{post.excerpt}</p>
+                </div>
+                <p className="font-mono text-xs text-black/45 sm:text-right">{post.meta}</p>
+              </article>
+            ))}
+          </section>
+          <aside className="border border-black/20 p-5">
+            <p className="font-mono text-xs font-semibold tracking-[0.14em] text-black/48 uppercase">
+              Home base
+            </p>
+            <p className="mt-5 text-2xl leading-tight font-bold">
+              A clean page for writing, projects, and the few links that matter.
+            </p>
+          </aside>
         </div>
-        <div className="divide-y divide-black/15">
-          {style.posts.map((post) => (
-            <div key={post.title} className="grid gap-3 py-4 sm:grid-cols-[1fr_96px]">
-              <div>
-                <p className="text-xs font-semibold text-black/50">{post.tag}</p>
-                <p className="mt-1 text-lg leading-tight font-bold">{post.title}</p>
-              </div>
-              <p className="font-mono text-xs text-black/50 sm:text-right">{post.meta}</p>
+      </div>
+    </section>
+  );
+}
+
+function MagazineHome({
+  chooseText,
+  docsHref,
+  style,
+}: {
+  readonly chooseText: string;
+  readonly docsHref: string;
+  readonly style: DemoHome;
+}) {
+  return (
+    <section
+      id={style.id}
+      className="scroll-mt-24 bg-[#f5ecd9] px-4 py-5 font-serif text-[#24160c] sm:px-8 lg:px-10"
+    >
+      <div className="min-h-[760px] border-y border-[#24160c]">
+        <header className="grid gap-3 border-b border-[#24160c] py-4 text-center">
+          <p className="text-xs tracking-[0.36em] uppercase">{style.author}</p>
+          <h2 className="text-5xl leading-none font-bold tracking-tight sm:text-7xl">
+            {style.name}
+          </h2>
+          <p className="text-sm tracking-[0.18em] uppercase">{style.label}</p>
+        </header>
+
+        <main className="grid gap-8 py-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <article>
+            <p className="text-xs font-bold tracking-[0.2em] uppercase">{style.posts[0]?.meta}</p>
+            <h3 className="mt-5 max-w-4xl text-6xl leading-[0.88] font-bold text-balance lg:text-8xl">
+              {style.title}
+            </h3>
+            <p className="mt-6 max-w-2xl text-xl leading-9">{style.line}</p>
+            <div className="mt-8">
+              <ChooseLink docsHref={docsHref} text={chooseText} />
             </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function EditorialMockup({ style }: { readonly style: StylePreview }) {
-  return (
-    <div className="min-h-[28rem] bg-[#f5ecd9] p-5 font-serif text-[#21170e]">
-      <div className="border-y border-[#21170e] py-3 text-center text-xs tracking-[0.32em] uppercase">
-        {style.author}
-      </div>
-      <div className="grid gap-5 py-6 sm:grid-cols-[1fr_180px]">
-        <div>
-          <p className="text-xs font-bold tracking-[0.18em] uppercase">{style.eyebrow}</p>
-          <h4 className="mt-4 text-5xl leading-[0.88] font-bold">{style.headline}</h4>
-        </div>
-        <img
-          src={style.image}
-          alt=""
-          loading="lazy"
-          className="aspect-[4/5] w-full object-cover sepia"
-        />
-      </div>
-      <div className="grid gap-4 border-t border-[#21170e] pt-4 sm:grid-cols-3">
-        {style.posts.map((post) => (
-          <div key={post.title}>
-            <p className="text-[11px] tracking-[0.16em] uppercase">{post.meta}</p>
-            <p className="mt-2 text-lg leading-tight font-bold">{post.title}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function GardenMockup({ style }: { readonly style: StylePreview }) {
-  return (
-    <div className="min-h-[28rem] bg-[#e8f0df] p-5 text-[#172416]">
-      <div className="grid gap-5 sm:grid-cols-[160px_1fr]">
-        <img
-          src={style.image}
-          alt=""
-          loading="lazy"
-          className="aspect-[3/4] w-full rounded-lg object-cover"
-        />
-        <div>
-          <p className="text-xs font-bold tracking-[0.18em] text-[#5f7b49] uppercase">
-            {style.author}
-          </p>
-          <h4 className="mt-4 text-4xl leading-[0.96] font-semibold">{style.headline}</h4>
-          <p className="mt-4 text-sm leading-6 text-[#4d6048]">{style.posts[0].excerpt}</p>
-        </div>
-      </div>
-      <div className="mt-6 grid gap-3 sm:grid-cols-3">
-        {style.posts.map((post) => (
-          <div key={post.title} className="border border-[#b7c8a9] bg-[#f7faef] p-3">
-            <p className="text-xs font-semibold text-[#6b8a53]">{post.tag}</p>
-            <p className="mt-2 text-base leading-tight font-semibold">{post.title}</p>
-            <p className="mt-3 text-xs text-[#65765d]">{post.meta}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function TerminalMockup({ style }: { readonly style: StylePreview }) {
-  return (
-    <div className="min-h-[28rem] bg-[#090f0c] p-4 font-mono text-[#d9ffe7]">
-      <div className="border border-[#2f6f4b] bg-[#0f1713]">
-        <div className="flex items-center gap-2 border-b border-[#2f6f4b] px-3 py-2">
-          <span className="size-2 rounded-full bg-[#ff5d5d]" />
-          <span className="size-2 rounded-full bg-[#ffd166]" />
-          <span className="size-2 rounded-full bg-[#52e08d]" />
-          <span className="ml-2 text-[11px] text-[#7ab891]">~/blog/index.md</span>
-        </div>
-        <div className="grid gap-4 p-4 sm:grid-cols-[1fr_150px]">
-          <div>
-            <p className="text-xs text-[#7ab891]">$ open {style.author}</p>
-            <h4 className="mt-5 text-3xl leading-tight font-bold text-[#f2fff7]">
-              # {style.headline}
-            </h4>
-            <p className="mt-4 text-sm leading-6 text-[#9bd6af]">{style.posts[0].excerpt}</p>
-          </div>
+          </article>
           <img
             src={style.image}
             alt=""
             loading="lazy"
-            className="aspect-square w-full border border-[#2f6f4b] object-cover opacity-80 mix-blend-screen"
+            className="aspect-[4/5] w-full border border-[#24160c] object-cover sepia"
           />
-        </div>
-        <div className="divide-y divide-[#2f6f4b] border-t border-[#2f6f4b]">
+        </main>
+
+        <div className="grid gap-6 border-t border-[#24160c] py-6 md:grid-cols-3">
           {style.posts.map((post) => (
-            <div key={post.title} className="grid gap-2 px-4 py-3 sm:grid-cols-[84px_1fr]">
-              <p className="text-xs text-[#7ab891]">{post.meta}</p>
-              <p className="text-sm leading-tight text-[#f2fff7]">- {post.title}</p>
-            </div>
+            <article
+              key={post.title}
+              className="border-b border-[#24160c] pb-5 md:border-r md:border-b-0 md:pr-5 md:last:border-r-0"
+            >
+              <p className="text-xs tracking-[0.18em] uppercase">{post.tag}</p>
+              <h3 className="mt-4 text-3xl leading-tight font-bold">{post.title}</h3>
+              <p className="mt-4 text-base leading-7">{post.excerpt}</p>
+            </article>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
-const styleSwatchClassName: Record<StyleVariant, string> = {
-  brutalist: "block h-5 w-full border-2 border-black bg-[#f0e733]",
-  editorial: "block h-5 w-full border border-[#8a6d3e] bg-[#f5ecd9]",
-  garden: "block h-5 w-full border border-[#8aa477] bg-[#dceccc]",
-  maker: "block h-5 w-full border border-foreground bg-foreground",
-  saas: "block h-5 w-full border border-[#b9c7df] bg-[#eaf1ff]",
-  terminal: "block h-5 w-full border border-[#2f6f4b] bg-[#0f1713]",
-};
+function GardenHome({
+  chooseText,
+  docsHref,
+  style,
+}: {
+  readonly chooseText: string;
+  readonly docsHref: string;
+  readonly style: DemoHome;
+}) {
+  return (
+    <section id={style.id} className="scroll-mt-24 bg-[#e8f0df] p-4 text-[#172416]">
+      <div className="min-h-[760px] rounded-lg border border-[#b7c8a9] bg-[#f7faef] p-5 sm:p-8 lg:p-10">
+        <header className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="flex size-10 items-center justify-center rounded-lg bg-[#d5e6c8]">
+              <LeafIcon className="size-5" />
+            </span>
+            <p className="text-lg font-semibold">{style.author}</p>
+          </div>
+          <nav className="flex flex-wrap gap-4 text-sm text-[#62785a]">
+            <span>Journal</span>
+            <span>Reading</span>
+            <span>Places</span>
+            <span>Letters</span>
+          </nav>
+        </header>
+
+        <main className="mt-10 grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
+          <img
+            src={style.image}
+            alt=""
+            loading="lazy"
+            className="aspect-[4/5] w-full rounded-lg object-cover"
+          />
+          <div>
+            <p className="text-xs font-bold tracking-[0.2em] text-[#6b8a53] uppercase">
+              {style.label}
+            </p>
+            <h2 className="mt-5 max-w-3xl text-5xl leading-[0.95] font-semibold text-balance sm:text-6xl">
+              {style.title}
+            </h2>
+            <p className="mt-5 max-w-xl text-lg leading-8 text-[#51634b]">{style.line}</p>
+            <div className="mt-8">
+              <ChooseLink
+                docsHref={docsHref}
+                text={chooseText}
+                className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-[#172416] px-4 text-sm font-semibold text-[#f7faef] transition hover:bg-[#2d3d29]"
+              />
+            </div>
+          </div>
+        </main>
+
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          {style.posts.map((post) => (
+            <article
+              key={post.title}
+              className="rounded-lg border border-[#b7c8a9] bg-[#fffdf5] p-5 transition hover:-translate-y-0.5"
+            >
+              <p className="text-xs font-semibold text-[#6b8a53]">{post.tag}</p>
+              <h3 className="mt-3 text-2xl leading-tight font-semibold">{post.title}</h3>
+              <p className="mt-4 text-sm leading-6 text-[#65765d]">{post.excerpt}</p>
+              <p className="mt-5 text-xs text-[#7b8c73]">{post.meta}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TerminalHome({
+  chooseText,
+  docsHref,
+  style,
+}: {
+  readonly chooseText: string;
+  readonly docsHref: string;
+  readonly style: DemoHome;
+}) {
+  return (
+    <section id={style.id} className="scroll-mt-24 bg-[#07100b] p-4 font-mono text-[#d9ffe7]">
+      <div className="min-h-[760px] border border-[#2f6f4b] bg-[#0f1713] shadow-[0_0_80px_rgba(82,224,141,0.12)]">
+        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-[#2f6f4b] px-4 py-3">
+          <div className="flex items-center gap-2">
+            <span className="size-2 rounded-full bg-[#ff5d5d]" />
+            <span className="size-2 rounded-full bg-[#ffd166]" />
+            <span className="size-2 rounded-full bg-[#52e08d]" />
+            <span className="ml-3 text-xs text-[#7ab891]">~/public/home.md</span>
+          </div>
+          <ChooseLink
+            docsHref={docsHref}
+            text={chooseText}
+            className="inline-flex min-h-10 items-center gap-2 border border-[#52e08d] px-3 text-xs font-semibold text-[#52e08d] transition hover:bg-[#52e08d] hover:text-[#07100b]"
+          />
+        </header>
+
+        <main className="grid gap-8 p-5 lg:grid-cols-[minmax(0,1fr)_300px] lg:p-8">
+          <div>
+            <p className="text-sm text-[#7ab891]">$ open {style.author}</p>
+            <h2 className="mt-6 max-w-4xl text-5xl leading-tight font-bold text-balance text-[#f2fff7] sm:text-6xl">
+              # {style.title}
+            </h2>
+            <p className="mt-6 max-w-2xl text-base leading-8 text-[#9bd6af]">{style.line}</p>
+            <div className="mt-10 divide-y divide-[#2f6f4b] border-y border-[#2f6f4b]">
+              {style.posts.map((post) => (
+                <article
+                  key={post.title}
+                  className="grid gap-3 py-4 sm:grid-cols-[94px_minmax(0,1fr)]"
+                >
+                  <p className="text-xs text-[#7ab891]">{post.meta}</p>
+                  <div>
+                    <h3 className="text-lg leading-tight text-[#f2fff7]">- {post.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-[#9bd6af]">{post.excerpt}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <aside className="grid content-start gap-4">
+            <img
+              src={style.image}
+              alt=""
+              loading="lazy"
+              className="aspect-square w-full border border-[#2f6f4b] object-cover opacity-80 mix-blend-screen"
+            />
+            <div className="border border-[#2f6f4b] bg-[#07100b] p-4">
+              <p className="text-xs text-[#7ab891]">status</p>
+              <p className="mt-3 text-2xl leading-tight text-[#f2fff7]">
+                Writing is the changelog of a life.
+              </p>
+            </div>
+          </aside>
+        </main>
+      </div>
+    </section>
+  );
+}
 
 function getDemoCopy(locale: ReturnType<typeof getCurrentLocale>) {
   const images = {
@@ -578,534 +639,390 @@ function getDemoCopy(locale: ReturnType<typeof getCurrentLocale>) {
 
   if (locale === "zh") {
     return {
-      eyebrow: "博客首页风格展厅",
-      title: "同一套博客，可以长成 6 种完全不同的样子。",
+      choiceTitle: "选择一种首页",
+      chooseText: "选择这个首页",
       description:
-        "读者看到的不应该只是模板，而应该是作者自己的气质。下面这些方向都适合个人博客，也都可以继续换布局、配色、栏目和封面比例。",
-      primaryAction: "查看 6 种风格",
-      docsAction: "阅读部署文档",
-      articlesAction: "查看官网文章",
-      boardLabel: "可选方向",
-      signals: [
-        { label: "首页方向", value: "6" },
-        { label: "可改模块", value: "12+" },
-        { label: "博客适配", value: "100%" },
-      ] satisfies DemoSignal[],
-      galleryEyebrow: "Design directions",
-      galleryTitle: "每一张都是可继续改造的博客首页。",
-      galleryDescription:
-        "可以选择一种直接作为起点，也可以把多个方向混合：例如用极简 SaaS 的信息密度，配上黑白个人站的语气和杂志封面的首屏。",
-      sidebarEyebrow: "自由改造",
-      sidebarTitle: "把风格变成你自己的站点，而不是套一个固定皮肤。",
-      sidebarBody:
-        "这些 demo 只展示起点：你可以继续调整导航、作者介绍、文章列表、标签、专题、订阅入口、图片比例和整套视觉语言。",
-      customization: [
-        {
-          title: "先选气质",
-          description: "博客可以像产品工作台、个人名片、电子杂志、研究笔记，也可以像开发者终端。",
-        },
-        {
-          title: "再改首页结构",
-          description:
-            "作者介绍、精选文章、最新列表、项目入口、订阅区和社交链接都能按你的内容重排。",
-        },
-        {
-          title: "最后统一视觉系统",
-          description:
-            "字体、留白、卡片边框、封面比例、强调色和深浅色模式一起收敛，站点才会像你本人。",
-        },
-      ],
+        "有人写产品，有人写日常，有人写代码，有人写长信。首页是一扇门，也是一间房：读者走进来，就能感到这个人的气质。",
+      docsAction: "查看创建指南",
+      eyebrow: "六个博客首页",
+      primaryAction: "看第一个首页",
+      title: "你的博客，可以有自己的气质。",
       styles: [
         {
-          author: "Startup Notes",
-          description:
-            "白色卡片、浅灰背景、Notion 式侧栏和 Linear 式文章列表，适合 AI 产品、创业复盘、工具教程。",
-          eyebrow: "苹果感极简 SaaS",
-          headline: "Build notes for a calm internet business",
-          id: "style-saas-minimal",
+          author: "晨间工作室",
+          id: "crystal-home",
           image: images.desk,
-          name: "轻量产品工作台",
-          stats: [
-            { label: "留白", value: "高" },
-            { label: "信息密度", value: "中" },
-            { label: "强调色", value: "蓝" },
-          ],
-          tags: ["Notion sidebar", "Linear list", "Blue accent", "Emoji stickers"],
+          kind: "crystal",
+          label: "清澈、留白、像刚打开的 Mac",
+          line: "把计划、复盘与长文放在同一个安静的地方。读者进来时，先看到秩序，再慢慢看见人。",
+          name: "澄明产品感",
+          title: "把一间明亮的工作室，放进浏览器。",
           posts: [
             {
-              excerpt: "把路线图、复盘和长期文章放在同一个安静界面里，适合读者快速扫读。",
-              meta: "06 min",
-              tag: "Build log",
-              title: "How I shipped a small AI product in public",
+              excerpt: "一周的产品想法、决定与复盘，收在一张干净的桌面上。",
+              meta: "6 分钟",
+              tag: "工作札记",
+              title: "如何把长期计划写得像一条清澈的河",
             },
             {
-              excerpt: "A quiet archive for shipping notes.",
-              meta: "04 min",
-              tag: "Notes",
-              title: "Decision logs that survive launch week",
+              excerpt: "写给未来自己的判断，也写给正在路过的读者。",
+              meta: "4 分钟",
+              tag: "复盘",
+              title: "那些没有发布的功能，后来变成了路径",
             },
             {
-              excerpt: "Organize writing like a product roadmap.",
-              meta: "08 min",
-              tag: "System",
-              title: "A blog homepage for weekly product thinking",
+              excerpt: "一个轻盈的首页，可以承载很重的思考。",
+              meta: "8 分钟",
+              tag: "系统",
+              title: "让首页像工作台，也像一间安静的房间",
             },
           ],
-          variant: "saas",
         },
         {
-          author: "Raw Dispatch",
-          description:
-            "粗黑边框、高饱和强调块、强烈标题和海报感分区，适合观点强、节奏快、愿意有态度的作者。",
-          eyebrow: "野兽现代派",
-          headline: "Noisy ideas, clean archive",
-          id: "style-modern-brutalist",
+          author: "粗粝电台",
+          id: "brutalist-home",
           image: images.server,
-          name: "野兽现代派快报",
-          stats: [
-            { label: "冲击力", value: "强" },
-            { label: "边框", value: "重" },
-            { label: "节奏", value: "快" },
-          ],
-          tags: ["Poster grid", "Heavy borders", "Yellow signal", "Opinionated"],
+          kind: "brutalist",
+          label: "锋利、醒目、像一张贴在墙上的声明",
+          line: "适合观点强烈的人。它不追求温顺，它要让读者在第一眼就知道，这里有人在认真表达。",
+          name: "野兽现代派",
+          title: "字要大，态度要站得住。",
           posts: [
             {
-              excerpt: "Opinionated writing with a loud front page.",
-              meta: "TODAY",
-              tag: "Essay",
-              title: "Stop making personal sites look apologetic",
+              excerpt: "如果一个个人站没有脾气，它就很容易被平台的噪声吞没。",
+              meta: "今日",
+              tag: "宣言",
+              title: "别把自己的首页做得像临时借来的墙",
             },
             {
-              excerpt: "A raw archive can still be easy to scan.",
-              meta: "FIELD",
-              tag: "Field note",
-              title: "Every border should mean something",
+              excerpt: "粗黑边框给页面留下边界，也给读者留下判断。",
+              meta: "现场",
+              tag: "观察",
+              title: "每一道边框都应该有理由",
             },
             {
-              excerpt: "Let the homepage carry editorial tension.",
-              meta: "LOG",
-              tag: "Build",
-              title: "Brutalist does not mean careless",
+              excerpt: "强烈不等于粗糙，克制也不等于沉默。",
+              meta: "记录",
+              tag: "设计",
+              title: "野兽派也可以很清醒",
             },
           ],
-          variant: "brutalist",
         },
         {
           author: "Maker Jackie",
-          description:
-            "接近 makerjackie.com 的黑白极简个人站气质：作者、入口、文章和作品集都很克制，重点是人和判断。",
-          eyebrow: "极简黑白个人站",
-          headline: "记录 AI、产品、独立开发和实验",
-          id: "style-maker-monochrome",
+          id: "maker-home",
           image: images.writing,
-          name: "Maker 黑白首页",
-          stats: [
-            { label: "颜色", value: "黑白" },
-            { label: "装饰", value: "少" },
-            { label: "作者感", value: "强" },
-          ],
-          tags: ["Monochrome", "Personal intro", "Project links", "Sharp text"],
+          kind: "maker",
+          label: "黑白、直接、像一个人站在门口说话",
+          line: "文章、作品、联系方式都在一页里自然展开。没有多余装饰，只留下这个人真正关心的东西。",
+          name: "黑白个人站",
+          title: "记录 AI、产品、独立开发和一些真实的生活。",
           posts: [
             {
-              excerpt: "把文章、作品和联系方式放在同一个清晰入口里。",
+              excerpt: "把自己放在首页，是给读者一个进入的理由。",
               meta: "2026.05",
-              tag: "Essay",
+              tag: "随笔",
               title: "你好，我是 Maker Jackie",
             },
             {
-              excerpt: "Personal publishing with a direct voice.",
+              excerpt: "作品集和博客不必分开，它们本来就是同一个人的两种痕迹。",
               meta: "2026.05",
-              tag: "Project",
-              title: "How this blog became my home base",
+              tag: "作品",
+              title: "一个个人站怎样慢慢长成基地",
             },
             {
-              excerpt: "Minimal does not need to feel empty.",
+              excerpt: "小页面也可以有重量，前提是每个入口都真的有用。",
               meta: "2026.04",
-              tag: "Note",
-              title: "A small page can still carry a real person",
+              tag: "笔记",
+              title: "极简是一种选择",
             },
           ],
-          variant: "maker",
         },
         {
           author: "The Slow Letter",
-          description:
-            "大标题、杂志分栏、温暖纸感和精选封面，适合长文、访谈、书影音、年度总结和审美型个人博客。",
-          eyebrow: "编辑部杂志感",
-          headline: "Essays for the slower part of the week",
-          id: "style-editorial-magazine",
+          id: "editorial-home",
           image: images.library,
-          name: "周末电子杂志",
-          stats: [
-            { label: "阅读感", value: "强" },
-            { label: "封面", value: "大" },
-            { label: "语气", value: "慢" },
-          ],
-          tags: ["Serif type", "Magazine cover", "Columns", "Warm paper"],
+          kind: "magazine",
+          label: "像周末翻开的一份私人杂志",
+          line: "适合长文、访谈、书影音和年度总结。读者会慢下来，像进入一间安静的阅览室。",
+          name: "电子杂志",
+          title: "写给一周里慢下来的那一部分。",
           posts: [
             {
-              excerpt: "Long-form writing with a slower rhythm.",
+              excerpt: "一个归档可以是一间正在生长的阅览室。",
               meta: "Issue 18",
-              tag: "Essay",
-              title: "The archive as a living reading room",
+              tag: "长文",
+              title: "把个人归档当作一间阅览室",
             },
             {
-              excerpt: "A homepage that feels edited, not generated.",
+              excerpt: "被认真编辑过的首页，会让读者知道这里值得停留。",
               meta: "Column",
-              tag: "Culture",
-              title: "Notes from a small personal library",
+              tag: "文化",
+              title: "小书房里的几条注释",
             },
             {
-              excerpt: "Featured essays need room to breathe.",
+              excerpt: "精选文章需要呼吸，读者也需要。",
               meta: "Letter",
-              tag: "Letter",
-              title: "Why the first screen should feel deliberate",
+              tag: "来信",
+              title: "首页的第一屏应该有一口气",
             },
           ],
-          variant: "editorial",
         },
         {
           author: "Garden Log",
-          description:
-            "自然绿色、轻微手帐感、图文并排和安静标签，适合生活记录、阅读笔记、旅行、园艺和慢节奏创作。",
-          eyebrow: "自然手帐博客",
-          headline: "Small notes from a growing life",
-          id: "style-garden-journal",
+          id: "garden-home",
           image: images.garden,
+          kind: "garden",
+          label: "柔软、自然、像一本摊开的生活手帐",
+          line: "写饭后散步、读书、旅行和季节变化。它不急着证明什么，只把日子慢慢保存下来。",
           name: "花园手帐",
-          stats: [
-            { label: "氛围", value: "柔和" },
-            { label: "内容", value: "生活" },
-            { label: "节奏", value: "慢" },
-          ],
-          tags: ["Soft green", "Daily notes", "Photo first", "Gentle archive"],
+          title: "把细小的日子，照顾成会发芽的文字。",
           posts: [
             {
-              excerpt: "轻松记录日常，也保留能被长期翻回来的线索。",
-              meta: "May 28",
-              tag: "Journal",
-              title: "The quiet advantage of writing after dinner",
+              excerpt: "一天结束后的几句话，往往比宏大的计划更接近真实。",
+              meta: "5 月 28 日",
+              tag: "日常",
+              title: "晚饭后写作的安静好处",
             },
             {
-              excerpt: "A small archive for observations and routines.",
-              meta: "May 21",
-              tag: "Reading",
-              title: "Books, walks, and the notes between them",
+              excerpt: "书、路、天气和人，都会在笔记里彼此照面。",
+              meta: "5 月 21 日",
+              tag: "阅读",
+              title: "书、散步，以及它们之间的空隙",
             },
             {
-              excerpt: "Let photos and paragraphs share the surface.",
-              meta: "May 12",
-              tag: "Life",
-              title: "How a seasonal page keeps memories alive",
+              excerpt: "季节性的首页，让记忆不再只是相册里的图片。",
+              meta: "5 月 12 日",
+              tag: "生活",
+              title: "让一个春天留在页面上",
             },
           ],
-          variant: "garden",
         },
         {
           author: "devlog.sh",
-          description:
-            "深色终端、等宽字体、命令行式索引和清晰日志流，适合技术博客、开源项目、研究记录和工程笔记。",
-          eyebrow: "终端极客日志",
-          headline: "Ship notes, patches, and field reports",
-          id: "style-terminal-devlog",
+          id: "terminal-home",
           image: images.notes,
+          kind: "terminal",
+          label: "暗色、等宽、像一份公开的工程日志",
+          line: "适合技术写作、开源项目和研究记录。它像终端一样冷静，但每一行都能看到人的判断。",
           name: "终端 Devlog",
-          stats: [
-            { label: "字体", value: "Mono" },
-            { label: "模式", value: "Dark" },
-            { label: "入口", value: "Log" },
-          ],
-          tags: ["Terminal UI", "Dark mode", "Code notes", "Readable index"],
+          title: "发布记录、补丁、研究和现场报告。",
           posts: [
             {
-              excerpt: "把提交记录、技术复盘和研究摘要变成可浏览的公开日志。",
+              excerpt: "一次周末发布留下的重构笔记，也是一段判断链。",
               meta: "r42",
               tag: "Patch",
-              title: "Refactor notes from a weekend release",
+              title: "一个周末版本里的重构记录",
             },
             {
-              excerpt: "A technical archive with enough personality.",
+              excerpt: "迁移运行时之后坏掉的东西，往往就是系统真正的形状。",
               meta: "r41",
               tag: "Research",
-              title: "What broke when I moved the worker runtime",
+              title: "迁移 Worker 运行时后发生了什么",
             },
             {
-              excerpt: "CLI aesthetics without sacrificing readability.",
+              excerpt: "终端气质不等于只给开发者看，清晰仍然是第一原则。",
               meta: "r40",
               tag: "Guide",
-              title: "Designing a devlog that non-developers can read",
+              title: "让非开发者也能读懂 Devlog",
             },
           ],
-          variant: "terminal",
         },
-      ] satisfies StylePreview[],
+      ] satisfies DemoHome[],
     };
   }
 
   return {
-    eyebrow: "Blog homepage style gallery",
-    title: "One blog starter can become six completely different homepages.",
+    choiceTitle: "Choose a homepage",
+    chooseText: "Choose this homepage",
     description:
-      "Readers should feel the author before they notice the template. These directions are all suited to personal blogs and can keep changing across layout, color, sections, and image rhythm.",
-    primaryAction: "Explore six styles",
-    docsAction: "Read deployment docs",
-    articlesAction: "Read site articles",
-    boardLabel: "Available directions",
-    signals: [
-      { label: "Homepage styles", value: "6" },
-      { label: "Editable blocks", value: "12+" },
-      { label: "Blog-ready", value: "100%" },
-    ] satisfies DemoSignal[],
-    galleryEyebrow: "Design directions",
-    galleryTitle: "Each card is a blog homepage starting point.",
-    galleryDescription:
-      "Pick one direction or mix several: product-like density, monochrome personal voice, editorial first screens, garden journals, or developer logs.",
-    sidebarEyebrow: "Customize freely",
-    sidebarTitle: "Turn a direction into your own site, not a fixed skin.",
-    sidebarBody:
-      "These demos show starting points. Navigation, author intro, featured writing, latest posts, series, subscription entry, image ratio, and the full visual language can all change.",
-    customization: [
-      {
-        title: "Choose the tone first",
-        description:
-          "A blog can feel like a product workspace, personal profile, magazine, field journal, or developer terminal.",
-      },
-      {
-        title: "Reshape the homepage",
-        description:
-          "Author intro, featured posts, latest lists, project links, subscriptions, and social links can be rearranged around your content.",
-      },
-      {
-        title: "Unify the visual system",
-        description:
-          "Typography, spacing, borders, cover ratios, accent colors, and light or dark mode make the site feel like the author.",
-      },
-    ],
+      "Some people write products, some write ordinary days, some write code, and some write long letters. A homepage is more than an entrance. It is the room a reader steps into.",
+    docsAction: "Read the creation guide",
+    eyebrow: "Six blog homepages",
+    primaryAction: "See the first homepage",
+    title: "Your blog can carry its own atmosphere.",
     styles: [
       {
-        author: "Startup Notes",
-        description:
-          "White cards, gray surfaces, a Notion-like sidebar, and Linear-style post lists for AI products, startup notes, and practical tutorials.",
-        eyebrow: "Apple-like SaaS minimal",
-        headline: "Build notes for a calm internet business",
-        id: "style-saas-minimal",
+        author: "Morning Studio",
+        id: "crystal-home",
         image: images.desk,
-        name: "Light Product Workspace",
-        stats: [
-          { label: "Whitespace", value: "High" },
-          { label: "Density", value: "Mid" },
-          { label: "Accent", value: "Blue" },
-        ],
-        tags: ["Notion sidebar", "Linear list", "Blue accent", "Emoji stickers"],
+        kind: "crystal",
+        label: "Clear, spacious, like opening a Mac in morning light",
+        line: "Plans, retrospectives, and essays live in one quiet place. Readers meet order first, then gradually meet the person.",
+        name: "Crystal Product",
+        title: "A bright studio, placed inside the browser.",
         posts: [
           {
-            excerpt:
-              "Roadmaps, retrospectives, and durable essays can live together in a quiet scanning surface.",
-            meta: "06 min",
-            tag: "Build log",
-            title: "How I shipped a small AI product in public",
+            excerpt: "Weekly product thoughts, decisions, and reflections on a clean desk.",
+            meta: "6 min",
+            tag: "Studio note",
+            title: "How to make long plans feel like clear water",
           },
           {
-            excerpt: "A quiet archive for shipping notes.",
-            meta: "04 min",
-            tag: "Notes",
-            title: "Decision logs that survive launch week",
+            excerpt: "Judgment for your future self, with enough room for a passing reader.",
+            meta: "4 min",
+            tag: "Review",
+            title: "The features I did not ship became the path",
           },
           {
-            excerpt: "Organize writing like a product roadmap.",
-            meta: "08 min",
+            excerpt: "A light homepage can still carry serious thinking.",
+            meta: "8 min",
             tag: "System",
-            title: "A blog homepage for weekly product thinking",
+            title: "Make the homepage a desk, not a directory",
           },
         ],
-        variant: "saas",
       },
       {
-        author: "Raw Dispatch",
-        description:
-          "Heavy borders, high-signal color blocks, loud headlines, and poster-like sections for writers with sharper opinions.",
-        eyebrow: "Modern brutalist",
-        headline: "Noisy ideas, clean archive",
-        id: "style-modern-brutalist",
+        author: "Raw Radio",
+        id: "brutalist-home",
         image: images.server,
-        name: "Modern Brutalist Dispatch",
-        stats: [
-          { label: "Impact", value: "Hard" },
-          { label: "Border", value: "Heavy" },
-          { label: "Pace", value: "Fast" },
-        ],
-        tags: ["Poster grid", "Heavy borders", "Yellow signal", "Opinionated"],
+        kind: "brutalist",
+        label: "Sharp, loud, like a statement taped to a wall",
+        line: "For writers with a point of view. It refuses to be polite. It tells the reader that someone is here, thinking in public.",
+        name: "Modern Brutalist",
+        title: "The type is large because the stance is clear.",
         posts: [
           {
-            excerpt: "Opinionated writing with a loud front page.",
-            meta: "TODAY",
-            tag: "Essay",
-            title: "Stop making personal sites look apologetic",
+            excerpt: "A personal site without temperament is easily swallowed by platform noise.",
+            meta: "Today",
+            tag: "Manifesto",
+            title: "Do not make your homepage look borrowed",
           },
           {
-            excerpt: "A raw archive can still be easy to scan.",
-            meta: "FIELD",
-            tag: "Field note",
-            title: "Every border should mean something",
+            excerpt: "A thick border gives the page a boundary.",
+            meta: "Field",
+            tag: "Note",
+            title: "Every border should have a reason",
           },
           {
-            excerpt: "Let the homepage carry editorial tension.",
-            meta: "LOG",
-            tag: "Build",
-            title: "Brutalist does not mean careless",
+            excerpt: "Strong does not mean careless. Minimal does not mean silent.",
+            meta: "Log",
+            tag: "Design",
+            title: "Brutalism can still be awake",
           },
         ],
-        variant: "brutalist",
       },
       {
         author: "Maker Jackie",
-        description:
-          "A monochrome personal-site direction close to makerjackie.com: restrained author signal, practical links, articles, and projects.",
-        eyebrow: "Minimal monochrome personal site",
-        headline: "Notes on AI, products, indie building, and experiments",
-        id: "style-maker-monochrome",
+        id: "maker-home",
         image: images.writing,
-        name: "Maker Monochrome Home",
-        stats: [
-          { label: "Color", value: "B/W" },
-          { label: "Decor", value: "Low" },
-          { label: "Author", value: "High" },
-        ],
-        tags: ["Monochrome", "Personal intro", "Project links", "Sharp text"],
+        kind: "maker",
+        label: "Black and white, direct, like a person at the door",
+        line: "Articles, projects, and contact paths unfold on one page. No extra decoration, only what the author keeps returning to.",
+        name: "Maker Monochrome",
+        title: "Notes on AI, products, indie building, and real life.",
         posts: [
           {
-            excerpt: "Articles, projects, and contact paths share one direct surface.",
+            excerpt: "Putting yourself on the homepage gives the reader a reason to enter.",
             meta: "2026.05",
             tag: "Essay",
             title: "Hello, I am Maker Jackie",
           },
           {
-            excerpt: "Personal publishing with a direct voice.",
+            excerpt: "A portfolio and a blog are two traces from the same person.",
             meta: "2026.05",
             tag: "Project",
-            title: "How this blog became my home base",
+            title: "How a personal site becomes home base",
           },
           {
-            excerpt: "Minimal does not need to feel empty.",
+            excerpt: "A small page can carry weight when every doorway matters.",
             meta: "2026.04",
             tag: "Note",
-            title: "A small page can still carry a real person",
+            title: "Minimal is chosen space",
           },
         ],
-        variant: "maker",
       },
       {
         author: "The Slow Letter",
-        description:
-          "Large type, magazine columns, warm paper, and a featured cover for essays, interviews, reading notes, and yearly reviews.",
-        eyebrow: "Editorial magazine",
-        headline: "Essays for the slower part of the week",
-        id: "style-editorial-magazine",
+        id: "editorial-home",
         image: images.library,
-        name: "Weekend Digital Magazine",
-        stats: [
-          { label: "Reading", value: "Deep" },
-          { label: "Cover", value: "Large" },
-          { label: "Voice", value: "Slow" },
-        ],
-        tags: ["Serif type", "Magazine cover", "Columns", "Warm paper"],
+        kind: "magazine",
+        label: "A private magazine opened on a weekend",
+        line: "For essays, interviews, books, films, and yearly reviews. The reader slows down, as if entering a quiet reading room.",
+        name: "Digital Magazine",
+        title: "For the slower part of the week.",
         posts: [
           {
-            excerpt: "Long-form writing with a slower rhythm.",
+            excerpt: "An archive can become a living reading room.",
             meta: "Issue 18",
             tag: "Essay",
-            title: "The archive as a living reading room",
+            title: "Treat the archive as a reading room",
           },
           {
-            excerpt: "A homepage that feels edited, not generated.",
+            excerpt: "An edited homepage tells the reader that staying is worthwhile.",
             meta: "Column",
             tag: "Culture",
-            title: "Notes from a small personal library",
+            title: "Notes from a small private library",
           },
           {
-            excerpt: "Featured essays need room to breathe.",
+            excerpt: "Featured writing needs room to breathe. So does the reader.",
             meta: "Letter",
             tag: "Letter",
-            title: "Why the first screen should feel deliberate",
+            title: "The first screen should have one clear breath",
           },
         ],
-        variant: "editorial",
       },
       {
         author: "Garden Log",
-        description:
-          "Soft greens, journal-like blocks, calm tags, and image-led sections for life writing, travel, reading, gardening, and slow creation.",
-        eyebrow: "Natural notebook blog",
-        headline: "Small notes from a growing life",
-        id: "style-garden-journal",
+        id: "garden-home",
         image: images.garden,
-        name: "Garden Notebook",
-        stats: [
-          { label: "Mood", value: "Soft" },
-          { label: "Content", value: "Life" },
-          { label: "Pace", value: "Slow" },
-        ],
-        tags: ["Soft green", "Daily notes", "Photo first", "Gentle archive"],
+        kind: "garden",
+        label: "Soft and natural, like an open notebook",
+        line: "For walks after dinner, books, travel, and seasons. It keeps ordinary days alive.",
+        name: "Garden Journal",
+        title: "Small days, tended until they begin to grow.",
         posts: [
           {
-            excerpt: "Daily writing can stay light while still becoming a durable archive.",
+            excerpt:
+              "A few sentences at the end of a day often feel closer to truth than a grand plan.",
             meta: "May 28",
             tag: "Journal",
             title: "The quiet advantage of writing after dinner",
           },
           {
-            excerpt: "A small archive for observations and routines.",
+            excerpt: "Books, roads, weather, and people meet one another in notes.",
             meta: "May 21",
             tag: "Reading",
-            title: "Books, walks, and the notes between them",
+            title: "Books, walks, and the space between them",
           },
           {
-            excerpt: "Let photos and paragraphs share the surface.",
+            excerpt: "A seasonal homepage lets memory live somewhere beyond a photo album.",
             meta: "May 12",
             tag: "Life",
-            title: "How a seasonal page keeps memories alive",
+            title: "Let a spring remain on the page",
           },
         ],
-        variant: "garden",
       },
       {
         author: "devlog.sh",
-        description:
-          "A dark terminal surface, monospace rhythm, command-line indexing, and clean log streams for technical blogs and open-source notes.",
-        eyebrow: "Terminal devlog",
-        headline: "Ship notes, patches, and field reports",
-        id: "style-terminal-devlog",
+        id: "terminal-home",
         image: images.notes,
+        kind: "terminal",
+        label: "Dark, monospaced, like a public engineering log",
+        line: "For technical writing, open-source projects, and research notes. It is as calm as a terminal, with human judgment in every line.",
         name: "Terminal Devlog",
-        stats: [
-          { label: "Type", value: "Mono" },
-          { label: "Mode", value: "Dark" },
-          { label: "Entry", value: "Log" },
-        ],
-        tags: ["Terminal UI", "Dark mode", "Code notes", "Readable index"],
+        title: "Release notes, patches, research, and field reports.",
         posts: [
           {
-            excerpt:
-              "Commits, release notes, and technical research become a public archive with personality.",
+            excerpt: "Refactor notes from a weekend release, and the judgment chain behind them.",
             meta: "r42",
             tag: "Patch",
             title: "Refactor notes from a weekend release",
           },
           {
-            excerpt: "A technical archive with enough personality.",
+            excerpt: "The things that broke after a runtime migration revealed the system shape.",
             meta: "r41",
             tag: "Research",
-            title: "What broke when I moved the worker runtime",
+            title: "What broke when I moved the Worker runtime",
           },
           {
-            excerpt: "CLI aesthetics without sacrificing readability.",
+            excerpt: "Terminal aesthetics can still be readable for people who do not write code.",
             meta: "r40",
             tag: "Guide",
-            title: "Designing a devlog that non-developers can read",
+            title: "Designing a devlog that others can read",
           },
         ],
-        variant: "terminal",
       },
-    ] satisfies StylePreview[],
+    ] satisfies DemoHome[],
   };
 }
