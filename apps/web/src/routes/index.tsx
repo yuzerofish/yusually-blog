@@ -34,6 +34,7 @@ import {
   SparklesIcon,
   type LucideIcon,
 } from "lucide-react";
+import { useEffect, type ComponentType, type CSSProperties } from "react";
 
 import { SiteShell } from "#/components/site-shell";
 import { $getHomePageData, type HomePageData } from "#/lib/cms-server";
@@ -75,7 +76,11 @@ type FreeHighlight = {
 type TechItem = {
   readonly name: string;
   readonly label: string;
-  readonly icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
+  readonly icon: ComponentType<{ className?: string; style?: CSSProperties }>;
+};
+
+type HomeRevealStyle = CSSProperties & {
+  readonly "--home-reveal-delay": string;
 };
 
 function HomePage() {
@@ -105,21 +110,42 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
   const visibleTags = tags.slice(0, 16);
 
   return (
-    <div className="bg-background">
+    <div data-home-surface className="bg-background">
+      <HomeMotionController />
       {/* ── Hero ── */}
-      <section className="border-b-2 border-foreground">
-        <div className="mx-auto max-w-6xl px-4 pt-16 pb-14 sm:px-6 lg:px-8 lg:pt-24 lg:pb-20 xl:px-12">
-          <p className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+      <section
+        data-home-hero
+        className="relative isolate overflow-hidden border-b-2 border-foreground"
+      >
+        <div className="relative z-10 mx-auto max-w-6xl px-4 pt-12 pb-10 sm:px-6 sm:pt-16 sm:pb-14 lg:px-8 lg:pt-24 lg:pb-20 xl:px-12">
+          <p
+            data-home-reveal
+            style={getRevealStyle(0)}
+            className="text-sm font-semibold tracking-wide text-muted-foreground uppercase"
+          >
             {copy.eyebrow}
           </p>
-          <h1 className="mt-6 max-w-5xl text-5xl leading-[0.98] font-semibold text-balance sm:text-6xl lg:text-7xl">
+          <h1
+            data-home-reveal
+            style={getRevealStyle(90)}
+            className="mt-6 max-w-5xl text-4xl leading-[0.98] font-semibold text-balance sm:text-6xl lg:text-7xl"
+          >
             {copy.heroTitle}
           </h1>
-          <p className="mt-6 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg">
+          <p
+            data-home-reveal
+            style={getRevealStyle(180)}
+            className="mt-6 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg"
+          >
             {copy.heroBody}
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button render={<Link to="/demo" />} nativeButton={false} size="lg">
+          <div data-home-reveal style={getRevealStyle(270)} className="mt-8 flex flex-wrap gap-3">
+            <Button
+              render={<Link to="/demo" />}
+              nativeButton={false}
+              size="lg"
+              className="hover:-translate-y-0.5"
+            >
               {copy.primaryCta}
               <ArrowRightIcon />
             </Button>
@@ -128,6 +154,7 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
               variant="outline"
               nativeButton={false}
               size="lg"
+              className="hover:-translate-y-0.5"
             >
               <FileTextIcon />
               {copy.secondaryCta}
@@ -139,7 +166,7 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
       {/* ── Your Own Corner ── */}
       <section className="border-b border-border bg-muted/35">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
-          <div className="grid gap-9 lg:grid-cols-[0.44fr_0.56fr]">
+          <div data-home-reveal className="grid gap-9 lg:grid-cols-[0.44fr_0.56fr]">
             <div>
               <p className="text-sm font-semibold text-link uppercase">{copy.ownershipEyebrow}</p>
               <h2 className="mt-3 text-3xl leading-tight font-semibold text-balance">
@@ -149,8 +176,8 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
             <p className="self-end text-sm leading-7 text-muted-foreground">{copy.ownershipBody}</p>
           </div>
           <div className="mt-10 divide-y divide-border border-y border-border">
-            {copy.ownershipPoints.map((point) => (
-              <OwnershipRow key={point.title} point={point} />
+            {copy.ownershipPoints.map((point, index) => (
+              <OwnershipRow key={point.title} point={point} index={index} />
             ))}
           </div>
         </div>
@@ -159,7 +186,7 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
       {/* ── Core Features ── */}
       <section className="border-b border-border bg-background">
         <div className="mx-auto grid max-w-6xl gap-9 px-4 py-12 sm:px-6 lg:grid-cols-[0.42fr_0.58fr] lg:px-8 lg:py-16 xl:px-12">
-          <div className="max-w-md">
+          <div data-home-reveal className="max-w-md">
             <p className="text-sm font-semibold text-link uppercase">{copy.featuresEyebrow}</p>
             <h2 className="mt-3 text-3xl leading-tight font-semibold text-balance">
               {copy.featuresTitle}
@@ -167,8 +194,8 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
             <p className="mt-4 text-sm leading-6 text-muted-foreground">{copy.featuresBody}</p>
           </div>
           <div className="divide-y divide-border border-y border-border">
-            {copy.features.map((feature) => (
-              <FeatureRow key={feature.title} feature={feature} />
+            {copy.features.map((feature, index) => (
+              <FeatureRow key={feature.title} feature={feature} index={index} />
             ))}
           </div>
         </div>
@@ -177,7 +204,7 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
       {/* ── AI Skill ── */}
       <section className="border-b border-border bg-background">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
-          <div className="grid gap-9 lg:grid-cols-[0.44fr_0.56fr]">
+          <div data-home-reveal className="grid gap-9 lg:grid-cols-[0.44fr_0.56fr]">
             <div>
               <p className="text-sm font-semibold text-link uppercase">{copy.skillEyebrow}</p>
               <h2 className="mt-3 text-3xl leading-tight font-semibold text-balance">
@@ -187,8 +214,14 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
             <p className="self-end text-sm leading-7 text-muted-foreground">{copy.skillBody}</p>
           </div>
           <ol className="mt-10 divide-y divide-border border-y border-border">
-            {copy.skillSteps.map((step) => (
-              <li key={step.number} className="grid gap-3 py-5 sm:grid-cols-[92px_minmax(0,1fr)]">
+            {copy.skillSteps.map((step, index) => (
+              <li
+                key={step.number}
+                data-home-reveal
+                data-home-row
+                style={getRevealStyle(index * 55)}
+                className="grid gap-3 py-5 sm:grid-cols-[92px_minmax(0,1fr)]"
+              >
                 <span className="text-sm font-semibold text-muted-foreground">{step.number}</span>
                 <span>
                   <span className="block text-lg font-semibold">{step.title}</span>
@@ -205,19 +238,31 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
       {/* ── Merged: No Server + Free Quota ── */}
       <section className="border-b border-border bg-muted/35">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
-          <p className="text-sm font-semibold text-link uppercase">{copy.freeEyebrow}</p>
-          <h2 className="mt-3 max-w-2xl text-3xl leading-tight font-semibold text-balance">
+          <p data-home-reveal className="text-sm font-semibold text-link uppercase">
+            {copy.freeEyebrow}
+          </p>
+          <h2
+            data-home-reveal
+            style={getRevealStyle(75)}
+            className="mt-3 max-w-2xl text-3xl leading-tight font-semibold text-balance"
+          >
             {copy.freeTitle}
           </h2>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">{copy.freeBody}</p>
+          <p
+            data-home-reveal
+            style={getRevealStyle(150)}
+            className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground"
+          >
+            {copy.freeBody}
+          </p>
           <div className="mt-10 grid gap-px border border-border bg-border sm:grid-cols-3">
-            {copy.freeHighlights.map((h) => (
-              <FreeHighlightCard key={h.label} item={h} />
+            {copy.freeHighlights.map((h, index) => (
+              <FreeHighlightCard key={h.label} item={h} index={index} />
             ))}
           </div>
           <div className="mt-10 divide-y divide-border border-y border-border">
-            {copy.quotaItems.map((item) => (
-              <QuotaRow key={item.service} item={item} />
+            {copy.quotaItems.map((item, index) => (
+              <QuotaRow key={item.service} item={item} index={index} />
             ))}
           </div>
         </div>
@@ -226,13 +271,19 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
       {/* ── Tech Stack ── */}
       <section className="border-b border-border bg-background">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
-          <p className="text-sm font-semibold text-link uppercase">{copy.techEyebrow}</p>
-          <h2 className="mt-3 max-w-2xl text-3xl leading-tight font-semibold text-balance">
+          <p data-home-reveal className="text-sm font-semibold text-link uppercase">
+            {copy.techEyebrow}
+          </p>
+          <h2
+            data-home-reveal
+            style={getRevealStyle(75)}
+            className="mt-3 max-w-2xl text-3xl leading-tight font-semibold text-balance"
+          >
             {copy.techTitle}
           </h2>
           <div className="mt-8 grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-            {copy.techItems.map((item) => (
-              <TechBadge key={item.name} item={item} />
+            {copy.techItems.map((item, index) => (
+              <TechBadge key={item.name} item={item} index={index} />
             ))}
           </div>
         </div>
@@ -241,7 +292,7 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
       {/* ── Theme Presets ── */}
       <section className="border-b border-border bg-muted/35">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
-          <div className="grid gap-6 lg:grid-cols-[0.44fr_0.56fr] lg:items-end">
+          <div data-home-reveal className="grid gap-6 lg:grid-cols-[0.44fr_0.56fr] lg:items-end">
             <div>
               <p className="text-sm font-semibold text-link uppercase">{copy.themeEyebrow}</p>
               <h2 className="mt-3 text-3xl leading-tight font-semibold text-balance">
@@ -251,8 +302,8 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
             <p className="max-w-2xl text-sm leading-6 text-muted-foreground">{copy.themeBody}</p>
           </div>
           <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {copy.themePreviews.map((preview) => (
-              <ThemePreviewCard key={preview.themePreset} preview={preview} />
+            {copy.themePreviews.map((preview, index) => (
+              <ThemePreviewCard key={preview.themePreset} preview={preview} index={index} />
             ))}
           </div>
         </div>
@@ -261,7 +312,7 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
       {/* ── Site Content ── */}
       <section className="bg-background">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
-          <div className="border-t border-border pt-10">
+          <div data-home-reveal className="border-t border-border pt-10">
             <p className="text-sm font-semibold text-link uppercase">{copy.contentEyebrow}</p>
             <h2 className="mt-3 text-3xl leading-tight font-semibold text-balance">
               {copy.contentTitle}
@@ -273,7 +324,7 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
           ) : null}
 
           {visibleTags.length ? (
-            <div className="mt-8 flex flex-wrap gap-2">
+            <div data-home-reveal className="mt-8 flex flex-wrap gap-2">
               {visibleTags.map((tag) => (
                 <Link
                   key={tag.slug}
@@ -289,17 +340,18 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
 
           {displayPosts.length ? (
             <div className="mt-10 divide-y divide-border border-y border-border">
-              {displayPosts.map((post) => (
-                <ArticleRow key={post.id} post={post} locale={locale} />
+              {displayPosts.map((post, index) => (
+                <ArticleRow key={post.id} post={post} locale={locale} index={index} />
               ))}
             </div>
           ) : null}
 
-          <div className="mt-7">
+          <div data-home-reveal className="mt-7">
             <Button
               render={<Link to="/blog" search={{ q: "", tag: "", series: "", page: 1 }} />}
               variant="outline"
               nativeButton={false}
+              className="hover:-translate-y-0.5"
             >
               {m.read_latest_posts()}
               <ArrowRightIcon />
@@ -311,11 +363,82 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
   );
 }
 
-function FreeHighlightCard({ item }: { readonly item: FreeHighlight }) {
+function HomeMotionController() {
+  useEffect(() => {
+    const root = document.querySelector<HTMLElement>("[data-home-surface]");
+    const elements = Array.from(document.querySelectorAll<HTMLElement>("[data-home-reveal]"));
+
+    const reveal = (element: HTMLElement) => {
+      element.dataset.homeReveal = "visible";
+    };
+
+    const isInView = (element: HTMLElement) => {
+      const rect = element.getBoundingClientRect();
+
+      return rect.top < window.innerHeight * 0.96 && rect.bottom > 0;
+    };
+
+    if (
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      !("IntersectionObserver" in window)
+    ) {
+      elements.forEach(reveal);
+      return;
+    }
+
+    elements.filter(isInView).forEach(reveal);
+    root?.setAttribute("data-home-motion-ready", "true");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+
+          reveal(entry.target as HTMLElement);
+          observer.unobserve(entry.target);
+        });
+      },
+      {
+        rootMargin: "0px 0px -10% 0px",
+        threshold: 0.12,
+      },
+    );
+
+    elements
+      .filter((element) => element.dataset.homeReveal !== "visible")
+      .forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, []);
+
+  return null;
+}
+
+function getRevealStyle(delayMs: number): HomeRevealStyle {
+  return {
+    "--home-reveal-delay": `${delayMs}ms`,
+  };
+}
+
+function FreeHighlightCard({
+  index,
+  item,
+}: {
+  readonly index: number;
+  readonly item: FreeHighlight;
+}) {
   const Icon = item.icon;
   return (
-    <div className="bg-background px-6 py-7">
-      <span className="flex size-10 items-center justify-center rounded-md bg-muted text-foreground">
+    <div
+      data-home-reveal
+      data-home-card
+      style={getRevealStyle(index * 70)}
+      className="bg-background px-6 py-7"
+    >
+      <span
+        data-home-icon
+        className="flex size-10 items-center justify-center rounded-md bg-muted text-foreground"
+      >
         <Icon className="size-5" />
       </span>
       <p className="mt-5 text-lg font-semibold">{item.label}</p>
@@ -325,14 +448,24 @@ function FreeHighlightCard({ item }: { readonly item: FreeHighlight }) {
 }
 
 function OwnershipRow({
+  index,
   point,
 }: {
+  readonly index: number;
   readonly point: { title: string; description: string; icon: LucideIcon };
 }) {
   const Icon = point.icon;
   return (
-    <article className="grid gap-4 py-5 sm:grid-cols-[48px_minmax(0,1fr)]">
-      <span className="flex size-10 items-center justify-center rounded-md bg-muted text-foreground">
+    <article
+      data-home-reveal
+      data-home-row
+      style={getRevealStyle(index * 55)}
+      className="grid gap-4 py-5 sm:grid-cols-[48px_minmax(0,1fr)]"
+    >
+      <span
+        data-home-icon
+        className="flex size-10 items-center justify-center rounded-md bg-muted text-foreground"
+      >
         <Icon className="size-5" />
       </span>
       <span>
@@ -345,12 +478,20 @@ function OwnershipRow({
   );
 }
 
-function FeatureRow({ feature }: { readonly feature: FeatureItem }) {
+function FeatureRow({ feature, index }: { readonly feature: FeatureItem; readonly index: number }) {
   const Icon = feature.icon;
 
   return (
-    <article className="grid gap-4 py-5 sm:grid-cols-[48px_minmax(0,1fr)]">
-      <span className="flex size-10 items-center justify-center rounded-md bg-muted text-foreground">
+    <article
+      data-home-reveal
+      data-home-row
+      style={getRevealStyle(index * 45)}
+      className="grid gap-4 py-5 sm:grid-cols-[48px_minmax(0,1fr)]"
+    >
+      <span
+        data-home-icon
+        className="flex size-10 items-center justify-center rounded-md bg-muted text-foreground"
+      >
         <Icon className="size-5" />
       </span>
       <span>
@@ -363,9 +504,20 @@ function FeatureRow({ feature }: { readonly feature: FeatureItem }) {
   );
 }
 
-function QuotaRow({ item }: { readonly item: { service: string; quota: string; note: string } }) {
+function QuotaRow({
+  index,
+  item,
+}: {
+  readonly index: number;
+  readonly item: { service: string; quota: string; note: string };
+}) {
   return (
-    <div className="grid gap-2 py-4 sm:grid-cols-[160px_minmax(0,1fr)]">
+    <div
+      data-home-reveal
+      data-home-row
+      style={getRevealStyle(index * 45)}
+      className="grid gap-2 py-4 sm:grid-cols-[160px_minmax(0,1fr)]"
+    >
       <span className="text-sm font-semibold">{item.service}</span>
       <span>
         <span className="block text-sm font-semibold text-link">{item.quota}</span>
@@ -375,10 +527,15 @@ function QuotaRow({ item }: { readonly item: { service: string; quota: string; n
   );
 }
 
-function TechBadge({ item }: { readonly item: TechItem }) {
+function TechBadge({ index, item }: { readonly index: number; readonly item: TechItem }) {
   const Icon = item.icon;
   return (
-    <div className="flex flex-col items-center gap-2 rounded-lg border border-border bg-background px-3 py-5 text-center">
+    <div
+      data-home-reveal
+      data-home-card
+      style={getRevealStyle(index * 45)}
+      className="flex flex-col items-center gap-2 rounded-lg border border-border bg-background px-3 py-5 text-center"
+    >
       <Icon className="size-7 shrink-0" />
       <span className="text-xs leading-tight font-semibold">{item.name}</span>
       <span className="text-xs text-muted-foreground">{item.label}</span>
@@ -386,11 +543,20 @@ function TechBadge({ item }: { readonly item: TechItem }) {
   );
 }
 
-function ThemePreviewCard({ preview }: { readonly preview: ThemePreview }) {
+function ThemePreviewCard({
+  index,
+  preview,
+}: {
+  readonly index: number;
+  readonly preview: ThemePreview;
+}) {
   return (
     <article
+      data-home-reveal
+      data-home-card
       data-theme-preset={preview.themePreset}
       data-layout-preset="shelf"
+      style={getRevealStyle(index * 70)}
       className="rounded-lg border border-border bg-background p-4 text-foreground"
     >
       <div className="flex items-center gap-2">
@@ -416,8 +582,8 @@ function FeaturedPostsBlock({
       <div className="grid gap-px bg-border lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]">
         <FeaturedPostLarge post={posts[0]} locale={locale} />
         <div className="divide-y divide-border bg-background">
-          {posts.slice(1).map((post) => (
-            <FeaturedPostCompact key={post.id} post={post} locale={locale} />
+          {posts.slice(1).map((post, index) => (
+            <FeaturedPostCompact key={post.id} post={post} locale={locale} index={index} />
           ))}
           {posts.length === 1 ? (
             <div className="flex h-full min-h-32 items-center px-5 py-5 text-sm leading-6 text-muted-foreground">
@@ -442,7 +608,11 @@ function FeaturedPostLarge({
   const coverImage = resolvePostCoverImage(post.coverImage);
 
   return (
-    <article className="grid gap-5 bg-background p-5 sm:grid-cols-[minmax(0,1fr)_220px] sm:items-start">
+    <article
+      data-home-reveal
+      data-home-card
+      className="grid gap-5 bg-background p-5 sm:grid-cols-[minmax(0,1fr)_220px] sm:items-start"
+    >
       <div className="min-w-0">
         <span className="inline-flex items-center gap-1.5 rounded-sm bg-accent px-2 py-1 text-xs font-semibold text-accent-foreground">
           <SparklesIcon className="size-3.5" />
@@ -464,6 +634,7 @@ function FeaturedPostLarge({
       <Link
         to="/blog/$slug"
         params={{ slug: post.slug }}
+        data-home-cover
         className="block aspect-[4/3] overflow-hidden rounded-md bg-muted"
         aria-label={post.title}
       >
@@ -480,14 +651,21 @@ function FeaturedPostLarge({
 }
 
 function FeaturedPostCompact({
+  index,
   locale,
   post,
 }: {
+  readonly index: number;
   readonly locale: SupportedLocale;
   readonly post: Post;
 }) {
   return (
-    <article className="p-5">
+    <article
+      data-home-reveal
+      data-home-row
+      style={getRevealStyle((index + 1) * 70)}
+      className="p-5"
+    >
       <PostBadges post={post} />
       <Link to="/blog/$slug" params={{ slug: post.slug }} className="group mt-3 block">
         <h3 className="text-xl leading-tight font-semibold text-balance group-hover:text-link">
@@ -502,9 +680,22 @@ function FeaturedPostCompact({
   );
 }
 
-function ArticleRow({ post, locale }: { readonly post: Post; readonly locale: SupportedLocale }) {
+function ArticleRow({
+  index,
+  locale,
+  post,
+}: {
+  readonly index: number;
+  readonly locale: SupportedLocale;
+  readonly post: Post;
+}) {
   return (
-    <article className="grid gap-4 py-7 sm:grid-cols-[minmax(0,1fr)_150px] sm:items-start">
+    <article
+      data-home-reveal
+      data-home-row
+      style={getRevealStyle(index * 55)}
+      className="grid gap-4 py-7 sm:grid-cols-[minmax(0,1fr)_150px] sm:items-start"
+    >
       <div className="min-w-0">
         <PostBadges post={post} />
         <Link to="/blog/$slug" params={{ slug: post.slug }} className="group">
