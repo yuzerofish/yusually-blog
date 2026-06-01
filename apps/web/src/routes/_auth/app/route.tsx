@@ -24,12 +24,7 @@ function AppLayout() {
           <div className="flex items-center gap-1.5">
             <LanguageToggle />
             <ThemeToggle />
-            <SignOutButton
-              className="hidden sm:block"
-              buttonClassName="px-3"
-              size="sm"
-              variant="outline"
-            />
+            <SignOutButton className="hidden sm:block" buttonClassName="px-3" size="sm" />
           </div>
         </div>
       </header>
@@ -39,12 +34,7 @@ function AppLayout() {
       </main>
 
       <div className="mx-auto w-full max-w-5xl px-4 pb-6 sm:hidden">
-        <SignOutButton
-          className="w-full"
-          buttonClassName="w-full"
-          size="default"
-          variant="outline"
-        />
+        <SignOutButton className="w-full" buttonClassName="w-full" size="default" />
       </div>
     </div>
   );

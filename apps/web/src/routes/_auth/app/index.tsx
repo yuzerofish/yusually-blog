@@ -17,7 +17,8 @@ function AppIndex() {
   const copy = getAccountEmailCopy(locale);
   const pageCopy = getAccountPageCopy(locale);
   const isAdmin = user?.role === "admin";
-  const displayName = user?.name?.trim() || user?.email || pageCopy.fallbackName;
+  const emailAddress = user?.email?.trim() ?? "";
+  const displayName = user?.name?.trim() || emailAddress || pageCopy.fallbackName;
   const avatarInitial = displayName.slice(0, 1).toUpperCase();
   const [commentReplyNotificationsEnabled, setCommentReplyNotificationsEnabled] = useState(true);
   const [emailPreference, setEmailPreference] = useState<EmailPreference>("none");
@@ -109,6 +110,11 @@ function AppIndex() {
                 ) : null}
               </div>
               <p className="mt-1 text-muted-foreground">{m.account_signed_in_as()}</p>
+              {emailAddress ? (
+                <p className="mt-1 font-mono text-xs break-all text-muted-foreground">
+                  {emailAddress}
+                </p>
+              ) : null}
             </div>
           </div>
 
@@ -123,7 +129,7 @@ function AppIndex() {
               <dt className="text-xs font-semibold text-muted-foreground uppercase">
                 {pageCopy.emailLabel}
               </dt>
-              <dd className="font-mono text-xs break-all text-muted-foreground">{user?.email}</dd>
+              <dd className="font-mono text-xs break-all text-muted-foreground">{emailAddress}</dd>
             </div>
           </dl>
         </section>
