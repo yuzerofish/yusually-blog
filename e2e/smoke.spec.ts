@@ -5,7 +5,7 @@ test.describe("Smoke Tests", () => {
     await page.goto("/");
     await expect(page.locator("h1, h2").first()).toBeVisible();
 
-    await page.getByRole("button", { name: "View sample content" }).click();
+    await page.getByRole("button", { name: "Read latest posts" }).click();
     await expect(page).toHaveURL(/\/blog/);
     await expect(page.getByRole("heading", { name: "Durable publishing notes" })).toBeVisible();
   });

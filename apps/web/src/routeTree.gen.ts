@@ -185,7 +185,7 @@ const DocsSplatRoute = DocsSplatRouteImport.update({
   id: '/docs/$',
   path: '/docs/$',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/docs/$.lazy').then((d) => d.Route))
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/blog/$slug',
   path: '/blog/$slug',
@@ -275,7 +275,7 @@ const ZhDocsSplatRoute = ZhDocsSplatRouteImport.update({
   id: '/zh/docs/$',
   path: '/zh/docs/$',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/zh/docs/$.lazy').then((d) => d.Route))
 const ApiSeriesIdRoute = ApiSeriesIdRouteImport.update({
   id: '/$id',
   path: '/$id',

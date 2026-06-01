@@ -23,6 +23,12 @@ const injectedHeadScriptsFallback = {
   },
 } as const;
 
+const publicHtmlCacheVersion =
+  process.env.CF_VERSION_METADATA_ID ??
+  process.env.CF_PAGES_COMMIT_SHA ??
+  process.env.VERCEL_GIT_COMMIT_SHA ??
+  String(Date.now());
+
 export default defineConfig({
   run: {
     // Vite Task
@@ -53,6 +59,9 @@ export default defineConfig({
 
   resolve: {
     tsconfigPaths: true,
+  },
+  define: {
+    __PUBLIC_HTML_CACHE_VERSION__: JSON.stringify(publicHtmlCacheVersion),
   },
   server: {
     port: 3000,

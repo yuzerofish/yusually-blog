@@ -5,6 +5,7 @@ import { useFumadocsLoader } from "fumadocs-core/source/client";
 import { I18nProvider } from "fumadocs-ui/contexts/i18n";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/layouts/docs/page";
+import { RootProvider as FumadocsRootProvider } from "fumadocs-ui/provider/tanstack";
 import { Suspense, useEffect } from "react";
 
 import { DocsMDXProvider, useMDXComponents } from "#/components/mdx";
@@ -60,31 +61,33 @@ export function DocsRouteView({ data }: { readonly data: DocsRouteData }) {
       className="min-h-svh bg-background text-foreground"
     >
       <StylePresetRuntimeScript initialPreset={preset} locale={data.locale} />
-      <DocsMDXProvider locale={data.locale} slugs={data.slugs}>
-        <I18nProvider
-          {...getDocsI18nProvider(data.locale)}
-          onLocaleChange={(locale) => {
-            const nextLocale = locale === "zh" ? "zh" : "en";
+      <FumadocsRootProvider theme={{ enabled: false }}>
+        <DocsMDXProvider locale={data.locale} slugs={data.slugs}>
+          <I18nProvider
+            {...getDocsI18nProvider(data.locale)}
+            onLocaleChange={(locale) => {
+              const nextLocale = locale === "zh" ? "zh" : "en";
 
-            void Promise.resolve(setCurrentLocale(nextLocale, { reload: false })).finally(() => {
-              window.location.href = getDocsUrl(data.slugs, nextLocale);
-            });
-          }}
-        >
-          <DocsLayout
-            {...getDocsLayoutOptions({
-              locale: data.locale,
-              nextPreset,
-              onPresetSelect: selectPreset,
-              siteSettings: data.siteSettings,
-              slugs: data.slugs,
-            })}
-            tree={loaderData.pageTree}
+              void Promise.resolve(setCurrentLocale(nextLocale, { reload: false })).finally(() => {
+                window.location.href = getDocsUrl(data.slugs, nextLocale);
+              });
+            }}
           >
-            <Suspense>{docsClientLoader.useContent(data.path)}</Suspense>
-          </DocsLayout>
-        </I18nProvider>
-      </DocsMDXProvider>
+            <DocsLayout
+              {...getDocsLayoutOptions({
+                locale: data.locale,
+                nextPreset,
+                onPresetSelect: selectPreset,
+                siteSettings: data.siteSettings,
+                slugs: data.slugs,
+              })}
+              tree={loaderData.pageTree}
+            >
+              <Suspense>{docsClientLoader.useContent(data.path)}</Suspense>
+            </DocsLayout>
+          </I18nProvider>
+        </DocsMDXProvider>
+      </FumadocsRootProvider>
     </div>
   );
 }
