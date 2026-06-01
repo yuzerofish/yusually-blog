@@ -652,7 +652,7 @@ export const Route = createFileRoute("/openapi.json")({
               CommentEmailSignupRequest: {
                 type: "object",
                 properties: {
-                  name: { type: "string" },
+                  name: { type: "string", minLength: 1 },
                   email: { type: "string" },
                   password: { type: "string" },
                 },

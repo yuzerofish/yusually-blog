@@ -71,12 +71,18 @@ function SignupForm() {
     if (isPending) return;
 
     const formData = new FormData(e.currentTarget);
-    const name = formData.get("name") as string;
+    const nameInput = formData.get("name");
+    const name = typeof nameInput === "string" ? nameInput.trim() : "";
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirm_password") as string;
 
-    if (!name || !email || !password || !confirmPassword) return;
+    if (!name) {
+      toast.error(m.signup_name_required());
+      return;
+    }
+
+    if (!email || !password || !confirmPassword) return;
 
     if (password !== confirmPassword) {
       toast.error(m.signup_password_mismatch());
@@ -111,8 +117,9 @@ function SignupForm() {
                 id="name"
                 name="name"
                 type="text"
-                placeholder="John Doe"
-                autoComplete="name"
+                placeholder="jackie"
+                autoComplete="username"
+                maxLength={80}
                 readOnly={isPending}
                 required
               />

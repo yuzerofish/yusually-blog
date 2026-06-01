@@ -335,6 +335,7 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ name: NonNullable<unknown> }} Signup_GreetingInputs */
 /** @typedef {{}} Signup_Has_AccountInputs */
 /** @typedef {{}} Signup_NameInputs */
+/** @typedef {{}} Signup_Name_RequiredInputs */
 /** @typedef {{}} Signup_Password_MismatchInputs */
 /** @typedef {{}} Signup_PendingInputs */
 /** @typedef {{}} Sign_OutInputs */
@@ -5005,7 +5006,7 @@ export const signup_has_account = /** @type {((inputs?: Signup_Has_AccountInputs
 /**
 * | output |
 * | --- |
-* | "Name" |
+* | "Username" |
 *
 * @param {Signup_NameInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -5015,6 +5016,20 @@ export const signup_name = /** @type {((inputs?: Signup_NameInputs, options?: { 
 	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
 	if (locale === "en") return __en.signup_name(inputs)
 	return __zh.signup_name(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Username is required." |
+*
+* @param {Signup_Name_RequiredInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const signup_name_required = /** @type {((inputs?: Signup_Name_RequiredInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Signup_Name_RequiredInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "en") return __en.signup_name_required(inputs)
+	return __zh.signup_name_required(inputs)
 });
 /**
 * | output |

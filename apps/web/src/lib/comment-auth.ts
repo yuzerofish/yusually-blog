@@ -138,7 +138,7 @@ export async function getCommentSessionFromRequest(request: Request) {
 
 export async function signupCommentUser(input: CommentUserInput, request: Request) {
   const email = normalizeEmail(input.email);
-  const name = input.name?.trim() || email.split("@")[0] || email;
+  const name = normalizeSignupName(input.name);
   const password = input.password ?? "";
 
   assertPassword(password);
@@ -220,6 +220,16 @@ export async function signupCommentUser(input: CommentUserInput, request: Reques
   }
 
   return loginCommentUser({ email, password }, request);
+}
+
+function normalizeSignupName(value: unknown) {
+  const name = typeof value === "string" ? value.replace(/\s+/g, " ").trim() : "";
+
+  if (!name) {
+    throw new Error("Username is required");
+  }
+
+  return name;
 }
 
 export async function loginCommentUser(

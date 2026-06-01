@@ -122,12 +122,20 @@ export function CommentForm({
     };
 
     try {
+      const nameInput = formData.get("name");
+      const name = typeof nameInput === "string" ? nameInput.trim() : "";
+
+      if (authMode === "signup" && !name) {
+        setAuthState("error");
+        return;
+      }
+
       response = await fetch(`/api/comment-auth/${authMode}`, {
         method: "POST",
         credentials: "same-origin",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          name: formData.get("name"),
+          name,
           email: formData.get("email"),
           emailPreference: formData.get("emailPreference"),
           password: formData.get("password"),
@@ -235,7 +243,13 @@ export function CommentForm({
             {authMode === "signup" ? (
               <div className="grid gap-2">
                 <Label htmlFor="comment-auth-name">{m.signup_name()}</Label>
-                <Input id="comment-auth-name" name="name" autoComplete="name" required />
+                <Input
+                  id="comment-auth-name"
+                  name="name"
+                  autoComplete="username"
+                  maxLength={80}
+                  required
+                />
               </div>
             ) : null}
             <div className="grid gap-2">

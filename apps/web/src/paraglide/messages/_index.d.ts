@@ -4649,7 +4649,7 @@ export const signup_has_account: ((inputs?: Signup_Has_AccountInputs, options?: 
 /**
 * | output |
 * | --- |
-* | "Name" |
+* | "Username" |
 *
 * @param {Signup_NameInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -4658,6 +4658,20 @@ export const signup_has_account: ((inputs?: Signup_Has_AccountInputs, options?: 
 export const signup_name: ((inputs?: Signup_NameInputs, options?: {
     locale?: "en" | "zh";
 }) => LocalizedString) & import("../runtime.js").MessageMetadata<Signup_NameInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Username is required." |
+*
+* @param {Signup_Name_RequiredInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const signup_name_required: ((inputs?: Signup_Name_RequiredInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Signup_Name_RequiredInputs, {
     locale?: "en" | "zh";
 }, {}>;
 /**
@@ -5275,6 +5289,7 @@ export type Signup_GreetingInputs = {
 };
 export type Signup_Has_AccountInputs = {};
 export type Signup_NameInputs = {};
+export type Signup_Name_RequiredInputs = {};
 export type Signup_Password_MismatchInputs = {};
 export type Signup_PendingInputs = {};
 export type Sign_OutInputs = {};

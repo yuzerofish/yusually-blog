@@ -332,6 +332,7 @@
 /** @typedef {{ name: NonNullable<unknown> }} Signup_GreetingInputs */
 /** @typedef {{}} Signup_Has_AccountInputs */
 /** @typedef {{}} Signup_NameInputs */
+/** @typedef {{}} Signup_Name_RequiredInputs */
 /** @typedef {{}} Signup_Password_MismatchInputs */
 /** @typedef {{}} Signup_PendingInputs */
 /** @typedef {{}} Sign_OutInputs */
@@ -682,6 +683,7 @@ export const signup_error: (inputs: Signup_ErrorInputs) => LocalizedString;
 export const signup_greeting: (inputs: Signup_GreetingInputs) => LocalizedString;
 export const signup_has_account: (inputs: Signup_Has_AccountInputs) => LocalizedString;
 export const signup_name: (inputs: Signup_NameInputs) => LocalizedString;
+export const signup_name_required: (inputs: Signup_Name_RequiredInputs) => LocalizedString;
 export const signup_password_mismatch: (inputs: Signup_Password_MismatchInputs) => LocalizedString;
 export const signup_pending: (inputs: Signup_PendingInputs) => LocalizedString;
 export const sign_out: (inputs: Sign_OutInputs) => LocalizedString;
@@ -1076,6 +1078,7 @@ export type Signup_GreetingInputs = {
 };
 export type Signup_Has_AccountInputs = {};
 export type Signup_NameInputs = {};
+export type Signup_Name_RequiredInputs = {};
 export type Signup_Password_MismatchInputs = {};
 export type Signup_PendingInputs = {};
 export type Sign_OutInputs = {};

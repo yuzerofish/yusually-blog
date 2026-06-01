@@ -333,6 +333,7 @@
 /** @typedef {{ name: NonNullable<unknown> }} Signup_GreetingInputs */
 /** @typedef {{}} Signup_Has_AccountInputs */
 /** @typedef {{}} Signup_NameInputs */
+/** @typedef {{}} Signup_Name_RequiredInputs */
 /** @typedef {{}} Signup_Password_MismatchInputs */
 /** @typedef {{}} Signup_PendingInputs */
 /** @typedef {{}} Sign_OutInputs */
@@ -1681,7 +1682,11 @@ export const signup_has_account = /** @type {(inputs: Signup_Has_AccountInputs) 
 };
 
 export const signup_name = /** @type {(inputs: Signup_NameInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`姓名`)
+	return /** @type {LocalizedString} */ (`用户名`)
+};
+
+export const signup_name_required = /** @type {(inputs: Signup_Name_RequiredInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`请填写用户名。`)
 };
 
 export const signup_password_mismatch = /** @type {(inputs: Signup_Password_MismatchInputs) => LocalizedString} */ () => {
