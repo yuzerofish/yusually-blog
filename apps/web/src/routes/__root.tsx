@@ -1,5 +1,4 @@
 import type { AuthQueryResult } from "@repo/auth/tanstack/queries";
-import { authQueryOptions } from "@repo/auth/tanstack/queries";
 import { getSiteSettingsForLocale } from "@repo/core";
 import { Toaster } from "@repo/ui/components/sonner";
 import { ThemeProvider } from "@repo/ui/lib/theme-provider";
@@ -23,19 +22,8 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-  beforeLoad: async ({ context }) => {
-    const authOptions = authQueryOptions();
-
-    if (import.meta.env.SSR) {
-      const user = await context.queryClient.fetchQuery(authOptions);
-      return { user };
-    }
-
-    void context.queryClient.prefetchQuery(authOptions);
-    return {
-      user: context.queryClient.getQueryData<AuthQueryResult>(authOptions.queryKey) ?? null,
-    };
-  },
+  // Protected routes load the user in /_auth/route.tsx.
+  // Public auth affordances use the shared auth query without blocking SSR.
   head: () => {
     const siteSettings = getSiteSettingsForLocale(getCurrentLocale());
 

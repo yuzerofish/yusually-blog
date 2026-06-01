@@ -10,6 +10,8 @@ export const authQueryOptions = () =>
   queryOptions({
     queryKey: ["auth"],
     queryFn: ({ signal }) => $getUser({ signal }),
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
     staleTime: 0,
   });
 
