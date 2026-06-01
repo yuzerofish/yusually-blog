@@ -105,6 +105,9 @@ async function logInAsLocalAdmin(page: Page) {
   await page.getByLabel("Email").fill(localAdmin.email);
   await page.getByLabel("Password").fill(localAdmin.password);
   await page.getByRole("button", { name: "Login" }).click();
+  await expect(page).toHaveURL(/\/app\/?$/);
+  await expect(page.getByRole("heading", { name: "Account" })).toBeVisible();
+  await page.getByRole("button", { name: /Open admin/ }).click();
   await expect(page).toHaveURL(/\/admin\/?$/);
   await expect(page.getByRole("heading", { name: "Publishing overview" })).toBeVisible();
 }

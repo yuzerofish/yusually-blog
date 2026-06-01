@@ -7,5 +7,5 @@ export const $getUser = createServerFn({ method: "GET" }).handler(async () => {
   setResponseHeader("cache-control", "no-store, max-age=0");
   setResponseHeader("pragma", "no-cache");
 
-  return _getUser({ disableCookieCache: true });
+  return _getUser();
 });

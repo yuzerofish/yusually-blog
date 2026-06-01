@@ -1,4 +1,4 @@
-import { useAuthSuspense } from "@repo/auth/tanstack/hooks";
+import type { AuthQueryResult } from "@repo/auth/tanstack/queries";
 import { getSiteSettingsForLocale, type SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { cn } from "@repo/ui/lib/utils";
@@ -40,8 +40,7 @@ const adminNav = [
   { label: m.admin_nav_settings, href: "/admin/settings", icon: SettingsIcon },
 ];
 
-export function AdminShell() {
-  const { user } = useAuthSuspense();
+export function AdminShell({ user }: { readonly user: AuthQueryResult }) {
   const locale = getCurrentLocale();
   const isAdmin = user?.role === "admin";
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(getSiteSettingsForLocale(locale));

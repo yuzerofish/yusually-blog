@@ -66,7 +66,7 @@ export async function getAccountUserFromRequest(
 ) {
   const session = await auth.api.getSession({
     headers: request.headers,
-    query: { ...query, disableCookieCache: true },
+    query,
   });
 
   if (!session?.user?.id) {
@@ -98,6 +98,14 @@ export async function loginAccount(
     data: publicAccountUser(user),
     headers: result.headers,
   } as const;
+}
+
+export async function logoutAccount(request: Request) {
+  const response = await callAuthEndpoint("/api/auth/sign-out", {}, request);
+
+  return {
+    headers: extractSetCookieHeaders(response),
+  };
 }
 
 export async function signupAccount(

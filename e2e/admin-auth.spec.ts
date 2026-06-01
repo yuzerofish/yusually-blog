@@ -78,11 +78,14 @@ test.describe("Admin authentication", () => {
     const page = await context.newPage();
 
     await page.goto("/login", { waitUntil: "domcontentloaded" });
-    await expect(page.locator('form[action="/api/admin/login"]')).toBeVisible();
+    await expect(page.locator('form[action="/api/account/login"]')).toBeVisible();
     await expect(page.locator('button[type="submit"]')).toBeEnabled();
     await page.locator("#email").fill(localAdmin.email);
     await page.locator("#password").fill(localAdmin.password);
     await page.locator('button[type="submit"]').click();
+    await expect(page).toHaveURL(/\/app\/?$/);
+    await expect(page.getByRole("heading", { name: "Account" })).toBeVisible();
+    await page.getByRole("button", { name: /Open admin/ }).click();
     await expect(page).toHaveURL(/\/admin\/?$/);
     await expect(page.getByRole("heading", { name: "Publishing overview" })).toBeVisible();
 
@@ -108,6 +111,9 @@ async function logInAsLocalAdmin(page: Page) {
   await page.getByLabel("Email").fill(localAdmin.email);
   await page.getByLabel("Password").fill(localAdmin.password);
   await page.getByRole("button", { name: "Login" }).click();
+  await expect(page).toHaveURL(/\/app\/?$/);
+  await expect(page.getByRole("heading", { name: "Account" })).toBeVisible();
+  await page.getByRole("button", { name: /Open admin/ }).click();
   await expect(page).toHaveURL(/\/admin\/?$/);
   await expect(page.getByRole("heading", { name: "Publishing overview" })).toBeVisible();
 }

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { logoutAdmin } from "#/lib/admin-auth";
+import { logoutAccount } from "#/lib/account-auth";
 import { formRedirect } from "#/lib/auth-form";
 import { jsonResponse } from "#/lib/cms-api";
 
@@ -8,7 +8,7 @@ export const Route = createFileRoute("/api/account/logout")({
   server: {
     handlers: {
       POST: async ({ request }: { request: Request }) => {
-        const result = await logoutAdmin(request);
+        const result = await logoutAccount(request);
 
         if (acceptsHtml(request)) {
           return formRedirect("/login", { headers: result.headers });
