@@ -1,7 +1,7 @@
 import { type ContentStatus, type Post } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
-import { ArrowLeftIcon, SparklesIcon } from "lucide-react";
+import { ArrowLeftIcon, FileTextIcon, GitBranchIcon, SparklesIcon } from "lucide-react";
 import { useEffect, useState, type ComponentProps } from "react";
 import { toast } from "sonner";
 
@@ -266,7 +266,11 @@ export function PostEditorPage({ postId }: PostEditorPageProps) {
         </p>
       ) : null}
 
-      {loadState === "ready" ? (
+      {loadState === "ready" && editingPost?.externalSource?.kind === "obsidian_git" ? (
+        <ObsidianReadOnlyPanel post={editingPost} locale={locale} />
+      ) : null}
+
+      {loadState === "ready" && editingPost?.externalSource?.kind !== "obsidian_git" ? (
         <PostForm
           editingPost={editingPost}
           editorMode={editorMode}
@@ -279,6 +283,60 @@ export function PostEditorPage({ postId }: PostEditorPageProps) {
         />
       ) : null}
     </section>
+  );
+}
+
+function ObsidianReadOnlyPanel({ locale, post }: { locale: "en" | "zh"; post: Post }) {
+  const source = post.externalSource;
+  const copy =
+    locale === "zh"
+      ? {
+          body: "这篇文章来自 Obsidian vault。后台会展示它，但修改、删除和重新发布都以 Git 中的 Markdown 文件为准。",
+          heading: "这篇文章由 Obsidian 同步",
+          openPost: "查看公开文章",
+          sourceLabel: "源文件",
+          syncHint: "修改源文件后，运行 Obsidian 同步命令即可更新网站。",
+        }
+      : {
+          body: "This post comes from the Obsidian vault. The admin can display it, but edits, deletion, and republishing are controlled by the Markdown file in Git.",
+          heading: "Synced from Obsidian",
+          openPost: "View public post",
+          sourceLabel: "Source file",
+          syncHint: "Edit the source file, then run the Obsidian sync command to update the site.",
+        };
+
+  return (
+    <div className={`${adminPanelClassName} grid gap-5`}>
+      <div className="flex items-start gap-3">
+        <span className="grid size-10 shrink-0 place-items-center rounded-md bg-muted text-link">
+          <GitBranchIcon className="size-5" />
+        </span>
+        <div className="min-w-0">
+          <h2 className="text-lg font-semibold">{copy.heading}</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">{copy.body}</p>
+        </div>
+      </div>
+
+      <div className="rounded-md border border-border bg-muted/35 p-4">
+        <div className="flex items-center gap-2 text-sm font-semibold">
+          <FileTextIcon className="size-4" />
+          {copy.sourceLabel}
+        </div>
+        <p className="mt-2 font-mono text-sm break-all text-muted-foreground">
+          {source?.path ?? "-"}
+        </p>
+        <p className="mt-3 text-xs leading-5 text-muted-foreground">{copy.syncHint}</p>
+      </div>
+
+      <div>
+        <Button
+          render={<Link to="/blog/$slug" params={{ slug: post.slug }} />}
+          nativeButton={false}
+        >
+          {copy.openPost}
+        </Button>
+      </div>
+    </div>
   );
 }
 

@@ -29,6 +29,12 @@ The API supports Markdown, HTML, ZIP, and folder imports. Exports include posts,
 
 Backups are written to R2 so a generated site can be restored or moved later.
 
+## Obsidian Publishing
+
+Use `content/notes` when you want to write in an Obsidian vault. Only `.md` and `.mdx` files with `publish: true` are synced, and synced notes become normal blog posts with the same comments, tags, RSS feed, and sitemap behavior.
+
+See [Obsidian Publishing](/docs/obsidian) for the full workflow.
+
 ## Docs Publishing
 
 Docs pages are committed as Markdown or MDX files under `apps/web/content/docs`. They are deployed with the web app and rendered by Fumadocs at `/docs`.

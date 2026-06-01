@@ -144,9 +144,22 @@ export function drizzleRowToPost(
     authorName: currentSettings.authorName,
     series: null,
     tags: [],
+    externalSource: null,
     seoTitle: row.seoTitle ?? row.title,
     seoDescription: row.seoDescription ?? row.excerpt,
     i18n: row.i18n as Post["i18n"],
+  };
+}
+
+export function drizzleRowToPostExternalSource(
+  row: typeof schema.postSources.$inferSelect,
+): NonNullable<Post["externalSource"]> {
+  return {
+    kind: row.source,
+    path: row.sourcePath,
+    hash: row.contentHash,
+    lastSeenAt: row.lastSeenAt,
+    missingAt: row.missingAt,
   };
 }
 

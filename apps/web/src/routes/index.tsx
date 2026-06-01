@@ -21,9 +21,12 @@ import {
   ArrowRightIcon,
   BookOpenIcon,
   CloudIcon,
+  FilesIcon,
   FileTextIcon,
+  GitBranchIcon,
   GlobeIcon,
   HashIcon,
+  ImageIcon,
   LockKeyholeIcon,
   MessageSquareTextIcon,
   PencilIcon,
@@ -104,6 +107,7 @@ function HomePage() {
 function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
   const copy = getHomeCopy(locale);
   const docsHref = getDocsUrl([], locale);
+  const obsidianDocsHref = getDocsUrl(["obsidian"], locale);
   const visibleFeaturedPosts = featuredPosts.slice(0, 3);
   const visibleFeaturedIds = new Set(visibleFeaturedPosts.map((post) => post.id));
   const displayPosts = posts.filter((post) => !visibleFeaturedIds.has(post.id)).slice(0, 5);
@@ -195,6 +199,35 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
           </div>
           <div className="divide-y divide-border border-y border-border">
             {copy.features.map((feature, index) => (
+              <FeatureRow key={feature.title} feature={feature} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Obsidian ── */}
+      <section className="border-b border-border bg-muted/35">
+        <div className="mx-auto grid max-w-6xl gap-9 px-4 py-12 sm:px-6 lg:grid-cols-[0.44fr_0.56fr] lg:px-8 lg:py-16 xl:px-12">
+          <div data-home-reveal className="max-w-md">
+            <p className="text-sm font-semibold text-link uppercase">{copy.obsidianEyebrow}</p>
+            <h2 className="mt-3 text-3xl leading-tight font-semibold text-balance">
+              {copy.obsidianTitle}
+            </h2>
+            <p className="mt-4 text-sm leading-6 text-muted-foreground">{copy.obsidianBody}</p>
+            <div className="mt-6">
+              <Button
+                render={<a href={obsidianDocsHref} aria-label={copy.obsidianCta} />}
+                variant="outline"
+                nativeButton={false}
+                className="hover:-translate-y-0.5"
+              >
+                <FileTextIcon />
+                {copy.obsidianCta}
+              </Button>
+            </div>
+          </div>
+          <div className="divide-y divide-border border-y border-border">
+            {copy.obsidianPoints.map((feature, index) => (
               <FeatureRow key={feature.title} feature={feature} index={index} />
             ))}
           </div>
@@ -889,6 +922,32 @@ function getHomeCopy(locale: SupportedLocale) {
         },
       ],
 
+      obsidianEyebrow: "Obsidian 写作流",
+      obsidianTitle: "把 Obsidian vault 直接变成博客来源。",
+      obsidianBody:
+        "草稿、私人笔记、长期资料都可以留在 vault 里。只有带 publish: true 的 Markdown / MDX 文件会发布到博客，并继续共用标签、RSS、评论和站内搜索。",
+      obsidianCta: "阅读 Obsidian 文档",
+      obsidianPoints: [
+        {
+          title: "按你的目录写作",
+          description:
+            "文件放在 content/notes，目录结构随你安排。网站不按文件夹展示，只按标签和发布时间组织文章。",
+          icon: FilesIcon,
+        },
+        {
+          title: "图片自动上传",
+          description:
+            "支持 ![[image.png]] 和普通 Markdown 图片。能在 vault 中找到的图片会上传到 R2，并自动改写链接。",
+          icon: ImageIcon,
+        },
+        {
+          title: "Git 同步发布与隐藏",
+          description:
+            "同步命令会记录源文件路径和内容 hash。移除 publish: true 或删除文件后，站内文章会自动隐藏。",
+          icon: GitBranchIcon,
+        },
+      ] satisfies FeatureItem[],
+
       // ── AI Skill ──
       skillEyebrow: "AI 初始化 Skill",
       skillTitle: "跟 AI 聊几句，博客全自动部署上线。",
@@ -1082,6 +1141,32 @@ function getHomeCopy(locale: SupportedLocale) {
         icon: ArchiveIcon,
       },
     ],
+
+    obsidianEyebrow: "Obsidian workflow",
+    obsidianTitle: "Turn an Obsidian vault into a blog source.",
+    obsidianBody:
+      "Keep drafts, private notes, and long-running references in one vault. Only Markdown / MDX files with publish: true become public posts, and they still use tags, RSS, comments, and site search.",
+    obsidianCta: "Read the Obsidian guide",
+    obsidianPoints: [
+      {
+        title: "Write in any folder structure",
+        description:
+          "Put files under content/notes and organize them however you like. The site ignores folders and groups public posts by tags and publish time.",
+        icon: FilesIcon,
+      },
+      {
+        title: "Image references are handled",
+        description:
+          "Supports ![[image.png]] and standard Markdown image links. Images found in the vault are uploaded to R2 and rewritten automatically.",
+        icon: ImageIcon,
+      },
+      {
+        title: "Git-backed publish and hide",
+        description:
+          "The sync command records source paths and content hashes. Remove publish: true or delete the source file, and the public post is hidden on the next sync.",
+        icon: GitBranchIcon,
+      },
+    ] satisfies FeatureItem[],
 
     // ── AI Skill ──
     skillEyebrow: "AI Init Skill",

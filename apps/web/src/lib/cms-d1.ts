@@ -21,6 +21,9 @@ export {
   deleteD1Post,
 } from "./cms-d1-posts";
 
+export type { ObsidianSyncEntry, ObsidianSyncResult } from "./cms-d1-obsidian";
+export { isObsidianPost, syncD1ObsidianPosts } from "./cms-d1-obsidian";
+
 // Re-export comments
 export type { D1CommentAiModerationTask, D1CommentCreateResult } from "./cms-d1-comments";
 export {

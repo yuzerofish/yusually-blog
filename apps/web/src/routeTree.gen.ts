@@ -45,6 +45,7 @@ import { Route as AuthAdminRouteRouteImport } from './routes/_auth/admin/route'
 import { Route as AuthAppIndexRouteImport } from './routes/_auth/app/index'
 import { Route as AuthAdminIndexRouteImport } from './routes/_auth/admin/index'
 import { Route as ZhDocsSplatRouteImport } from './routes/zh/docs/$'
+import { Route as ApiSyncObsidianRouteImport } from './routes/api/sync/obsidian'
 import { Route as ApiSeriesIdRouteImport } from './routes/api/series/$id'
 import { Route as ApiPostsBatchRouteImport } from './routes/api/posts/batch'
 import { Route as ApiPostsIdRouteImport } from './routes/api/posts/$id'
@@ -276,6 +277,11 @@ const ZhDocsSplatRoute = ZhDocsSplatRouteImport.update({
   path: '/zh/docs/$',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/zh/docs/$.lazy').then((d) => d.Route))
+const ApiSyncObsidianRoute = ApiSyncObsidianRouteImport.update({
+  id: '/api/sync/obsidian',
+  path: '/api/sync/obsidian',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSeriesIdRoute = ApiSeriesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -614,6 +620,7 @@ export interface FileRoutesByFullPath {
   '/api/posts/$id': typeof ApiPostsIdRoute
   '/api/posts/batch': typeof ApiPostsBatchRoute
   '/api/series/$id': typeof ApiSeriesIdRoute
+  '/api/sync/obsidian': typeof ApiSyncObsidianRoute
   '/zh/docs/$': typeof ZhDocsSplatRoute
   '/admin/': typeof AuthAdminIndexRoute
   '/app/': typeof AuthAppIndexRoute
@@ -699,6 +706,7 @@ export interface FileRoutesByTo {
   '/api/posts/$id': typeof ApiPostsIdRoute
   '/api/posts/batch': typeof ApiPostsBatchRoute
   '/api/series/$id': typeof ApiSeriesIdRoute
+  '/api/sync/obsidian': typeof ApiSyncObsidianRoute
   '/zh/docs/$': typeof ZhDocsSplatRoute
   '/admin': typeof AuthAdminIndexRoute
   '/app': typeof AuthAppIndexRoute
@@ -790,6 +798,7 @@ export interface FileRoutesById {
   '/api/posts/$id': typeof ApiPostsIdRoute
   '/api/posts/batch': typeof ApiPostsBatchRoute
   '/api/series/$id': typeof ApiSeriesIdRoute
+  '/api/sync/obsidian': typeof ApiSyncObsidianRoute
   '/zh/docs/$': typeof ZhDocsSplatRoute
   '/_auth/admin/': typeof AuthAdminIndexRoute
   '/_auth/app/': typeof AuthAppIndexRoute
@@ -880,6 +889,7 @@ export interface FileRouteTypes {
     | '/api/posts/$id'
     | '/api/posts/batch'
     | '/api/series/$id'
+    | '/api/sync/obsidian'
     | '/zh/docs/$'
     | '/admin/'
     | '/app/'
@@ -965,6 +975,7 @@ export interface FileRouteTypes {
     | '/api/posts/$id'
     | '/api/posts/batch'
     | '/api/series/$id'
+    | '/api/sync/obsidian'
     | '/zh/docs/$'
     | '/admin'
     | '/app'
@@ -1055,6 +1066,7 @@ export interface FileRouteTypes {
     | '/api/posts/$id'
     | '/api/posts/batch'
     | '/api/series/$id'
+    | '/api/sync/obsidian'
     | '/zh/docs/$'
     | '/_auth/admin/'
     | '/_auth/app/'
@@ -1131,6 +1143,7 @@ export interface RootRouteChildren {
   ApiImportHtmlRoute: typeof ApiImportHtmlRoute
   ApiImportMarkdownRoute: typeof ApiImportMarkdownRoute
   ApiImportZipRoute: typeof ApiImportZipRoute
+  ApiSyncObsidianRoute: typeof ApiSyncObsidianRoute
   ZhDocsSplatRoute: typeof ZhDocsSplatRoute
   ApiCommentAuthGithubStartRoute: typeof ApiCommentAuthGithubStartRoute
   ApiCommentAuthGoogleStartRoute: typeof ApiCommentAuthGoogleStartRoute
@@ -1388,6 +1401,13 @@ declare module '@tanstack/react-router' {
       path: '/zh/docs/$'
       fullPath: '/zh/docs/$'
       preLoaderRoute: typeof ZhDocsSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/sync/obsidian': {
+      id: '/api/sync/obsidian'
+      path: '/api/sync/obsidian'
+      fullPath: '/api/sync/obsidian'
+      preLoaderRoute: typeof ApiSyncObsidianRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/series/$id': {
@@ -2013,6 +2033,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiImportHtmlRoute: ApiImportHtmlRoute,
   ApiImportMarkdownRoute: ApiImportMarkdownRoute,
   ApiImportZipRoute: ApiImportZipRoute,
+  ApiSyncObsidianRoute: ApiSyncObsidianRoute,
   ZhDocsSplatRoute: ZhDocsSplatRoute,
   ApiCommentAuthGithubStartRoute: ApiCommentAuthGithubStartRoute,
   ApiCommentAuthGoogleStartRoute: ApiCommentAuthGoogleStartRoute,

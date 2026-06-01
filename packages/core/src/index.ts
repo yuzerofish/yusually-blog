@@ -35,6 +35,7 @@ export type {
   EmailPreference,
   LayoutPreset,
   Post,
+  PostExternalSource,
   Series,
   SiteSettings,
   SupportedLocale,

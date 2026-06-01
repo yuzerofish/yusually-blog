@@ -21,6 +21,7 @@ import {
   type PostInput,
   type ListPostsOptions,
   drizzleRowToPost,
+  drizzleRowToPostExternalSource,
   drizzleRowToSeries,
   postVisibilityFilter,
 } from "./cms-d1-shared";
@@ -548,7 +549,7 @@ async function attachD1Relations(
   const seriesIds = Array.from(
     new Set(rows.map((row) => row.seriesId).filter((id): id is string => Boolean(id))),
   );
-  const [tagRows, seriesRows] = await Promise.all([
+  const [tagRows, seriesRows, sourceRows] = await Promise.all([
     db
       .select({
         tagId: schema.tags.id,
@@ -565,9 +566,13 @@ async function attachD1Relations(
     seriesIds.length
       ? db.select().from(schema.series).where(inArray(schema.series.id, seriesIds))
       : Promise.resolve([]),
+    db.select().from(schema.postSources).where(inArray(schema.postSources.postId, postIds)),
   ]);
 
   const seriesById = new Map(seriesRows.map((row) => [row.id, drizzleRowToSeries(row)]));
+  const sourcesByPostId = new Map(
+    sourceRows.map((row) => [row.postId, drizzleRowToPostExternalSource(row)]),
+  );
   const tagsByPostId = new Map<string, Tag[]>();
 
   for (const row of tagRows) {
@@ -585,6 +590,7 @@ async function attachD1Relations(
 
   return posts.map((post, index) => ({
     ...post,
+    externalSource: sourcesByPostId.get(post.id) ?? null,
     series: rows[index].seriesId ? (seriesById.get(rows[index].seriesId) ?? null) : null,
     tags: tagsByPostId.get(post.id) ?? [],
   }));

@@ -49,6 +49,10 @@ export const Route = createFileRoute("/api/posts/batch")({
             continue;
           }
 
+          if (post.externalSource?.kind === "obsidian_git") {
+            continue;
+          }
+
           const updated = await updateD1Post(post.id, { status, locale });
 
           if (updated) {

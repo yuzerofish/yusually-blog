@@ -37,6 +37,7 @@ export type Post = {
   authorName: string;
   series: Series | null;
   tags: Tag[];
+  externalSource?: PostExternalSource | null;
   seoTitle: string;
   seoDescription: string;
   i18n?: LocalizedFields<
@@ -48,6 +49,14 @@ export type Post = {
     | "seoTitle"
     | "seoDescription"
   >;
+};
+
+export type PostExternalSource = {
+  kind: "obsidian_git";
+  path: string;
+  hash: string;
+  lastSeenAt: string;
+  missingAt: string | null;
 };
 
 export type Series = {

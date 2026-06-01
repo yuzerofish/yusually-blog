@@ -176,6 +176,7 @@ export function PostList({
             {visiblePosts.map((post) => {
               const statusCopy = getPostStatusCopy(post.status);
               const publiclyVisible = isPostPubliclyVisible(post);
+              const isObsidianPost = post.externalSource?.kind === "obsidian_git";
 
               return (
                 <tr key={post.id}>
@@ -218,7 +219,9 @@ export function PostList({
                   <td className="px-3 py-3 text-muted-foreground">
                     {post.series?.name ?? m.admin_posts_no_series()}
                   </td>
-                  <td className="px-3 py-3 text-muted-foreground">{post.source}</td>
+                  <td className="px-3 py-3 text-muted-foreground">
+                    {isObsidianPost ? "Obsidian" : post.source}
+                  </td>
                   <td className="px-3 py-3 text-muted-foreground">{post.updatedAt.slice(0, 10)}</td>
                   <td className="px-3 py-3">
                     {publiclyVisible ? (
@@ -243,7 +246,7 @@ export function PostList({
                       >
                         {m.admin_posts_edit()}
                       </Button>
-                      {post.status !== "published" ? (
+                      {!isObsidianPost && post.status !== "published" ? (
                         <Button
                           size="sm"
                           variant="outline"
@@ -253,7 +256,7 @@ export function PostList({
                           {m.admin_publish_post()}
                         </Button>
                       ) : null}
-                      {post.status !== "draft" ? (
+                      {!isObsidianPost && post.status !== "draft" ? (
                         <Button
                           size="sm"
                           variant="outline"
@@ -263,7 +266,7 @@ export function PostList({
                           {m.admin_posts_move_to_draft()}
                         </Button>
                       ) : null}
-                      {post.status !== "archived" ? (
+                      {!isObsidianPost && post.status !== "archived" ? (
                         <Button
                           size="sm"
                           variant="outline"
@@ -273,9 +276,11 @@ export function PostList({
                           {m.admin_posts_archive()}
                         </Button>
                       ) : null}
-                      <Button size="sm" variant="destructive" onClick={() => onDeletePost(post)}>
-                        {m.admin_posts_delete()}
-                      </Button>
+                      {!isObsidianPost ? (
+                        <Button size="sm" variant="destructive" onClick={() => onDeletePost(post)}>
+                          {m.admin_posts_delete()}
+                        </Button>
+                      ) : null}
                     </div>
                   </td>
                 </tr>

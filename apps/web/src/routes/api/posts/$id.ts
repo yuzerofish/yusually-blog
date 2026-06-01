@@ -55,6 +55,16 @@ export const Route = createFileRoute("/api/posts/$id")({
           return jsonResponse({ error: "Post not found" }, { status: 404 });
         }
 
+        if (post.externalSource?.kind === "obsidian_git") {
+          return jsonResponse(
+            {
+              error:
+                "Obsidian-synced posts are read-only in the admin API. Edit the source file and run the Obsidian sync again.",
+            },
+            { status: 409 },
+          );
+        }
+
         const updated = await updateD1Post(
           post.id,
           await applyPublishingAutomation({ ...body, locale }, post),
@@ -78,6 +88,16 @@ export const Route = createFileRoute("/api/posts/$id")({
 
         if (!post) {
           return jsonResponse({ error: "Post not found" }, { status: 404 });
+        }
+
+        if (post.externalSource?.kind === "obsidian_git") {
+          return jsonResponse(
+            {
+              error:
+                "Obsidian-synced posts are deleted from Git. Remove publish: true or delete the source file and run the Obsidian sync again.",
+            },
+            { status: 409 },
+          );
         }
 
         const deleted = await deleteD1Post(post.id);

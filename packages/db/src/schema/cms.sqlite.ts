@@ -102,6 +102,28 @@ export const postTags = sqliteTable(
   (table) => [uniqueIndex("post_tags_unique_idx").on(table.postId, table.tagId)],
 );
 
+export const postSources = sqliteTable(
+  "post_sources",
+  {
+    id: text("id").primaryKey(),
+    postId: text("post_id")
+      .notNull()
+      .references(() => posts.id, { onDelete: "cascade" }),
+    source: text("source", { enum: ["obsidian_git"] }).notNull(),
+    sourcePath: text("source_path").notNull(),
+    contentHash: text("content_hash").notNull(),
+    lastSeenAt: text("last_seen_at").notNull(),
+    missingAt: text("missing_at"),
+    createdAt: text("created_at").notNull(),
+    updatedAt: text("updated_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("post_sources_source_path_idx").on(table.source, table.sourcePath),
+    uniqueIndex("post_sources_post_source_idx").on(table.postId, table.source),
+    index("post_sources_missing_idx").on(table.source, table.missingAt),
+  ],
+);
+
 export const assets = sqliteTable(
   "assets",
   {
