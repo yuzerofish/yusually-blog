@@ -82,7 +82,7 @@ export async function createD1Series(input: SeriesInput) {
     updatedAt: now,
   });
 
-  await invalidateCache("series:all", "posts:published");
+  await invalidateCache("series:all", "posts:published", "sitemap:paths");
 
   return series;
 }
@@ -123,7 +123,7 @@ export async function updateD1Series(idOrSlug: string, input: SeriesInput) {
     })
     .where(eq(schema.series.id, existing.id));
 
-  await invalidateCache("series:all", "posts:published");
+  await invalidateCache("series:all", "posts:published", "sitemap:paths");
 
   return getD1SeriesByIdOrSlug(existing.id);
 }
@@ -141,7 +141,7 @@ export async function deleteD1Series(idOrSlug: string) {
     .set({ seriesId: null })
     .where(eq(schema.posts.seriesId, existing.id));
   await db.delete(schema.series).where(eq(schema.series.id, existing.id));
-  await invalidateCache("series:all", "posts:published");
+  await invalidateCache("series:all", "posts:published", "sitemap:paths");
 
   return existing;
 }

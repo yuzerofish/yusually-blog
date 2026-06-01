@@ -18,10 +18,13 @@ export type HomePageData = {
 };
 
 export type BlogIndexPageData = {
+  page: number;
+  pageSize: number;
   posts: Post[];
   siteSettings: SiteSettings;
   tags: Tag[];
   series: Series[];
+  totalPosts: number;
 };
 
 export type TagPageData = {
@@ -82,13 +85,13 @@ export const $getBlogPostPage = createServerFn({ method: "GET" })
 export const $getHomePageData = createServerFn({ method: "GET" }).handler(
   async (): Promise<HomePageData> => {
     const { getD1SiteSettings, listD1Posts, listD1Series, listD1Tags } = await import("./cms-d1");
-    const [siteSettings, posts, tags, series] = await Promise.all([
+    const [siteSettings, posts, featuredPosts, tags, series] = await Promise.all([
       getD1SiteSettings(),
-      listD1Posts(),
+      listD1Posts({ limit: 12 }),
+      listD1Posts({ featured: true, limit: 3 }),
       listD1Tags(),
       listD1Series(),
     ]);
-    const featuredPosts = posts.filter((post) => post.featured);
 
     return {
       posts,
@@ -101,26 +104,47 @@ export const $getHomePageData = createServerFn({ method: "GET" }).handler(
 );
 
 export const $getBlogIndexPage = createServerFn({ method: "GET" })
-  .inputValidator((data: { query?: string; tagSlug?: string; seriesSlug?: string }) => data)
+  .inputValidator(
+    (data: {
+      page?: number;
+      pageSize?: number;
+      query?: string;
+      tagSlug?: string;
+      seriesSlug?: string;
+    }) => data,
+  )
   .handler(async ({ data }): Promise<BlogIndexPageData> => {
-    const { getD1SiteSettings, listD1Posts, listD1Series, listD1Tags } = await import("./cms-d1");
-    const [allPosts, siteSettings, tags, series] = await Promise.all([
-      listD1Posts(),
-      getD1SiteSettings(),
-      listD1Tags(),
-      listD1Series(),
-    ]);
-    const posts = filterPosts(allPosts, {
+    const { countD1Posts, getD1SiteSettings, listD1Posts, listD1Series, listD1Tags } =
+      await import("./cms-d1");
+    const pageSize = Math.min(Math.max(1, Math.floor(data.pageSize ?? 6)), 24);
+    const requestedPage = Math.max(1, Math.floor(data.page ?? 1));
+    const filters = {
       query: data.query,
       tagSlug: data.tagSlug,
       seriesSlug: data.seriesSlug,
+    };
+    const [siteSettings, tags, series, totalPosts] = await Promise.all([
+      getD1SiteSettings(),
+      listD1Tags(),
+      listD1Series(),
+      countD1Posts(filters),
+    ]);
+    const pageCount = Math.max(1, Math.ceil(totalPosts / pageSize));
+    const page = Math.min(requestedPage, pageCount);
+    const posts = await listD1Posts({
+      ...filters,
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
     });
 
     return {
+      page,
+      pageSize,
       posts,
       siteSettings,
       tags,
       series,
+      totalPosts,
     };
   });
 
@@ -128,8 +152,8 @@ export const $getTagPage = createServerFn({ method: "GET" })
   .inputValidator((data: { slug: string }) => data)
   .handler(async ({ data }): Promise<TagPageData | null> => {
     const { getD1SiteSettings, listD1Posts, listD1Tags } = await import("./cms-d1");
-    const [allPosts, siteSettings, tags] = await Promise.all([
-      listD1Posts(),
+    const [posts, siteSettings, tags] = await Promise.all([
+      listD1Posts({ tagSlug: data.slug }),
       getD1SiteSettings(),
       listD1Tags(),
     ]);
@@ -142,7 +166,7 @@ export const $getTagPage = createServerFn({ method: "GET" })
     return {
       siteSettings,
       tag,
-      posts: filterPosts(allPosts, { tagSlug: tag.slug }),
+      posts,
     };
   });
 
@@ -184,8 +208,8 @@ export const $getSeriesDetailPage = createServerFn({ method: "GET" })
   .inputValidator((data: { slug: string }) => data)
   .handler(async ({ data }): Promise<SeriesDetailPageData | null> => {
     const { getD1SiteSettings, listD1Posts, listD1Series } = await import("./cms-d1");
-    const [allPosts, siteSettings, allSeries] = await Promise.all([
-      listD1Posts(),
+    const [posts, siteSettings, allSeries] = await Promise.all([
+      listD1Posts({ seriesSlug: data.slug }),
       getD1SiteSettings(),
       listD1Series(),
     ]);
@@ -198,7 +222,7 @@ export const $getSeriesDetailPage = createServerFn({ method: "GET" })
     return {
       siteSettings,
       currentSeries: series,
-      posts: filterPosts(allPosts, { seriesSlug: series.slug }),
+      posts,
     };
   });
 
@@ -221,23 +245,3 @@ export const $getAboutPageData = createServerFn({ method: "GET" }).handler(
     };
   },
 );
-
-function filterPosts(
-  posts: Post[],
-  { query = "", tagSlug, seriesSlug }: { query?: string; tagSlug?: string; seriesSlug?: string },
-) {
-  const normalizedQuery = query.trim().toLowerCase();
-
-  return posts.filter((post) => {
-    const matchesTag = tagSlug ? post.tags.some((tag) => tag.slug === tagSlug) : true;
-    const matchesSeries = seriesSlug ? post.series?.slug === seriesSlug : true;
-    const matchesQuery = normalizedQuery
-      ? [post.title, post.excerpt, post.contentText, post.slug]
-          .join(" ")
-          .toLowerCase()
-          .includes(normalizedQuery)
-      : true;
-
-    return matchesTag && matchesSeries && matchesQuery;
-  });
-}

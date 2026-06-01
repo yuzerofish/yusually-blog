@@ -1,7 +1,7 @@
 import "@tanstack/react-start/server-only";
 import { env } from "cloudflare:workers";
 
-const CACHE_TTL_SECONDS = 60;
+const CACHE_TTL_SECONDS = 300;
 
 export async function cachedGet<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
   try {

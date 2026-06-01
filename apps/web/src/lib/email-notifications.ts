@@ -18,6 +18,7 @@ import { getCmsDb } from "./cms-db";
 import { getEmailDeliveryStatus, sendCmsEmail } from "./cms-email";
 
 const digestWindowDays = 14;
+const emailSendConcurrency = 5;
 
 type NotificationRecipient = {
   id: string;
@@ -57,10 +58,7 @@ export async function notifyPostPublishedSubscribers(post: Post): Promise<PostNo
 
   const recipients = await listRecipientsByPreference("instant_posts");
   const subject = `New post: ${post.title}`;
-  let sent = 0;
-  let failed = 0;
-
-  for (const recipient of recipients) {
+  const totals = await runEmailTasks(recipients, async (recipient) => {
     const deliveryId = await reservePostDelivery({
       notificationType: "instant_post",
       postId: post.id,
@@ -69,7 +67,7 @@ export async function notifyPostPublishedSubscribers(post: Post): Promise<PostNo
     });
 
     if (!deliveryId) {
-      continue;
+      return { failed: 0, sent: 0 };
     }
 
     const result = await sendCmsEmail({
@@ -84,15 +82,15 @@ export async function notifyPostPublishedSubscribers(post: Post): Promise<PostNo
     });
 
     if (result.sent) {
-      sent += 1;
       await markDeliverySent(deliveryId, result.messageId);
+      return { failed: 0, sent: 1 };
     } else {
-      failed += 1;
       await markDeliveryFailed(deliveryId, result.error ?? result.reason);
+      return { failed: 1, sent: 0 };
     }
-  }
+  });
 
-  return { failed, sent, skipped: false };
+  return { failed: totals.failed, sent: totals.sent, skipped: false };
 }
 
 export function shouldNotifyPostPublication(previous: Post | null | undefined, next: Post) {
@@ -179,10 +177,7 @@ export async function sendDueBiweeklyDigest() {
   }
 
   const subject = `${settings.name}: ${posts.length} new ${posts.length === 1 ? "post" : "posts"}`;
-  let sent = 0;
-  let failed = 0;
-
-  for (const recipient of recipients) {
+  const totals = await runEmailTasks(recipients, async (recipient) => {
     const deliveryId = await createDelivery({
       notificationType: "biweekly_digest",
       postId: null,
@@ -201,13 +196,13 @@ export async function sendDueBiweeklyDigest() {
     });
 
     if (result.sent) {
-      sent += 1;
       await markDeliverySent(deliveryId, result.messageId);
+      return { failed: 0, sent: 1 };
     } else {
-      failed += 1;
       await markDeliveryFailed(deliveryId, result.error ?? result.reason);
+      return { failed: 1, sent: 0 };
     }
-  }
+  });
 
   await getCmsDb()
     .insert(cmsSchema.emailDigestRuns)
@@ -215,15 +210,22 @@ export async function sendDueBiweeklyDigest() {
       id: runId,
       periodStart: periodStart.toISOString(),
       periodEnd: periodEnd.toISOString(),
-      status: failed && !sent ? "failed" : "sent",
+      status: totals.failed && !totals.sent ? "failed" : "sent",
       postCount: posts.length,
-      recipientCount: sent,
-      error: failed ? `${failed} recipient${failed === 1 ? "" : "s"} failed` : null,
+      recipientCount: totals.sent,
+      error: totals.failed
+        ? `${totals.failed} recipient${totals.failed === 1 ? "" : "s"} failed`
+        : null,
       createdAt,
       completedAt: new Date().toISOString(),
     });
 
-  return { failed, postCount: posts.length, recipientCount: sent, skipped: false };
+  return {
+    failed: totals.failed,
+    postCount: posts.length,
+    recipientCount: totals.sent,
+    skipped: false,
+  };
 }
 
 export async function getBroadcastAudienceCount() {
@@ -280,10 +282,7 @@ export async function sendManualBroadcast(input: BroadcastInput) {
   const recipients = await listBroadcastRecipients();
   const broadcastId = `broadcast_${crypto.randomUUID()}`;
   const createdAt = new Date().toISOString();
-  let sent = 0;
-  let failed = 0;
-
-  for (const recipient of recipients) {
+  const totals = await runEmailTasks(recipients, async (recipient) => {
     const deliveryId = await createDelivery({
       notificationType: "manual_broadcast",
       postId: null,
@@ -302,13 +301,13 @@ export async function sendManualBroadcast(input: BroadcastInput) {
     });
 
     if (result.sent) {
-      sent += 1;
       await markDeliverySent(deliveryId, result.messageId);
+      return { failed: 0, sent: 1 };
     } else {
-      failed += 1;
       await markDeliveryFailed(deliveryId, result.error ?? result.reason);
+      return { failed: 1, sent: 0 };
     }
-  }
+  });
 
   await getCmsDb()
     .insert(cmsSchema.emailBroadcasts)
@@ -316,15 +315,17 @@ export async function sendManualBroadcast(input: BroadcastInput) {
       id: broadcastId,
       subject,
       message,
-      status: failed && !sent ? "failed" : "sent",
-      recipientCount: sent,
-      error: failed ? `${failed} recipient${failed === 1 ? "" : "s"} failed` : null,
+      status: totals.failed && !totals.sent ? "failed" : "sent",
+      recipientCount: totals.sent,
+      error: totals.failed
+        ? `${totals.failed} recipient${totals.failed === 1 ? "" : "s"} failed`
+        : null,
       createdByUserId: input.createdByUserId ?? null,
       createdAt,
       sentAt: new Date().toISOString(),
     });
 
-  return { broadcastId, failed, recipientCount: sent };
+  return { broadcastId, failed: totals.failed, recipientCount: totals.sent };
 }
 
 export async function unsubscribeOptionalEmails(token: string) {
@@ -387,6 +388,26 @@ async function listBroadcastRecipients(): Promise<NotificationRecipient[]> {
     })
     .from(authUserTable)
     .where(and(eq(authUserTable.emailVerified, true), eq(authUserTable.marketingOptOut, false)));
+}
+
+async function runEmailTasks<TRecipient>(
+  recipients: TRecipient[],
+  task: (recipient: TRecipient) => Promise<{ failed: number; sent: number }>,
+) {
+  const totals = { failed: 0, sent: 0 };
+
+  for (let index = 0; index < recipients.length; index += emailSendConcurrency) {
+    const results = await Promise.all(
+      recipients.slice(index, index + emailSendConcurrency).map((recipient) => task(recipient)),
+    );
+
+    for (const result of results) {
+      totals.failed += result.failed;
+      totals.sent += result.sent;
+    }
+  }
+
+  return totals;
 }
 
 async function reservePostDelivery(input: {

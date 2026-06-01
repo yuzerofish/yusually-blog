@@ -1,29 +1,32 @@
+import { cachedGet } from "#/lib/cms-cache";
 import { getD1SiteSettings, listD1Posts, listD1Series, listD1Tags } from "#/lib/cms-d1";
 import { source } from "#/lib/source";
 
 export async function getSitemapPaths() {
-  const siteSettings = await getD1SiteSettings();
-  const [posts, tags, series] = await Promise.all([
-    listD1Posts().catch(() => []),
-    listD1Tags().catch(() => []),
-    listD1Series().catch(() => []),
-  ]);
-  const docsPaths = source.getPages().map((page) => page.url);
-  const pagePaths = ["", "/blog", "/docs", "/series", "/tags", "/about"];
-  const postPaths = posts.map((post) => `/blog/${post.slug}`);
-  const taxonomyPaths = [
-    ...series.map((item) => `/series/${item.slug}`),
-    ...tags.map((tag) => `/tags/${tag.slug}`),
-  ];
+  return cachedGet("sitemap:paths", async () => {
+    const siteSettings = await getD1SiteSettings();
+    const [posts, tags, series] = await Promise.all([
+      listD1Posts().catch(() => []),
+      listD1Tags().catch(() => []),
+      listD1Series().catch(() => []),
+    ]);
+    const docsPaths = source.getPages().map((page) => page.url);
+    const pagePaths = ["", "/blog", "/docs", "/series", "/tags", "/about"];
+    const postPaths = posts.map((post) => `/blog/${post.slug}`);
+    const taxonomyPaths = [
+      ...series.map((item) => `/series/${item.slug}`),
+      ...tags.map((tag) => `/tags/${tag.slug}`),
+    ];
 
-  const pageAndDocsPaths = Array.from(new Set([...pagePaths, ...docsPaths]));
+    const pageAndDocsPaths = Array.from(new Set([...pagePaths, ...docsPaths]));
 
-  return {
-    siteUrl: siteSettings.url,
-    allPaths: [...pageAndDocsPaths, ...postPaths, ...taxonomyPaths],
-    pagePaths: pageAndDocsPaths,
-    postPaths,
-  };
+    return {
+      siteUrl: siteSettings.url,
+      allPaths: [...pageAndDocsPaths, ...postPaths, ...taxonomyPaths],
+      pagePaths: pageAndDocsPaths,
+      postPaths,
+    };
+  });
 }
 
 export function sitemapXml(siteUrl: string, paths: string[]) {

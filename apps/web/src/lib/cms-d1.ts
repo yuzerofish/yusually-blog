@@ -12,6 +12,7 @@ export type {
 
 // Re-export posts
 export {
+  countD1Posts,
   listD1Posts,
   getD1PostBySlug,
   getD1PostByIdOrSlug,

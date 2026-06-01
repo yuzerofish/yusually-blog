@@ -45,7 +45,7 @@ describe("cachedGet", () => {
     await expect(cachedGet("object", fetcher)).resolves.toEqual({ ok: true });
     expect(fetcher).toHaveBeenCalledTimes(1);
     expect(mockCache.put).toHaveBeenCalledWith("object", JSON.stringify({ ok: true }), {
-      expirationTtl: 60,
+      expirationTtl: 300,
     });
   });
 

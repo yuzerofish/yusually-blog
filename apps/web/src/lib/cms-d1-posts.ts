@@ -32,26 +32,131 @@ import { getCmsDb } from "./cms-db";
 // ---------------------------------------------------------------------------
 
 export async function listD1Posts({
+  featured,
   includeUnpublished = false,
+  limit,
+  offset,
   query = "",
+  seriesSlug,
+  tagSlug,
 }: ListPostsOptions = {}) {
+  const normalizedLimit = normalizeListLimit(limit);
+  const normalizedOffset = normalizeListOffset(offset);
+
   // Cache the common case: published posts, no search query
-  if (!includeUnpublished && !query) {
+  if (
+    !includeUnpublished &&
+    featured === undefined &&
+    !query &&
+    !seriesSlug &&
+    !tagSlug &&
+    normalizedLimit === undefined &&
+    normalizedOffset === 0
+  ) {
     return cachedGet("posts:published", () =>
       listD1PostsFromDb({ includeUnpublished: false, query: "" }),
     );
   }
 
-  return listD1PostsFromDb({ includeUnpublished, query });
+  return listD1PostsFromDb({
+    includeUnpublished,
+    featured,
+    limit: normalizedLimit,
+    offset: normalizedOffset,
+    query,
+    seriesSlug,
+    tagSlug,
+  });
+}
+
+export async function countD1Posts({
+  featured,
+  includeUnpublished = false,
+  query = "",
+  seriesSlug,
+  tagSlug,
+}: ListPostsOptions = {}) {
+  const db = getCmsDb();
+  const conditions = await buildD1PostConditions({
+    includeUnpublished,
+    featured,
+    query,
+    seriesSlug,
+    tagSlug,
+  });
+
+  if (!conditions) {
+    return 0;
+  }
+
+  const [row] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(schema.posts)
+    .where(and(...conditions));
+
+  return Number(row?.count ?? 0);
 }
 
 async function listD1PostsFromDb({
+  featured,
+  includeUnpublished = false,
+  limit,
+  offset,
+  query = "",
+  seriesSlug,
+  tagSlug,
+}: ListPostsOptions = {}) {
+  const db = getCmsDb();
+  const normalizedLimit = normalizeListLimit(limit);
+  const normalizedOffset = normalizeListOffset(offset);
+  const conditions = await buildD1PostConditions({
+    includeUnpublished,
+    featured,
+    query,
+    seriesSlug,
+    tagSlug,
+  });
+
+  if (!conditions) {
+    return [];
+  }
+
+  const queryRows = () =>
+    db
+      .select()
+      .from(schema.posts)
+      .where(and(...conditions))
+      .orderBy(
+        desc(schema.posts.pinned),
+        desc(schema.posts.publishedAt),
+        desc(schema.posts.updatedAt),
+      );
+  const rows =
+    normalizedLimit === undefined
+      ? await queryRows()
+      : await queryRows().limit(normalizedLimit).offset(normalizedOffset);
+
+  const currentSettings = await getD1SiteSettings();
+
+  return attachD1Relations(rows, currentSettings);
+}
+
+async function buildD1PostConditions({
+  featured,
   includeUnpublished = false,
   query = "",
+  seriesSlug,
+  tagSlug,
 }: ListPostsOptions = {}) {
   const db = getCmsDb();
   const normalizedQuery = query.trim().toLowerCase();
+  const normalizedSeriesSlug = seriesSlug?.trim();
+  const normalizedTagSlug = tagSlug?.trim();
   const conditions = [postVisibilityFilter(includeUnpublished)];
+
+  if (featured !== undefined) {
+    conditions.push(eq(schema.posts.featured, featured));
+  }
 
   if (normalizedQuery) {
     const pattern = `%${normalizedQuery}%`;
@@ -65,19 +170,61 @@ async function listD1PostsFromDb({
     );
   }
 
-  const rows = await db
-    .select()
-    .from(schema.posts)
-    .where(and(...conditions))
-    .orderBy(
-      desc(schema.posts.pinned),
-      desc(schema.posts.publishedAt),
-      desc(schema.posts.updatedAt),
-    );
+  if (normalizedSeriesSlug) {
+    const [series] = await db
+      .select({ id: schema.series.id })
+      .from(schema.series)
+      .where(eq(schema.series.slug, normalizedSeriesSlug))
+      .limit(1);
 
-  const currentSettings = await getD1SiteSettings();
+    if (!series) {
+      return null;
+    }
 
-  return attachD1Relations(rows, currentSettings);
+    conditions.push(eq(schema.posts.seriesId, series.id));
+  }
+
+  if (normalizedTagSlug) {
+    const [tag] = await db
+      .select({ id: schema.tags.id })
+      .from(schema.tags)
+      .where(eq(schema.tags.slug, normalizedTagSlug))
+      .limit(1);
+
+    if (!tag) {
+      return null;
+    }
+
+    const postTagRows = await db
+      .select({ postId: schema.postTags.postId })
+      .from(schema.postTags)
+      .where(eq(schema.postTags.tagId, tag.id));
+    const postIds = postTagRows.map((row) => row.postId);
+
+    if (!postIds.length) {
+      return null;
+    }
+
+    conditions.push(inArray(schema.posts.id, postIds));
+  }
+
+  return conditions;
+}
+
+function normalizeListLimit(limit: number | undefined) {
+  if (!Number.isFinite(limit) || limit === undefined) {
+    return undefined;
+  }
+
+  return Math.min(Math.max(1, Math.floor(limit)), 100);
+}
+
+function normalizeListOffset(offset: number | undefined) {
+  if (!Number.isFinite(offset) || offset === undefined) {
+    return 0;
+  }
+
+  return Math.max(0, Math.floor(offset));
 }
 
 export async function getD1PostBySlug(slug: string, includeUnpublished = false) {
@@ -203,7 +350,7 @@ export async function createD1Post(input: PostInput) {
   });
 
   await replaceD1PostTags(post.id, input.tags ?? [], input.locale);
-  await invalidateCache("posts:published", "tags:all");
+  await invalidateCache("posts:published", "tags:all", "sitemap:paths");
 
   return (await getD1PostByIdOrSlug(post.id)) ?? post;
 }
@@ -301,7 +448,7 @@ export async function updateD1Post(idOrSlug: string, input: PostInput) {
     await replaceD1PostTags(post.id, input.tags, input.locale);
   }
 
-  await invalidateCache("posts:published", "tags:all");
+  await invalidateCache("posts:published", "tags:all", "sitemap:paths");
 
   return getD1PostByIdOrSlug(post.id);
 }
@@ -374,7 +521,7 @@ export async function deleteD1Post(idOrSlug: string) {
     .set({ status: "deleted", updatedAt: now })
     .where(eq(schema.posts.id, post.id));
 
-  await invalidateCache("posts:published");
+  await invalidateCache("posts:published", "sitemap:paths");
 
   return {
     ...post,

@@ -65,8 +65,13 @@ export type CommentInput = {
 };
 
 export type ListPostsOptions = {
+  featured?: boolean;
   includeUnpublished?: boolean;
+  limit?: number;
+  offset?: number;
   query?: string;
+  seriesSlug?: string;
+  tagSlug?: string;
 };
 
 export type AssetInput = {

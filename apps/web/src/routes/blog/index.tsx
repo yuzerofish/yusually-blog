@@ -10,6 +10,8 @@ import { $getBlogIndexPage, type BlogIndexPageData } from "#/lib/cms-server";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
+const BLOG_PAGE_SIZE = 6;
+
 export const Route = createFileRoute("/blog/")({
   validateSearch: (search) => ({
     q: typeof search.q === "string" ? search.q : "",
@@ -18,6 +20,7 @@ export const Route = createFileRoute("/blog/")({
     page: Math.max(1, Number(search.page) || 1),
   }),
   loaderDeps: ({ search }) => ({
+    page: search.page,
     q: search.q,
     tag: search.tag,
     series: search.series,
@@ -28,6 +31,8 @@ export const Route = createFileRoute("/blog/")({
         query: deps.q,
         tagSlug: deps.tag || undefined,
         seriesSlug: deps.series || undefined,
+        page: deps.page,
+        pageSize: BLOG_PAGE_SIZE,
       },
     }),
   component: BlogIndexPage,
@@ -37,16 +42,12 @@ function BlogIndexPage() {
   const locale = getCurrentLocale();
   const search = Route.useSearch();
   const data: BlogIndexPageData = Route.useLoaderData();
-  const pageSize = 6;
   const tags = dedupeBySlug(data.tags.map((tag) => localizeTag(tag, locale)));
   const series = dedupeBySlug(data.series.map((item) => localizeSeries(item, locale)));
-  const matchedPosts = data.posts
-    .map((post) => localizePost(post, locale))
-    .filter(isReaderFacingPost);
+  const posts = data.posts.map((post) => localizePost(post, locale)).filter(isReaderFacingPost);
   const siteSettings = localizeSiteSettings(data.siteSettings, locale);
-  const pageCount = Math.max(1, Math.ceil(matchedPosts.length / pageSize));
-  const currentPage = Math.min(search.page, pageCount);
-  const posts = matchedPosts.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const pageCount = Math.max(1, Math.ceil(data.totalPosts / data.pageSize));
+  const currentPage = Math.min(data.page, pageCount);
 
   return (
     <SiteShell siteSettings={siteSettings}>

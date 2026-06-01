@@ -63,7 +63,7 @@ export async function updateD1SiteSettings(input: SiteSettingsInput) {
       set: { value: settings, updatedAt: now },
     });
 
-  await invalidateCache("site:settings");
+  await invalidateCache("site:settings", "sitemap:paths");
 
   return settings;
 }
