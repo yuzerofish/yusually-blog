@@ -9,10 +9,35 @@ import { $getUser } from "./functions";
 export const authQueryOptions = () =>
   queryOptions({
     queryKey: ["auth"],
-    queryFn: ({ signal }) => $getUser({ signal }),
-    refetchOnMount: "always",
+    queryFn: ({ signal }) => getAuthUser(signal),
+    gcTime: 1000 * 60 * 10,
+    refetchOnMount: false,
+    refetchOnReconnect: "always",
     refetchOnWindowFocus: true,
-    staleTime: 0,
+    staleTime: 1000 * 60 * 5,
   });
 
 export type AuthQueryResult = Awaited<ReturnType<typeof $getUser>>;
+
+async function getAuthUser(signal?: AbortSignal): Promise<AuthQueryResult> {
+  if (typeof window === "undefined") {
+    return $getUser({ signal });
+  }
+
+  const response = await fetch("/api/account/me", {
+    cache: "no-store",
+    credentials: "same-origin",
+    headers: { accept: "application/json" },
+    signal,
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const payload = (await response.json().catch(() => null)) as {
+    data?: AuthQueryResult | null;
+  } | null;
+
+  return payload?.data ?? null;
+}

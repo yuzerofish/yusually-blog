@@ -54,6 +54,31 @@ test.describe("Admin authentication", () => {
     }
   });
 
+  test("keeps the public header in account state after login", async ({ page }) => {
+    await logInAsLocalAdmin(page);
+
+    const accountResponse = await page
+      .context()
+      .request.get("/api/account/me?disableCookieCache=true&disableRefresh=true");
+    expect(accountResponse.status()).toBe(200);
+
+    const response = await page.goto("/", { waitUntil: "domcontentloaded" });
+    expect(response?.status()).toBeLessThan(500);
+
+    const header = page.locator("header");
+    const accountButton = header.getByRole("button", { name: "Account" });
+
+    await expect(accountButton).toBeVisible();
+    await expect(header.getByRole("button", { name: "Login" })).toHaveCount(0);
+
+    for (let index = 0; index < 3; index += 1) {
+      await accountButton.hover();
+      await page.waitForTimeout(150);
+      await expect(accountButton).toBeVisible();
+      await expect(header.getByRole("button", { name: "Login" })).toHaveCount(0);
+    }
+  });
+
   test("loads the new post editor without client runtime errors", async ({ page }) => {
     const pageErrors: string[] = [];
     page.on("pageerror", (error) => pageErrors.push(error.message));
