@@ -1,9 +1,11 @@
 ---
 title: Publishing
-description: Publish through the admin UI, OpenAPI, AI Skill, or Git-managed docs.
+description: Choose between browser editing, API publishing, Git-managed Markdown, imports, and docs.
 ---
 
 01mvp-blog-starter supports several publishing paths.
+
+The default path is the admin UI. Use the other paths only when they match how you already work; every extra source adds integration surface, so each one has a narrow boundary.
 
 ## Blog Posts
 
@@ -29,12 +31,16 @@ The API supports Markdown, HTML, ZIP, and folder imports. Exports include posts,
 
 Backups are written to R2 so a generated site can be restored or moved later.
 
-## Obsidian Publishing
+## Git-Managed Markdown
 
-Use `content/notes` when you want to write in an Obsidian vault. Only `.md` and `.mdx` files with `publish: true` are synced, and synced notes become normal blog posts with the same comments, tags, RSS feed, and sitemap behavior.
+Use `content/notes` when you want blog posts to live as Markdown or MDX files in Git. This path is compatible with common Obsidian Markdown syntax, but it is a Git/deployment workflow rather than an Obsidian desktop plugin.
 
-See [Obsidian Publishing](/docs/obsidian) for the full workflow.
+Only files with `publish: true` are synced. Synced notes become normal blog posts with the same comments, tags, RSS feed, and sitemap behavior.
+
+See [Obsidian-Compatible Markdown](/docs/obsidian) for the full workflow.
 
 ## Docs Publishing
 
 Docs pages are committed as Markdown or MDX files under `apps/web/content/docs`. They are deployed with the web app and rendered by Fumadocs at `/docs`.
+
+Keep Fumadocs for product documentation and setup guides. Use `content/notes` for blog-style posts that should be grouped by tags and publish time. The two paths intentionally serve different content types.

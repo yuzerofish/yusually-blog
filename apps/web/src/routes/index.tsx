@@ -922,11 +922,11 @@ function getHomeCopy(locale: SupportedLocale) {
         },
       ],
 
-      obsidianEyebrow: "Obsidian 写作流",
-      obsidianTitle: "把 Obsidian vault 直接变成博客来源。",
+      obsidianEyebrow: "Git Markdown 写作流",
+      obsidianTitle: "把 Obsidian 风格的 Markdown 发布成博客。",
       obsidianBody:
-        "草稿、私人笔记、长期资料都可以留在 vault 里。只有带 publish: true 的 Markdown / MDX 文件会发布到博客，并继续共用标签、RSS、评论和站内搜索。",
-      obsidianCta: "阅读 Obsidian 文档",
+        "把选中的 Markdown / MDX 文件放进 content/notes，用 GitHub 或部署流程发布。只有带 publish: true 的文件会公开，并继续共用标签、RSS、评论和站内搜索。",
+      obsidianCta: "阅读 Markdown 发布文档",
       obsidianPoints: [
         {
           title: "按你的目录写作",
@@ -943,7 +943,7 @@ function getHomeCopy(locale: SupportedLocale) {
         {
           title: "Git 同步发布与隐藏",
           description:
-            "同步命令会记录源文件路径和内容 hash。移除 publish: true 或删除文件后，站内文章会自动隐藏。",
+            "部署同步会记录源文件路径和内容 hash。移除 publish: true 或删除文件后，站内文章会自动隐藏。",
           icon: GitBranchIcon,
         },
       ] satisfies FeatureItem[],
@@ -1142,11 +1142,11 @@ function getHomeCopy(locale: SupportedLocale) {
       },
     ],
 
-    obsidianEyebrow: "Obsidian workflow",
-    obsidianTitle: "Turn an Obsidian vault into a blog source.",
+    obsidianEyebrow: "Git Markdown workflow",
+    obsidianTitle: "Publish Obsidian-style Markdown as blog posts.",
     obsidianBody:
-      "Keep drafts, private notes, and long-running references in one vault. Only Markdown / MDX files with publish: true become public posts, and they still use tags, RSS, comments, and site search.",
-    obsidianCta: "Read the Obsidian guide",
+      "Put selected Markdown / MDX files under content/notes and publish them through GitHub or your deploy flow. Only files with publish: true become public posts, and they still use tags, RSS, comments, and site search.",
+    obsidianCta: "Read the Markdown guide",
     obsidianPoints: [
       {
         title: "Write in any folder structure",
@@ -1163,7 +1163,7 @@ function getHomeCopy(locale: SupportedLocale) {
       {
         title: "Git-backed publish and hide",
         description:
-          "The sync command records source paths and content hashes. Remove publish: true or delete the source file, and the public post is hidden on the next sync.",
+          "Deployment sync records source paths and content hashes. Remove publish: true or delete the source file, and the public post is hidden on the next sync.",
         icon: GitBranchIcon,
       },
     ] satisfies FeatureItem[],

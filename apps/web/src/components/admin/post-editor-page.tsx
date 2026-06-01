@@ -291,18 +291,18 @@ function ObsidianReadOnlyPanel({ locale, post }: { locale: "en" | "zh"; post: Po
   const copy =
     locale === "zh"
       ? {
-          body: "这篇文章来自 Obsidian vault。后台会展示它，但修改、删除和重新发布都以 Git 中的 Markdown 文件为准。",
-          heading: "这篇文章由 Obsidian 同步",
+          body: "这篇文章来自 Git 管理的 Markdown 文件。后台会展示它，但修改、删除和重新发布都以源文件为准。",
+          heading: "这篇文章由 Markdown 文件同步",
           openPost: "查看公开文章",
           sourceLabel: "源文件",
-          syncHint: "修改源文件后，运行 Obsidian 同步命令即可更新网站。",
+          syncHint: "修改源文件后，提交并重新部署即可更新网站。",
         }
       : {
-          body: "This post comes from the Obsidian vault. The admin can display it, but edits, deletion, and republishing are controlled by the Markdown file in Git.",
-          heading: "Synced from Obsidian",
+          body: "This post comes from a Git-managed Markdown file. The admin can display it, but edits, deletion, and republishing are controlled by the source file.",
+          heading: "Synced from Markdown",
           openPost: "View public post",
           sourceLabel: "Source file",
-          syncHint: "Edit the source file, then run the Obsidian sync command to update the site.",
+          syncHint: "Edit the source file, commit it, and deploy again to update the site.",
         };
 
   return (
