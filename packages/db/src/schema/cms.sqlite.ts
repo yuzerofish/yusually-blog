@@ -200,7 +200,7 @@ export const emailNotificationDeliveries = sqliteTable(
     postId: text("post_id").references(() => posts.id, { onDelete: "cascade" }),
     commentId: text("comment_id").references(() => comments.id, { onDelete: "cascade" }),
     notificationType: text("notification_type", {
-      enum: ["instant_post", "biweekly_digest", "manual_broadcast", "comment_reply"],
+      enum: ["biweekly_digest", "manual_broadcast", "comment_reply"],
     }).notNull(),
     subject: text("subject").notNull(),
     status: text("status", { enum: ["pending", "sent", "failed"] })

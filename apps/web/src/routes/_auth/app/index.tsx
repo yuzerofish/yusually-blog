@@ -1,7 +1,8 @@
 import { useAuthSuspense } from "@repo/auth/tanstack/hooks";
+import type { EmailPreference } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRightIcon, BellIcon, MailIcon, ShieldCheckIcon } from "lucide-react";
+import { ArrowRightIcon, BellIcon, CheckIcon, MailIcon, ShieldCheckIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { getCurrentLocale } from "#/lib/i18n";
@@ -145,25 +146,50 @@ function AppIndex() {
 
           <div className="mt-5 grid gap-4">
             <div className="grid gap-2">
-              <label htmlFor="account-email-preference" className="font-medium">
-                {copy.blogFrequency}
-              </label>
-              <select
-                id="account-email-preference"
-                value={emailPreference}
-                onChange={(event) =>
-                  void savePreference({
-                    emailPreference: event.currentTarget.value as EmailPreference,
-                  })
-                }
-                disabled={status === "saving"}
-                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
+              <p className="font-medium">{copy.blogFrequency}</p>
+              <div
+                className="grid gap-2 sm:grid-cols-2"
+                role="radiogroup"
+                aria-label={copy.blogFrequency}
               >
-                <option value="none">{copy.none}</option>
-                <option value="instant_posts">{copy.instant}</option>
-                <option value="biweekly_digest">{copy.digest}</option>
-              </select>
-              <p className="text-xs text-muted-foreground">{copy.frequencyHint}</p>
+                {copy.blogOptions.map((option) => {
+                  const selected = emailPreference === option.value;
+
+                  return (
+                    <label
+                      key={option.value}
+                      className={`grid min-h-24 gap-2 rounded-md border p-4 text-left transition ${
+                        selected
+                          ? "border-primary bg-primary/10 text-foreground shadow-xs"
+                          : "border-border bg-muted/35 text-muted-foreground hover:border-primary/45 hover:bg-muted/55"
+                      } ${status === "saving" ? "cursor-not-allowed opacity-70" : "cursor-pointer"}`}
+                    >
+                      <input
+                        type="radio"
+                        name="account-email-preference"
+                        value={option.value}
+                        checked={selected}
+                        disabled={status === "saving"}
+                        onChange={() => void savePreference({ emailPreference: option.value })}
+                        className="sr-only"
+                      />
+                      <span className="flex items-center justify-between gap-3">
+                        <span className="font-medium text-foreground">{option.label}</span>
+                        <span
+                          className={`flex size-5 shrink-0 items-center justify-center rounded-full border ${
+                            selected
+                              ? "border-primary bg-primary text-primary-foreground"
+                              : "border-border bg-background"
+                          }`}
+                        >
+                          {selected ? <CheckIcon className="size-3.5" /> : null}
+                        </span>
+                      </span>
+                      <span className="text-xs leading-5">{option.description}</span>
+                    </label>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="flex items-start gap-3 rounded-md bg-muted/40 p-3">
@@ -219,8 +245,6 @@ function AppIndex() {
   );
 }
 
-type EmailPreference = "none" | "instant_posts" | "biweekly_digest";
-
 type AccountEmailPreferences = {
   commentReplyNotificationsEnabled: boolean;
   emailPreference: EmailPreference;
@@ -258,13 +282,21 @@ function getAccountEmailCopy(locale: ReturnType<typeof getCurrentLocale>) {
       announcements: "重要通知",
       announcementsDescription: "接收产品更新和账号相关邮件。",
       blogFrequency: "博客更新",
+      blogOptions: [
+        {
+          description: "不接收新文章邮件。",
+          label: "不订阅",
+          value: "none",
+        },
+        {
+          description: "每周汇总新文章发送到邮箱。",
+          label: "订阅每周博客更新",
+          value: "biweekly_digest",
+        },
+      ] satisfies Array<{ description: string; label: string; value: EmailPreference }>,
       commentReplies: "评论回复通知",
       commentRepliesDescription: "有人回复你的评论时发送邮件。",
       description: "选择你想收到的邮件。",
-      digest: "每 2 周摘要",
-      frequencyHint: "控制新文章提醒的发送频率。",
-      instant: "每篇新文章",
-      none: "不接收新文章邮件",
       saved: "邮件设置已保存",
       saving: "正在保存...",
       stopAnnouncements: "暂停通知",
@@ -277,13 +309,21 @@ function getAccountEmailCopy(locale: ReturnType<typeof getCurrentLocale>) {
     announcements: "Important updates",
     announcementsDescription: "Receive product updates and account-related email.",
     blogFrequency: "Blog updates",
+    blogOptions: [
+      {
+        description: "Do not receive new post emails.",
+        label: "Do not subscribe",
+        value: "none",
+      },
+      {
+        description: "Get a weekly email with the latest posts.",
+        label: "Weekly blog updates",
+        value: "biweekly_digest",
+      },
+    ] satisfies Array<{ description: string; label: string; value: EmailPreference }>,
     commentReplies: "Comment reply notifications",
     commentRepliesDescription: "Send an email when someone replies to one of your comments.",
     description: "Choose the emails you want to receive.",
-    digest: "Every 2 weeks",
-    frequencyHint: "Controls how often new post emails are sent.",
-    instant: "Every new post",
-    none: "No new post emails",
     saved: "Email settings saved",
     saving: "Saving...",
     stopAnnouncements: "Pause updates",

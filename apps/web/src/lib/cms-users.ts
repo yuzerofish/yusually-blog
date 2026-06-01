@@ -13,6 +13,10 @@ import { env } from "cloudflare:workers";
 import { desc, eq } from "drizzle-orm";
 
 import { getCmsDb } from "./cms-db";
+import {
+  isEmailPreference as isSupportedEmailPreference,
+  normalizeEmailPreference,
+} from "./email-preferences";
 
 type AuthUserRow = typeof authUserTable.$inferSelect;
 
@@ -27,7 +31,7 @@ export function isUserRole(value: unknown): value is UserRole {
 }
 
 export function isEmailPreference(value: unknown): value is EmailPreference {
-  return value === "none" || value === "instant_posts" || value === "biweekly_digest";
+  return isSupportedEmailPreference(value);
 }
 
 export async function listCmsUsers(): Promise<CmsUser[]> {
@@ -207,7 +211,7 @@ function toCmsUser(
     image: user.image,
     commentStatus: user.commentStatus,
     commentStatusUpdatedAt: user.commentStatusUpdatedAt,
-    emailPreference: user.emailPreference,
+    emailPreference: normalizeEmailPreference(user.emailPreference),
     emailPreferenceUpdatedAt: user.emailPreferenceUpdatedAt,
     marketingOptOut: user.marketingOptOut,
     commentReplyNotificationsEnabled: user.commentReplyNotificationsEnabled,

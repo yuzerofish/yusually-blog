@@ -1,5 +1,7 @@
-import type { ApiTokenScope } from "@repo/core";
+import type { ApiTokenScope, EmailPreference } from "@repo/core";
 import { z } from "zod";
+
+import { isEmailPreference } from "./email-preferences";
 
 const ContentStatusSchema = z.enum(["draft", "published", "scheduled", "archived", "deleted"]);
 const ContentSourceSchema = z.enum([
@@ -12,7 +14,7 @@ const ContentSourceSchema = z.enum([
   "import",
 ]);
 const SupportedLocaleSchema = z.enum(["en", "zh"]);
-const EmailPreferenceSchema = z.enum(["none", "instant_posts", "biweekly_digest"]);
+const EmailPreferenceSchema = z.custom<EmailPreference>(isEmailPreference);
 const ApiTokenScopeSchema = z.enum([
   "posts:read",
   "posts:write",

@@ -405,7 +405,6 @@ function AdminUsersPage() {
                       className={adminSelectClassName}
                     >
                       <option value="none">{copy.emailNone}</option>
-                      <option value="instant_posts">{copy.emailInstant}</option>
                       <option value="biweekly_digest">{copy.emailDigest}</option>
                     </select>
                   </div>
@@ -567,10 +566,6 @@ function commentAccessLabel(status: CommentUserStatus) {
 }
 
 function emailPreferenceLabel(emailPreference: EmailPreference, copy: UsersActionCopy) {
-  if (emailPreference === "instant_posts") {
-    return copy.emailInstant;
-  }
-
   if (emailPreference === "biweekly_digest") {
     return copy.emailDigest;
   }
@@ -629,18 +624,12 @@ function getUsersActionCopy(locale: "en" | "zh") {
       commentHistory: "按发布时间倒序显示",
       currentAccount: "当前账号",
       currentAdminRoleLocked: "不能在这里修改当前登录管理员的角色。",
-      emailDigest: "双周摘要",
-      emailInstant: "每篇文章",
+      emailDigest: "每周更新",
       emailNone: "不接收博客邮件",
       emailSubscribers: "邮件订阅",
       emailUpdates: "博客更新邮件",
       emailUpdateSuccess: (name: string, emailPreference: EmailPreference) => {
-        const label =
-          emailPreference === "instant_posts"
-            ? "每篇文章"
-            : emailPreference === "biweekly_digest"
-              ? "双周摘要"
-              : "不接收博客邮件";
+        const label = emailPreference === "biweekly_digest" ? "每周更新" : "不接收博客邮件";
 
         return `“${name}”已更新为${label}`;
       },
@@ -666,18 +655,12 @@ function getUsersActionCopy(locale: "en" | "zh") {
     commentHistory: "Newest first",
     currentAccount: "You",
     currentAdminRoleLocked: "The signed-in admin role cannot be changed here.",
-    emailDigest: "Biweekly digest",
-    emailInstant: "Every post",
+    emailDigest: "Weekly updates",
     emailNone: "No blog emails",
     emailSubscribers: "Email subscribers",
     emailUpdates: "Blog update emails",
     emailUpdateSuccess: (name: string, emailPreference: EmailPreference) => {
-      const label =
-        emailPreference === "instant_posts"
-          ? "every post"
-          : emailPreference === "biweekly_digest"
-            ? "biweekly digest"
-            : "no blog emails";
+      const label = emailPreference === "biweekly_digest" ? "weekly updates" : "no blog emails";
 
       return `"${name}" email updates set to ${label}`;
     },

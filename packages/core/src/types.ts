@@ -73,7 +73,7 @@ export type UserRole = "admin" | "reader";
 
 export type CommentUserStatus = "active" | "muted";
 
-export type EmailPreference = "none" | "instant_posts" | "biweekly_digest";
+export type EmailPreference = "none" | "biweekly_digest";
 
 export type CmsUser = {
   id: string;

@@ -1608,7 +1608,7 @@ function getEmailFeatureCopy(locale: ReturnType<typeof getCurrentLocale>) {
   if (locale === "zh") {
     return {
       blogUpdates: "启用博客更新邮件",
-      blogUpdatesHelp: "只发送给主动选择“每篇文章”或“双周摘要”的已验证用户。",
+      blogUpdatesHelp: "只发送给主动选择每周博客更新的已验证用户。",
       broadcastDescription: (count: number) =>
         `手动发送站点公告给未退订的已验证注册用户。当前可接收用户：${count}。`,
       broadcastDisabled: "需要先配置邮件服务，并在站点设置里启用手动公告。",
@@ -1630,7 +1630,7 @@ function getEmailFeatureCopy(locale: ReturnType<typeof getCurrentLocale>) {
 
   return {
     blogUpdates: "Enable blog update emails",
-    blogUpdatesHelp: "Only sends to verified users who choose instant posts or biweekly digest.",
+    blogUpdatesHelp: "Only sends to verified users who choose weekly blog updates.",
     broadcastDescription: (count: number) =>
       `Send a manual site announcement to verified registered users who have not opted out. Current audience: ${count}.`,
     broadcastDisabled: "Configure email delivery and enable manual announcements first.",

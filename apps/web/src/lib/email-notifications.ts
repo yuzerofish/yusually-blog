@@ -1,11 +1,5 @@
 import "@tanstack/react-start/server-only";
-import {
-  digestText,
-  escapeHtml,
-  type EmailPreference,
-  type Post,
-  type SiteSettings,
-} from "@repo/core";
+import { digestText, escapeHtml, type EmailPreference, type SiteSettings } from "@repo/core";
 import { createAuthDb } from "@repo/db";
 import { user as authUserTable } from "@repo/db/schema";
 import * as cmsSchema from "@repo/db/schema/cms";
@@ -13,11 +7,10 @@ import { env } from "cloudflare:workers";
 import { and, desc, eq, gt, lte, or } from "drizzle-orm";
 
 import { getD1SiteSettings } from "./cms-d1-assets";
-import { getD1PostByIdOrSlug } from "./cms-d1-posts";
 import { getCmsDb } from "./cms-db";
 import { getEmailDeliveryStatus, sendCmsEmail } from "./cms-email";
 
-const digestWindowDays = 14;
+const digestWindowDays = 7;
 const emailSendConcurrency = 5;
 
 type NotificationRecipient = {
@@ -32,104 +25,9 @@ type BroadcastInput = {
   createdByUserId?: string | null;
 };
 
-type PostNotificationResult =
-  | { skipped: true; reason: "disabled" | "not_configured" | "not_public" }
-  | { failed: number; sent: number; skipped: false };
-
 const authDb = createAuthDb(env.CMS_DB as Parameters<typeof createAuthDb>[0]);
 
-export async function notifyPostPublishedSubscribers(post: Post): Promise<PostNotificationResult> {
-  if (!isPublicPost(post)) {
-    return { skipped: true, reason: "not_public" as const };
-  }
-
-  const [settings, delivery] = await Promise.all([
-    getD1SiteSettings(),
-    Promise.resolve(getEmailDeliveryStatus()),
-  ]);
-
-  if (!settings.emailNotificationsEnabled) {
-    return { skipped: true, reason: "disabled" as const };
-  }
-
-  if (!delivery.configured) {
-    return { skipped: true, reason: "not_configured" as const };
-  }
-
-  const recipients = await listRecipientsByPreference("instant_posts");
-  const subject = `New post: ${post.title}`;
-  const totals = await runEmailTasks(recipients, async (recipient) => {
-    const deliveryId = await reservePostDelivery({
-      notificationType: "instant_post",
-      postId: post.id,
-      subject,
-      userId: recipient.id,
-    });
-
-    if (!deliveryId) {
-      return { failed: 0, sent: 0 };
-    }
-
-    const result = await sendCmsEmail({
-      to: recipient.email,
-      subject,
-      ...buildPostEmail({
-        post,
-        recipient,
-        settings,
-        unsubscribeUrl: await issueUnsubscribeUrl(recipient.id, settings),
-      }),
-    });
-
-    if (result.sent) {
-      await markDeliverySent(deliveryId, result.messageId);
-      return { failed: 0, sent: 1 };
-    } else {
-      await markDeliveryFailed(deliveryId, result.error ?? result.reason);
-      return { failed: 1, sent: 0 };
-    }
-  });
-
-  return { failed: totals.failed, sent: totals.sent, skipped: false };
-}
-
-export function shouldNotifyPostPublication(previous: Post | null | undefined, next: Post) {
-  return isPublicPost(next) && (!previous || !isPublicPost(previous));
-}
-
-export async function sendDueScheduledPostNotifications() {
-  const rows = await getCmsDb()
-    .select({ id: cmsSchema.posts.id })
-    .from(cmsSchema.posts)
-    .where(
-      and(
-        eq(cmsSchema.posts.status, "scheduled"),
-        lte(cmsSchema.posts.publishedAt, new Date().toISOString()),
-      ),
-    )
-    .orderBy(desc(cmsSchema.posts.publishedAt));
-  let sent = 0;
-  let failed = 0;
-
-  for (const row of rows) {
-    const post = await getD1PostByIdOrSlug(row.id);
-
-    if (!post) {
-      continue;
-    }
-
-    const result = await notifyPostPublishedSubscribers(post);
-
-    if ("sent" in result && "failed" in result) {
-      sent += result.sent;
-      failed += result.failed;
-    }
-  }
-
-  return { failed, sent };
-}
-
-export async function sendDueBiweeklyDigest() {
+export async function sendDueWeeklyBlogDigest() {
   const [settings, delivery] = await Promise.all([
     getD1SiteSettings(),
     Promise.resolve(getEmailDeliveryStatus()),
@@ -353,13 +251,6 @@ export async function unsubscribeOptionalEmails(token: string) {
   return true;
 }
 
-function isPublicPost(post: Post) {
-  return (
-    post.status === "published" ||
-    (post.status === "scheduled" && Date.parse(post.publishedAt) <= Date.now())
-  );
-}
-
 async function listRecipientsByPreference(
   emailPreference: Exclude<EmailPreference, "none">,
 ): Promise<NotificationRecipient[]> {
@@ -410,33 +301,8 @@ async function runEmailTasks<TRecipient>(
   return totals;
 }
 
-async function reservePostDelivery(input: {
-  notificationType: "instant_post";
-  postId: string;
-  subject: string;
-  userId: string;
-}) {
-  const existing = await getCmsDb()
-    .select({ id: cmsSchema.emailNotificationDeliveries.id })
-    .from(cmsSchema.emailNotificationDeliveries)
-    .where(
-      and(
-        eq(cmsSchema.emailNotificationDeliveries.userId, input.userId),
-        eq(cmsSchema.emailNotificationDeliveries.postId, input.postId),
-        eq(cmsSchema.emailNotificationDeliveries.notificationType, input.notificationType),
-      ),
-    )
-    .limit(1);
-
-  if (existing[0]) {
-    return null;
-  }
-
-  return createDelivery(input);
-}
-
 async function createDelivery(input: {
-  notificationType: "instant_post" | "biweekly_digest" | "manual_broadcast";
+  notificationType: "biweekly_digest" | "manual_broadcast";
   postId: string | null;
   subject: string;
   userId: string;
@@ -516,36 +382,6 @@ async function listPostsForDigest(periodStart: string, periodEnd: string) {
   }));
 }
 
-function buildPostEmail(input: {
-  post: Post;
-  recipient: NotificationRecipient;
-  settings: SiteSettings;
-  unsubscribeUrl: string;
-}) {
-  const postUrl = `${input.settings.url.replace(/\/$/, "")}/blog/${input.post.slug}`;
-  const text = [
-    `Hi ${input.recipient.name},`,
-    "",
-    `${input.settings.name} published a new post: ${input.post.title}`,
-    input.post.excerpt,
-    "",
-    `Read it here: ${postUrl}`,
-    "",
-    `You are receiving this because you subscribed to new post emails on ${input.settings.name}.`,
-    `Unsubscribe: ${input.unsubscribeUrl}`,
-  ].join("\n");
-  const html = [
-    `<p>Hi ${escapeHtml(input.recipient.name)},</p>`,
-    `<p>${escapeHtml(input.settings.name)} published a new post:</p>`,
-    `<h1>${escapeHtml(input.post.title)}</h1>`,
-    input.post.excerpt ? `<p>${escapeHtml(input.post.excerpt)}</p>` : "",
-    `<p><a href="${escapeHtml(postUrl)}">Read the post</a></p>`,
-    optionalEmailFooter(input.settings, input.unsubscribeUrl),
-  ].join("");
-
-  return { html, text };
-}
-
 function buildDigestEmail(input: {
   posts: Array<{ excerpt: string; publishedAt: string; title: string; url: string }>;
   recipient: NotificationRecipient;
@@ -565,7 +401,7 @@ function buildDigestEmail(input: {
       post.excerpt ? `  ${post.excerpt}` : "",
     ]),
     "",
-    `You are receiving this because you subscribed to biweekly blog updates on ${input.settings.name}.`,
+    `You are receiving this because you subscribed to weekly blog updates on ${input.settings.name}.`,
     `Unsubscribe: ${input.unsubscribeUrl}`,
   ].join("\n");
   const html = [

@@ -1,8 +1,9 @@
 import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
+import type { EmailPreference } from "@repo/core";
 import { Button, buttonVariants } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
-import { LoaderCircleIcon, LogOutIcon, MailIcon } from "lucide-react";
+import { CheckIcon, LoaderCircleIcon, LogOutIcon, MailIcon } from "lucide-react";
 import { useEffect, useState, type ComponentProps } from "react";
 
 import { getCurrentLocale } from "#/lib/i18n";
@@ -19,7 +20,6 @@ type CommentFormProps = {
 type SubmitState = "idle" | "submitting" | "success" | "error";
 type AuthState = "idle" | "submitting" | "error" | "verification";
 type AuthMode = "login" | "signup";
-type EmailPreference = "none" | "instant_posts" | "biweekly_digest";
 type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
 
 type CommentAuthUser = {
@@ -274,18 +274,20 @@ export function CommentForm({
               />
             </div>
             {authMode === "signup" ? (
-              <div className="grid gap-2">
-                <Label htmlFor="comment-auth-email-preference">{emailCopy.label}</Label>
-                <select
+              <div className="flex items-start gap-2 rounded-md border border-border bg-muted/30 p-3 text-sm">
+                <input
                   id="comment-auth-email-preference"
+                  type="checkbox"
                   name="emailPreference"
-                  defaultValue="none"
-                  className="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
-                >
-                  <option value="none">{emailCopy.none}</option>
-                  <option value="instant_posts">{emailCopy.instant}</option>
-                  <option value="biweekly_digest">{emailCopy.digest}</option>
-                </select>
+                  value="biweekly_digest"
+                  className="mt-0.5 size-4 rounded border-input accent-primary"
+                />
+                <label htmlFor="comment-auth-email-preference" className="cursor-pointer">
+                  <span className="block font-medium">{emailCopy.weekly}</span>
+                  <span className="mt-1 block text-xs leading-5 text-muted-foreground">
+                    {emailCopy.weeklyDescription}
+                  </span>
+                </label>
               </div>
             ) : null}
             <div className="flex flex-wrap items-center gap-3">
@@ -359,21 +361,39 @@ export function CommentForm({
             <p className="mt-1 text-xs leading-5">{emailCopy.description}</p>
           </div>
         </div>
-        <div className="grid gap-1">
-          <select
-            value={user.emailPreference}
-            onChange={(event) =>
-              void updateEmailPreference({
-                emailPreference: event.currentTarget.value as EmailPreference,
-              })
-            }
-            disabled={emailPreferenceStatus === "saving"}
-            className="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/20"
-          >
-            <option value="none">{emailCopy.none}</option>
-            <option value="instant_posts">{emailCopy.instant}</option>
-            <option value="biweekly_digest">{emailCopy.digest}</option>
-          </select>
+        <div className="grid gap-2">
+          <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label={emailCopy.title}>
+            {emailCopy.options.map((option) => {
+              const selected = user.emailPreference === option.value;
+
+              return (
+                <label
+                  key={option.value}
+                  className={`inline-flex min-h-9 items-center justify-center gap-1.5 rounded-md border px-2 text-xs font-medium transition ${
+                    selected
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-background text-muted-foreground hover:border-primary/45"
+                  } ${
+                    emailPreferenceStatus === "saving"
+                      ? "cursor-not-allowed opacity-70"
+                      : "cursor-pointer"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="comment-email-preference"
+                    value={option.value}
+                    checked={selected}
+                    disabled={emailPreferenceStatus === "saving"}
+                    onChange={() => void updateEmailPreference({ emailPreference: option.value })}
+                    className="sr-only"
+                  />
+                  {selected ? <CheckIcon className="size-3.5" /> : null}
+                  {option.label}
+                </label>
+              );
+            })}
+          </div>
           {emailPreferenceStatus === "saved" ? (
             <p className="text-xs text-success">{emailCopy.saved}</p>
           ) : null}
@@ -450,24 +470,28 @@ function getCommentEmailPreferenceCopy(locale: ReturnType<typeof getCurrentLocal
   if (locale === "zh") {
     return {
       commentReplies: "有人回复我的评论时通知我",
-      description: "选择这个账号接收新文章邮件的频率。",
-      digest: "每 2 周摘要",
-      instant: "每篇新文章",
-      label: "博客更新邮件",
-      none: "不接收博客邮件",
+      description: "选择这个账号是否接收每周博客更新。",
+      options: [
+        { label: "不订阅", value: "none" },
+        { label: "每周更新", value: "biweekly_digest" },
+      ] satisfies Array<{ label: string; value: EmailPreference }>,
       saved: "邮件偏好已保存",
       title: "博客更新邮件",
+      weekly: "订阅每周博客更新",
+      weeklyDescription: "每周汇总新文章发送到邮箱。",
     };
   }
 
   return {
     commentReplies: "Notify me when someone replies to my comments",
-    description: "Choose how often this account receives new post emails.",
-    digest: "Biweekly digest",
-    instant: "Every new post",
-    label: "Blog update emails",
-    none: "No blog emails",
+    description: "Choose whether this account receives weekly blog updates.",
+    options: [
+      { label: "No email", value: "none" },
+      { label: "Weekly", value: "biweekly_digest" },
+    ] satisfies Array<{ label: string; value: EmailPreference }>,
     saved: "Email preference saved",
     title: "Blog update emails",
+    weekly: "Subscribe to weekly blog updates",
+    weeklyDescription: "Get a weekly email with the latest posts.",
   };
 }

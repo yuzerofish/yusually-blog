@@ -16,6 +16,7 @@ import { eq } from "drizzle-orm";
 
 import { auth } from "#/lib/auth";
 import { getSetCookieValues } from "#/lib/auth-helpers";
+import { isEmailPreference, normalizeEmailPreference } from "#/lib/email-preferences";
 
 async function callAuthEndpoint(path: string, body: object, request: Request) {
   const url = new URL(path, request.url);
@@ -346,15 +347,11 @@ async function toCommentUser(user: BetterAuthUser): Promise<CommentUser> {
     provider: await resolvePrimaryProvider(user.id),
     commentStatus: user.commentStatus ?? "active",
     commentReplyNotificationsEnabled: user.commentReplyNotificationsEnabled ?? true,
-    emailPreference: user.emailPreference ?? "none",
+    emailPreference: normalizeEmailPreference(user.emailPreference),
     marketingOptOut: user.marketingOptOut ?? false,
     createdAt: toIsoString(user.createdAt),
     lastLoginAt: null,
   };
-}
-
-function isEmailPreference(value: unknown): value is EmailPreference {
-  return value === "none" || value === "instant_posts" || value === "biweekly_digest";
 }
 
 async function getAuthUserById(id: string) {
