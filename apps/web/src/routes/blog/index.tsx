@@ -38,9 +38,11 @@ function BlogIndexPage() {
   const search = Route.useSearch();
   const data: BlogIndexPageData = Route.useLoaderData();
   const pageSize = 6;
-  const tags = data.tags.map((tag) => localizeTag(tag, locale));
-  const series = data.series.map((item) => localizeSeries(item, locale));
-  const matchedPosts = data.posts.map((post) => localizePost(post, locale));
+  const tags = dedupeBySlug(data.tags.map((tag) => localizeTag(tag, locale)));
+  const series = dedupeBySlug(data.series.map((item) => localizeSeries(item, locale)));
+  const matchedPosts = data.posts
+    .map((post) => localizePost(post, locale))
+    .filter(isReaderFacingPost);
   const siteSettings = localizeSiteSettings(data.siteSettings, locale);
   const pageCount = Math.max(1, Math.ceil(matchedPosts.length / pageSize));
   const currentPage = Math.min(search.page, pageCount);
@@ -68,65 +70,16 @@ function BlogIndexPage() {
             />
           </label>
           <Button type="submit">{m.blog_search_submit()}</Button>
-          <div className="flex flex-wrap gap-2 md:col-span-2" aria-label={m.blog_filter_label()}>
-            <Button
-              render={<a href={blogHref({ q: search.q })} aria-label={m.blog_filter_all()} />}
-              nativeButton={false}
-              variant={search.tag ? "outline" : "default"}
-              size="sm"
-            >
-              {m.blog_filter_all()}
-            </Button>
-            {tags.map((tag) => (
-              <Button
-                key={tag.slug}
-                render={
-                  <a
-                    href={blogHref({ q: search.q, tag: tag.slug, series: search.series })}
-                    aria-label={tag.name}
-                  />
-                }
-                nativeButton={false}
-                variant={search.tag === tag.slug ? "default" : "outline"}
-                size="sm"
-              >
-                {tag.name}
-              </Button>
-            ))}
-          </div>
-          <div
-            className="flex flex-wrap gap-2 md:col-span-2"
-            aria-label={m.blog_series_filter_label()}
-          >
-            <Button
-              render={
-                <a
-                  href={blogHref({ q: search.q, tag: search.tag })}
-                  aria-label={m.blog_series_all()}
-                />
-              }
-              nativeButton={false}
-              variant={search.series ? "outline" : "default"}
-              size="sm"
-            >
-              {m.blog_series_all()}
-            </Button>
-            {series.map((item) => (
-              <Button
-                key={item.slug}
-                render={
-                  <a
-                    href={blogHref({ q: search.q, tag: search.tag, series: item.slug })}
-                    aria-label={item.name}
-                  />
-                }
-                nativeButton={false}
-                variant={search.series === item.slug ? "default" : "outline"}
-                size="sm"
-              >
-                {item.name}
-              </Button>
-            ))}
+          <details className="rounded-md border border-border bg-muted/30 p-3 md:col-span-2 md:hidden">
+            <summary className="cursor-pointer text-sm font-semibold">
+              {locale === "zh" ? "筛选文章" : "Filter articles"}
+            </summary>
+            <div className="mt-3 grid gap-3">
+              <FilterGroups search={search} tags={tags} series={series} />
+            </div>
+          </details>
+          <div className="hidden gap-3 md:col-span-2 md:grid">
+            <FilterGroups search={search} tags={tags} series={series} />
           </div>
         </form>
         <div className="mt-8 grid gap-5">
@@ -188,6 +141,75 @@ function BlogIndexPage() {
   );
 }
 
+function FilterGroups({
+  search,
+  series,
+  tags,
+}: {
+  readonly search: ReturnType<typeof Route.useSearch>;
+  readonly series: Array<{ slug: string; name: string }>;
+  readonly tags: Array<{ slug: string; name: string }>;
+}) {
+  return (
+    <>
+      <div className="flex flex-wrap gap-2" aria-label={m.blog_filter_label()}>
+        <Button
+          render={<a href={blogHref({ q: search.q })} aria-label={m.blog_filter_all()} />}
+          nativeButton={false}
+          variant={search.tag ? "outline" : "default"}
+          size="sm"
+        >
+          {m.blog_filter_all()}
+        </Button>
+        {tags.slice(0, 8).map((tag) => (
+          <Button
+            key={tag.slug}
+            render={
+              <a
+                href={blogHref({ q: search.q, tag: tag.slug, series: search.series })}
+                aria-label={tag.name}
+              />
+            }
+            nativeButton={false}
+            variant={search.tag === tag.slug ? "default" : "outline"}
+            size="sm"
+          >
+            {tag.name}
+          </Button>
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-2" aria-label={m.blog_series_filter_label()}>
+        <Button
+          render={
+            <a href={blogHref({ q: search.q, tag: search.tag })} aria-label={m.blog_series_all()} />
+          }
+          nativeButton={false}
+          variant={search.series ? "outline" : "default"}
+          size="sm"
+        >
+          {m.blog_series_all()}
+        </Button>
+        {series.slice(0, 6).map((item) => (
+          <Button
+            key={item.slug}
+            render={
+              <a
+                href={blogHref({ q: search.q, tag: search.tag, series: item.slug })}
+                aria-label={item.name}
+              />
+            }
+            nativeButton={false}
+            variant={search.series === item.slug ? "default" : "outline"}
+            size="sm"
+          >
+            {item.name}
+          </Button>
+        ))}
+      </div>
+    </>
+  );
+}
+
 function blogHref({
   page,
   q,
@@ -208,4 +230,25 @@ function blogHref({
   const value = search.toString();
 
   return value ? `/blog?${value}` : "/blog";
+}
+
+function dedupeBySlug<TItem extends { slug: string; name: string }>(items: TItem[]) {
+  const seen = new Set<string>();
+
+  return items.filter((item) => {
+    const key = `${item.slug}:${item.name}`;
+
+    if (seen.has(key)) {
+      return false;
+    }
+
+    seen.add(key);
+    return true;
+  });
+}
+
+function isReaderFacingPost(post: { title: string; slug: string }) {
+  const normalized = `${post.title} ${post.slug}`.toLowerCase();
+
+  return !normalized.includes("e2e comment flow");
 }

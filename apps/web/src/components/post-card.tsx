@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { CalendarDaysIcon, FileTextIcon, LibraryIcon } from "lucide-react";
 
 import { getCurrentLocale } from "#/lib/i18n";
+import { resolvePostCoverImage } from "#/lib/post-cover-image";
 import { m } from "#/paraglide/messages.js";
 
 type PostCardProps = {
@@ -13,7 +14,7 @@ type PostCardProps = {
 };
 
 export function PostCard({ post, priority = false, locale = getCurrentLocale() }: PostCardProps) {
-  const coverImage = post.coverImage.trim();
+  const coverImage = resolvePostCoverImage(post.coverImage);
 
   return (
     <article className="grid overflow-hidden rounded-lg border border-border/80 bg-card shadow-xs transition hover:border-ring/45 hover:shadow-sm md:grid-cols-[0.42fr_0.58fr]">

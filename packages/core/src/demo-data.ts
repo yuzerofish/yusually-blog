@@ -15,10 +15,9 @@ export const siteSettings: SiteSettings = {
     { label: "RSS", href: "/rss.xml" },
   ],
   navigation: [
-    { label: "Blog", href: "/blog", i18n: { label: { zh: "博客" } } },
+    { label: "Demo", href: "/demo", i18n: { label: { zh: "博客 Demo" } } },
     { label: "Docs", href: "/docs", i18n: { label: { zh: "文档" } } },
-    { label: "Series", href: "/series", i18n: { label: { zh: "专栏" } } },
-    { label: "Tags", href: "/tags", i18n: { label: { zh: "标签" } } },
+    { label: "Articles", href: "/blog", i18n: { label: { zh: "文章" } } },
     { label: "About", href: "/about", i18n: { label: { zh: "关于" } } },
   ],
   rssEnabled: true,
@@ -129,8 +128,7 @@ export const posts: Post[] = [
     slug: "designing-a-permanent-personal-cms-on-cloudflare",
     excerpt:
       "The template stores canonical content in D1, keeps media and backup archives in R2, and exposes the same OpenAPI publishing surface to humans and AI agents.",
-    coverImage:
-      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1600&q=80",
+    coverImage: "/demo/desk.jpg",
     contentMarkdown: `# Designing a permanent personal publishing system on Cloudflare
 
 01mvp-blog-starter treats the database as the source of truth and Markdown as the durable content format. Posts, comments, settings, and API tokens live in D1. Images, attachments, import packages, and backups live in R2.
@@ -201,8 +199,7 @@ The first release focuses on a reliable loop: sign in, write, upload, publish, r
     slug: "what-the-ai-initialization-skill-needs-to-automate",
     excerpt:
       "The Skill checks local tooling, creates Cloudflare resources, writes site config, deploys the Worker, validates routes, and creates the first post.",
-    coverImage:
-      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&q=80",
+    coverImage: "/demo/notes.jpg",
     contentMarkdown: `# What the AI initialization Skill needs to automate
 
 The Skill is not a tutorial. It is an execution workflow for agents.
@@ -261,8 +258,7 @@ Manual steps are reserved for login, token creation, paid-plan confirmation, DNS
     slug: "portable-content-model-markdown-html-zip-backups",
     excerpt:
       "Imports normalize Markdown, HTML, and bundled images into database records and R2 keys; exports produce a plain folder that other blog tools can read.",
-    coverImage:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80",
+    coverImage: "/demo/garden.jpg",
     contentMarkdown: `# A portable content model for Markdown, HTML, and ZIP backups
 
 01mvp-blog-starter keeps export paths boring on purpose. A complete export contains posts, assets, comments, and site settings. Markdown stays readable by other static blogs.

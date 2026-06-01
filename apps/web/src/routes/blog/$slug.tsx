@@ -16,6 +16,7 @@ import { CommentForm } from "#/components/comment-form";
 import { SiteShell } from "#/components/site-shell";
 import { $getBlogPostPage, type BlogPostPageData } from "#/lib/cms-server";
 import { getCurrentLocale } from "#/lib/i18n";
+import { resolvePostCoverImage } from "#/lib/post-cover-image";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/blog/$slug")({
@@ -38,7 +39,8 @@ export const Route = createFileRoute("/blog/$slug")({
     const siteSettings = localizeSiteSettings(loaderData.siteSettings, locale);
     const siteUrl = siteSettings.url.replace(/\/$/, "");
     const canonicalUrl = `${siteUrl}/blog/${post.slug}`;
-    const socialImage = post.coverImage.trim() || siteSettings.defaultOgImage.trim();
+    const socialImage =
+      resolvePostCoverImage(post.coverImage) || siteSettings.defaultOgImage.trim();
     const imageUrl = absoluteUrl(socialImage, siteUrl);
     const avatarUrl = absoluteUrl(siteSettings.avatarUrl, siteUrl);
     const robots = siteSettings.indexingEnabled ? "index,follow" : "noindex,nofollow";
@@ -122,7 +124,7 @@ function BlogPostPage() {
     : null;
   const articleBody = buildArticleBody(localizedPost.contentHtml);
   const editLabel = locale === "zh" ? "编辑文章" : m.admin_posts_edit();
-  const coverImage = localizedPost.coverImage.trim();
+  const coverImage = resolvePostCoverImage(localizedPost.coverImage);
 
   return (
     <SiteShell siteSettings={localizedSiteSettings}>

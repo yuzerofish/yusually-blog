@@ -111,14 +111,16 @@ export function localizeSiteSettings(
 
 const defaultNavigationLabels: Record<SupportedLocale, Record<string, string>> = {
   en: {
-    "/blog": "Blog",
+    "/demo": "Demo",
+    "/blog": "Articles",
     "/docs": "Docs",
     "/series": "Series",
     "/tags": "Tags",
     "/about": "About",
   },
   zh: {
-    "/blog": "博客",
+    "/demo": "博客 Demo",
+    "/blog": "文章",
     "/docs": "文档",
     "/series": "专栏",
     "/tags": "标签",

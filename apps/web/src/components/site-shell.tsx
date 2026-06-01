@@ -2,8 +2,16 @@ import { SiGithub } from "@icons-pack/react-simple-icons";
 import { useAuth } from "@repo/auth/tanstack/hooks";
 import { getSiteSettingsForLocale, type SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
+import { cn } from "@repo/ui/lib/utils";
 import { Link, useLocation } from "@tanstack/react-router";
-import { Loader2Icon, SearchIcon } from "lucide-react";
+import {
+  BookOpenIcon,
+  FileTextIcon,
+  HomeIcon,
+  Loader2Icon,
+  SearchIcon,
+  UserCircleIcon,
+} from "lucide-react";
 import { useEffect } from "react";
 
 import { LanguageToggle } from "#/components/language-toggle";
@@ -33,15 +41,7 @@ export function SiteShell({
   const searchLabel = locale === "zh" ? "搜索" : "Search";
   const githubLink = siteSettings.socialLinks.find(isGitHubSocialLink);
   const footerSocialLinks = siteSettings.socialLinks.filter((link) => !isGitHubSocialLink(link));
-  const navigation = siteSettings.navigation.length
-    ? siteSettings.navigation
-    : [
-        { label: m.nav_blog(), href: "/blog" },
-        { label: m.nav_docs(), href: "/docs" },
-        { label: m.nav_series(), href: "/series" },
-        { label: m.nav_tags(), href: "/tags" },
-        { label: m.nav_about(), href: "/about" },
-      ];
+  const navigation = getMarketingNavigation(siteSettings.navigation, locale);
   const localizedNavigation = navigation.map((item) => ({
     ...item,
     href: getLocalizedDocsHref(item.href, locale),
@@ -88,16 +88,18 @@ export function SiteShell({
               locale={locale}
               nextPreset={nextPreset}
               onSelect={selectPreset}
+              className="hidden md:inline-flex"
             />
-            <ThemeToggle />
+            <ThemeToggle className="hidden md:inline-flex" />
             {githubLink ? <HeaderGitHubLink link={githubLink} /> : null}
-            <HeaderAuthAction />
+            <HeaderAuthAction className="hidden md:inline-flex" />
           </div>
         </div>
       </header>
       <StylePresetRuntimeScript initialPreset={preset} locale={locale} />
 
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 pb-20 md:pb-0">{children}</main>
+      <MobileTabBar locale={locale} />
 
       <footer className="border-t border-border/80 bg-muted/45">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
@@ -122,6 +124,105 @@ export function SiteShell({
       </footer>
     </div>
   );
+}
+
+type ShellNavigationItem = SiteSettings["navigation"][number];
+
+const defaultMarketingNavigation: ShellNavigationItem[] = [
+  { label: "Demo", href: "/demo", i18n: { label: { zh: "博客 Demo" } } },
+  { label: "Docs", href: "/docs", i18n: { label: { zh: "文档" } } },
+  { label: "Articles", href: "/blog", i18n: { label: { zh: "文章" } } },
+  { label: "About", href: "/about", i18n: { label: { zh: "关于" } } },
+];
+
+function getMarketingNavigation(
+  configuredNavigation: ShellNavigationItem[],
+  locale: ReturnType<typeof getCurrentLocale>,
+) {
+  const navigation =
+    configuredNavigation.length && !isLegacyStarterNavigation(configuredNavigation)
+      ? configuredNavigation
+      : defaultMarketingNavigation;
+
+  return navigation.map((item) => ({
+    ...item,
+    label: item.i18n?.label?.[locale] ?? item.label,
+  }));
+}
+
+function isLegacyStarterNavigation(navigation: ShellNavigationItem[]) {
+  const legacyPaths = ["/blog", "/docs", "/series", "/tags", "/about"];
+
+  return (
+    navigation.length === legacyPaths.length &&
+    legacyPaths.every((path, index) => navigation[index]?.href === path)
+  );
+}
+
+function MobileTabBar({ locale }: { readonly locale: ReturnType<typeof getCurrentLocale> }) {
+  const { user } = useAuth();
+  const location = useLocation();
+  const docsHref = getLocalizedDocsHref("/docs", locale);
+  const items = [
+    {
+      href: "/",
+      label: locale === "zh" ? "首页" : "Home",
+      icon: HomeIcon,
+    },
+    {
+      href: "/demo",
+      label: locale === "zh" ? "Demo" : "Demo",
+      icon: BookOpenIcon,
+    },
+    {
+      href: docsHref,
+      label: locale === "zh" ? "文档" : "Docs",
+      icon: FileTextIcon,
+    },
+    {
+      href: "/blog",
+      label: locale === "zh" ? "文章" : "Articles",
+      icon: SearchIcon,
+    },
+    {
+      href: user ? "/app" : "/login",
+      label: user ? m.account_title() : m.login(),
+      icon: UserCircleIcon,
+    },
+  ];
+
+  return (
+    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/95 px-2 pt-1.5 pb-[max(env(safe-area-inset-bottom),0.5rem)] shadow-[0_-12px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl md:hidden">
+      <div className="mx-auto grid max-w-md grid-cols-5 gap-1">
+        {items.map((item) => {
+          const Icon = item.icon;
+          const active = isActiveMobilePath(location.pathname, item.href);
+
+          return (
+            <a
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex min-h-12 flex-col items-center justify-center gap-1 rounded-md px-1 text-[11px] leading-none font-semibold text-muted-foreground transition",
+                active && "bg-foreground text-background",
+              )}
+            >
+              <Icon className="size-4" />
+              <span className="max-w-full truncate">{item.label}</span>
+            </a>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
+
+function isActiveMobilePath(pathname: string, href: string) {
+  if (href === "/") {
+    return pathname === "/";
+  }
+
+  return pathname === href || pathname.startsWith(`${href}/`);
 }
 
 let lastTrackedPageViewKey = "";
@@ -200,6 +301,7 @@ function HeaderGitHubLink({ link }: { readonly link: SocialLink }) {
       nativeButton={false}
       aria-label={m.github_repository()}
       title={link.label}
+      className="hidden md:inline-flex"
     >
       <SiGithub className="size-4" />
       <span className="sr-only">{link.label}</span>
@@ -207,7 +309,7 @@ function HeaderGitHubLink({ link }: { readonly link: SocialLink }) {
   );
 }
 
-function HeaderAuthAction() {
+function HeaderAuthAction({ className }: { readonly className?: string }) {
   const { user, isPending } = useAuth();
 
   if (isPending) {
@@ -217,7 +319,7 @@ function HeaderAuthAction() {
         variant="outline"
         size="sm"
         disabled
-        className="min-w-14"
+        className={cn("min-w-14", className)}
         aria-label={m.login()}
       >
         <Loader2Icon className="animate-spin" />
@@ -232,7 +334,7 @@ function HeaderAuthAction() {
         variant="outline"
         size="sm"
         nativeButton={false}
-        className="min-w-14 px-3 font-semibold"
+        className={cn("min-w-14 px-3 font-semibold", className)}
         aria-label={m.account_title()}
       >
         {m.account_title()}
@@ -246,7 +348,7 @@ function HeaderAuthAction() {
       variant="outline"
       size="sm"
       nativeButton={false}
-      className="min-w-14 px-3 font-semibold"
+      className={cn("min-w-14 px-3 font-semibold", className)}
       aria-label={m.login()}
     >
       {m.login()}

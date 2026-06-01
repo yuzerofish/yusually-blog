@@ -39,6 +39,7 @@ import { SiteShell } from "#/components/site-shell";
 import { $getHomePageData, type HomePageData } from "#/lib/cms-server";
 import { getDocsUrl } from "#/lib/docs-i18n";
 import { getCurrentLocale } from "#/lib/i18n";
+import { resolvePostCoverImage } from "#/lib/post-cover-image";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/")({
@@ -80,8 +81,10 @@ type TechItem = {
 function HomePage() {
   const data: HomePageData = Route.useLoaderData();
   const locale = getCurrentLocale();
-  const posts = data.posts.map((post) => localizePost(post, locale));
-  const featuredPosts = data.featuredPosts.map((post) => localizePost(post, locale));
+  const posts = data.posts.map((post) => localizePost(post, locale)).filter(isReaderFacingPost);
+  const featuredPosts = data.featuredPosts
+    .map((post) => localizePost(post, locale))
+    .filter(isReaderFacingPost);
   const siteSettings = localizeSiteSettings(data.siteSettings, locale);
   const tags = data.tags.map((tag) => localizeTag(tag, locale));
   const homeProps = { posts, featuredPosts, tags, locale };
@@ -116,11 +119,7 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
             {copy.heroBody}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button
-              render={<Link to="/blog" search={{ q: "", tag: "", series: "", page: 1 }} />}
-              nativeButton={false}
-              size="lg"
-            >
+            <Button render={<Link to="/demo" />} nativeButton={false} size="lg">
               {copy.primaryCta}
               <ArrowRightIcon />
             </Button>
@@ -440,7 +439,7 @@ function FeaturedPostLarge({
   readonly locale: SupportedLocale;
   readonly post: Post;
 }) {
-  const coverImage = post.coverImage.trim();
+  const coverImage = resolvePostCoverImage(post.coverImage);
 
   return (
     <article className="grid gap-5 bg-background p-5 sm:grid-cols-[minmax(0,1fr)_220px] sm:items-start">
@@ -562,6 +561,12 @@ function PostTags({ post }: { readonly post: Post }) {
   );
 }
 
+function isReaderFacingPost(post: { title: string; slug: string }) {
+  const normalized = `${post.title} ${post.slug}`.toLowerCase();
+
+  return !normalized.includes("e2e comment flow");
+}
+
 // Cloudflare brand color
 const CF_ORANGE = "#F6821F";
 
@@ -605,7 +610,7 @@ function getHomeCopy(locale: SupportedLocale) {
       heroTitle: "搭建你的永久精神家园",
       heroBody:
         "01mvp-blog-starter 是一套 Cloudflare 原生的个人博客内容系统。后台、评论、图床、RSS 开箱即用，配合 AI Init Skill 可以从初始化到上线自动完成。",
-      primaryCta: "查看示例内容",
+      primaryCta: "查看博客 Demo",
       secondaryCta: "阅读使用文档",
 
       // ── Why Free ──
@@ -793,7 +798,7 @@ function getHomeCopy(locale: SupportedLocale) {
     heroTitle: "Build your permanent home on the internet",
     heroBody:
       "01mvp-blog-starter is a Cloudflare-native personal blog system. Writing dashboard, comments, image hosting, and RSS ship out of the box, and the AI Init Skill can take it from setup to live deploy.",
-    primaryCta: "View sample content",
+    primaryCta: "View blog demo",
     secondaryCta: "Read the docs",
 
     // ── Why Free ──
