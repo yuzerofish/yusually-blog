@@ -310,9 +310,9 @@ function HeaderGitHubLink({ link }: { readonly link: SocialLink }) {
 }
 
 function HeaderAuthAction({ className }: { readonly className?: string }) {
-  const { user, isPending } = useAuth();
+  const { user, isFetching, isPending } = useAuth();
 
-  if (isPending) {
+  if (isPending || (!user && isFetching)) {
     return (
       <Button
         type="button"

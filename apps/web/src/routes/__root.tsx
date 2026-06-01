@@ -1,4 +1,5 @@
 import type { AuthQueryResult } from "@repo/auth/tanstack/queries";
+import { authQueryOptions } from "@repo/auth/tanstack/queries";
 import { getSiteSettingsForLocale } from "@repo/core";
 import { Toaster } from "@repo/ui/components/sonner";
 import { ThemeProvider } from "@repo/ui/lib/theme-provider";
@@ -22,11 +23,19 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-  // Typically we don't need the user immediately in landing pages.
-  // For protected routes with loader data, see /_auth/route.tsx
-  // beforeLoad: ({ context }) => {
-  //   context.queryClient.prefetchQuery(authQueryOptions());
-  // },
+  beforeLoad: async ({ context }) => {
+    const authOptions = authQueryOptions();
+
+    if (import.meta.env.SSR) {
+      const user = await context.queryClient.fetchQuery(authOptions);
+      return { user };
+    }
+
+    void context.queryClient.prefetchQuery(authOptions);
+    return {
+      user: context.queryClient.getQueryData<AuthQueryResult>(authOptions.queryKey) ?? null,
+    };
+  },
   head: () => {
     const siteSettings = getSiteSettingsForLocale(getCurrentLocale());
 

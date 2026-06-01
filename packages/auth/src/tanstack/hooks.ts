@@ -12,6 +12,6 @@ export function useAuthSuspense() {
 }
 
 export function useAuth() {
-  const { data: user, isPending } = useQuery(authQueryOptions());
-  return { user: user ?? null, isPending };
+  const { data: user, isFetching, isPending } = useQuery(authQueryOptions());
+  return { user: user ?? null, isFetching, isPending };
 }
