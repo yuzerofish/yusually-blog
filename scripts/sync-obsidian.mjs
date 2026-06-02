@@ -195,7 +195,7 @@ export async function buildObsidianSyncPayload({ apiToken, dryRun, notesRoot, si
     });
     const assetHash = resolvedAssets
       .map((asset) => asset.hash)
-      .sort()
+      .sort((left, right) => left.localeCompare(right))
       .join("\n");
     const contentHash = sha256(`${note.raw}\n${assetHash}`);
     const coverImage =

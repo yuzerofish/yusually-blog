@@ -60,9 +60,11 @@ Feeds and public metadata use current D1 site settings and localized content whe
 - `POST /api/admin/logout`
 - `GET /api/admin/me`
 
+Content, import, export, site, asset, and moderation routes accept scoped Bearer API tokens unless otherwise noted. Token management, admin user management, and admin password changes require a browser admin session.
+
 `GET /api/posts` accepts `q`, `tag`, `series`, `status=all`, and `lang=en|zh`. `status=all` requires `posts:read`. Public post lists return only published posts.
 
-`GET /api/site` returns localized site settings when `lang=en|zh` or `Accept-Language` is provided. `PUT /api/site` accepts `themePreset=maker|apple|editorial` and `layoutPreset=shelf|developer|journal` along with title, URL, description, author, language, RSS, comments, comment approval, blocked keywords, auto-blocking, email verification, and indexing settings. Legacy `themePreset=claude` values normalize to `maker`. `emailVerificationEnabled=true` is rejected unless Cloudflare Email Sending or Resend outbound email is configured.
+`GET /api/site` returns localized site settings when `lang=en|zh` or `Accept-Language` is provided. `PUT /api/site` accepts `themePreset=maker|apple|editorial|brutalist` and `layoutPreset=shelf|developer|journal` along with title, URL, description, author, language, RSS, comments, comment approval, blocked keywords, auto-blocking, email verification, and indexing settings. Legacy `themePreset=claude` values normalize to `editorial`. `emailVerificationEnabled=true` is rejected unless Cloudflare Email Sending or Resend outbound email is configured.
 
 `POST /api/posts` accepts `publishedAt`, optional `seriesId`, `seriesSlug`, or `seriesName`, plus bilingual `i18n` fields for title, excerpt, Markdown, rendered HTML, text, SEO title, and SEO description. When `locale` is `zh`, the primary input is also stored into Chinese localized fields. Creating or updating a `published` or `scheduled` post requires both `posts:write` and `posts:publish`. Scheduled posts become visible in public lists when `publishedAt` is reached.
 
@@ -86,7 +88,7 @@ Feeds and public metadata use current D1 site settings and localized content whe
 
 `POST /api/backups` creates a ZIP export backup in R2 and applies the configured backup retention policy. It uses the same `export:read` scope as export.
 
-`POST /api/admin/password-reset` requests an optional Email Sending reset link when `email` is provided, or confirms a reset when `token` and `password` are provided. Direct token-authenticated `PATCH /api/admin/password` remains available when Email Sending is disabled.
+`POST /api/admin/password-reset` requests an optional Email Sending reset link when `email` is provided, or confirms a reset when `token` and `password` are provided. `PATCH /api/admin/password` is an admin-session endpoint for signed-in administrators.
 
 ## Token Scopes
 

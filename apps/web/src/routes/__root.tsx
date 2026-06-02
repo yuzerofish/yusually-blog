@@ -1,9 +1,14 @@
 import type { AuthQueryResult } from "@repo/auth/tanstack/queries";
 import { getSiteSettingsForLocale } from "@repo/core";
 import { Toaster } from "@repo/ui/components/sonner";
-import { ThemeProvider } from "@repo/ui/lib/theme-provider";
+import { getThemeScript, ThemeProvider } from "@repo/ui/lib/theme-provider";
 import type { QueryClient } from "@tanstack/react-query";
-import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
+import {
+  createRootRouteWithContext,
+  HeadContent,
+  ScriptOnce,
+  Scripts,
+} from "@tanstack/react-router";
 import { useEffect, useRef, useState, useTransition } from "react";
 
 import { getCurrentLocale } from "#/lib/i18n";
@@ -186,6 +191,7 @@ function RootDocument({ children }: { readonly children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <ScriptOnce>{getThemeScript("theme", "system")}</ScriptOnce>
         <ThemeProvider>
           {children}
           <Toaster richColors />

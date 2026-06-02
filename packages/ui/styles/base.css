@@ -132,7 +132,8 @@
   --sidebar-ring: oklch(0.64 0.16 253.8);
 }
 
-/* ─── Claude: warm cream-orange, humanistic, soft ─── */
+/* Warm editorial: cream-orange, humanistic, soft */
+[data-theme-preset="editorial"],
 [data-theme-preset="claude"] {
   color-scheme: light;
   --background: oklch(0.972 0.012 82);
@@ -292,6 +293,7 @@
 }
 
 /* ─── Dark: Claude ─── */
+.dark [data-theme-preset="editorial"],
 .dark [data-theme-preset="claude"] {
   color-scheme: dark;
   --background: oklch(0.14 0.014 55);

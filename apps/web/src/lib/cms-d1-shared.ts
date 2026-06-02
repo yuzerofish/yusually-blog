@@ -299,13 +299,12 @@ export function normalizeSiteSettings(
 }
 
 function normalizeThemePreset(value: string | undefined, fallback: SiteSettings["themePreset"]) {
-  if (value === "maker" || value === "apple" || value === "claude" || value === "brutalist") {
+  if (value === "maker" || value === "apple" || value === "editorial" || value === "brutalist") {
     return value;
   }
 
-  // Legacy: editorial mapped to claude
-  if (value === "editorial" || value === "editorial-edge") {
-    return "claude" as const;
+  if (value === "claude" || value === "editorial-edge") {
+    return "editorial" as const;
   }
 
   return fallback;

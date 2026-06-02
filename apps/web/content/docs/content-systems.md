@@ -15,7 +15,7 @@ Use the publishing backend for content that benefits from runtime management:
 - comments and moderation
 - media uploads to R2
 - RSS and feed output
-- OpenAPI and Skill publishing
+- OpenAPI publishing automation
 - imports, exports, and backups
 
 Blog content is stored in D1. Markdown remains the authoring format, and rendered HTML is cached for public pages.
@@ -39,7 +39,7 @@ Docs content lives under `apps/web/content/docs`. It is reviewed, versioned, and
 /docs   = Git Markdown/MDX docs
 /admin  = admin UI only
 RSS     = blog posts only
-sitemap = home + blog + docs + tags + about
+sitemap = home + demo + blog + docs + series + tags + about
 ```
 
 The admin UI does not edit Git-managed docs. If a site owner wants a docs-only or blog-only template, they can remove the unused route and navigation entry during project customization.

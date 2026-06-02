@@ -126,7 +126,6 @@ export default defineConfig({
       "build/",
       "**/.source/**",
       "worker-configuration.d.ts",
-      "scripts/",
     ],
   },
 });

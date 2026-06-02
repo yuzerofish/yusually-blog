@@ -95,14 +95,9 @@ MDX files are accepted too. Markdown-compatible MDX works the same as `.md`; cus
 
 ## How It Works
 
-The Worker cannot read Git files at request time, so syncing happens during deployment or from an explicit automation command. The sync scans `content/notes`, finds published `.md` and `.mdx` files, uploads referenced images, rewrites Obsidian-specific syntax, and sends a normalized manifest to the deployed site through an internal API endpoint.
+The Worker cannot read Git files at request time, so syncing happens during deployment or from an explicit automation command. The sync scans `content/notes`, finds published `.md` and `.mdx` files, uploads referenced images, rewrites Obsidian-specific syntax, and sends the normalized posts to the deployed site.
 
-The server stores synced notes as normal posts and records their source file in `post_sources`. That source record contains:
-
-- source type: `obsidian_git`
-- source path inside `content/notes`
-- content hash
-- last sync time
+The server stores synced notes as normal posts and keeps enough source metadata to match future syncs back to the same files.
 
 The admin area shows these posts as Git-managed Markdown posts. They are read-only in the browser because the source of truth is the Markdown file. To change a synced post, edit the file, commit it, and deploy again.
 

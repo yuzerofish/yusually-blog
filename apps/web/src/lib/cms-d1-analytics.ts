@@ -9,6 +9,9 @@ import { getClientIp } from "./comment-guard";
 
 const ANALYTICS_DEFAULT_DAYS = 7;
 const ANALYTICS_MAX_DAYS = 30;
+const ANALYTICS_DEDUPE_TTL_SECONDS = 60;
+const ANALYTICS_RATE_LIMIT_TTL_SECONDS = 60;
+const ANALYTICS_RATE_LIMIT_MAX = 60;
 const MAX_PATH_LENGTH = 300;
 const MAX_SLUG_LENGTH = 180;
 const MAX_REFERRER_HOST_LENGTH = 180;
@@ -32,6 +35,12 @@ export async function trackD1PageView(input: TrackAnalyticsInput) {
   const now = new Date();
   const occurredDate = toDateKey(now);
   const postSlug = normalizePostSlug(input.postSlug) ?? getPostSlugFromPath(path);
+  const visitorHash = await createAnalyticsVisitorHash(input.request);
+
+  if (await shouldSkipRateLimitedAnalyticsEvent(visitorHash, path)) {
+    return false;
+  }
+
   const db = getCmsDb();
 
   await db.insert(schema.analyticsEvents).values({
@@ -40,7 +49,7 @@ export async function trackD1PageView(input: TrackAnalyticsInput) {
     path,
     postSlug,
     referrerHost: normalizeReferrerHost(input.referrer, input.request.url),
-    visitorHash: await createAnalyticsVisitorHash(input.request),
+    visitorHash,
     occurredDate,
     occurredAt: now.toISOString(),
   });
@@ -214,7 +223,7 @@ function shouldIgnoreAnalyticsRequest(request: Request, path: string) {
   const origin = request.headers.get("origin");
 
   return (
-    (origin !== null && origin !== new URL(request.url).origin) ||
+    origin !== new URL(request.url).origin ||
     pathname.startsWith("/admin") ||
     pathname.startsWith("/api") ||
     pathname.startsWith("/uploads") ||
@@ -225,7 +234,40 @@ function shouldIgnoreAnalyticsRequest(request: Request, path: string) {
 async function createAnalyticsVisitorHash(request: Request) {
   const salt = env.BETTER_AUTH_SECRET?.trim() || env.CMS_PUBLIC_SITE_URL?.trim() || "blog-starter";
   const source = [salt, getClientIp(request), request.headers.get("user-agent") ?? ""].join("\n");
-  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(source));
+
+  return sha256Hex(source);
+}
+
+async function shouldSkipRateLimitedAnalyticsEvent(visitorHash: string, path: string) {
+  const pathHash = await sha256Hex(path);
+  const dedupeKey = `analytics:dedupe:${visitorHash}:${pathHash}`;
+  const rateKey = `analytics:rate:${visitorHash}`;
+
+  try {
+    const [duplicate, currentCount] = await Promise.all([
+      env.CMS_CACHE.get(dedupeKey),
+      env.CMS_CACHE.get<number>(rateKey, "json").catch(() => 0),
+    ]);
+
+    if (duplicate || Number(currentCount ?? 0) >= ANALYTICS_RATE_LIMIT_MAX) {
+      return true;
+    }
+
+    await Promise.all([
+      env.CMS_CACHE.put(dedupeKey, "1", { expirationTtl: ANALYTICS_DEDUPE_TTL_SECONDS }),
+      env.CMS_CACHE.put(rateKey, JSON.stringify(Number(currentCount ?? 0) + 1), {
+        expirationTtl: ANALYTICS_RATE_LIMIT_TTL_SECONDS,
+      }),
+    ]);
+  } catch {
+    return false;
+  }
+
+  return false;
+}
+
+async function sha256Hex(value: string) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
 
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }

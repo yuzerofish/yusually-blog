@@ -233,7 +233,7 @@ export const Route = createFileRoute("/openapi.json")({
                               },
                             },
                           },
-                          themePreset: { enum: ["maker", "apple", "claude", "brutalist"] },
+                          themePreset: { enum: ["maker", "apple", "editorial", "brutalist"] },
                           layoutPreset: { enum: ["shelf", "developer", "journal"] },
                           primaryLanguage: { enum: ["en", "zh"] },
                           rssEnabled: { type: "boolean" },
@@ -467,19 +467,19 @@ export const Route = createFileRoute("/openapi.json")({
             "/api/tokens": {
               get: {
                 summary: "List API tokens",
-                security: [{ apiToken: ["site:read"] }],
+                security: [{ adminSession: [] }],
                 responses: { "200": { description: "API token list" } },
               },
               post: {
                 summary: "Create API token",
-                security: [{ apiToken: ["site:write"] }],
+                security: [{ adminSession: [] }],
                 responses: { "201": { description: "API token created" } },
               },
             },
             "/api/tokens/{id}/revoke": {
               post: {
                 summary: "Revoke API token",
-                security: [{ apiToken: ["site:write"] }],
+                security: [{ adminSession: [] }],
                 responses: { "200": { description: "API token revoked" } },
               },
             },
@@ -507,6 +507,11 @@ export const Route = createFileRoute("/openapi.json")({
               apiToken: {
                 type: "http",
                 scheme: "bearer",
+              },
+              adminSession: {
+                type: "apiKey",
+                in: "cookie",
+                name: "better-auth.session_token",
               },
             },
             schemas: {

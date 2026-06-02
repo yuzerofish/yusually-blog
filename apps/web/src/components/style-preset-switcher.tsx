@@ -3,7 +3,7 @@ import { Button } from "@repo/ui/components/button";
 import { PaletteIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-type StylePresetId = "maker-shelf" | "apple-shelf" | "claude-shelf" | "brutalist-shelf";
+type StylePresetId = "maker-shelf" | "apple-shelf" | "editorial-shelf" | "brutalist-shelf";
 
 export type StylePresetOption = {
   id: StylePresetId;
@@ -36,8 +36,8 @@ export const stylePresetOptions: StylePresetOption[] = [
     },
   },
   {
-    id: "claude-shelf",
-    themePreset: "claude",
+    id: "editorial-shelf",
+    themePreset: "editorial",
     layoutPreset: "shelf",
     label: {
       en: "Warm Editorial",
@@ -91,11 +91,14 @@ function getStylePresetSwitchLabel(locale: SupportedLocale, nextPreset: StylePre
 }
 
 function getPresetForAttributes(themePreset?: string, layoutPreset?: string) {
+  const normalizedThemePreset = themePreset === "claude" ? "editorial" : themePreset;
+
   return (
     stylePresetOptions.find(
-      (preset) => preset.themePreset === themePreset && preset.layoutPreset === layoutPreset,
+      (preset) =>
+        preset.themePreset === normalizedThemePreset && preset.layoutPreset === layoutPreset,
     ) ??
-    stylePresetOptions.find((preset) => preset.themePreset === themePreset) ??
+    stylePresetOptions.find((preset) => preset.themePreset === normalizedThemePreset) ??
     defaultStylePreset
   );
 }
@@ -218,11 +221,14 @@ export function StylePresetRuntimeScript({
   }
 
   function getPresetForAttributes(themePreset, layoutPreset) {
+    const normalizedThemePreset = themePreset === "claude" ? "editorial" : themePreset;
+
     return (
       presets.find(
-        (preset) => preset.themePreset === themePreset && preset.layoutPreset === layoutPreset,
+        (preset) =>
+          preset.themePreset === normalizedThemePreset && preset.layoutPreset === layoutPreset,
       ) ||
-      presets.find((preset) => preset.themePreset === themePreset) ||
+      presets.find((preset) => preset.themePreset === normalizedThemePreset) ||
       presets[0]
     );
   }

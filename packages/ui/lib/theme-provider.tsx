@@ -1,7 +1,5 @@
 "use client";
 
-// https://ui.shadcn.com/docs/dark-mode/tanstack-start
-import { ScriptOnce } from "@tanstack/react-router";
 import { createContext, use, useEffect, useState } from "react";
 
 type Theme = "dark" | "light" | "system";
@@ -17,7 +15,7 @@ type ThemeProviderState = {
   setTheme: (theme: Theme) => void;
 };
 
-function getThemeScript(storageKey: string, defaultTheme: Theme) {
+export function getThemeScript(storageKey: string, defaultTheme: Theme) {
   const key = JSON.stringify(storageKey);
   const fallback = JSON.stringify(defaultTheme);
 
@@ -77,12 +75,7 @@ export function ThemeProvider({
     setThemeState(next);
   };
 
-  return (
-    <ThemeProviderContext value={{ theme, setTheme }}>
-      <ScriptOnce>{getThemeScript(storageKey, defaultTheme)}</ScriptOnce>
-      {children}
-    </ThemeProviderContext>
-  );
+  return <ThemeProviderContext value={{ theme, setTheme }}>{children}</ThemeProviderContext>;
 }
 
 export function useTheme() {

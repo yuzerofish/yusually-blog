@@ -22,25 +22,7 @@ It ships with two content surfaces by default:
 - Cloudflare Workers runtime through `@cloudflare/vite-plugin`
 - Cloudflare D1 for posts, comments, settings, users, sessions, and API tokens
 - Cloudflare R2 for assets, imports, exports, and backups
-- OpenAPI for API and Skill automation
-
-## Workspace
-
-```txt
-apps/web                 TanStack Start app, admin UI, public site, docs, API routes
-packages/core            content types, demo data, Markdown and i18n helpers
-packages/db              Drizzle schema and D1 migrations
-packages/ui              shared UI primitives
-skills                   AI initialization and OpenAPI maintenance Skill
-apps/web/content/docs    public Fumadocs source, mirrored at docs/site
-docs/specs               project specifications and implementation records
-```
-
-## Documentation Source
-
-The public documentation source is `apps/web/content/docs`. It is rendered at `/docs` and `/zh/docs`, and `README.md` points to the English docs index so the repository landing page and docs home stay aligned.
-
-The root `docs/specs` folder is for project specifications, deployment records, acceptance notes, and implementation evidence. It is intentionally separate from the public Fumadocs source.
+- OpenAPI for publishing automation
 
 ## Configuration
 
@@ -80,23 +62,7 @@ This checks the required R2 bucket, builds the web app, applies remote D1 migrat
 
 ## Automation
 
-The canonical blog Skill lives at `skills/01mvp-blog/SKILL.md`.
-
-Check that the Skill is discoverable from the GitHub repository:
-
-```sh
-npx skills@latest add 01MVP/blog-starter --list
-```
-
-Install it for Codex in this project:
-
-```sh
-npx skills@latest add 01MVP/blog-starter --skill 01mvp-blog --agent codex --yes
-```
-
-Replace `codex` with another lowercase agent id when installing for a different agent.
-
-Use the `01mvp-blog` Skill for site creation and OpenAPI-based maintenance. Cloudflare provisioning still needs Cloudflare-capable agent skills or tooling. Generated sites expose `/openapi.json`; create scoped API tokens in the admin settings before connecting external automation.
+Generated sites expose `/openapi.json`. Create scoped API tokens in the admin settings before connecting external publishing tools or API clients.
 
 ## License
 

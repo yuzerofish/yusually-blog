@@ -11,7 +11,7 @@
   <text x="172" y="128" fill="#312B25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="24" font-weight="650">01mvp-blog-starter</text>
   <text x="120" y="260" fill="#25211D" font-family="ui-sans-serif, system-ui, sans-serif" font-size="70" font-weight="680">Cloudflare-native</text>
   <text x="120" y="340" fill="#25211D" font-family="ui-sans-serif, system-ui, sans-serif" font-size="70" font-weight="680">publishing system</text>
-  <text x="120" y="410" fill="#746D62" font-family="ui-sans-serif, system-ui, sans-serif" font-size="30" font-weight="450">Personal blog CMS with bilingual posts, feeds, assets, and AI-ready APIs.</text>
+  <text x="120" y="410" fill="#746D62" font-family="ui-sans-serif, system-ui, sans-serif" font-size="30" font-weight="450">Personal publishing system with bilingual posts, feeds, assets, and APIs.</text>
   <rect x="120" y="474" width="156" height="44" rx="8" fill="#F0EAE0" stroke="#D9D2C4"/>
   <text x="150" y="504" fill="#312B25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="600">D1 + R2</text>
   <rect x="292" y="474" width="140" height="44" rx="8" fill="#F0EAE0" stroke="#D9D2C4"/>

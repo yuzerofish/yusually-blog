@@ -354,6 +354,12 @@ async function getLatestWeeklyBlogUpdateRun() {
   const [run] = await getCmsDb()
     .select()
     .from(cmsSchema.weeklyBlogUpdateRuns)
+    .where(
+      or(
+        eq(cmsSchema.weeklyBlogUpdateRuns.status, "sent"),
+        eq(cmsSchema.weeklyBlogUpdateRuns.status, "failed"),
+      ),
+    )
     .orderBy(desc(cmsSchema.weeklyBlogUpdateRuns.periodEnd))
     .limit(1);
 

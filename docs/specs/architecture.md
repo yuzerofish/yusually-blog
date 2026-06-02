@@ -23,7 +23,7 @@
 - Paraglide.js is the only UI translation runtime. Source messages live in `apps/web/messages/en.json` and `apps/web/messages/zh.json`; compiled files live in `apps/web/src/paraglide`.
 - English and Chinese are always enabled.
 - `primaryLanguage` is selected during initialization and stored in D1 site settings.
-- `themePreset` is stored in site settings and drives the public site, admin UI, and auth screens through shared CSS tokens. Supported presets are `maker`, `apple`, and `editorial`; legacy `claude` values normalize to `maker`.
+- `themePreset` is stored in site settings and drives the public site, admin UI, and auth screens through shared CSS tokens. Supported presets are `maker`, `apple`, `editorial`, and `brutalist`; legacy `claude` values normalize to `editorial`.
 - `layoutPreset` is stored in site settings and controls the public home page structure. Supported presets are `shelf`, `developer`, and `journal`.
 - Public product copy includes English and Chinese on the home page.
 - Content records preserve bilingual fields through `i18n` JSON for posts, tags, comments, site name, site description, author bio, and SEO fields.

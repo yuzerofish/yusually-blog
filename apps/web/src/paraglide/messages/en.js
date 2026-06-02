@@ -1414,7 +1414,7 @@ export const feature_api_title = /** @type {(inputs: Feature_Api_TitleInputs) =>
 };
 
 export const feature_api_body = /** @type {(inputs: Feature_Api_BodyInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Automation surfaces for developers and AI agents.`)
+	return /** @type {LocalizedString} */ (`Automation surfaces for developers and publishing tools.`)
 };
 
 export const feature_d1_body = /** @type {(inputs: Feature_D1_BodyInputs) => LocalizedString} */ () => {
@@ -1442,11 +1442,11 @@ export const github_repository = /** @type {(inputs: Github_RepositoryInputs) =>
 };
 
 export const home_bilingual_intro_en = /** @type {(inputs: Home_Bilingual_Intro_EnInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`A Cloudflare-native publishing system with visual writing, Markdown import, bilingual content, and AI-ready automation workflows.`)
+	return /** @type {LocalizedString} */ (`A Cloudflare-native publishing system with visual writing, Markdown import, bilingual content, and API automation workflows.`)
 };
 
 export const home_bilingual_intro_zh = /** @type {(inputs: Home_Bilingual_Intro_ZhInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`基于 Cloudflare 的个人发布系统——支持可视化写作、Markdown 导入、中英文内容和 AI 自动化工作流。`)
+	return /** @type {LocalizedString} */ (`基于 Cloudflare 的个人发布系统——支持可视化写作、Markdown 导入、中英文内容和 API 自动化工作流。`)
 };
 
 export const home_eyebrow = /** @type {(inputs: Home_EyebrowInputs) => LocalizedString} */ () => {

@@ -28,17 +28,17 @@ Run focused checks first, then broaden to the root tasks when the changed surfac
 ## Database Schema Changes
 
 1. Edit schemas in `packages/db/src/schema/`
-2. Run `pnpm -F @repo/db db generate` to create migration files
-3. **Check Wrangler environment** — ensure you're targeting the local/dev D1 database, not production. If Wrangler is configured for a production binding, **stop and warn the user**.
-4. Run `pnpm -F @repo/db db migrate` to apply. Features will silently fail without applied migrations.
+2. Add a new forward-only SQL migration under `packages/db/migrations/`. Do not rewrite a migration that may already have been applied to local, preview, or production D1.
+3. **Check Wrangler environment** — ensure you're targeting the intended local/dev D1 database before applying locally, and use `--remote` only when the deployment step or user explicitly calls for production.
+4. Apply with Wrangler D1 migrations for the target database. Features will silently fail without applied migrations.
 
 ## Other DB Commands
 
-| Command                        | Purpose                  |
-| ------------------------------ | ------------------------ |
-| `pnpm -F @repo/db db generate` | Generate migration files |
-| `pnpm -F @repo/db db migrate`  | Apply migrations         |
-| `pnpm -F @repo/db db studio`   | Open Drizzle Studio      |
+| Command                                                                                            | Purpose                       |
+| -------------------------------------------------------------------------------------------------- | ----------------------------- |
+| `pnpm --filter @repo/web exec wrangler d1 migrations list CMS_DB --config wrangler.jsonc`          | Check local migration status  |
+| `pnpm --filter @repo/web exec wrangler d1 migrations apply CMS_DB --config wrangler.jsonc`         | Apply local D1 migrations     |
+| `pnpm --filter @repo/web exec wrangler d1 migrations list CMS_DB --remote --config wrangler.jsonc` | Check remote migration status |
 
 ## Planning Artifacts
 

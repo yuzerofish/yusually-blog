@@ -8,7 +8,7 @@ description: 01mvp-blog-starter 的 API 与自动化入口。
 API 主要服务于：
 
 - 后台管理界面
-- AI 初始化与维护工作流
+- 初始化与维护工作流
 - 自定义自动化脚本
 
 ## 主要接口

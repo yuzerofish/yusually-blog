@@ -34,7 +34,7 @@ The button works for Workers applications. This repository is a pnpm monorepo, s
 pnpm deploy:web
 ```
 
-Cloudflare can provision supported resources from the Wrangler config, including D1, R2, and KV. Review `apps/web/wrangler.jsonc` after the first deployment because the production domain and public site URL are project-specific.
+Before the first production deploy, create or choose the target D1 database, R2 bucket, and KV namespace, then replace the placeholders in `apps/web/wrangler.jsonc`. The deploy script fails early while placeholder IDs or demo URLs remain.
 
 Required production secrets:
 
@@ -102,7 +102,7 @@ packages/db              Drizzle schema and D1 migrations
 packages/ui              shared UI primitives
 skills                   AI initialization and OpenAPI maintenance Skill
 apps/web/content/docs    public Fumadocs source, mirrored at docs/site
-docs/specs               project specifications and implementation records
+docs/specs               project specifications and release planning records
 ```
 
 ## Documentation
@@ -116,7 +116,7 @@ Start with these guides:
 - [Advanced configuration](./apps/web/content/docs/advanced-configuration.md)
 - [API](./apps/web/content/docs/api.md)
 
-The root `docs/specs` folder is for project specifications, deployment records, acceptance notes, and implementation evidence. It is intentionally separate from the public Fumadocs source.
+The root `docs/specs` folder is for project specifications, deployment records, acceptance notes, and release planning records. It is intentionally separate from the public Fumadocs source.
 
 ## Automation
 

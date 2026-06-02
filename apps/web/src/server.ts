@@ -145,19 +145,33 @@ function rejectCrossOriginWrite(request: Request) {
     return null;
   }
 
-  const origin = request.headers.get("origin");
-
-  if (!origin) {
+  if (hasApiTokenAuth(request)) {
     return null;
   }
 
+  const origin = request.headers.get("origin");
+
   try {
-    if (new URL(origin).origin === new URL(request.url).origin) {
+    if (origin && new URL(origin).origin === new URL(request.url).origin) {
       return null;
     }
   } catch {
     // Invalid Origin headers are rejected below.
   }
 
+  if (!origin && isTrustedFetchSite(request.headers.get("sec-fetch-site"))) {
+    return null;
+  }
+
   return Response.json({ error: "Cross-origin write requests are not allowed" }, { status: 403 });
+}
+
+function hasApiTokenAuth(request: Request) {
+  const authorization = request.headers.get("authorization") ?? "";
+
+  return /^Bearer\s+.+/i.test(authorization) || Boolean(request.headers.get("x-api-token")?.trim());
+}
+
+function isTrustedFetchSite(value: string | null) {
+  return value === "same-origin" || value === "same-site" || value === "none";
 }

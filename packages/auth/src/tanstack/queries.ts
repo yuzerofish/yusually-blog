@@ -11,10 +11,10 @@ export const authQueryOptions = () =>
     queryKey: ["auth"],
     queryFn: ({ signal }) => getAuthUser(signal),
     gcTime: 1000 * 60 * 10,
-    refetchOnMount: false,
+    refetchOnMount: "always",
     refetchOnReconnect: "always",
     refetchOnWindowFocus: true,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 0,
   });
 
 export type AuthQueryResult = Awaited<ReturnType<typeof $getUser>>;

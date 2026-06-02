@@ -13,7 +13,7 @@ The Skill collects:
 - Author name and email
 - Primary language: `en` or `zh`
 - Domain
-- Theme preset: `maker`, `apple`, or `editorial`
+- Theme preset: `maker`, `apple`, `editorial`, or `brutalist`
 - Layout preset: `shelf`, `developer`, or `journal`
 - Comments preference
 - Email Sending preference

@@ -234,7 +234,7 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
         </div>
       </section>
 
-      {/* ── AI Skill ── */}
+      {/* ── Automation ── */}
       <section className="border-b border-border bg-background">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
           <div data-home-reveal className="grid gap-9 lg:grid-cols-[0.44fr_0.56fr]">
@@ -830,10 +830,10 @@ function getHomeCopy(locale: SupportedLocale) {
 
   if (locale === "zh") {
     return {
-      eyebrow: "个人博客内容系统 · Cloudflare 托管 · AI 一键部署",
+      eyebrow: "个人博客内容系统 · Cloudflare 托管 · 自动化部署",
       heroTitle: "搭建你的永久精神家园",
       heroBody:
-        "01mvp-blog-starter 是一套 Cloudflare 原生的个人博客内容系统。后台、评论、图床、RSS 开箱即用，配合 AI Init Skill 可以从初始化到上线自动完成。",
+        "01mvp-blog-starter 是一套 Cloudflare 原生的个人博客内容系统。后台、评论、图床、RSS 开箱即用，初始化流程可以从配置一路跑到上线。",
       primaryCta: "查看博客 Demo",
       secondaryCta: "阅读使用文档",
 
@@ -948,10 +948,11 @@ function getHomeCopy(locale: SupportedLocale) {
         },
       ] satisfies FeatureItem[],
 
-      // ── AI Skill ──
-      skillEyebrow: "AI 初始化 Skill",
-      skillTitle: "跟 AI 聊几句，博客全自动部署上线。",
-      skillBody: "配套了专为 AI 设计的 Skill。授权 Cloudflare 一次，之后全靠 AI 自动完成。",
+      // ── Automation ──
+      skillEyebrow: "自动化初始化",
+      skillTitle: "从模板到上线，初始化流程可以连续完成。",
+      skillBody:
+        "准备好 Cloudflare 授权和站点信息后，自动化流程会创建资源、写入配置、运行迁移并完成部署。",
       skillSteps: [
         {
           number: "01",
@@ -960,13 +961,12 @@ function getHomeCopy(locale: SupportedLocale) {
         },
         {
           number: "02",
-          title: "告诉 AI 你的需求",
-          description:
-            "说「帮我用 blog-starter 部署一个博客，站点名叫 XXX」，AI 加载 Skill 自动执行。",
+          title: "填写站点信息",
+          description: "提供站点名称、域名、语言、社交登录和邮件发送配置。",
         },
         {
           number: "03",
-          title: "AI 完成所有部署",
+          title: "执行部署流程",
           description: "自动创建 D1、R2、Workers，执行迁移，写入配置，部署上线。",
         },
         {
@@ -1024,7 +1024,7 @@ function getHomeCopy(locale: SupportedLocale) {
           description: "蓝色主色、大圆角、柔和边框，适合产品文档。",
         },
         {
-          themePreset: "claude",
+          themePreset: "editorial",
           title: "暖调人文",
           description: "橙米色调、人文感柔软，适合长文随笔。",
         },
@@ -1044,10 +1044,10 @@ function getHomeCopy(locale: SupportedLocale) {
 
   // ── English ──
   return {
-    eyebrow: "Personal blog system · Cloudflare-hosted · AI deployment",
+    eyebrow: "Personal blog system · Cloudflare-hosted · automated deploy",
     heroTitle: "Build your permanent home on the internet",
     heroBody:
-      "01mvp-blog-starter is a Cloudflare-native personal blog system. Writing dashboard, comments, image hosting, and RSS ship out of the box, and the AI Init Skill can take it from setup to live deploy.",
+      "01mvp-blog-starter is a Cloudflare-native personal blog system. Writing dashboard, comments, image hosting, and RSS ship out of the box, and the setup flow can take it from configuration to live deploy.",
     primaryCta: "View blog demo",
     secondaryCta: "Read the docs",
 
@@ -1168,11 +1168,11 @@ function getHomeCopy(locale: SupportedLocale) {
       },
     ] satisfies FeatureItem[],
 
-    // ── AI Skill ──
-    skillEyebrow: "AI Init Skill",
-    skillTitle: "Chat with your AI editor. Blog goes live automatically.",
+    // ── Automation ──
+    skillEyebrow: "Automated setup",
+    skillTitle: "Go from template to live site in one setup flow.",
     skillBody:
-      "Ships with a Skill for AI coding assistants. Authorize Cloudflare once, then let the AI handle everything.",
+      "After Cloudflare access and site details are ready, the setup flow creates resources, writes configuration, runs migrations, and deploys the Worker.",
     skillSteps: [
       {
         number: "01",
@@ -1182,13 +1182,13 @@ function getHomeCopy(locale: SupportedLocale) {
       },
       {
         number: "02",
-        title: "Tell the AI what you want",
+        title: "Fill in site details",
         description:
-          'Say: "Deploy a blog using blog-starter, site name is [Your Name]." The AI loads the Skill and starts.',
+          "Provide the site name, domain, language, social login, and email sending settings.",
       },
       {
         number: "03",
-        title: "AI deploys everything",
+        title: "Run the deploy flow",
         description:
           "Creates D1, R2, Workers — runs migrations, writes config, deploys. Fully automatic.",
       },
@@ -1196,7 +1196,7 @@ function getHomeCopy(locale: SupportedLocale) {
         number: "04",
         title: "Start writing",
         description:
-          "AI gives you the live URL. Open /admin, create your account, publish your first post.",
+          "Open /admin on the live URL, create your account, and publish your first post.",
       },
     ],
 
@@ -1249,7 +1249,7 @@ function getHomeCopy(locale: SupportedLocale) {
         description: "Blue primary, larger radius, softer borders for calm product docs.",
       },
       {
-        themePreset: "claude",
+        themePreset: "editorial",
         title: "Warm Editorial",
         description: "Warm cream-orange, soft and humanistic, for essays and reflective posts.",
       },

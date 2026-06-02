@@ -17,20 +17,11 @@ Use the admin UI when you want a normal writing workflow:
 
 Published posts appear on `/blog`, tag pages, RSS, feeds, and sitemap output.
 
-## Publish With OpenAPI Or Skill
+## Publish With OpenAPI
 
 Use `/openapi.json` for local drafts, automation, external integrations, or AI-assisted publishing.
 
-Create a scoped API token in the admin settings, then use the OpenAPI schema when connecting external tools or generating API clients. Use the `01mvp-blog` Skill in `skills/01mvp-blog` when an AI agent should create or maintain a blog end to end.
-
-Verify or install the Skill from the GitHub repository:
-
-```sh
-npx skills@latest add 01MVP/blog-starter --list
-npx skills@latest add 01MVP/blog-starter --skill 01mvp-blog --agent codex --yes
-```
-
-Replace `codex` with another lowercase agent id when installing for a different agent.
+Create a scoped API token in the admin settings, then use the OpenAPI schema when connecting external tools or generating API clients.
 
 ## Maintain Docs
 
@@ -42,9 +33,7 @@ Use Fumadocs for content that should live with the repository:
 - deployment instructions
 - template setup guides
 
-Docs live in `apps/web/content/docs`. English pages use `*.md` or `*.mdx`; Chinese pages use `*.zh.md` or `*.zh.mdx`.
-
-`README.md` points to the English docs index. The repository-level `docs/site` path is a convenience link to the same Fumadocs source, while `docs/specs` remains the project specification and evidence area.
+Docs are Markdown or MDX files in the repository. English pages use `*.md` or `*.mdx`; Chinese pages use `*.zh.md` or `*.zh.mdx`.
 
 ## Choose A Content System
 
@@ -53,7 +42,7 @@ Docs live in `apps/web/content/docs`. English pages use `*.md` or `*.mdx`; Chine
 /docs   = Git-managed Markdown/MDX docs
 /admin  = publishing admin UI
 RSS     = blog posts only
-sitemap = home + blog + docs + tags + about
+sitemap = home + demo + blog + docs + series + tags + about
 ```
 
 Keep frequently edited articles in the publishing backend. Keep durable product or developer references in docs.

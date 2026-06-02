@@ -12,6 +12,9 @@ const rootDir = fileURLToPath(new URL("..", import.meta.url));
 const webDir = path.join(rootDir, "apps", "web");
 const wranglerConfigPath = path.join(webDir, "wrangler.jsonc");
 const config = parseJsonc(readFileSync(wranglerConfigPath, "utf8"));
+
+assertDeployConfig(config);
+
 const buckets = Array.isArray(config.r2_buckets)
   ? config.r2_buckets
       .map((bucket) => ({
@@ -67,6 +70,69 @@ if (missingBuckets.length > 0) {
 }
 
 console.log(`R2 bucket preflight passed: ${buckets.map((bucket) => bucket.bucketName).join(", ")}`);
+
+function assertDeployConfig(config) {
+  const vars = config.vars && typeof config.vars === "object" ? config.vars : {};
+  const d1Databases = Array.isArray(config.d1_databases) ? config.d1_databases : [];
+  const kvNamespaces = Array.isArray(config.kv_namespaces) ? config.kv_namespaces : [];
+  const routes = Array.isArray(config.routes) ? config.routes : [];
+  const problems = [];
+
+  const publicSiteUrl = String(vars.CMS_PUBLIC_SITE_URL ?? "");
+  const viteBaseUrl = String(vars.VITE_BASE_URL ?? "");
+
+  if (isPlaceholderUrl(publicSiteUrl) || isPlaceholderUrl(viteBaseUrl)) {
+    problems.push("Set CMS_PUBLIC_SITE_URL and VITE_BASE_URL to your production URL.");
+  }
+
+  if (publicSiteUrl.includes("blog.01mvp.com") || viteBaseUrl.includes("blog.01mvp.com")) {
+    problems.push("Replace the 01mvp demo site URL before deploying this template.");
+  }
+
+  if (routes.some((route) => String(route.pattern ?? "").includes("blog.01mvp.com"))) {
+    problems.push("Remove or replace the 01mvp custom domain route.");
+  }
+
+  for (const database of d1Databases) {
+    const id = String(database.database_id ?? "");
+
+    if (isPlaceholderUuid(id) || id === "b267c97c-72a5-45a1-9f5a-cfd0b8e8067c") {
+      problems.push(`Set a real D1 database_id for ${database.binding ?? "CMS_DB"}.`);
+    }
+  }
+
+  for (const namespace of kvNamespaces) {
+    const id = String(namespace.id ?? "");
+
+    if (isPlaceholderHexId(id) || id === "c1150cc286374ba9919f48f48a985f36") {
+      problems.push(`Set a real KV namespace id for ${namespace.binding ?? "CMS_CACHE"}.`);
+    }
+  }
+
+  if (String(vars.CMS_EMAIL_FROM ?? "").includes("01mvp.com")) {
+    problems.push("Replace the 01mvp email sender before enabling production email.");
+  }
+
+  if (problems.length) {
+    fail([
+      "apps/web/wrangler.jsonc still contains template or demo deployment values.",
+      "",
+      ...Array.from(new Set(problems)).map((problem) => `- ${problem}`),
+    ]);
+  }
+}
+
+function isPlaceholderUrl(value) {
+  return !value || value.includes("your-domain.example") || value.includes("example.com");
+}
+
+function isPlaceholderUuid(value) {
+  return value === "00000000-0000-0000-0000-000000000000" || /replace|your/i.test(value);
+}
+
+function isPlaceholderHexId(value) {
+  return value === "00000000000000000000000000000000" || /replace|your/i.test(value);
+}
 
 function fail(lines) {
   console.error(lines.filter(Boolean).join("\n"));

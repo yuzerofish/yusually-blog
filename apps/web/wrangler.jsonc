@@ -10,31 +10,23 @@
   "triggers": {
     "crons": ["0 9 * * *"],
   },
-  "routes": [{ "pattern": "blog.01mvp.com", "custom_domain": true }],
   "vars": {
-    "VITE_BASE_URL": "https://blog.01mvp.com",
-    "CMS_PUBLIC_SITE_URL": "https://blog.01mvp.com",
+    "VITE_BASE_URL": "https://your-domain.example",
+    "CMS_PUBLIC_SITE_URL": "https://your-domain.example",
     "CMS_BACKUP_RETENTION_DAYS": "30",
-    "CMS_EMAIL_SENDING_ENABLED": "true",
-    "CMS_EMAIL_FROM": "noreply@01mvp.com",
-    "CMS_EMAIL_TO": "contact@01mvp.com",
+    "CMS_EMAIL_SENDING_ENABLED": "false",
+    "CMS_EMAIL_FROM": "",
+    "CMS_EMAIL_TO": "",
     "CMS_PASSWORD_RESET_TTL_MINUTES": "30",
-    "CMS_TURNSTILE_SECRET_KEY": "",
     "VITE_TURNSTILE_SITE_KEY": "",
-    "GITHUB_CLIENT_ID": "Ov23liY1bJAHyGhDejaU",
-    "GOOGLE_CLIENT_ID": "245095604871-dpncspolt7dn6efot4h8duvd57nh90q1.apps.googleusercontent.com",
+    "GITHUB_CLIENT_ID": "",
+    "GOOGLE_CLIENT_ID": "",
   },
-  "send_email": [
-    {
-      "name": "CMS_EMAIL",
-      "allowed_sender_addresses": ["noreply@01mvp.com"],
-    },
-  ],
   "d1_databases": [
     {
       "binding": "CMS_DB",
       "database_name": "blog-starter-cms",
-      "database_id": "b267c97c-72a5-45a1-9f5a-cfd0b8e8067c",
+      "database_id": "00000000-0000-0000-0000-000000000000",
       "migrations_dir": "../../packages/db/migrations",
     },
   ],
@@ -47,7 +39,7 @@
   "kv_namespaces": [
     {
       "binding": "CMS_CACHE",
-      "id": "c1150cc286374ba9919f48f48a985f36",
+      "id": "00000000000000000000000000000000",
     },
   ],
 }

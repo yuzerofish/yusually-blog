@@ -24,6 +24,8 @@ This command writes only to the local D1 database under `.wrangler/state`. It do
 
 ## Production Site
 
+Before deploying, replace the D1 database id, KV namespace id, public site URL, and optional custom domain values in `apps/web/wrangler.jsonc`. The default config is a template-safe config; `pnpm deploy:web` fails early if placeholder values remain.
+
 ```sh
 pnpm deploy:web
 ```
@@ -100,8 +102,8 @@ GitHub and Google OAuth add one-click reader login methods for comments. Create 
 ```txt
 http://localhost:3000/api/auth/callback/github
 http://localhost:3000/api/auth/callback/google
-https://blog.01mvp.com/api/auth/callback/github
-https://blog.01mvp.com/api/auth/callback/google
+https://your-domain.example/api/auth/callback/github
+https://your-domain.example/api/auth/callback/google
 ```
 
 GitHub OAuth apps have one authorization callback URL, so local and production usually use separate OAuth apps. Google OAuth clients allow multiple authorized redirect URIs, but separate local and production clients still make secret rotation cleaner.

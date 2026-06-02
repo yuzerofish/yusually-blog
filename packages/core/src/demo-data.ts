@@ -3,8 +3,8 @@ import type { Asset, Comment, Post, Series, SiteSettings, Tag } from "./types";
 export const siteSettings: SiteSettings = {
   name: "01MVP Blog Starter",
   description:
-    "A Cloudflare-native personal site for articles, videos, durable notes, and AI-assisted publishing.",
-  url: "https://blog.01mvp.com",
+    "A Cloudflare-native personal site for articles, videos, durable notes, and API-assisted publishing.",
+  url: "https://your-domain.example",
   authorName: "01MVP",
   authorBio:
     "Builder notes, product essays, and durable personal knowledge on an edge-native publishing stack.",
@@ -38,7 +38,7 @@ export const siteSettings: SiteSettings = {
   primaryLanguage: "en",
   i18n: {
     description: {
-      zh: "基于 Cloudflare 的个人站点，用来沉淀文章、视频、长期笔记和 AI 辅助发布工作流。",
+      zh: "基于 Cloudflare 的个人站点，用来沉淀文章、视频、长期笔记和 API 辅助发布工作流。",
     },
     authorBio: {
       zh: "基于边缘原生发布栈记录构建笔记、产品文章和长期可沉淀的个人知识。",
@@ -69,12 +69,12 @@ export const tags: Tag[] = [
   },
   {
     id: "tag-ai",
-    name: "AI Automation",
-    slug: "ai-automation",
-    description: "Agent-friendly OpenAPI workflows and repeatable site initialization.",
+    name: "API Automation",
+    slug: "api-automation",
+    description: "OpenAPI workflows for repeatable publishing and site maintenance.",
     i18n: {
-      name: { zh: "AI 自动化" },
-      description: { zh: "面向 Agent 的 OpenAPI 工作流和可重复的网站初始化。" },
+      name: { zh: "API 自动化" },
+      description: { zh: "用于发布和站点维护的 OpenAPI 工作流。" },
     },
   },
   {
@@ -127,7 +127,7 @@ export const posts: Post[] = [
     title: "Designing a permanent personal publishing system on Cloudflare",
     slug: "designing-a-permanent-personal-publishing-system-on-cloudflare",
     excerpt:
-      "The template stores canonical content in D1, keeps media and backup archives in R2, and exposes the same OpenAPI publishing surface to humans and AI agents.",
+      "The template stores canonical content in D1, keeps media and backup archives in R2, and exposes the same OpenAPI publishing surface to people and automation tools.",
     coverImage: "/demo/desk.jpg",
     contentMarkdown: `# Designing a permanent personal publishing system on Cloudflare
 
@@ -163,7 +163,7 @@ The first release focuses on a reliable loop: sign in, write, upload, publish, r
     i18n: {
       title: { zh: "在 Cloudflare 上设计一个长期可用的个人发布系统" },
       excerpt: {
-        zh: "这个模板把标准内容存入 D1，把媒体和备份归档放进 R2，并向人类和 AI Agent 暴露同一套 OpenAPI 发布能力。",
+        zh: "这个模板把标准内容存入 D1，把媒体和备份归档放进 R2，并向作者和自动化工具暴露同一套 OpenAPI 发布能力。",
       },
       contentMarkdown: {
         zh: `# 在 Cloudflare 上设计一个长期可用的个人发布系统
@@ -195,23 +195,23 @@ The first release focuses on a reliable loop: sign in, write, upload, publish, r
   },
   {
     id: "post-skill-runner",
-    title: "What the AI initialization Skill needs to automate",
-    slug: "what-the-ai-initialization-skill-needs-to-automate",
+    title: "What a guided setup workflow should automate",
+    slug: "what-a-guided-setup-workflow-should-automate",
     excerpt:
-      "The Skill checks local tooling, creates Cloudflare resources, writes site config, deploys the Worker, validates routes, and creates the first post.",
+      "A setup workflow should check local tooling, prepare Cloudflare resources, write site config, deploy the Worker, validate routes, and create the first post.",
     coverImage: "/demo/notes.jpg",
-    contentMarkdown: `# What the AI initialization Skill needs to automate
+    contentMarkdown: `# What a guided setup workflow should automate
 
-The Skill is not a tutorial. It is an execution workflow for agents.
+A good setup workflow should remove repetitive deployment work without hiding the decisions a site owner needs to make.
 
-It should collect the site name, author, domain, theme, comments preference, and email preference. Then it checks Node, pnpm, Vite+, Wrangler, and Cloudflare auth state before creating D1, R2, optional KV, and Turnstile resources.
+It should collect the site name, author, domain, theme, comments preference, and email preference. Then it checks Node, pnpm, Vite+, Wrangler, and Cloudflare auth state before preparing D1, R2, optional KV, and Turnstile resources.
 
 Manual steps are reserved for login, token creation, paid-plan confirmation, DNS confirmation, and email verification.
 `,
     contentHtml:
-      "<p>The Skill is not a tutorial. It is an execution workflow for agents.</p><p>Manual steps are reserved for login, token creation, paid-plan confirmation, DNS confirmation, and email verification.</p>",
+      "<p>A good setup workflow should remove repetitive deployment work without hiding the decisions a site owner needs to make.</p><p>Manual steps are reserved for login, token creation, paid-plan confirmation, DNS confirmation, and email verification.</p>",
     contentText:
-      "The AI initialization Skill checks local tooling creates Cloudflare resources writes config deploys validates and creates a first post.",
+      "The setup workflow checks local tooling prepares Cloudflare resources writes config deploys validates and creates a first post.",
     status: "published",
     source: "ai",
     featured: true,
@@ -222,33 +222,33 @@ Manual steps are reserved for login, token creation, paid-plan confirmation, DNS
     authorName: "01MVP",
     series: aiWorkflow,
     tags: [ai, cloudflare],
-    seoTitle: "AI Skill automation plan for 01mvp-blog-starter",
+    seoTitle: "Setup automation plan for 01mvp-blog-starter",
     seoDescription:
-      "The 01mvp-blog-starter Skill initializes, configures, deploys, validates, and maintains a new Cloudflare-native blog.",
+      "A guided setup workflow can configure, deploy, validate, and maintain a Cloudflare-native blog.",
     i18n: {
-      title: { zh: "AI 初始化 Skill 自动化了哪些步骤" },
+      title: { zh: "引导式初始化流程应该自动化哪些步骤" },
       excerpt: {
-        zh: "Skill 会检查本地工具、创建 Cloudflare 资源、写入站点配置、部署 Worker、验证路由并创建第一篇文章。",
+        zh: "初始化流程应该检查本地工具、准备 Cloudflare 资源、写入站点配置、部署 Worker、验证路由并创建第一篇文章。",
       },
       contentMarkdown: {
-        zh: `# AI 初始化 Skill 需要自动完成什么
+        zh: `# 引导式初始化流程应该自动化哪些步骤
 
-这个 Skill 避免教程口吻，定位为面向 Agent 的执行工作流。
+好的初始化流程应该减少重复部署工作，同时保留站点所有者需要做的关键选择。
 
-它需要收集站点名称、作者、域名、主题、评论偏好、邮件偏好和主语言，然后检查 Node、pnpm、Vite+、Wrangler 和 Cloudflare 登录状态，再创建 D1、R2、可选 KV 与 Turnstile 资源。
+它需要收集站点名称、作者、域名、主题、评论偏好、邮件偏好和主语言，然后检查 Node、pnpm、Vite+、Wrangler 和 Cloudflare 登录状态，再准备 D1、R2、可选 KV 与 Turnstile 资源。
 
 人工步骤只保留给登录、Token 创建、付费计划确认、DNS 确认和邮件验证。
 `,
       },
       contentHtml: {
-        zh: "<p>这个 Skill 避免教程口吻，定位为面向 Agent 的执行工作流。</p><p>人工步骤只保留给登录、Token 创建、付费计划确认、DNS 确认和邮件验证。</p>",
+        zh: "<p>好的初始化流程应该减少重复部署工作，同时保留站点所有者需要做的关键选择。</p><p>人工步骤只保留给登录、Token 创建、付费计划确认、DNS 确认和邮件验证。</p>",
       },
       contentText: {
-        zh: "AI 初始化 Skill 会检查本地工具、创建 Cloudflare 资源、写入配置、部署、验证并创建第一篇文章。",
+        zh: "初始化流程会检查本地工具、准备 Cloudflare 资源、写入配置、部署、验证并创建第一篇文章。",
       },
-      seoTitle: { zh: "01mvp-blog-starter 的 AI Skill 自动化计划" },
+      seoTitle: { zh: "01mvp-blog-starter 的初始化自动化计划" },
       seoDescription: {
-        zh: "01mvp-blog-starter Skill 会初始化、配置、部署、验证并维护一个新的 Cloudflare 原生博客。",
+        zh: "引导式初始化流程可以配置、部署、验证并维护一个新的 Cloudflare 原生博客。",
       },
     },
   },

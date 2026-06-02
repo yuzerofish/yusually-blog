@@ -84,7 +84,7 @@ type CloudflareBindings = {
   RESEND_API_KEY?: string;
   RESEND_FROM_EMAIL?: string;
   EMAIL_FROM?: string;
-  CMS_TURNSTILE_SECRET_KEY: string;
+  CMS_TURNSTILE_SECRET_KEY?: string;
   VITE_TURNSTILE_SITE_KEY: string;
   BETTER_AUTH_SECRET?: string;
   GITHUB_CLIENT_ID?: string;
