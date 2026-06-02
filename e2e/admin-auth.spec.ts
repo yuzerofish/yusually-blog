@@ -54,6 +54,38 @@ test.describe("Admin authentication", () => {
     }
   });
 
+  test("shows a denied admin state for signed-in readers", async ({ page }) => {
+    await prepareEmailPasswordSignup(page);
+
+    const runId = `${Date.now()}-${test.info().parallelIndex}`;
+    await signUpReaderAccount(page, {
+      email: `reader-admin-denied-${runId}@example.test`,
+      name: `Reader Admin Denied ${runId}`,
+      password: "password123",
+    });
+
+    const accountResponse = await page
+      .context()
+      .request.get("/api/account/me?disableCookieCache=true&disableRefresh=true");
+    expect(accountResponse.status()).toBe(200);
+
+    const adminMeResponse = await page
+      .context()
+      .request.get("/api/admin/me?disableCookieCache=true&disableRefresh=true");
+    expect(adminMeResponse.status()).toBe(401);
+
+    const usersResponse = await page.context().request.get("/api/admin/users");
+    expect(usersResponse.status()).toBe(401);
+
+    const response = await page.goto("/admin", { waitUntil: "domcontentloaded" });
+    expect(response?.status()).toBeLessThan(500);
+    await expect(page).toHaveURL(/\/admin\/?$/);
+    await expect(page.getByRole("heading", { name: "Admin area unavailable" })).toBeVisible();
+    await expect(page.getByText("This account does not have admin access.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Publishing overview" })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /Posts/ })).toHaveCount(0);
+  });
+
   test("keeps the public header in account state after login", async ({ page }) => {
     await logInAsLocalAdmin(page);
 
@@ -193,6 +225,39 @@ async function logInAsLocalAdmin(page: Page) {
   await page.getByRole("button", { name: /Open admin/ }).click();
   await expect(page).toHaveURL(/\/admin\/?$/);
   await expect(page.getByRole("heading", { name: "Publishing overview" })).toBeVisible();
+}
+
+async function prepareEmailPasswordSignup(page: Page) {
+  await logInAsLocalAdmin(page);
+
+  const response = await page.context().request.put("/api/site", {
+    data: {
+      emailVerificationEnabled: false,
+    },
+  });
+  expect(response.status()).toBe(200);
+
+  await page.context().clearCookies();
+}
+
+async function signUpReaderAccount(
+  page: Page,
+  input: {
+    email: string;
+    name: string;
+    password: string;
+  },
+) {
+  const signupResponse = await page.context().request.post("/api/account/signup", {
+    data: input,
+    headers: {
+      origin: baseURL,
+    },
+  });
+  expect(signupResponse.status()).toBe(201);
+
+  await page.goto("/app", { waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("heading", { name: "Account" })).toBeVisible();
 }
 
 async function expectAdminPayload(response: APIResponse) {

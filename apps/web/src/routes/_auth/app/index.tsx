@@ -158,6 +158,14 @@ function AppIndex() {
                   return (
                     <label
                       key={option.value}
+                      onClick={(event) => {
+                        if (selected || status === "saving") {
+                          return;
+                        }
+
+                        event.preventDefault();
+                        void savePreference({ emailPreference: option.value });
+                      }}
                       className={`grid min-h-24 gap-2 rounded-md border p-4 text-left transition ${
                         selected
                           ? "border-primary bg-primary/10 text-foreground shadow-xs"
