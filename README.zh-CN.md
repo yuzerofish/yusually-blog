@@ -5,11 +5,11 @@
 
 [English README](./README.md)
 
-01mvp-blog-starter 是一个基于 Cloudflare 的个人博客 CMS，并内置 Git 管理的文档系统。
+01mvp-blog-starter 是一个基于 Cloudflare 的个人发布系统，并内置 Git 管理的文档系统。
 
 默认提供两套内容系统：
 
-- `/blog` 由 CMS 后端驱动，适合公开文章、后台写作、评论、RSS、OpenAPI 发布、导入、导出和备份。
+- `/blog` 由发布后台驱动，适合公开文章、后台写作、评论、RSS、OpenAPI 发布、导入、导出和备份。
 - `/docs` 由 Fumadocs 与 GitHub Markdown/MDX 驱动，适合产品文档、开发者文档、API 指南和模板说明。
 
 ## 技术栈
@@ -31,8 +31,7 @@
 这个按钮面向 Workers 应用。当前仓库是 pnpm monorepo，所以根目录脚本是部署入口：
 
 ```sh
-pnpm build:web
-pnpm run deploy
+pnpm deploy:web
 ```
 
 Cloudflare 可以根据 Wrangler 配置创建支持的资源，包括 D1、R2 和 KV。第一次部署后请检查 `apps/web/wrangler.jsonc`，因为生产域名和公开站点 URL 需要改成你自己的项目值。
@@ -92,7 +91,7 @@ pnpm build:web
 pnpm deploy:web
 ```
 
-这个命令会检查必需的 R2 存储桶、构建 Web 应用、应用远程 D1 migrations，并用生成的 Cloudflare 配置部署 Worker。
+这个命令会检查必需的 R2 存储桶、构建 Web 应用、应用远程 D1 migrations，用生成的 Cloudflare 配置部署 Worker，并在配置 `CMS_PUBLIC_SITE_URL` 和 `CMS_API_TOKEN` 后同步 Git 管理的笔记。
 
 ## 工作区
 
@@ -121,7 +120,23 @@ docs/specs               项目规格、部署记录和实现记录
 
 ## 自动化
 
-创建站点和维护已有博客都通过 `skills/01mvp-blog` 里的 `01mvp-blog` Skill 完成。生成后的站点会暴露 `/openapi.json`，接入外部自动化前先在后台设置页创建受限 API Token。
+博客 Skill 的源文件在 `skills/01mvp-blog/SKILL.md`。
+
+在当前仓库检查 Skill 是否可被发现：
+
+```sh
+pnpm skills add . --list --full-depth
+```
+
+把它安装到本项目的 Codex 环境：
+
+```sh
+pnpm skills add . --skill 01mvp-blog --agent codex --yes --full-depth
+```
+
+安装到其他 agent 时，把 `codex` 换成对应的小写 agent id。
+
+创建站点和维护已有博客时使用 `01mvp-blog` Skill。Cloudflare 资源创建和部署仍然需要具备 Cloudflare 能力的 agent skill 或工具。生成后的站点会暴露 `/openapi.json`，接入外部自动化前先在后台设置页创建受限 API Token。
 
 ## License
 

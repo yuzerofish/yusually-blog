@@ -23,6 +23,15 @@ Use `/openapi.json` for local drafts, automation, external integrations, or AI-a
 
 Create a scoped API token in the admin settings, then use the OpenAPI schema when connecting external tools or generating API clients. Use the `01mvp-blog` Skill in `skills/01mvp-blog` when an AI agent should create or maintain a blog end to end.
 
+From this checkout, verify or install the Skill with:
+
+```sh
+pnpm skills add . --list --full-depth
+pnpm skills add . --skill 01mvp-blog --agent codex --yes --full-depth
+```
+
+Replace `codex` with another lowercase agent id when installing for a different agent.
+
 ## Maintain Docs
 
 Use Fumadocs for content that should live with the repository:
@@ -62,3 +71,5 @@ Deploy the production site with:
 ```sh
 pnpm deploy:web
 ```
+
+The deploy command applies remote D1 migrations and runs the Git-managed notes sync when `CMS_PUBLIC_SITE_URL` and `CMS_API_TOKEN` are configured.

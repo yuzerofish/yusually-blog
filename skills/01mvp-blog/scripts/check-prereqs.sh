@@ -11,6 +11,11 @@ check() {
       return
     fi
 
+    if [ "$name" = "wrangler" ] && pnpm --filter @repo/web exec wrangler --version >/dev/null 2>&1; then
+      printf 'ok: %s -> pnpm --filter @repo/web exec wrangler\n' "$name"
+      return
+    fi
+
     printf 'missing: %s\n' "$name"
     missing=1
     return

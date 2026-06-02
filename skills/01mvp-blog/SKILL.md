@@ -11,6 +11,22 @@ Use this Skill when creating a new personal blog from the 01mvp-blog-starter tem
 
 For Cloudflare account, resource, DNS, and deployment work, recommend that the user install and use the relevant Cloudflare skills in their agent environment. Prefer the comprehensive Cloudflare skill plus the Wrangler and Workers best-practices skills, commonly exposed as `cloudflare:cloudflare`, `cloudflare:wrangler`, and `cloudflare:workers-best-practices`. This Skill owns the blog-specific workflow, expected outputs, OpenAPI usage, and verification contract; do not duplicate Cloudflare platform setup instructions here.
 
+## Install And Load
+
+From a checkout of the template, verify that the Skill can be discovered:
+
+```sh
+pnpm skills add . --list --full-depth
+```
+
+Install it for Codex in the current project:
+
+```sh
+pnpm skills add . --skill 01mvp-blog --agent codex --yes --full-depth
+```
+
+Use lowercase agent ids such as `codex`, `cursor`, or `gemini-cli` when installing for a specific agent. After installation, ask the agent to use the `01mvp-blog` Skill when creating a site, validating a generated site, or maintaining an existing blog through OpenAPI.
+
 ## Inputs To Collect
 
 Ask for missing values only when they are not already provided:

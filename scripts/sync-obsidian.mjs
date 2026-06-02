@@ -27,7 +27,7 @@ export async function main(argv = process.argv.slice(2), env = process.env) {
     return;
   }
 
-  if (!options.siteUrl) {
+  if (!options.siteUrl && !options.dryRun) {
     throw new Error("Set CMS_PUBLIC_SITE_URL, VITE_BASE_URL, or pass --site <url>.");
   }
 

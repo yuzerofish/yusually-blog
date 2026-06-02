@@ -52,6 +52,8 @@ You can run a local preview when debugging a note:
 pnpm sync:obsidian -- --dry-run
 ```
 
+Dry-run scans `content/notes`, prints the entries that would sync, and does not require `CMS_API_TOKEN`.
+
 You can also run the sync command manually for advanced automation:
 
 ```bash

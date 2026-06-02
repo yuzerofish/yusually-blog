@@ -52,6 +52,8 @@ tags: [writing, ai]
 pnpm sync:obsidian -- --dry-run
 ```
 
+Dry-run 会扫描 `content/notes`，输出将要同步的条目，不需要配置 `CMS_API_TOKEN`。
+
 也可以在高级自动化里手动运行同步命令：
 
 ```bash

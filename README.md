@@ -5,11 +5,11 @@
 
 [中文 README](./README.zh-CN.md)
 
-01mvp-blog-starter is a Cloudflare-native personal blog CMS with a Git-managed documentation system.
+01mvp-blog-starter is a Cloudflare-native personal publishing system with a Git-managed documentation system.
 
 It ships with two content surfaces:
 
-- `/blog` is powered by the CMS backend for posts, admin writing, comments, RSS, OpenAPI publishing, imports, exports, and backups.
+- `/blog` is powered by the publishing backend for posts, admin writing, comments, RSS, OpenAPI publishing, imports, exports, and backups.
 - `/docs` is powered by Fumadocs and GitHub Markdown/MDX for product docs, developer docs, API guides, and template notes.
 
 ## Stack
@@ -28,11 +28,10 @@ It ships with two content surfaces:
 
 Use the Deploy to Cloudflare button above to create and deploy your own copy from the public GitHub repository.
 
-The button works for Workers applications. This repository is a pnpm monorepo, so the root package scripts are the deployment entrypoint:
+The button works for Workers applications. This repository is a pnpm monorepo, so the root package script is the deployment entrypoint:
 
 ```sh
-pnpm build:web
-pnpm run deploy
+pnpm deploy:web
 ```
 
 Cloudflare can provision supported resources from the Wrangler config, including D1, R2, and KV. Review `apps/web/wrangler.jsonc` after the first deployment because the production domain and public site URL are project-specific.
@@ -92,7 +91,7 @@ The build compiles Paraglide output, builds TanStack Start, and writes the Cloud
 pnpm deploy:web
 ```
 
-This checks the required R2 bucket, builds the web app, applies remote D1 migrations, and deploys the Worker with the generated Cloudflare config.
+This checks the required R2 bucket, builds the web app, applies remote D1 migrations, deploys the Worker with the generated Cloudflare config, and runs the Git-managed notes sync when `CMS_PUBLIC_SITE_URL` and `CMS_API_TOKEN` are configured.
 
 ## Workspace
 
@@ -121,7 +120,23 @@ The root `docs/specs` folder is for project specifications, deployment records, 
 
 ## Automation
 
-Use the `01mvp-blog` Skill in `skills/01mvp-blog` for site creation and OpenAPI-based maintenance. Generated sites expose `/openapi.json`; create scoped API tokens in the admin settings before wiring external automation.
+The canonical blog Skill lives at `skills/01mvp-blog/SKILL.md`.
+
+Check that the Skill is discoverable from this checkout:
+
+```sh
+pnpm skills add . --list --full-depth
+```
+
+Install it for Codex in this project:
+
+```sh
+pnpm skills add . --skill 01mvp-blog --agent codex --yes --full-depth
+```
+
+Replace `codex` with another lowercase agent id when installing for a different agent.
+
+Use the `01mvp-blog` Skill for site creation and OpenAPI-based maintenance. Cloudflare provisioning still needs Cloudflare-capable agent skills or tooling. Generated sites expose `/openapi.json`; create scoped API tokens in the admin settings before wiring external automation.
 
 ## License
 

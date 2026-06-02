@@ -58,9 +58,9 @@ export const tags: Tag[] = [
     },
   },
   {
-    id: "tag-cms",
+    id: "tag-publishing",
     name: "Publishing",
-    slug: "cms",
+    slug: "publishing",
     description: "Content workflows for writing, publishing, importing, and exporting.",
     i18n: {
       name: { zh: "内容管理" },
@@ -115,7 +115,7 @@ export const series: Series[] = [
 ];
 
 const cloudflare = tags[0];
-const cms = tags[1];
+const publishing = tags[1];
 const ai = tags[2];
 const markdown = tags[3];
 const publishingStack = series[0];
@@ -123,9 +123,9 @@ const aiWorkflow = series[1];
 
 export const posts: Post[] = [
   {
-    id: "post-edge-cms",
+    id: "post-edge-publishing",
     title: "Designing a permanent personal publishing system on Cloudflare",
-    slug: "designing-a-permanent-personal-cms-on-cloudflare",
+    slug: "designing-a-permanent-personal-publishing-system-on-cloudflare",
     excerpt:
       "The template stores canonical content in D1, keeps media and backup archives in R2, and exposes the same OpenAPI publishing surface to humans and AI agents.",
     coverImage: "/demo/desk.jpg",
@@ -156,7 +156,7 @@ The first release focuses on a reliable loop: sign in, write, upload, publish, r
     updatedAt: "2026-05-22T12:20:00.000Z",
     authorName: "01MVP",
     series: publishingStack,
-    tags: [cloudflare, cms, markdown],
+    tags: [cloudflare, publishing, markdown],
     seoTitle: "Designing a permanent personal publishing system on Cloudflare",
     seoDescription:
       "How 01mvp-blog-starter uses Cloudflare Workers, D1, R2, Markdown, and scoped automation for durable personal publishing.",
@@ -278,7 +278,7 @@ HTML import has two modes: sanitized HTML for normal use and trusted iframe rend
     updatedAt: "2026-05-23T08:10:00.000Z",
     authorName: "01MVP",
     series: publishingStack,
-    tags: [cms, markdown],
+    tags: [publishing, markdown],
     seoTitle: "Portable Markdown, HTML, and ZIP backup model",
     seoDescription:
       "A Cloudflare-native publishing model that imports Markdown and HTML and exports portable archives.",
@@ -312,7 +312,7 @@ HTML 导入提供两种模式：普通使用场景下的安全清洗 HTML，以�
 export const comments: Comment[] = [
   {
     id: "comment-1",
-    postId: "post-edge-cms",
+    postId: "post-edge-publishing",
     parentId: null,
     authorName: "Reader",
     authorEmailHash: "demo-email-hash",
@@ -353,12 +353,12 @@ export const assets: Asset[] = [
   },
   {
     id: "asset-cover",
-    key: "posts/edge-cms-cover.jpg",
+    key: "posts/edge-publishing-cover.jpg",
     url: posts[0].coverImage,
-    filename: "edge-cms-cover.jpg",
+    filename: "edge-publishing-cover.jpg",
     contentType: "image/jpeg",
     sizeBytes: 184320,
     createdAt: "2026-05-20T09:10:00.000Z",
-    attachedPostId: "post-edge-cms",
+    attachedPostId: "post-edge-publishing",
   },
 ];

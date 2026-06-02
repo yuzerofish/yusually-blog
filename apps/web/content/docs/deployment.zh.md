@@ -28,7 +28,7 @@ password: 1
 pnpm deploy:web
 ```
 
-这会先检查必要的 R2 存储桶，再构建 Web 应用，并使用生成的 Cloudflare 配置部署 Worker。
+这会先检查必要的 R2 存储桶，再构建 Web 应用、应用远程 D1 migrations、使用生成的 Cloudflare 配置部署 Worker，并在配置 `CMS_PUBLIC_SITE_URL` 和 `CMS_API_TOKEN` 后同步 Git 管理的笔记。
 
 R2 存储桶需要在目标 Cloudflare 账号里先开通 R2 后才能创建。Cloudflare 提供 R2 免费月额度，但 R2 仍然是按量计费产品，新账号可能需要先完成 R2 subscription checkout，并添加有效付款方式。
 
@@ -55,7 +55,7 @@ Turnstile 和 Cloudflare Email Sending 是可选能力。未配置可选 binding
 
 ## 必要 Migration
 
-启用读者评论前，先应用 D1 migrations：
+`pnpm deploy:web` 已经会通过根目录 `db:migrate:remote` 脚本自动应用远程 D1 migrations。只有自定义部署流水线或定向维护时，才需要单独运行：
 
 ```sh
 pnpm --filter @repo/web exec wrangler d1 migrations apply <d1-database-name> --remote --config wrangler.jsonc

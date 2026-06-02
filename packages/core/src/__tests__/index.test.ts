@@ -100,9 +100,9 @@ describe("getFeaturedPosts", () => {
 
 describe("getPostBySlug", () => {
   it("finds a post by its slug", () => {
-    const post = getPostBySlug("designing-a-permanent-personal-cms-on-cloudflare");
+    const post = getPostBySlug("designing-a-permanent-personal-publishing-system-on-cloudflare");
     expect(post).toBeDefined();
-    expect(post!.id).toBe("post-edge-cms");
+    expect(post!.id).toBe("post-edge-publishing");
   });
 
   it("returns undefined for a missing slug", () =>
@@ -123,15 +123,15 @@ describe("getTagBySlug", () => {
 
 describe("getRelatedPosts", () => {
   it("returns posts with shared tags, excluding the original", () => {
-    // post-edge-cms has tags: cloudflare, cms, markdown
-    const related = getRelatedPosts("post-edge-cms");
+    // post-edge-publishing has tags: cloudflare, publishing, markdown
+    const related = getRelatedPosts("post-edge-publishing");
     for (const post of related) {
-      expect(post.id).not.toBe("post-edge-cms");
+      expect(post.id).not.toBe("post-edge-publishing");
     }
   });
 
   it("returns at most 3 related posts", () => {
-    const related = getRelatedPosts("post-edge-cms");
+    const related = getRelatedPosts("post-edge-publishing");
     expect(related.length).toBeLessThanOrEqual(3);
   });
 
@@ -140,9 +140,9 @@ describe("getRelatedPosts", () => {
   });
 
   it("returns related posts that share at least one tag", () => {
-    // post-edge-cms has tags: cloudflare, cms, markdown
-    const related = getRelatedPosts("post-edge-cms");
-    const postTagSlugs = new Set(["cloudflare", "cms", "markdown"]);
+    // post-edge-publishing has tags: cloudflare, publishing, markdown
+    const related = getRelatedPosts("post-edge-publishing");
+    const postTagSlugs = new Set(["cloudflare", "publishing", "markdown"]);
     for (const post of related) {
       const hasSharedTag = post.tags.some((tag) => postTagSlugs.has(tag.slug));
       expect(hasSharedTag).toBe(true);

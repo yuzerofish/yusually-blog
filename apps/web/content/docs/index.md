@@ -76,9 +76,27 @@ Production site:
 pnpm deploy:web
 ```
 
+This checks the required R2 bucket, builds the web app, applies remote D1 migrations, deploys the Worker, and runs the Git-managed notes sync when `CMS_PUBLIC_SITE_URL` and `CMS_API_TOKEN` are configured.
+
 ## Automation
 
-Use the `01mvp-blog` Skill in `skills/01mvp-blog` for site creation and OpenAPI-based maintenance. Generated sites expose `/openapi.json`; create scoped API tokens in the admin settings before connecting external automation.
+The canonical blog Skill lives at `skills/01mvp-blog/SKILL.md`.
+
+Check that the Skill is discoverable from this checkout:
+
+```sh
+pnpm skills add . --list --full-depth
+```
+
+Install it for Codex in this project:
+
+```sh
+pnpm skills add . --skill 01mvp-blog --agent codex --yes --full-depth
+```
+
+Replace `codex` with another lowercase agent id when installing for a different agent.
+
+Use the `01mvp-blog` Skill for site creation and OpenAPI-based maintenance. Cloudflare provisioning still needs Cloudflare-capable agent skills or tooling. Generated sites expose `/openapi.json`; create scoped API tokens in the admin settings before connecting external automation.
 
 ## License
 

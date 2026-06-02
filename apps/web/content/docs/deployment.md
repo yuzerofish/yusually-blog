@@ -28,7 +28,7 @@ This command writes only to the local D1 database under `.wrangler/state`. It do
 pnpm deploy:web
 ```
 
-This checks the required R2 bucket, builds the web app, and deploys the Worker using the generated Cloudflare config.
+This checks the required R2 bucket, builds the web app, applies remote D1 migrations, deploys the Worker using the generated Cloudflare config, and runs the Git-managed notes sync when `CMS_PUBLIC_SITE_URL` and `CMS_API_TOKEN` are configured.
 
 R2 must be enabled on the target Cloudflare account before the storage bucket can be created. Cloudflare includes free monthly R2 usage, but R2 is still a usage-billed product, so new accounts may need to complete the R2 subscription checkout and add a valid payment method first.
 
@@ -55,7 +55,7 @@ For setup steps and admin status checks, see [Advanced configuration](./advanced
 
 ## Required Migrations
 
-Apply D1 migrations before deploying a site that accepts reader comments:
+`pnpm deploy:web` applies remote D1 migrations automatically through the root `db:migrate:remote` script. Use this command only for a custom deploy pipeline or targeted maintenance:
 
 ```sh
 pnpm --filter @repo/web exec wrangler d1 migrations apply <d1-database-name> --remote --config wrangler.jsonc
