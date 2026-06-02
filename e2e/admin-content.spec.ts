@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { sameOriginHeaders } from "./request";
+
 const localAdmin = {
   email: process.env.BLOGCMS_LOCAL_ADMIN_EMAIL ?? "a@a.test",
   password: process.env.BLOGCMS_LOCAL_ADMIN_PASSWORD ?? "1",
@@ -24,6 +26,7 @@ test.describe("Admin content management", () => {
         status: "draft",
         commentsEnabled: true,
       },
+      headers: sameOriginHeaders(),
     });
     expect(createResponse.status()).toBe(201);
 
@@ -49,6 +52,7 @@ test.describe("Admin content management", () => {
         contentMarkdown: `# ${publishedTitle}\n\nPublished through the admin API.`,
         status: "published",
       },
+      headers: sameOriginHeaders(),
     });
     expect(publishResponse.status()).toBe(200);
 
@@ -71,7 +75,9 @@ test.describe("Admin content management", () => {
     expect(publicResponse?.status(), "published post should load publicly").toBeLessThan(500);
     await expect(page.getByRole("heading", { name: publishedTitle })).toBeVisible();
 
-    const deleteResponse = await page.context().request.delete(`/api/posts/${postId}`);
+    const deleteResponse = await page.context().request.delete(`/api/posts/${postId}`, {
+      headers: sameOriginHeaders(),
+    });
     expect(deleteResponse.status()).toBe(200);
     const deleted = (await deleteResponse.json()) as { data?: { status?: string } };
     expect(deleted.data?.status).toBe("deleted");
@@ -100,6 +106,7 @@ test.describe("Admin content management", () => {
         commentsEnabled: true,
         commentsRequireApproval: true,
       },
+      headers: sameOriginHeaders(),
     });
     expect(baselineResponse.status()).toBe(200);
 

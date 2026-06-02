@@ -1,11 +1,11 @@
 import { expect, test, type APIResponse, type Page } from "@playwright/test";
 
+import { baseURL, sameOriginHeaders } from "./request";
+
 const localAdmin = {
   email: process.env.BLOGCMS_LOCAL_ADMIN_EMAIL ?? "a@a.test",
   password: process.env.BLOGCMS_LOCAL_ADMIN_PASSWORD ?? "1",
 };
-const baseURL =
-  process.env.PLAYWRIGHT_BASE_URL ?? `http://localhost:${process.env.PLAYWRIGHT_PORT ?? "3000"}`;
 
 const adminRoutes = [
   { path: "/admin", heading: "Publishing overview" },
@@ -161,6 +161,7 @@ test.describe("Admin authentication", () => {
         status: "draft",
         commentsEnabled: true,
       },
+      headers: sameOriginHeaders(),
     });
     expect(createResponse.status()).toBe(201);
 
@@ -234,6 +235,7 @@ async function prepareEmailPasswordSignup(page: Page) {
     data: {
       emailVerificationEnabled: false,
     },
+    headers: sameOriginHeaders(),
   });
   expect(response.status()).toBe(200);
 
@@ -250,9 +252,7 @@ async function signUpReaderAccount(
 ) {
   const signupResponse = await page.context().request.post("/api/account/signup", {
     data: input,
-    headers: {
-      origin: baseURL,
-    },
+    headers: sameOriginHeaders(),
   });
   expect(signupResponse.status()).toBe(201);
 

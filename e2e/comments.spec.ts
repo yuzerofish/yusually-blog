@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { sameOriginHeaders } from "./request";
+
 const localAdmin = {
   email: process.env.BLOGCMS_LOCAL_ADMIN_EMAIL ?? "a@a.test",
   password: process.env.BLOGCMS_LOCAL_ADMIN_PASSWORD ?? "1",
@@ -29,6 +31,7 @@ test.describe("Comments", () => {
         status: "published",
         commentsEnabled: true,
       },
+      headers: sameOriginHeaders(),
     });
     expect(createPostResponse.status()).toBe(201);
 
@@ -90,7 +93,9 @@ test.describe("Comments", () => {
 
     const approveResponse = await page
       .context()
-      .request.post(`/api/comments/${persistedComment?.id}/approve`);
+      .request.post(`/api/comments/${persistedComment?.id}/approve`, {
+        headers: sameOriginHeaders(),
+      });
     expect(approveResponse.status()).toBe(200);
 
     await page.context().clearCookies();
@@ -119,6 +124,7 @@ async function ensureCommentSettings(page: Page) {
       commentsRequireApproval: true,
       emailVerificationEnabled: false,
     },
+    headers: sameOriginHeaders(),
   });
 
   expect(response.status()).toBe(200);
