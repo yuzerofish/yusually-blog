@@ -14,6 +14,7 @@ import {
   XIcon,
 } from "lucide-react";
 import {
+  Component,
   lazy,
   Suspense,
   useEffect,
@@ -23,6 +24,7 @@ import {
   useSyncExternalStore,
   type ComponentProps,
   type DragEventHandler,
+  type ReactNode,
 } from "react";
 import { toast } from "sonner";
 
@@ -71,7 +73,10 @@ export function PostForm({
   const [isCoverDragging, setIsCoverDragging] = useState(false);
   const mounted = useClientMounted();
   const saving = editorState === "saving";
-  const previewHtml = useMemo(() => renderMarkdownToHtml(markdown), [markdown]);
+  const previewResult = useMemo(
+    () => (editorMode === "preview" ? renderPreviewMarkdown(markdown) : null),
+    [editorMode, markdown],
+  );
   const imageAssets = useMemo(
     () => assetRows.filter((asset) => asset.contentType.startsWith("image/")),
     [assetRows],
@@ -407,33 +412,113 @@ export function PostForm({
 
         {editorMode === "editor" && mounted ? (
           <Suspense fallback={<div className="min-h-[560px] animate-pulse rounded bg-muted" />}>
-            <MdxEditorSurface
-              value={markdown}
-              onChange={onMarkdownChange}
-              className="min-h-[560px]"
-              editorClassName="min-h-[560px]"
-              contentEditableClassName="min-h-[500px] px-5 py-5 text-base leading-8"
-            />
+            <EditorRuntimeBoundary
+              key={editingPost?.id ?? "new-post"}
+              fallback={
+                <RichEditorFallback
+                  copy={copy}
+                  markdown={markdown}
+                  onMarkdownChange={onMarkdownChange}
+                />
+              }
+            >
+              <MdxEditorSurface
+                value={markdown}
+                onChange={onMarkdownChange}
+                className="min-h-[560px]"
+                editorClassName="min-h-[560px]"
+                contentEditableClassName="min-h-[500px] px-5 py-5 text-base leading-8"
+              />
+            </EditorRuntimeBoundary>
           </Suspense>
         ) : null}
 
         {editorMode === "source" ? (
-          <textarea
+          <SourceMarkdownEditor
             value={markdown}
-            onChange={(event) => onMarkdownChange(event.target.value)}
-            className={`${adminTextareaClassName} min-h-[560px] resize-y font-mono leading-6 focus-visible:ring-[3px] focus-visible:ring-ring/50`}
+            label={copy.sourceEditorLabel}
+            onMarkdownChange={onMarkdownChange}
           />
         ) : null}
 
         {editorMode === "preview" ? (
-          <div
-            className="prose prose-neutral prose-a:text-link dark:prose-invert min-h-[560px] max-w-none rounded-md border border-border bg-muted/45 p-5"
-            dangerouslySetInnerHTML={{ __html: previewHtml }}
-          />
+          previewResult?.error ? (
+            <div className="min-h-[560px] rounded-md border border-border bg-muted/45 p-5 text-sm text-muted-foreground">
+              {copy.previewUnavailable}
+            </div>
+          ) : (
+            <div
+              className="prose prose-neutral prose-a:text-link dark:prose-invert min-h-[560px] max-w-none rounded-md border border-border bg-muted/45 p-5"
+              dangerouslySetInnerHTML={{ __html: previewResult?.html ?? "" }}
+            />
+          )
         ) : null}
       </div>
     </form>
   );
+}
+
+class EditorRuntimeBoundary extends Component<
+  { children: ReactNode; fallback: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    return this.state.hasError ? this.props.fallback : this.props.children;
+  }
+}
+
+function RichEditorFallback({
+  copy,
+  markdown,
+  onMarkdownChange,
+}: {
+  copy: ReturnType<typeof getPostFormCopy>;
+  markdown: string;
+  onMarkdownChange: (markdown: string) => void;
+}) {
+  return (
+    <div className="grid gap-3 rounded-md border border-border bg-muted/35 p-4">
+      <p className="text-sm text-muted-foreground">{copy.richEditorUnavailable}</p>
+      <SourceMarkdownEditor
+        value={markdown}
+        label={copy.sourceEditorLabel}
+        onMarkdownChange={onMarkdownChange}
+      />
+    </div>
+  );
+}
+
+function SourceMarkdownEditor({
+  label,
+  value,
+  onMarkdownChange,
+}: {
+  label: string;
+  value: string;
+  onMarkdownChange: (markdown: string) => void;
+}) {
+  return (
+    <textarea
+      aria-label={label}
+      value={value}
+      onChange={(event) => onMarkdownChange(event.target.value)}
+      className={`${adminTextareaClassName} min-h-[560px] resize-y font-mono leading-6 focus-visible:ring-[3px] focus-visible:ring-ring/50`}
+    />
+  );
+}
+
+function renderPreviewMarkdown(markdown: string) {
+  try {
+    return { error: false as const, html: renderMarkdownToHtml(markdown) };
+  } catch {
+    return { error: true as const, html: "" };
+  }
 }
 
 function toDatetimeLocal(value: string) {
@@ -461,7 +546,10 @@ function getPostFormCopy(locale: "en" | "zh") {
       coverInvalid: "请选择图片文件。",
       coverUploaded: "封面已上传",
       emptyCover: "拖入一张图片，或从本机选择图片作为封面。",
+      previewUnavailable: "预览暂时无法打开这段 Markdown。请切回源码继续编辑。",
+      richEditorUnavailable: "富文本编辑器无法打开这段 Markdown，可以先在源码模式继续编辑。",
       saving: "正在保存...",
+      sourceEditorLabel: "Markdown 源码",
       uploadCover: "上传封面",
     };
   }
@@ -471,7 +559,12 @@ function getPostFormCopy(locale: "en" | "zh") {
     coverInvalid: "Choose an image file.",
     coverUploaded: "Cover uploaded",
     emptyCover: "Drop an image here, or choose one from your device.",
+    previewUnavailable:
+      "Preview could not open this Markdown. Switch back to source to keep editing.",
+    richEditorUnavailable:
+      "The rich editor could not open this Markdown. Continue editing in source.",
     saving: "Saving...",
+    sourceEditorLabel: "Markdown source",
     uploadCover: "Upload cover",
   };
 }

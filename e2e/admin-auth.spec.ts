@@ -98,6 +98,58 @@ test.describe("Admin authentication", () => {
     expect(pageErrors).toEqual([]);
   });
 
+  test("loads an existing post editor without client runtime errors", async ({ page }) => {
+    const pageErrors: string[] = [];
+    page.on("pageerror", (error) => pageErrors.push(error.message));
+
+    await logInAsLocalAdmin(page);
+
+    const runId = `${Date.now()}-${test.info().parallelIndex}`;
+    const title = `E2E edit smoke ${runId}`;
+    const createResponse = await page.context().request.post("/api/posts", {
+      data: {
+        title,
+        slug: `e2e-edit-smoke-${runId}`,
+        excerpt: "Post used by the Playwright admin edit smoke test.",
+        contentMarkdown: [
+          `# ${title}`,
+          "",
+          "This post intentionally includes Markdown that exercises the existing-post editor path.",
+          "",
+          "| Area | Status |",
+          "| --- | --- |",
+          "| Admin edit | Smoke tested |",
+          "",
+          "```tsx",
+          "export function SmokeExample() {",
+          '  return <span data-kind="admin-edit">covered</span>;',
+          "}",
+          "```",
+        ].join("\n"),
+        status: "draft",
+        commentsEnabled: true,
+      },
+    });
+    expect(createResponse.status()).toBe(201);
+
+    const payload = (await createResponse.json()) as { data?: { id?: string } };
+    const postId = payload.data?.id;
+    expect(postId).toBeTruthy();
+
+    const response = await page.goto(`/admin/posts/${postId}`, { waitUntil: "domcontentloaded" });
+    expect(
+      response?.status(),
+      "existing post editor should not return a server error",
+    ).toBeLessThan(500);
+    await expect(page.getByRole("heading", { name: "Edit post" })).toBeVisible();
+    await expect(page.locator("#editor-title")).toHaveValue(title);
+    await expect(
+      page.locator('[contenteditable="true"], textarea[aria-label="Markdown source"]').first(),
+    ).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText("Something went wrong")).toHaveCount(0);
+    expect(pageErrors).toEqual([]);
+  });
+
   test("logs in with the native form fallback", async ({ browser }) => {
     const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
     const page = await context.newPage();
