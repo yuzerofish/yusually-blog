@@ -122,16 +122,16 @@ The root `docs/specs` folder is for project specifications, deployment records, 
 
 The canonical blog Skill lives at `skills/01mvp-blog/SKILL.md`.
 
-Check that the Skill is discoverable from this checkout:
+Check that the Skill is discoverable from the GitHub repository:
 
 ```sh
-pnpm skills add . --list --full-depth
+npx skills@latest add 01MVP/blog-starter --list
 ```
 
 Install it for Codex in this project:
 
 ```sh
-pnpm skills add . --skill 01mvp-blog --agent codex --yes --full-depth
+npx skills@latest add 01MVP/blog-starter --skill 01mvp-blog --agent codex --yes
 ```
 
 Replace `codex` with another lowercase agent id when installing for a different agent.

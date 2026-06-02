@@ -23,11 +23,11 @@ Use `/openapi.json` for local drafts, automation, external integrations, or AI-a
 
 Create a scoped API token in the admin settings, then use the OpenAPI schema when connecting external tools or generating API clients. Use the `01mvp-blog` Skill in `skills/01mvp-blog` when an AI agent should create or maintain a blog end to end.
 
-From this checkout, verify or install the Skill with:
+Verify or install the Skill from the GitHub repository:
 
 ```sh
-pnpm skills add . --list --full-depth
-pnpm skills add . --skill 01mvp-blog --agent codex --yes --full-depth
+npx skills@latest add 01MVP/blog-starter --list
+npx skills@latest add 01MVP/blog-starter --skill 01mvp-blog --agent codex --yes
 ```
 
 Replace `codex` with another lowercase agent id when installing for a different agent.

@@ -82,16 +82,16 @@ pnpm deploy:web
 
 博客 Skill 的源文件在 `skills/01mvp-blog/SKILL.md`。
 
-在当前仓库检查 Skill 是否可被发现：
+检查 GitHub 仓库里的 Skill 是否可被发现：
 
 ```sh
-pnpm skills add . --list --full-depth
+npx skills@latest add 01MVP/blog-starter --list
 ```
 
 把它安装到本项目的 Codex 环境：
 
 ```sh
-pnpm skills add . --skill 01mvp-blog --agent codex --yes --full-depth
+npx skills@latest add 01MVP/blog-starter --skill 01mvp-blog --agent codex --yes
 ```
 
 安装到其他 agent 时，把 `codex` 换成对应的小写 agent id。

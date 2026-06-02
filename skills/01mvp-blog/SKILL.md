@@ -13,16 +13,16 @@ For Cloudflare account, resource, DNS, and deployment work, recommend that the u
 
 ## Install And Load
 
-From a checkout of the template, verify that the Skill can be discovered:
+Verify that the Skill can be discovered from the GitHub repository:
 
 ```sh
-pnpm skills add . --list --full-depth
+npx skills@latest add 01MVP/blog-starter --list
 ```
 
 Install it for Codex in the current project:
 
 ```sh
-pnpm skills add . --skill 01mvp-blog --agent codex --yes --full-depth
+npx skills@latest add 01MVP/blog-starter --skill 01mvp-blog --agent codex --yes
 ```
 
 Use lowercase agent ids such as `codex`, `cursor`, or `gemini-cli` when installing for a specific agent. After installation, ask the agent to use the `01mvp-blog` Skill when creating a site, validating a generated site, or maintaining an existing blog through OpenAPI.
