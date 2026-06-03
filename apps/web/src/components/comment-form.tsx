@@ -1,5 +1,5 @@
 import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
-import type { EmailPreference } from "@repo/core";
+import type { Comment, EmailPreference } from "@repo/core";
 import { Button, buttonVariants } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
@@ -15,6 +15,7 @@ type CommentFormProps = {
   readonly parentId?: string | null;
   readonly replyingTo?: string | null;
   readonly onCancelReply?: () => void;
+  readonly onCommentCreated?: (comment: Comment) => void;
 };
 
 type SubmitState = "idle" | "submitting" | "success" | "error";
@@ -36,12 +37,14 @@ type CommentAuthUser = {
 
 export function CommentForm({
   onCancelReply,
+  onCommentCreated,
   parentId,
   postSlug,
   replyingTo,
   turnstileSiteKey,
 }: CommentFormProps) {
   const [state, setState] = useState<SubmitState>("idle");
+  const [submittedStatus, setSubmittedStatus] = useState<Comment["status"] | null>(null);
   const [authState, setAuthState] = useState<AuthState>("idle");
   const [authMode, setAuthMode] = useState<AuthMode>("login");
   const [user, setUser] = useState<CommentAuthUser | null>(null);
@@ -80,6 +83,7 @@ export function CommentForm({
     if (state === "submitting") return;
 
     setState("submitting");
+    setSubmittedStatus(null);
     const form = event.currentTarget;
     const formData = new FormData(form);
     const turnstileToken = turnstileSiteKey ? formData.get("cf-turnstile-response") : undefined;
@@ -98,11 +102,21 @@ export function CommentForm({
         }),
       });
 
-      setState(response.ok ? "success" : "error");
-      if (response.ok) {
-        form.reset();
-        onCancelReply?.();
+      if (!response.ok) {
+        setState("error");
+        return;
       }
+
+      const payload = (await response.json().catch(() => ({}))) as { data?: Comment };
+
+      if (payload.data) {
+        setSubmittedStatus(payload.data.status);
+        onCommentCreated?.(payload.data);
+      }
+
+      setState("success");
+      form.reset();
+      onCancelReply?.();
     } catch {
       setState("error");
     }
@@ -450,7 +464,11 @@ export function CommentForm({
         <Button type="submit" disabled={state === "submitting"}>
           {state === "submitting" ? m.comment_submitting() : m.submit_comment()}
         </Button>
-        {state === "success" ? <p className="text-sm text-success">{m.comment_success()}</p> : null}
+        {state === "success" ? (
+          <p className="text-sm text-success">
+            {submittedStatus === "approved" ? m.comment_success() : m.comment_pending_success()}
+          </p>
+        ) : null}
         {state === "error" ? <p className="text-sm text-destructive">{m.comment_error()}</p> : null}
       </div>
     </form>

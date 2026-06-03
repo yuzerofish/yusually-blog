@@ -259,6 +259,9 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{ name: NonNullable<unknown> }} Comment_Replying_ToInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Comment_Signed_In_AsInputs */
 /** @typedef {{}} Comment_SubmittingInputs */
+/** @typedef {{}} Comment_Pending_BadgeInputs */
+/** @typedef {{}} Comment_Pending_SuccessInputs */
+/** @typedef {{}} Comment_Pending_Visible_NoteInputs */
 /** @typedef {{}} Comment_SuccessInputs */
 /** @typedef {{}} Comment_Switch_To_LoginInputs */
 /** @typedef {{}} Comment_Switch_To_SignupInputs */
@@ -3956,7 +3959,49 @@ export const comment_submitting = /** @type {((inputs?: Comment_SubmittingInputs
 /**
 * | output |
 * | --- |
-* | "Comment submitted." |
+* | "Pending" |
+*
+* @param {Comment_Pending_BadgeInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const comment_pending_badge = /** @type {((inputs?: Comment_Pending_BadgeInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_Pending_BadgeInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "en") return __en.comment_pending_badge(inputs)
+	return __zh.comment_pending_badge(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Comment received. It will appear after review." |
+*
+* @param {Comment_Pending_SuccessInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const comment_pending_success = /** @type {((inputs?: Comment_Pending_SuccessInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_Pending_SuccessInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "en") return __en.comment_pending_success(inputs)
+	return __zh.comment_pending_success(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Only you can see this comment for now. It will appear publicly after review." |
+*
+* @param {Comment_Pending_Visible_NoteInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const comment_pending_visible_note = /** @type {((inputs?: Comment_Pending_Visible_NoteInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Comment_Pending_Visible_NoteInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "en") return __en.comment_pending_visible_note(inputs)
+	return __zh.comment_pending_visible_note(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Comment published." |
 *
 * @param {Comment_SuccessInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options

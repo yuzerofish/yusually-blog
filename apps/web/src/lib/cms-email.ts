@@ -226,22 +226,62 @@ export async function notifyCommentCreated(input: {
   siteUrl: string;
 }) {
   const moderationUrl = `${input.siteUrl.replace(/\/$/, "")}/admin/comments`;
+  const commentPreview = previewCommentText(input.comment.body);
+  const statusLabel = commentNotificationStatus(input.comment.status);
 
   return sendCmsEmail({
-    subject: `New comment awaiting review: ${input.postTitle}`,
+    subject: `New comment: ${commentPreview}`,
     text: [
-      `Post: ${input.postTitle}`,
+      "New comment",
+      "",
+      "Comment:",
+      input.comment.body,
+      "",
       `Author: ${input.comment.authorName}`,
-      `Comment: ${input.comment.body}`,
-      `Review: ${moderationUrl}`,
+      `Status: ${statusLabel}`,
+      `Post: ${input.postTitle}`,
+      `Manage comments: ${moderationUrl}`,
     ].join("\n"),
     html: [
-      `<p><strong>Post:</strong> ${escapeHtml(input.postTitle)}</p>`,
+      `<p><strong>New comment</strong></p>`,
+      `<p><strong>Comment:</strong></p>`,
+      `<blockquote style="margin:0;padding:12px 16px;border-left:3px solid #d4d4d4;background:#f8f8f8;">${escapeHtml(input.comment.body)}</blockquote>`,
       `<p><strong>Author:</strong> ${escapeHtml(input.comment.authorName)}</p>`,
-      `<p>${escapeHtml(input.comment.body)}</p>`,
-      `<p><a href="${escapeHtml(moderationUrl)}">Review comment</a></p>`,
+      `<p><strong>Status:</strong> ${escapeHtml(statusLabel)}</p>`,
+      `<p><strong>Post:</strong> ${escapeHtml(input.postTitle)}</p>`,
+      `<p><a href="${escapeHtml(moderationUrl)}">Manage comments</a></p>`,
     ].join(""),
   });
+}
+
+function previewCommentText(body: string) {
+  const normalized = body.replace(/\s+/g, " ").trim();
+
+  if (!normalized) {
+    return "Empty comment";
+  }
+
+  if (normalized.length <= 96) {
+    return normalized;
+  }
+
+  return `${normalized.slice(0, 93).trimEnd()}...`;
+}
+
+function commentNotificationStatus(status: Comment["status"]) {
+  if (status === "approved") {
+    return "Published";
+  }
+
+  if (status === "pending") {
+    return "Pending";
+  }
+
+  if (status === "spam") {
+    return "Spam";
+  }
+
+  return "Deleted";
 }
 
 export async function notifyImportCompleted(input: {

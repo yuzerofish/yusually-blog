@@ -256,6 +256,9 @@
 /** @typedef {{ name: NonNullable<unknown> }} Comment_Replying_ToInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Comment_Signed_In_AsInputs */
 /** @typedef {{}} Comment_SubmittingInputs */
+/** @typedef {{}} Comment_Pending_BadgeInputs */
+/** @typedef {{}} Comment_Pending_SuccessInputs */
+/** @typedef {{}} Comment_Pending_Visible_NoteInputs */
 /** @typedef {{}} Comment_SuccessInputs */
 /** @typedef {{}} Comment_Switch_To_LoginInputs */
 /** @typedef {{}} Comment_Switch_To_SignupInputs */
@@ -607,6 +610,9 @@ export const comment_reply: (inputs: Comment_ReplyInputs) => LocalizedString;
 export const comment_replying_to: (inputs: Comment_Replying_ToInputs) => LocalizedString;
 export const comment_signed_in_as: (inputs: Comment_Signed_In_AsInputs) => LocalizedString;
 export const comment_submitting: (inputs: Comment_SubmittingInputs) => LocalizedString;
+export const comment_pending_badge: (inputs: Comment_Pending_BadgeInputs) => LocalizedString;
+export const comment_pending_success: (inputs: Comment_Pending_SuccessInputs) => LocalizedString;
+export const comment_pending_visible_note: (inputs: Comment_Pending_Visible_NoteInputs) => LocalizedString;
 export const comment_success: (inputs: Comment_SuccessInputs) => LocalizedString;
 export const comment_switch_to_login: (inputs: Comment_Switch_To_LoginInputs) => LocalizedString;
 export const comment_switch_to_signup: (inputs: Comment_Switch_To_SignupInputs) => LocalizedString;
@@ -985,6 +991,9 @@ export type Comment_Signed_In_AsInputs = {
     name: NonNullable<unknown>;
 };
 export type Comment_SubmittingInputs = {};
+export type Comment_Pending_BadgeInputs = {};
+export type Comment_Pending_SuccessInputs = {};
+export type Comment_Pending_Visible_NoteInputs = {};
 export type Comment_SuccessInputs = {};
 export type Comment_Switch_To_LoginInputs = {};
 export type Comment_Switch_To_SignupInputs = {};

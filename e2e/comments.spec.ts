@@ -76,7 +76,9 @@ test.describe("Comments", () => {
 
     const commentResponse = await createCommentResponse;
     expect(commentResponse.status()).toBe(201);
-    await expect(page.getByText("Comment submitted.")).toBeVisible();
+    await expect(page.getByText("Comment received. It will appear after review.")).toBeVisible();
+    await expect(page.getByText("Pending")).toBeVisible();
+    await expect(page.getByText(commentBody)).toBeVisible();
 
     await page.context().clearCookies();
     await logInAsLocalAdmin(page);

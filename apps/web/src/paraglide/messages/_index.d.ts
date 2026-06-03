@@ -3599,7 +3599,49 @@ export const comment_submitting: ((inputs?: Comment_SubmittingInputs, options?: 
 /**
 * | output |
 * | --- |
-* | "Comment submitted." |
+* | "Pending" |
+*
+* @param {Comment_Pending_BadgeInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const comment_pending_badge: ((inputs?: Comment_Pending_BadgeInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Comment_Pending_BadgeInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Comment received. It will appear after review." |
+*
+* @param {Comment_Pending_SuccessInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const comment_pending_success: ((inputs?: Comment_Pending_SuccessInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Comment_Pending_SuccessInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Only you can see this comment for now. It will appear publicly after review." |
+*
+* @param {Comment_Pending_Visible_NoteInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const comment_pending_visible_note: ((inputs?: Comment_Pending_Visible_NoteInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Comment_Pending_Visible_NoteInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Comment published." |
 *
 * @param {Comment_SuccessInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -5196,6 +5238,9 @@ export type Comment_Signed_In_AsInputs = {
     name: NonNullable<unknown>;
 };
 export type Comment_SubmittingInputs = {};
+export type Comment_Pending_BadgeInputs = {};
+export type Comment_Pending_SuccessInputs = {};
+export type Comment_Pending_Visible_NoteInputs = {};
 export type Comment_SuccessInputs = {};
 export type Comment_Switch_To_LoginInputs = {};
 export type Comment_Switch_To_SignupInputs = {};

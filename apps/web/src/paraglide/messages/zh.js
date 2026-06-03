@@ -257,6 +257,9 @@
 /** @typedef {{ name: NonNullable<unknown> }} Comment_Replying_ToInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Comment_Signed_In_AsInputs */
 /** @typedef {{}} Comment_SubmittingInputs */
+/** @typedef {{}} Comment_Pending_BadgeInputs */
+/** @typedef {{}} Comment_Pending_SuccessInputs */
+/** @typedef {{}} Comment_Pending_Visible_NoteInputs */
 /** @typedef {{}} Comment_SuccessInputs */
 /** @typedef {{}} Comment_Switch_To_LoginInputs */
 /** @typedef {{}} Comment_Switch_To_SignupInputs */
@@ -1381,8 +1384,20 @@ export const comment_submitting = /** @type {(inputs: Comment_SubmittingInputs) 
 	return /** @type {LocalizedString} */ (`正在提交...`)
 };
 
+export const comment_pending_badge = /** @type {(inputs: Comment_Pending_BadgeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`待审核`)
+};
+
+export const comment_pending_success = /** @type {(inputs: Comment_Pending_SuccessInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`评论已收到，审核通过后会显示。`)
+};
+
+export const comment_pending_visible_note = /** @type {(inputs: Comment_Pending_Visible_NoteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`这条评论目前只有你能看到，审核通过后会公开显示。`)
+};
+
 export const comment_success = /** @type {(inputs: Comment_SuccessInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`评论已提交。`)
+	return /** @type {LocalizedString} */ (`评论已发布。`)
 };
 
 export const comment_switch_to_login = /** @type {(inputs: Comment_Switch_To_LoginInputs) => LocalizedString} */ () => {

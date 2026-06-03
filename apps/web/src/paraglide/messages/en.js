@@ -257,6 +257,9 @@
 /** @typedef {{ name: NonNullable<unknown> }} Comment_Replying_ToInputs */
 /** @typedef {{ name: NonNullable<unknown> }} Comment_Signed_In_AsInputs */
 /** @typedef {{}} Comment_SubmittingInputs */
+/** @typedef {{}} Comment_Pending_BadgeInputs */
+/** @typedef {{}} Comment_Pending_SuccessInputs */
+/** @typedef {{}} Comment_Pending_Visible_NoteInputs */
 /** @typedef {{}} Comment_SuccessInputs */
 /** @typedef {{}} Comment_Switch_To_LoginInputs */
 /** @typedef {{}} Comment_Switch_To_SignupInputs */
@@ -1381,8 +1384,20 @@ export const comment_submitting = /** @type {(inputs: Comment_SubmittingInputs) 
 	return /** @type {LocalizedString} */ (`Submitting...`)
 };
 
+export const comment_pending_badge = /** @type {(inputs: Comment_Pending_BadgeInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Pending`)
+};
+
+export const comment_pending_success = /** @type {(inputs: Comment_Pending_SuccessInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Comment received. It will appear after review.`)
+};
+
+export const comment_pending_visible_note = /** @type {(inputs: Comment_Pending_Visible_NoteInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Only you can see this comment for now. It will appear publicly after review.`)
+};
+
 export const comment_success = /** @type {(inputs: Comment_SuccessInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Comment submitted.`)
+	return /** @type {LocalizedString} */ (`Comment published.`)
 };
 
 export const comment_switch_to_login = /** @type {(inputs: Comment_Switch_To_LoginInputs) => LocalizedString} */ () => {

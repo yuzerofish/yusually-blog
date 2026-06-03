@@ -8,6 +8,7 @@ import {
   type Comment,
 } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
+import { cn } from "@repo/ui/lib/utils";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { MessageSquareIcon, PencilLineIcon, RssIcon } from "lucide-react";
 import { useState } from "react";
@@ -111,10 +112,15 @@ function BlogPostPage() {
     Route.useLoaderData();
   const { user } = useAuth();
   const [replyTarget, setReplyTarget] = useState<Comment | null>(null);
+  const [submittedComments, setSubmittedComments] = useState<Comment[]>([]);
   const locale = getCurrentLocale();
   const localizedPost = localizePost(post, locale);
   const localizedSiteSettings = localizeSiteSettings(siteSettings, locale);
   const localizedComments = comments.map((comment) => localizeComment(comment, locale));
+  const visibleComments = mergeCommentLists(
+    localizedComments,
+    submittedComments.map((comment) => localizeComment(comment, locale)),
+  );
   const localizedRelatedPosts = relatedPosts.map((relatedPost) =>
     localizePost(relatedPost, locale),
   );
@@ -281,12 +287,15 @@ function BlogPostPage() {
                     parentId={replyTarget?.id ?? null}
                     replyingTo={replyTarget?.authorName ?? null}
                     onCancelReply={() => setReplyTarget(null)}
+                    onCommentCreated={(comment) =>
+                      setSubmittedComments((current) => upsertComment(current, comment))
+                    }
                   />
                 ) : (
                   <p className="mt-6 text-sm text-muted-foreground">{m.comments_disabled()}</p>
                 )}
                 <div className="mt-6 grid gap-4">
-                  <CommentList comments={localizedComments} onReply={setReplyTarget} />
+                  <CommentList comments={visibleComments} onReply={setReplyTarget} />
                 </div>
               </section>
             ) : null}
@@ -341,18 +350,35 @@ function CommentList({ comments, depth = 0, onReply, parentId = null }: CommentL
       {children.map((comment) => (
         <div key={comment.id} className="grid gap-3">
           <div
-            className="border-l border-border/80 py-1 pl-4"
+            className={cn(
+              "border-l py-1 pl-4",
+              comment.status === "pending"
+                ? "border-success/60 bg-success/5 py-3 pr-4"
+                : "border-border/80",
+            )}
             style={{ marginLeft: depth ? Math.min(depth, 3) * 16 : 0 }}
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="font-medium">{comment.authorName}</p>
-              {depth < 1 ? (
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="font-medium">{comment.authorName}</p>
+                {comment.status === "pending" ? (
+                  <span className="rounded-full border border-success/35 bg-success/10 px-2 py-0.5 text-xs font-medium text-success">
+                    {m.comment_pending_badge()}
+                  </span>
+                ) : null}
+              </div>
+              {depth < 1 && comment.status === "approved" ? (
                 <Button type="button" size="sm" variant="outline" onClick={() => onReply(comment)}>
                   {m.comment_reply()}
                 </Button>
               ) : null}
             </div>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">{comment.body}</p>
+            {comment.status === "pending" ? (
+              <p className="mt-2 text-xs leading-5 text-success">
+                {m.comment_pending_visible_note()}
+              </p>
+            ) : null}
           </div>
           {depth < 1 ? (
             <CommentList
@@ -366,6 +392,28 @@ function CommentList({ comments, depth = 0, onReply, parentId = null }: CommentL
       ))}
     </>
   );
+}
+
+function mergeCommentLists(comments: Comment[], submittedComments: Comment[]) {
+  const byId = new Map(comments.map((comment) => [comment.id, comment]));
+
+  for (const comment of submittedComments) {
+    byId.set(comment.id, comment);
+  }
+
+  return Array.from(byId.values()).sort((first, second) =>
+    first.createdAt.localeCompare(second.createdAt),
+  );
+}
+
+function upsertComment(comments: Comment[], comment: Comment) {
+  const existingIndex = comments.findIndex((current) => current.id === comment.id);
+
+  if (existingIndex === -1) {
+    return [...comments, comment];
+  }
+
+  return comments.map((current, index) => (index === existingIndex ? comment : current));
 }
 
 function absoluteUrl(value: string, siteUrl: string) {
