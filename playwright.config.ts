@@ -9,6 +9,11 @@ const webServerEnv = {
   ...definedProcessEnv(process.env),
   BETTER_AUTH_SECRET: localBetterAuthSecret,
   CMS_PUBLIC_SITE_URL: baseURL,
+  CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV: "false",
+  GITHUB_CLIENT_ID: process.env.PLAYWRIGHT_GITHUB_CLIENT_ID ?? "",
+  GITHUB_CLIENT_SECRET: process.env.PLAYWRIGHT_GITHUB_CLIENT_SECRET ?? "",
+  GOOGLE_CLIENT_ID: process.env.PLAYWRIGHT_GOOGLE_CLIENT_ID ?? "",
+  GOOGLE_CLIENT_SECRET: process.env.PLAYWRIGHT_GOOGLE_CLIENT_SECRET ?? "",
   VITE_BASE_URL: baseURL,
 };
 

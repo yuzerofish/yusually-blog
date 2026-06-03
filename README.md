@@ -39,8 +39,8 @@ Before the first production deploy, create or choose the target D1 database, R2 
 Required production secrets:
 
 - `BETTER_AUTH_SECRET`: generate with `pnpm auth:secret`
-- `GITHUB_CLIENT_SECRET`: optional unless GitHub comment login is enabled
-- `GOOGLE_CLIENT_SECRET`: optional unless Google comment login is enabled
+- `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`: optional unless GitHub login is enabled
+- `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`: optional unless Google login is enabled
 
 ## Automatic Deploys
 

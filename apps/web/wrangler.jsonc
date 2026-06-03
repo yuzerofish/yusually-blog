@@ -25,8 +25,6 @@
     "CMS_EMAIL_TO": "",
     "CMS_PASSWORD_RESET_TTL_MINUTES": "30",
     "VITE_TURNSTILE_SITE_KEY": "",
-    "GITHUB_CLIENT_ID": "",
-    "GOOGLE_CLIENT_ID": "",
   },
   "d1_databases": [
     {

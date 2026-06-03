@@ -9,12 +9,15 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { BookOpenIcon, LoaderCircleIcon } from "lucide-react";
 import { toast } from "sonner";
 
+import { $getAccountLoginOptions, type AccountLoginOptions } from "#/lib/account-login-options";
 import { redirectForRole } from "#/lib/account-routing";
 import { getCurrentLocale } from "#/lib/i18n";
+import type { SocialProvider } from "#/lib/social-providers";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/_guest/login")({
   validateSearch: (search): { error?: boolean } => (search.error === "1" ? { error: true } : {}),
+  loader: (): Promise<AccountLoginOptions> => $getAccountLoginOptions(),
   component: LoginForm,
 });
 
@@ -22,10 +25,14 @@ type AccountUser = NonNullable<AuthQueryResult>;
 
 function LoginForm() {
   const { redirectUrl } = Route.useRouteContext();
+  const { socialProviders } = Route.useLoaderData();
   const search = Route.useSearch();
   const siteSettings = getSiteSettingsForLocale(getCurrentLocale());
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const availableSocialLogins = socialLoginOptions.filter((option) =>
+    socialProviders.includes(option.provider),
+  );
 
   const { mutate: emailLoginMutate, isPending } = useMutation({
     mutationFn: async (data: { email: string; password: string }) => {
@@ -83,39 +90,33 @@ function LoginForm() {
               {m.login_error()}
             </p>
           ) : null}
-          <div className="grid gap-3">
-            <a
-              href={accountSocialLoginHref("github", redirectUrl)}
-              aria-disabled={isPending}
-              className={buttonVariants({
-                variant: "secondary",
-                className: isPending
-                  ? "w-full justify-center pointer-events-none opacity-45"
-                  : "w-full justify-center",
-              })}
-            >
-              <SiGithub className="size-4" />
-              {m.login_with_provider({ provider: "GitHub" })}
-            </a>
-            <a
-              href={accountSocialLoginHref("google", redirectUrl)}
-              aria-disabled={isPending}
-              className={buttonVariants({
-                variant: "secondary",
-                className: isPending
-                  ? "w-full justify-center pointer-events-none opacity-45"
-                  : "w-full justify-center",
-              })}
-            >
-              <SiGoogle className="size-4" />
-              {m.login_with_provider({ provider: "Google" })}
-            </a>
-          </div>
-          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <span className="h-px flex-1 bg-border" />
-            {m.login_alternative()}
-            <span className="h-px flex-1 bg-border" />
-          </div>
+          {availableSocialLogins.length ? (
+            <>
+              <div className="grid gap-3">
+                {availableSocialLogins.map(({ Icon, label, provider }) => (
+                  <a
+                    key={provider}
+                    href={accountSocialLoginHref(provider, redirectUrl)}
+                    aria-disabled={isPending}
+                    className={buttonVariants({
+                      variant: "secondary",
+                      className: isPending
+                        ? "w-full justify-center pointer-events-none opacity-45"
+                        : "w-full justify-center",
+                    })}
+                  >
+                    <Icon className="size-4" />
+                    {m.login_with_provider({ provider: label })}
+                  </a>
+                ))}
+              </div>
+              <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                <span className="h-px flex-1 bg-border" />
+                {m.login_alternative()}
+                <span className="h-px flex-1 bg-border" />
+              </div>
+            </>
+          ) : null}
           <div className="flex flex-col gap-5">
             <div className="grid gap-2">
               <Label htmlFor="email">{m.login_email()}</Label>
@@ -163,6 +164,15 @@ function LoginForm() {
     </div>
   );
 }
+
+const socialLoginOptions = [
+  { provider: "github", label: "GitHub", Icon: SiGithub },
+  { provider: "google", label: "Google", Icon: SiGoogle },
+] satisfies Array<{
+  provider: SocialProvider;
+  label: string;
+  Icon: React.ComponentType<{ className?: string }>;
+}>;
 
 function accountSocialLoginHref(provider: "github" | "google", redirectTo: string) {
   return `/api/account/login/${provider}/start?redirectTo=${encodeURIComponent(redirectTo)}`;

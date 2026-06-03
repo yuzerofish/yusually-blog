@@ -1,11 +1,17 @@
 import "@tanstack/react-start/server-only";
 import { authErrorMessage, extractSetCookieHeaders, type CmsUser, type UserRole } from "@repo/core";
+import { env } from "cloudflare:workers";
 
 import { redirectForRole } from "#/lib/account-routing";
 import { auth } from "#/lib/auth";
 import { getSetCookieValues } from "#/lib/auth-helpers";
 import { getCmsUserById } from "#/lib/cms-users";
 import { loginCommentUser, signupCommentUser } from "#/lib/comment-auth";
+import {
+  isSocialProviderConfigured,
+  socialProviderDisplayName,
+  type SocialProviderEnv,
+} from "#/lib/social-providers";
 
 type SocialSignInPayload = {
   url?: string;
@@ -157,6 +163,13 @@ export async function redirectToAccountSocialLogin(
   provider: AccountSocialProvider,
   request: Request,
 ) {
+  if (!isSocialProviderConfigured(provider, env as SocialProviderEnv)) {
+    return {
+      error: `${socialProviderDisplayName(provider)} login is not configured`,
+      status: 503,
+    } as const;
+  }
+
   const url = new URL(request.url);
   const redirectTo = safeRedirectPath(url.searchParams.get("redirectTo") ?? "/app");
   const callbackURL = new URL("/api/account/login/social/complete", request.url);
@@ -178,7 +191,7 @@ export async function redirectToAccountSocialLogin(
 
   if (!response.ok || !payload?.url) {
     return {
-      error: authErrorMessage(payload, `${providerDisplayName(provider)} login failed`),
+      error: authErrorMessage(payload, `${socialProviderDisplayName(provider)} login failed`),
     } as const;
   }
 
@@ -215,10 +228,6 @@ export function publicAccountUser(user: CmsUser): AccountUser {
     createdAt: user.createdAt,
     lastLoginAt: null,
   };
-}
-
-function providerDisplayName(provider: AccountSocialProvider) {
-  return provider === "github" ? "GitHub" : "Google";
 }
 
 function safeRedirectPath(value: string) {

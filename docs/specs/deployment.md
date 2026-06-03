@@ -89,15 +89,17 @@ https://blog.01mvp.com/api/auth/callback/github
 https://blog.01mvp.com/api/auth/callback/google
 ```
 
-Set `GITHUB_CLIENT_ID` and `GOOGLE_CLIENT_ID` in `apps/web/wrangler.jsonc` or the Cloudflare dashboard. Store the auth and enabled OAuth provider secrets with Wrangler:
+Store the auth secret and each enabled OAuth provider value with Wrangler:
 
 ```sh
 pnpm --filter @repo/web exec wrangler secret put BETTER_AUTH_SECRET --config wrangler.jsonc
+pnpm --filter @repo/web exec wrangler secret put GITHUB_CLIENT_ID --config wrangler.jsonc
 pnpm --filter @repo/web exec wrangler secret put GITHUB_CLIENT_SECRET --config wrangler.jsonc
+pnpm --filter @repo/web exec wrangler secret put GOOGLE_CLIENT_ID --config wrangler.jsonc
 pnpm --filter @repo/web exec wrangler secret put GOOGLE_CLIENT_SECRET --config wrangler.jsonc
 ```
 
-For local development, set `BETTER_AUTH_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` in `apps/web/.env`. Email/password comment login works without either OAuth provider.
+For local development, set `BETTER_AUTH_SECRET`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` in `apps/web/.env`. Email/password login works without either OAuth provider.
 
 ## Optional Email Sending
 

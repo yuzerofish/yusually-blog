@@ -13,6 +13,11 @@ import { count, eq } from "drizzle-orm";
 
 import { auth } from "#/lib/auth";
 import { getSetCookieValues } from "#/lib/auth-helpers";
+import {
+  isSocialProviderConfigured,
+  socialProviderDisplayName,
+  type SocialProviderEnv,
+} from "#/lib/social-providers";
 
 async function callAuthEndpoint(path: string, body: object, request: Request) {
   const url = new URL(path, request.url);
@@ -185,8 +190,8 @@ export async function loginAdmin(input: { email?: string; password?: string }, r
 }
 
 export async function redirectToAdminSocialLogin(provider: AdminSocialProvider, request: Request) {
-  if (!hasSocialProvider(provider)) {
-    return { error: `${providerDisplayName(provider)} login is not configured` } as const;
+  if (!isSocialProviderConfigured(provider, env as SocialProviderEnv)) {
+    return { error: `${socialProviderDisplayName(provider)} login is not configured` } as const;
   }
 
   const url = new URL(request.url);
@@ -210,7 +215,7 @@ export async function redirectToAdminSocialLogin(provider: AdminSocialProvider, 
 
   if (!response.ok || !payload?.url) {
     return {
-      error: authErrorMessage(payload, `${providerDisplayName(provider)} login failed`),
+      error: authErrorMessage(payload, `${socialProviderDisplayName(provider)} login failed`),
     } as const;
   }
 
@@ -314,18 +319,6 @@ function toAdminUser(user: BetterAuthUser): AdminUser {
     createdAt: toIsoString(user.createdAt),
     lastLoginAt: null,
   };
-}
-
-function hasSocialProvider(provider: AdminSocialProvider) {
-  if (provider === "github") {
-    return Boolean(env.GITHUB_CLIENT_ID?.trim() && env.GITHUB_CLIENT_SECRET?.trim());
-  }
-
-  return Boolean(env.GOOGLE_CLIENT_ID?.trim() && env.GOOGLE_CLIENT_SECRET?.trim());
-}
-
-function providerDisplayName(provider: AdminSocialProvider) {
-  return provider === "github" ? "GitHub" : "Google";
 }
 
 function safeRedirectPath(value: string) {

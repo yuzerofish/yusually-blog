@@ -19,6 +19,10 @@ export const Route = createFileRoute("/api/account/login/$provider/start")({
         );
 
         if ("error" in result) {
+          if ("status" in result && result.status === 503) {
+            return Response.json({ error: result.error }, { status: result.status });
+          }
+
           return formRedirect("/login?error=1", { headers: result.headers });
         }
 

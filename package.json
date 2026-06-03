@@ -69,11 +69,17 @@
       "CMS_STORAGE": {
         "description": "R2 bucket for uploaded assets, import packages, exports, and backups."
       },
+      "GITHUB_CLIENT_ID": {
+        "description": "Optional GitHub OAuth client id for account and comment login. Leave empty if GitHub login is disabled."
+      },
       "GITHUB_CLIENT_SECRET": {
-        "description": "Optional GitHub OAuth secret for comment login. Leave empty if GitHub login is disabled."
+        "description": "Optional GitHub OAuth secret for account and comment login. Leave empty if GitHub login is disabled."
+      },
+      "GOOGLE_CLIENT_ID": {
+        "description": "Optional Google OAuth client id for account and comment login. Leave empty if Google login is disabled."
       },
       "GOOGLE_CLIENT_SECRET": {
-        "description": "Optional Google OAuth secret for comment login. Leave empty if Google login is disabled."
+        "description": "Optional Google OAuth secret for account and comment login. Leave empty if Google login is disabled."
       }
     }
   }

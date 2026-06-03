@@ -86,19 +86,10 @@ http://localhost:3000/api/auth/callback/github
 https://your-domain.com/api/auth/callback/github
 ```
 
-把 client id 放到 Wrangler var 或 Cloudflare dashboard 变量：
-
-```jsonc
-{
-  "vars": {
-    "GITHUB_CLIENT_ID": "your-client-id",
-  },
-}
-```
-
-把 client secret 写成 Wrangler secret：
+把 client id 和 client secret 都保存为 Wrangler secret：
 
 ```sh
+pnpm --filter @repo/web exec wrangler secret put GITHUB_CLIENT_ID --config wrangler.jsonc
 pnpm --filter @repo/web exec wrangler secret put GITHUB_CLIENT_SECRET --config wrangler.jsonc
 ```
 
@@ -117,19 +108,10 @@ http://localhost:3000/api/auth/callback/google
 https://your-domain.com/api/auth/callback/google
 ```
 
-把 client id 放到 Wrangler var 或 Cloudflare dashboard 变量：
-
-```jsonc
-{
-  "vars": {
-    "GOOGLE_CLIENT_ID": "your-client-id",
-  },
-}
-```
-
-把 client secret 写成 Wrangler secret：
+把 client id 和 client secret 都保存为 Wrangler secret：
 
 ```sh
+pnpm --filter @repo/web exec wrangler secret put GOOGLE_CLIENT_ID --config wrangler.jsonc
 pnpm --filter @repo/web exec wrangler secret put GOOGLE_CLIENT_SECRET --config wrangler.jsonc
 ```
 

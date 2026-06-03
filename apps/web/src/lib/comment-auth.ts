@@ -17,6 +17,11 @@ import { eq } from "drizzle-orm";
 import { auth } from "#/lib/auth";
 import { getSetCookieValues } from "#/lib/auth-helpers";
 import { isEmailPreference } from "#/lib/email-preferences";
+import {
+  isSocialProviderConfigured,
+  socialProviderDisplayName,
+  type SocialProviderEnv,
+} from "#/lib/social-providers";
 
 async function callAuthEndpoint(path: string, body: object, request: Request) {
   const url = new URL(path, request.url);
@@ -282,9 +287,9 @@ async function redirectToSocialProviderForCommentLogin(
   provider: SocialCommentProvider,
   request: Request,
 ) {
-  if (!hasSocialProvider(provider)) {
+  if (!isSocialProviderConfigured(provider, env as SocialProviderEnv)) {
     return Response.json(
-      { error: `${providerDisplayName(provider)} login is not configured` },
+      { error: `${socialProviderDisplayName(provider)} login is not configured` },
       { status: 503 },
     );
   }
@@ -309,7 +314,7 @@ async function redirectToSocialProviderForCommentLogin(
 
   if (!response.ok || !payload?.url) {
     return Response.json(
-      { error: authErrorMessage(payload, `${providerDisplayName(provider)} login failed`) },
+      { error: authErrorMessage(payload, `${socialProviderDisplayName(provider)} login failed`) },
       { status: response.ok ? 500 : response.status },
     );
   }
@@ -385,18 +390,6 @@ function toBetterAuthUser(value: unknown) {
   }
 
   return null;
-}
-
-function hasSocialProvider(provider: SocialCommentProvider) {
-  if (provider === "github") {
-    return Boolean(env.GITHUB_CLIENT_ID?.trim() && env.GITHUB_CLIENT_SECRET?.trim());
-  }
-
-  return Boolean(env.GOOGLE_CLIENT_ID?.trim() && env.GOOGLE_CLIENT_SECRET?.trim());
-}
-
-function providerDisplayName(provider: SocialCommentProvider) {
-  return provider === "github" ? "GitHub" : "Google";
 }
 
 function safeRedirectPath(value: string) {
