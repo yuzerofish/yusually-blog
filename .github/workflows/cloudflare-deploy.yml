@@ -32,6 +32,11 @@ jobs:
           node-version-file: .node-version
           cache: true
 
+      - name: Set up pnpm
+        run: |
+          corepack enable
+          pnpm --version
+
       - name: Verify Cloudflare secrets
         run: |
           test -n "$CLOUDFLARE_ACCOUNT_ID"
