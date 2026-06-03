@@ -1,7 +1,9 @@
 import type { Post, SupportedLocale } from "@repo/core";
 import { formatDate } from "@repo/core";
+import { cn } from "@repo/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
-import { CalendarDaysIcon, FileTextIcon, LibraryIcon } from "lucide-react";
+import { CalendarDaysIcon, LibraryIcon } from "lucide-react";
+import { useState } from "react";
 
 import { getCurrentLocale } from "#/lib/i18n";
 import { resolvePostCoverImage } from "#/lib/post-cover-image";
@@ -14,25 +16,29 @@ type PostCardProps = {
 };
 
 export function PostCard({ post, priority = false, locale = getCurrentLocale() }: PostCardProps) {
-  const coverImage = resolvePostCoverImage(post.coverImage);
+  const resolvedCoverImage = resolvePostCoverImage(post.coverImage);
+  const [failedCoverImage, setFailedCoverImage] = useState("");
+  const coverImage = failedCoverImage === resolvedCoverImage ? "" : resolvedCoverImage;
 
   return (
-    <article className="grid overflow-hidden rounded-lg border border-border/80 bg-card shadow-xs transition hover:border-ring/45 hover:shadow-sm md:grid-cols-[0.42fr_0.58fr]">
-      <Link to="/blog/$slug" params={{ slug: post.slug }} className="block min-h-56 bg-muted">
-        {coverImage ? (
+    <article
+      className={cn(
+        "grid overflow-hidden rounded-lg border border-border/80 bg-card shadow-xs transition hover:border-ring/45 hover:shadow-sm",
+        coverImage && "md:grid-cols-[0.42fr_0.58fr]",
+      )}
+    >
+      {coverImage ? (
+        <Link to="/blog/$slug" params={{ slug: post.slug }} className="block min-h-56 bg-muted">
           <img
             src={coverImage}
             alt=""
             loading={priority ? "eager" : "lazy"}
+            onError={() => setFailedCoverImage(resolvedCoverImage)}
             className="h-full min-h-56 w-full object-cover"
           />
-        ) : (
-          <div className="flex min-h-56 w-full items-center justify-center bg-muted text-muted-foreground">
-            <FileTextIcon className="size-10 opacity-70" aria-hidden="true" />
-          </div>
-        )}
-      </Link>
-      <div className="flex min-w-0 flex-col p-5">
+        </Link>
+      ) : null}
+      <div className={cn("flex min-w-0 flex-col p-5", !coverImage && "sm:p-6")}>
         <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1">
             <CalendarDaysIcon className="size-3.5" />
