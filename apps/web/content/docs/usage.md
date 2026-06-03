@@ -1,64 +1,66 @@
 ---
 title: Usage Guide
-description: How to publish posts, maintain docs, and operate the blog template.
+description: You don't need to be a developer to use this site. Here's what you can do, organized by scenario.
 ---
 
-Use `/blog` for articles and `/docs` for long-lived documentation. Both systems are enabled by default.
+Think of this website template as a Swiss Army knife — different scenarios call for different tools. Let's walk through each one.
 
-## Write Blog Posts
+## Want to write a blog post?
 
-Use the admin UI when you want a normal writing workflow:
+**Go to the admin panel and write in your browser.**
 
-- write Markdown in the browser
-- save drafts
-- upload cover images and media
-- publish immediately or schedule a post
-- review comments
+Open `/admin` (just add `/admin` to your site's URL), log in, and you can:
 
-Published posts appear on `/blog`, tag pages, RSS, feeds, and sitemap output.
+- Write articles like you would in Google Docs (using Markdown format)
+- Save drafts anytime without worrying about losing work
+- Upload cover images and media
+- Publish immediately or schedule a post for later
+- Manage reader comments
 
-## Publish With OpenAPI
+Once published, your post automatically appears on the blog page, tag pages, and RSS feeds. **No code required.**
 
-Use `/openapi.json` for local drafts, automation, external integrations, or AI-assisted publishing.
+## Want to write product documentation?
 
-Create a scoped API token in the admin settings, then use the OpenAPI schema when connecting external tools or generating API clients.
+**Edit the Markdown files in the project folder.**
 
-## Maintain Docs
+Product docs (like the pages you're reading right now) live as files in the project. If you've used Notion or Google Docs, think of Markdown as "plain text with formatting shortcuts."
 
-Use Fumadocs for content that should live with the repository:
+- English docs: `filename.md`
+- Chinese docs: `filename.zh.md`
 
-- product manuals
-- developer documentation
-- API usage notes
-- deployment instructions
-- template setup guides
+> New to Markdown? It's like keyboard shortcuts for formatting, but typed out. For example, `**bold**` makes text bold, and `- item` creates a bullet list. You can learn the basics in 5 minutes.
 
-Docs are Markdown or MDX files in the repository. English pages use `*.md` or `*.mdx`; Chinese pages use `*.zh.md` or `*.zh.mdx`.
+## Want AI to publish posts for you?
 
-## Choose A Content System
+**Use the OpenAPI interface to let AI tools auto-publish.**
 
-```txt
-/blog   = admin-managed posts
-/docs   = Git-managed Markdown/MDX docs
-/admin  = publishing admin UI
-RSS     = blog posts only
-sitemap = home + demo + blog + docs + series + tags + about
-```
+This site provides a standard API (think of it as "an instruction manual that machines can read"). Here's how:
 
-Keep frequently edited articles in the publishing backend. Keep durable product or developer references in docs.
+1. In the admin settings page, create an API Token (like giving a key to the machine)
+2. Hand that "key" to your AI tool or automation script
+3. The AI can now publish posts and manage content on your behalf
 
-## Deploy
+Great for: batch publishing, AI-generated content going live automatically, or connecting other tools.
 
-Build the web app before shipping:
+## Want to deploy and go live?
 
-```sh
-pnpm build:web
-```
+**One command does it all.**
 
-Deploy the production site with:
+When you're ready to make the site publicly visible:
 
 ```sh
 pnpm deploy:web
 ```
 
-The deploy command applies remote D1 migrations and runs the Git-managed notes sync when `CMS_PUBLIC_SITE_URL` and `CMS_API_TOKEN` are configured.
+> Think of this command as pressing the "launch button" — it automatically handles building, database migration, and content sync. If you have a technical colleague, just send them this command.
+
+---
+
+## Quick Reference
+
+| I want to...            | Where to go                 | Do I need coding skills?   |
+| ----------------------- | --------------------------- | -------------------------- |
+| Write blog posts        | `/admin` panel              | No                         |
+| Write product docs      | Markdown files in the repo  | Basic familiarity helps    |
+| AI/automated publishing | OpenAPI interface           | One-time setup needed      |
+| Deploy the site         | Run one command in terminal | Ask a tech-savvy colleague |

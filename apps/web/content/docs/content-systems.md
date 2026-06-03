@@ -1,45 +1,57 @@
 ---
 title: Content Systems
-description: How the blog backend and Fumadocs documentation system divide ownership.
+description: Why are there two content systems? A plain-language explanation with real-life analogies.
 ---
 
-The template enables both content systems by default. They are intentionally separate.
+## Why Two Systems?
 
-## `/blog`: Blog Content
+Think about how you share information in daily life:
 
-Use the publishing backend for content that benefits from runtime management:
+- **Social media / newsletter**: Post frequently, get comments, manage from your phone
+- **Company handbook / wiki**: Stable reference material, reviewed before publishing, version-tracked
 
-- public posts
-- drafts, scheduled posts, and archived posts
-- visual admin writing
-- comments and moderation
-- media uploads to R2
-- RSS and feed output
-- OpenAPI publishing automation
-- imports, exports, and backups
+This website template works the same way — **Blog** is your newsletter, **Docs** is your company wiki. They serve different purposes and stay cleanly separated.
 
-Blog content is stored in D1. Markdown remains the authoring format, and rendered HTML is cached for public pages.
+## Side-by-Side Comparison
 
-## `/docs`: Git Markdown/MDX
+|                      | Blog (`/blog`)                 | Docs (`/docs`)                                   |
+| -------------------- | ------------------------------ | ------------------------------------------------ |
+| **Analogy**          | Newsletter / social feed       | Company handbook / wiki                          |
+| **Update frequency** | Often                          | Rarely                                           |
+| **Where you write**  | Admin panel (in browser)       | Markdown files in the project folder             |
+| **Who manages it**   | The author, solo               | Team collaboration with review process           |
+| **Drafts?**          | Yes, with scheduled publishing | Via Git branches (like a document approval flow) |
+| **Comments?**        | Yes                            | No                                               |
+| **Image uploads?**   | Yes, directly in admin         | Yes, but placed in project files                 |
+| **RSS feed**         | Included                       | Not included                                     |
 
-Use Fumadocs for content that should be versioned with the repository:
+## Blog: Your "Newsletter"
 
-- product documentation
-- developer guides
-- API usage notes
-- deployment and template setup docs
-- longer reference material that should change with code
+In the admin panel (`/admin`), you can:
 
-Docs content lives under `apps/web/content/docs`. It is reviewed, versioned, and deployed with the codebase.
+- Write posts, save drafts, schedule publishing
+- Upload cover images and media
+- Manage comments
+- Import/export content backups
+- Let AI publish posts for you via the API
 
-## Boundary
+**Put this here**: Industry insights, product updates, tutorials, personal reflections — anything you'll publish and update frequently.
 
-```txt
-/blog   = blog content
-/docs   = Git Markdown/MDX docs
-/admin  = admin UI only
-RSS     = blog posts only
-sitemap = home + demo + blog + docs + series + tags + about
-```
+## Docs: Your "Company Wiki"
 
-The admin UI does not edit Git-managed docs. If a site owner wants a docs-only or blog-only template, they can remove the unused route and navigation entry during project customization.
+Documentation pages (like the one you're reading now) live in the project code, like a product manual:
+
+- Content is stable and doesn't change often
+- Changes go through a review process (via Git, similar to document approvals)
+- Published together with the website code, keeping everything in sync
+
+**Put this here**: Product manuals, how-to guides, developer docs, deployment instructions — anything you "write once and rarely touch."
+
+## Quick Decision: Where Does It Go?
+
+Ask yourself: **Will I likely edit this again next week?**
+
+- "Probably yes" → put it in **Blog**
+- "Probably not" → put it in **Docs**
+
+> You can also use just one system if you prefer. Want only a blog with no docs? Or only docs with no blog? Just remove the part you don't need.

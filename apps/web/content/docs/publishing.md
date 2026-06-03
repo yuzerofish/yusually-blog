@@ -1,46 +1,70 @@
 ---
 title: Publishing
-description: Choose between browser editing, API publishing, Git-managed Markdown, imports, and docs.
+description: Choose the publishing method that matches your skill level.
 ---
 
-01mvp-blog-starter supports several publishing paths.
+# Publishing
 
-The default path is the admin UI. Use the other paths only when they match how you already work; every extra source adds integration surface, so each one has a narrow boundary.
+This blog system offers **three publishing methods** for people with different technical backgrounds. Pick the one that fits you best.
 
-## Blog Posts
+## Quick Comparison
 
-Use the admin UI when you want a normal writing workflow:
+| Method            | Best for               | Analogy                             | Difficulty |
+| ----------------- | ---------------------- | ----------------------------------- | ---------- |
+| Dashboard writing | No coding experience   | Like using WordPress or Medium      | ⭐         |
+| Obsidian + Git    | Some basic tech skills | Like writing in Word then uploading | ⭐⭐       |
+| API automation    | Developers             | Like building an automated pipeline | ⭐⭐⭐     |
 
-- write Markdown in the browser
-- upload cover images and media
-- save drafts
-- publish or schedule posts
-- moderate comments
+---
 
-Published posts appear under `/blog`, feeds, tag pages, and the sitemap.
+## Path 1: Dashboard Writing (Zero Code)
 
-## OpenAPI Publishing
+**Write articles in your browser, just like any blogging platform.**
 
-Use `/openapi.json` when you want local automation, external integrations, or AI-assisted publishing. Create a scoped API token in the admin settings before running authenticated requests.
+Log into your blog's admin panel, write your post with a visual editor, add images, and hit publish. What you see is what you get. No technical knowledge required.
 
-Publishing uses the same authenticated HTTP API as the admin UI. Writing posts requires `posts:write`, and publishing or scheduling posts also requires `posts:publish`.
+**Choose this if:**
 
-## Import And Export
+- You just want to focus on writing content
+- You're comfortable working in a browser
+- You don't want to touch any code or command line
 
-The API supports Markdown, HTML, ZIP, and folder imports. Exports include posts, comments, assets, tags, site settings, and a manifest.
+> This is the simplest way to get started. You can be publishing within minutes.
 
-Backups are written to R2 so a generated site can be restored or moved later.
+---
 
-## Git-Managed Markdown
+## Path 2: Obsidian + Git (For Note-Taking Enthusiasts)
 
-Use `content/notes` when you want blog posts to live as Markdown or MDX files in Git. This path is compatible with common Obsidian Markdown syntax, but it is a Git/deployment workflow rather than an Obsidian desktop plugin.
+**Write on your own computer, then sync to your website.**
 
-Only files with `publish: true` are synced. Synced notes become normal blog posts with the same comments, tags, RSS feed, and sitemap behavior.
+Use [Obsidian](https://obsidian.md) (a popular local note-taking app) to write articles on your computer, then sync them to your website using Git (a version control tool — think of it as a "time machine for files").
 
-See [Obsidian-Compatible Markdown](/docs/obsidian) for the full workflow.
+**Choose this if:**
 
-## Docs Publishing
+- You prefer writing locally, without needing internet
+- You already use Obsidian for your knowledge base
+- You want your articles saved as files on your own computer
 
-Docs pages are committed as Markdown or MDX files under `apps/web/content/docs`. They are deployed with the web app and rendered by Fumadocs at `/docs`.
+> There's a small learning curve, but the benefit is that your content always stays in your hands. See the [Obsidian workflow guide](/docs/obsidian) for details.
 
-Keep Fumadocs for product documentation and setup guides. Use `content/notes` for blog-style posts that should be grouped by tags and publish time. The two paths intentionally serve different content types.
+---
+
+## Path 3: API Automation (For Developers)
+
+**Build an automated pipeline that publishes content for you.**
+
+Use the API (Application Programming Interface) to automate your publishing workflow. For example: auto-sync from Notion, bulk import from other systems, or set up scheduled publishing with a script.
+
+**Choose this if:**
+
+- You can code, or your team has a developer
+- You want to connect your publishing workflow with other tools
+- You need bulk operations or scheduled publishing
+
+> This is the most flexible method, but requires programming knowledge. Great for handing off to a technical teammate.
+
+---
+
+## Not Sure Which to Pick?
+
+**Start with dashboard writing.** Once you're familiar with the blog system, you can upgrade to other methods as needed. All three methods can be mixed and matched — they don't conflict.

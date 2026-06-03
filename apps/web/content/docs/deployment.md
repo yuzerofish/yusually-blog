@@ -1,11 +1,62 @@
 ---
 title: Deployment
-description: Deploy the blog site to Cloudflare Workers.
+description: Publish your blog to the internet.
 ---
 
-01mvp-blog-starter is designed for Cloudflare Workers, D1, R2, and optional KV.
+## What is "deployment"
 
-## Local Development Admin
+**Deployment = uploading your website to the internet so anyone in the world can visit it via a URL.**
+
+Think of it this way: you've written a book on your computer. "Deploying" is like shipping that book to a bookstore shelf so readers can find it. Before deployment, the website only exists on a developer's computer — no one else can see it.
+
+## Where your website lives: Cloudflare
+
+Your website runs on **Cloudflare's** servers.
+
+| Question            | Answer                                                                                     |
+| ------------------- | ------------------------------------------------------------------------------------------ |
+| What is Cloudflare? | A publicly-traded US company, one of the world's largest internet infrastructure providers |
+| Why use it?         | Generous free tier, fast (servers worldwide), stable and reliable                          |
+| Does it cost money? | Personal blogs typically stay within the free tier — no payment needed                     |
+
+## The "infrastructure" your website needs
+
+Your website is powered by three core components. Think of it like a restaurant:
+
+| Component   | Analogy                                     | What it does                                                      |
+| ----------- | ------------------------------------------- | ----------------------------------------------------------------- |
+| **Workers** | Waitstaff                                   | Greets every visitor to your site and serves them the right page  |
+| **D1**      | Filing cabinet with spreadsheets (database) | Stores your posts, comments, user info, and other structured data |
+| **R2**      | Storage locker                              | Stores images you upload, backup files, etc.                      |
+
+> There are also optional components (like KV caching and email sending) that don't affect core functionality. Enable them as needed.
+
+## Deployment overview
+
+From your perspective, deployment looks like this:
+
+1. You write posts and adjust settings in the admin panel
+2. A developer runs **one command** in their terminal, and the site is updated
+
+The whole process usually takes less than a minute.
+
+## What is "local development"
+
+"Local development" means a developer **runs a copy of the website on their own computer** to test things. It's like a chef tasting a dish in the kitchen — only they can see it; customers don't know it's happening.
+
+Local development is used to:
+
+- Test new features before they go live
+- Preview design changes
+- Avoid breaking the live production site
+
+---
+
+## Developer Reference
+
+> The following section is for the developer responsible for deploying and maintaining the site. If you're a product manager or site owner, you can skip this.
+
+### Local development admin
 
 Seed the local Wrangler D1 database with a fixed admin account:
 
@@ -20,29 +71,25 @@ email: a@a.test
 password: 1
 ```
 
-This command writes only to the local D1 database under `.wrangler/state`. It does not create a production admin account. Override the defaults with `BLOGCMS_LOCAL_ADMIN_EMAIL`, `BLOGCMS_LOCAL_ADMIN_NAME`, or `BLOGCMS_LOCAL_ADMIN_PASSWORD` when needed.
+This command writes only to the local D1 database under `.wrangler/state`. It does not create a production admin account. Override defaults with `BLOGCMS_LOCAL_ADMIN_EMAIL`, `BLOGCMS_LOCAL_ADMIN_NAME`, or `BLOGCMS_LOCAL_ADMIN_PASSWORD`.
 
-## Production Site
+### Production deployment
 
-Before deploying, replace the D1 database id, KV namespace id, public site URL, and optional custom domain values in `apps/web/wrangler.jsonc`. The default config is a template-safe config; `pnpm deploy:web` fails early if placeholder values remain.
+Before deploying, replace the D1 database id, KV namespace id, public site URL, and optional custom domain values in `apps/web/wrangler.jsonc`. The deploy command fails early if placeholders remain.
 
 ```sh
 pnpm deploy:web
 ```
 
-This checks the required R2 bucket, builds the web app, applies remote D1 migrations, deploys the Worker using the generated Cloudflare config, and runs the Git-managed notes sync when `CMS_PUBLIC_SITE_URL` and `CMS_API_TOKEN` are configured.
+This command: checks R2 bucket → builds the web app → applies remote D1 migrations → deploys the Worker → syncs Git-managed notes (when `CMS_PUBLIC_SITE_URL` and `CMS_API_TOKEN` are configured).
 
-R2 must be enabled on the target Cloudflare account before the storage bucket can be created. Cloudflare includes free monthly R2 usage, but R2 is still a usage-billed product, so new accounts may need to complete the R2 subscription checkout and add a valid payment method first.
-
-If deploy reports a missing R2 bucket, create it in the same Cloudflare account:
+If it reports a missing R2 bucket:
 
 ```sh
 pnpm --filter @repo/web exec wrangler r2 bucket create blog-starter-assets --config wrangler.jsonc
 ```
 
-The default setup uses one R2 bucket. Object prefixes separate responsibilities: `uploads/` for public assets, `imports/` for import packages, and `exports/` for JSON/ZIP backups.
-
-## Runtime Resources
+### Runtime resources
 
 ```txt
 Workers: public site, admin, API routes, feeds, sitemap, robots
@@ -51,27 +98,11 @@ R2: assets, import packages, exports, backups
 KV: cache metadata and optional short-lived records
 ```
 
-Turnstile and Cloudflare Email Sending are optional. Empty optional bindings should not block login, publishing, imports, exports, backups, or comment moderation.
+### Environment variables
 
-For setup steps and admin status checks, see [Advanced configuration](./advanced-configuration).
+Local development reads `apps/web/.env`. Production reads Wrangler vars plus secrets. Use `apps/web/wrangler.jsonc` as the source of truth for variable names.
 
-## Required Migrations
-
-`pnpm deploy:web` applies remote D1 migrations automatically through the root `db:migrate:remote` script. Use this command only for a custom deploy pipeline or targeted maintenance:
-
-```sh
-pnpm --filter @repo/web exec wrangler d1 migrations apply <d1-database-name> --remote --config wrangler.jsonc
-```
-
-Better Auth tables are created by `0002_better_auth_d1.sql`; comment moderation linkage is created by `0004_comment_moderation.sql`.
-
-## Environment Variables
-
-Local development reads `apps/web/.env`. Cloudflare preview and production read Wrangler vars plus secrets.
-
-Keep the public site URL, backup retention, email delivery, Turnstile, auth secret, and comment OAuth values in Wrangler vars and secrets. Use `apps/web/wrangler.jsonc` as the source of truth for exact variable names.
-
-Set `BETTER_AUTH_SECRET` and enabled OAuth provider secrets as Wrangler secrets in production:
+Set production secrets:
 
 ```sh
 pnpm --filter @repo/web exec wrangler secret put BETTER_AUTH_SECRET --config wrangler.jsonc
@@ -79,42 +110,18 @@ pnpm --filter @repo/web exec wrangler secret put GITHUB_CLIENT_SECRET --config w
 pnpm --filter @repo/web exec wrangler secret put GOOGLE_CLIENT_SECRET --config wrangler.jsonc
 ```
 
-## Optional Email Sending
+### D1 Migrations
 
-Cloudflare Email Sending is disabled by default because outbound email requires Workers Paid. As of Cloudflare's current pricing, Workers Paid includes 3,000 outbound emails per month, then bills additional sending at $0.35 per 1,000 emails. Email Routing for inbound forwarding remains unlimited.
+`pnpm deploy:web` applies remote D1 migrations automatically. Only run manually for custom pipelines or targeted maintenance:
 
-Use Email Sending or Resend when you want password reset links, admin notifications, import/export completion notices, backup notices, or admin-enabled email verification for comment accounts. Email verification stays off until an admin enables it in settings, and the core site still supports admin login, publishing, comments, moderation, imports, exports, and backups when outbound email is not configured.
-
-Current Cloudflare limits include:
-
-- new accounts may start by sending only to verified email addresses in the Cloudflare account
-- paid accounts can send to any recipient, subject to daily sending limits
-- each email can include up to 50 total `to`, `cc`, and `bcc` recipients
-- each email can be up to 5 MiB, including attachments
-- Workers binding sends also count against standard Workers CPU, subrequest, and memory limits
-
-Check Cloudflare's [Email Service pricing](https://developers.cloudflare.com/email-service/platform/pricing/) and [Email Service limits](https://developers.cloudflare.com/email-service/platform/limits/) before enabling production email.
-
-## Social Comment Login
-
-GitHub and Google OAuth add one-click reader login methods for comments. Create an OAuth app/client for each provider and environment that needs its own callback URL:
-
-```txt
-http://localhost:3000/api/auth/callback/github
-http://localhost:3000/api/auth/callback/google
-https://your-domain.example/api/auth/callback/github
-https://your-domain.example/api/auth/callback/google
+```sh
+pnpm --filter @repo/web exec wrangler d1 migrations apply <d1-database-name> --remote --config wrangler.jsonc
 ```
 
-GitHub OAuth apps have one authorization callback URL, so local and production usually use separate OAuth apps. Google OAuth clients allow multiple authorized redirect URIs, but separate local and production clients still make secret rotation cleaner.
+### Optional email sending
 
-Set `GITHUB_CLIENT_ID` and `GOOGLE_CLIENT_ID` in the matching Wrangler config or Cloudflare dashboard. Email/password reader login still works when either OAuth provider is not configured.
+Cloudflare Email Sending is disabled by default (requires Workers Paid). Used for password resets, admin notifications, import/export notices, etc. Core functionality works fine without it.
 
-## Comment Moderation
+### Social comment login
 
-Comments require a reader session. Site owners can configure comment behavior in the admin settings:
-
-- require manual approval before comments appear publicly
-- automatically block comments that match blocked keywords
-- manage blocked keywords without code changes
-- review pending and blocked comments in the moderation queue
+See the [Comments documentation](./comments) for GitHub/Google OAuth setup details.

@@ -1,47 +1,57 @@
 ---
 title: Comments
-description: Reader login, moderation, and blocked keywords.
+description: Let readers leave comments on your blog posts.
 ---
 
-Comments are enabled as a reader-facing feature, but posting requires a reader session by default.
+## What is the comment system
 
-## Login Options
+The comment system lets readers **leave messages below your blog posts** — just like comments on Medium or YouTube. Readers can share thoughts, ask questions, or give you feedback after reading an article.
 
-GitHub and Google OAuth are one-click login methods for reader comments. Email/password login is available as a fallback.
+## Why readers need to log in
 
-Create an OAuth app/client for each provider and environment that needs its own callback URL:
+Just like Twitter or Reddit, readers must log in before posting a comment. Here's why:
 
-```txt
-http://localhost:3000/api/auth/callback/github
-http://localhost:3000/api/auth/callback/google
-https://your-domain.com/api/auth/callback/github
-https://your-domain.com/api/auth/callback/google
-```
+| Benefit           | Explanation                             |
+| ----------------- | --------------------------------------- |
+| Prevents spam     | Bots can't flood your comments          |
+| Accountability    | Every comment has a known author        |
+| Easier management | You can manage specific users if needed |
 
-GitHub OAuth apps have one authorization callback URL, so local and production usually use separate OAuth apps. Google OAuth clients allow multiple authorized redirect URIs, but separate local and production clients make secret rotation cleaner.
+## How readers log in
 
-Set `GITHUB_CLIENT_ID` and `GOOGLE_CLIENT_ID` in Wrangler vars or the Cloudflare dashboard. Store `GITHUB_CLIENT_SECRET` and `GOOGLE_CLIENT_SECRET` as Wrangler secrets for production and in `apps/web/.env` for local development.
+Your readers have three ways to log in and comment:
 
-## Moderation Defaults
+- **GitHub one-click login** — log in with a GitHub account in one click (convenient for developer readers)
+- **Google one-click login** — log in with a Google account in one click (most people have one)
+- **Email + password** — register an account with an email address (fallback option, works for anyone)
 
-New comments enter the moderation queue when manual approval is enabled. Approved comments are public. Blocked comments are hidden from public pages.
+> GitHub and Google login require a developer to configure for you. If not set up yet, readers can still use the email/password option to register and comment.
 
-The admin settings page controls:
+## Comment moderation
 
-- whether comments are enabled
-- whether comments require approval before publication
-- whether blocked keywords automatically hide a comment
-- the blocked keyword list
-- whether email/password comment accounts must verify email before signing in
+You can choose between two moderation modes:
 
-## Keyword Blocking
+| Mode                    | What happens                                          | Best for                                     |
+| ----------------------- | ----------------------------------------------------- | -------------------------------------------- |
+| **Approve first**       | Comments don't appear publicly until you approve them | Sites with strict content standards          |
+| **Publish immediately** | Comments appear right away                            | Trusting your readers, maximizing engagement |
 
-Use blocked keywords for spam, abusive language, and content that should not be publicly displayed. Keyword matches are handled server-side during comment submission.
+You can switch between modes in your admin settings page with one click — no code changes or redeployment needed.
 
-When auto-blocking is enabled, a matching comment is marked as `spam`. When auto-blocking is disabled, the moderation queue still shows the comment so an admin can decide manually.
+## Keyword blocking
 
-## Admin Workflow
+You can set up a list of **blocked keywords** (such as spam phrases, profanity, etc.). When a reader's comment contains these words:
 
-Use `/admin/comments` to review pending and blocked comments. Admins can approve, mark as spam, or delete comments.
+- **Auto-blocking enabled**: the comment is automatically marked as spam and hidden from public view
+- **Auto-blocking disabled**: the comment enters your moderation queue for you to decide manually
 
-Use `/admin/settings` to change the default approval mode, keyword blocking behavior, and optional email verification without redeploying the site. Email verification requires Cloudflare Email Sending or Resend configuration.
+You can update the keyword list anytime in your admin panel — no developer help needed.
+
+## How to manage comments
+
+All comment management happens in your **admin dashboard**:
+
+- Go to the **Comments page** (`/admin/comments`) to: approve, mark as spam, or delete comments
+- Go to the **Settings page** (`/admin/settings`) to: toggle comments on/off, switch moderation mode, manage blocked keywords
+
+> Everything is done through the web-based admin panel — no coding or redeployment required.

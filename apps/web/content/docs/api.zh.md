@@ -1,66 +1,44 @@
 ---
 title: API
-description: 01mvp-blog-starter 的 API 与自动化入口。
+description: 了解你的网站 API 能做什么，以及谁会用到它。
 ---
 
-01mvp-blog-starter 在 `/openapi.json` 提供 OpenAPI 文档。
+## 什么是 API
 
-API 主要服务于：
+想象一下餐厅的**服务窗口**：你告诉服务员想要什么菜，服务员去厨房帮你做好端出来。你不需要自己进厨房。
 
-- 后台管理界面
-- 初始化与维护工作流
-- 自定义自动化脚本
+API 就是你网站对外提供的「服务窗口」。其他程序可以通过这个窗口，对你的网站发出指令——比如「帮我发布一篇文章」或「把所有文章导出来」。
 
-## 主要接口
+## 这个网站的 API 能做什么
 
-```txt
-POST   /api/posts
-PATCH  /api/posts/:id
-GET    /api/posts
-GET    /api/posts/:id
-DELETE /api/posts/:id
+| 能力               | 举个例子                                           |
+| ------------------ | -------------------------------------------------- |
+| **发布和管理文章** | 让 AI 写完文章后自动发到你的网站，不用手动复制粘贴 |
+| **批量导入内容**   | 把你在其他平台写的旧文章一次性搬过来               |
+| **导出和备份**     | 把所有内容打包下载，防止数据丢失                   |
+| **管理评论**       | 批量审核、删除垃圾评论                             |
+| **管理图片等资源** | 上传和查看你网站里用到的图片文件                   |
 
-POST   /api/import/markdown
-POST   /api/import/html
-POST   /api/import/zip
+## 谁会用到 API
 
-POST   /api/assets
-GET    /api/assets
+大多数情况下，你不需要自己直接使用 API。以下这些角色可能会用到它：
 
-GET    /api/export
-POST   /api/backups
+- **帮你做自动化的技术人员** — 比如让网站每天自动备份
+- **AI 写作工具** — 写完文章后直接发布到你的网站，不需要你手动操作
+- **其他工具和平台** — 比如把你网站的内容同步到其他地方
 
-POST   /api/comments/:id/approve
-POST   /api/comments/:id/spam
-POST   /api/comments/:id/delete
+## 安全机制：API Token
 
-GET    /api/comment-auth/me
-POST   /api/comment-auth/login
-POST   /api/comment-auth/signup
-POST   /api/comment-auth/logout
-GET    /api/comment-auth/github/start
-GET    /api/comment-auth/verify-email
-GET    /api/admin/email-status
-```
+API Token 就像一把**钥匙**。只有拿到这把钥匙的程序，才能通过 API 操作你的网站。
 
-API Token 有 scope。发布内容需要写权限，把文章切换到已发布或定时发布还需要 publish 权限。
+你可以在后台设置页创建 Token，并且给每把钥匙设置不同的权限——有的只能读文章，有的能发布文章，有的能管理评论。这样即使某把钥匙泄露了，影响范围也很小。
 
-API Token 在后台设置页创建。按任务选择最小权限：文章需要 `posts:read`、`posts:write`，发布或定时发布再加 `posts:publish`；评论审核需要 `comments:moderate`；导出需要 `export:read`；站点设置需要 `site:read` 或 `site:write`。
+> **小贴士：** 就像你不会把家里的万能钥匙随便给人一样，每个 Token 应该只给它需要的最小权限。
 
-## 评论与读者登录
+## OpenAPI 是什么
 
-`POST /api/comments` 需要读者会话。请求包含评论内容、文章 id，以及用于回复的可选 parent id。服务端会执行 honeypot 检查、可选 Turnstile 校验、频率限制、正文长度限制、链接数量限制和屏蔽关键词检查。
+你的网站在 `/openapi.json` 提供了一份**标准化的说明书**。
 
-读者和后台管理员共用 Better Auth。`/api/comment-auth/*` 保留评论区需要的响应结构，实际账号和会话都写入共享的 Better Auth 表。如果后台开启邮箱验证，邮箱密码评论账号需要完成邮件确认后才能登录。
+这份说明书用所有程序都能读懂的格式，描述了你网站 API 的全部能力。技术人员或 AI 工具拿到这份说明书后，就能自动知道怎么跟你的网站对话，不需要一个个手动查接口。
 
-开启人工审核时，新评论进入 `pending`。关闭人工审核时，新评论可以直接进入 `approved`。命中屏蔽关键词且开启自动屏蔽时，评论进入 `spam`。
-
-## OpenAPI
-
-打开机器可读 schema：
-
-```txt
-/openapi.json
-```
-
-生成客户端、测试集成或接入外部自动化时，可以直接使用这个 schema。
+> 你不需要自己打开或阅读这份文件——它是给程序看的。

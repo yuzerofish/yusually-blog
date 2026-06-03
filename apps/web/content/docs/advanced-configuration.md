@@ -1,24 +1,35 @@
 ---
-title: Advanced configuration
+title: Advanced Configuration
 description: Optional email, comment OAuth, and Turnstile setup.
 ---
 
-The starter does not require email delivery, comment OAuth, or Cloudflare Turnstile for the first run. The admin settings page only detects whether these optional integrations are configured. It does not write Cloudflare secrets, create OAuth apps, or change provider accounts.
+> **This page is for the technical person helping you set up your website.** If you own the site but aren't doing the configuration yourself, share this page with your tech partner.
+
+All of these configurations are **optional**. Your blog can publish posts and accept comments without any of them. You only need to set these up when you want the extra capabilities below.
+
+| Feature        | What it does in one sentence                                                             |
+| -------------- | ---------------------------------------------------------------------------------------- |
+| Email delivery | Lets your site send emails (e.g., notify you of new comments, send password reset links) |
+| GitHub OAuth   | Lets readers sign in with their GitHub account to leave comments                         |
+| Google OAuth   | Lets readers sign in with their Google account to leave comments                         |
+| Turnstile      | Bot protection for comments (the "I'm not a robot" kind of check)                        |
 
 After changing Cloudflare vars, secrets, or bindings, redeploy the Worker and refresh `/admin/settings`.
 
+---
+
 ## Email Delivery
 
-Email delivery is an advanced optional feature. The blog can publish posts, accept comments, and run the moderation queue without it.
+**Lets your website send emails** — for example, notifying you about new comments, sending password reset links to readers, or confirming that a backup finished.
 
 After email delivery is configured, the blog can:
 
-- send an admin email when a reader submits a new comment
-- send password reset links for admin accounts
-- send import, export, and backup completion notices
-- support admin-enabled email verification for email/password comment accounts
+- Send an admin email when a reader submits a new comment
+- Send password reset links for admin accounts
+- Send import, export, and backup completion notices
+- Support email verification for email/password comment accounts
 
-Leave email delivery disabled when you do not need outbound email. The core publishing and comment workflows continue to work.
+> Don't need these features? Leave email delivery disabled. The core publishing and comment workflows continue to work fine.
 
 ### Cloudflare Email Service
 
@@ -60,13 +71,15 @@ pnpm --filter @repo/web exec wrangler secret put RESEND_API_KEY --config wrangle
 
 When either Cloudflare Email Service or Resend is detected, the admin settings page can enable email verification for new email/password comment accounts.
 
+---
+
 ## GitHub OAuth
 
-GitHub OAuth adds a one-click reader login option for comments. Email/password comment login remains available when GitHub OAuth is not configured.
+**Lets readers sign in with their GitHub account to leave comments** — email/password login remains available when this isn't configured.
 
 Create a GitHub OAuth app for each environment that needs its own callback URL. GitHub OAuth apps have one authorization callback URL, so local and production usually use separate OAuth apps.
 
-Use these callback URLs:
+Callback URLs:
 
 ```txt
 http://localhost:3000/api/auth/callback/github
@@ -91,9 +104,11 @@ pnpm --filter @repo/web exec wrangler secret put GITHUB_CLIENT_SECRET --config w
 
 For local development, put both values in `apps/web/.env`.
 
+---
+
 ## Google OAuth
 
-Google OAuth adds another one-click reader login option for comments. Email/password and any configured GitHub login remain available when Google OAuth is not configured.
+**Lets readers sign in with their Google account to leave comments** — email/password and any configured GitHub login remain available when this isn't configured.
 
 Create a Google OAuth client and add the callback URLs as authorized redirect URIs:
 
@@ -120,14 +135,16 @@ pnpm --filter @repo/web exec wrangler secret put GOOGLE_CLIENT_SECRET --config w
 
 For local development, put both values in `apps/web/.env`.
 
+---
+
 ## Cloudflare Turnstile
 
-Turnstile is optional spam protection for comment submission. Comments still require a reader session and still use server-side rate limits and moderation when Turnstile is not configured.
+**Bot protection for comments** — like the "I'm not a robot" checks you see on other websites. Comments still require a reader session and use server-side rate limits and moderation when Turnstile is not configured.
 
 Create a Turnstile widget in Cloudflare and allow the hostnames where your blog runs. The widget gives you two values:
 
-- site key: public key used by the browser
-- secret key: private key used by the Worker to validate tokens
+- **site key**: public key used by the browser
+- **secret key**: private key used by the Worker to validate tokens
 
 Set the public site key as a Wrangler var:
 
@@ -147,11 +164,13 @@ pnpm --filter @repo/web exec wrangler secret put CMS_TURNSTILE_SECRET_KEY --conf
 
 Turnstile is only enforced when both `VITE_TURNSTILE_SITE_KEY` and `CMS_TURNSTILE_SECRET_KEY` are present.
 
+---
+
 ## Check Status
 
 Open `/admin/settings` and review Advanced configuration. The status checks:
 
-- email delivery: `CMS_EMAIL` binding plus email vars, or Resend vars and secret
+- Email delivery: `CMS_EMAIL` binding plus email vars, or Resend vars and secret
 - GitHub OAuth: `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`
 - Google OAuth: `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`
 - Turnstile: `VITE_TURNSTILE_SITE_KEY` and `CMS_TURNSTILE_SECRET_KEY`

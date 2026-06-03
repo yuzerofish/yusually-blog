@@ -1,69 +1,64 @@
 ---
 title: 01mvp-blog-starter
-description: 基于 Cloudflare 的个人博客，并内置 Git 管理的文档系统。
+description: 一个开箱即用的个人博客系统，帮你快速拥有自己的网站。
 ---
 
-01mvp-blog-starter 是 `github.com/01mvp/blog-starter` 的 Cloudflare 原生个人博客与自动化初始化流程。
+## 30 秒理解这个项目
 
-默认同时提供两套内容系统：
+**一句话总结**：这是一个「个人博客网站模板」——你 fork 它、配置一下、部署上线，就拥有了一个属于自己的博客网站。
 
-- `/blog` 由发布后台驱动，适合公开文章、后台写作、评论、RSS、OpenAPI 发布、导入、导出和备份。
-- `/docs` 由 Fumadocs 与 GitHub Markdown/MDX 驱动，适合产品文档、开发者文档、API 指南和模板使用说明。
+**适合谁**：想长期维护个人品牌、写文章、沉淀内容的人。不管你是产品经理、设计师、独立开发者还是自媒体人，只要你想有一个自己完全掌控的网站（不依赖任何平台），这个模板就适合你。
 
-这个模板面向想长期维护个人网站的人：文章可以在后台和自动化工具里快速发布，文档则跟随代码仓库一起 review、版本化和部署。
+**它解决什么问题**：
 
-## 技术栈
+- 微信公众号、知乎、掘金……这些平台的内容不属于你，平台可能删文、限流、甚至关停
+- 自建网站通常需要大量技术知识，门槛很高
+- 这个模板把技术部分打包好了，你只需要关心「写什么」
 
-- TanStack Start + TanStack Router
-- React 19 + React Compiler
-- Tailwind CSS + shadcn/ui + Base UI
-- Fumadocs 管理 Git 文档
-- Paraglide.js 编译英文和中文 UI 文案
-- Cloudflare Workers runtime，通过 `@cloudflare/vite-plugin` 集成
-- Cloudflare D1 存储文章、评论、设置、用户、会话和 API Token
-- Cloudflare R2 存储媒体、导入包、导出包和备份
-- OpenAPI 用于发布自动化
+## 这个网站能做什么
 
-## 配置入口
+你的网站默认有两个核心区域：
 
-配置新站点时优先看这几页：
+| 区域 | 网址    | 用来做什么                   | 类比                         |
+| ---- | ------- | ---------------------------- | ---------------------------- |
+| 博客 | `/blog` | 写文章、发动态、接收读者评论 | 像你自己的公众号，但完全自主 |
+| 文档 | `/docs` | 写产品说明、教程、指南       | 像飞书文档/语雀知识库        |
 
-- [部署](./deployment)：Cloudflare Workers、D1、R2、KV、migrations、环境变量和部署 target。
-- [评论](./comments)：读者登录、社交账号 OAuth、邮箱登录、审核模式、关键词屏蔽和评论管理。
-- [进阶配置](./advanced-configuration)：可选邮件发送、评论 OAuth 和 Turnstile 状态检测。
-- [API](./api)：自动化接口、OpenAPI 和评论登录接口。
+**博客**适合经常更新的内容——今天的想法、本周的复盘、新产品的发布笔记。
 
-## 本地开发
+**文档**适合长期稳定的内容——产品手册、使用教程、团队规范。这些内容不常变，但需要一直在那里。
 
-```sh
-pnpm install
-pnpm dev:web
-```
+## 技术栈简介
 
-本地 Web 应用默认运行在 `http://localhost:3000`。如果端口被占用，Vite+ 会自动使用下一个可用端口。
+> 你不需要理解下面每一项技术，这里只是帮你建立一个大致印象。如果有技术伙伴帮你维护网站，这些信息对他们有用。
 
-## 构建
+| 技术               | 它是做什么的                                             |
+| ------------------ | -------------------------------------------------------- |
+| Cloudflare Workers | 你的网站运行的地方（类比：服务员，负责接待每一个访客）   |
+| Cloudflare D1      | 存储文章、评论、用户信息的数据库（类比：一个大表格仓库） |
+| Cloudflare R2      | 存储图片、附件、备份的文件柜                             |
+| React              | 网页界面的搭建工具（类比：装修用的材料）                 |
+| Tailwind CSS       | 让网页变好看的样式工具                                   |
+| Markdown           | 一种简单的写作格式，用纯文本就能排版                     |
 
-```sh
-pnpm build:web
-```
+**为什么选 Cloudflare？**
 
-构建会编译 Paraglide 输出、构建 TanStack Start，并生成 Cloudflare Worker bundle。
+Cloudflare 是全球最大的网络基础设施公司之一。选它的原因：
 
-## 部署
+1. **免费额度慷慨**——个人博客的访问量，基本不需要付费
+2. **全球加速**——不管读者在哪里，打开你的网站都很快
+3. **稳定可靠**——大公司的基础设施，不用担心宕机
 
-生产站点：
+## 接下来做什么
 
-```sh
-pnpm deploy:web
-```
+如果你是第一次接触这个项目：
 
-这个命令会检查必需的 R2 存储桶、构建 Web 应用、应用远程 D1 migrations、部署 Worker，并在配置 `CMS_PUBLIC_SITE_URL` 和 `CMS_API_TOKEN` 后同步 Git 管理的笔记。
+1. 先看 [使用指南](./usage)——了解你能用这个网站做什么
+2. 再看 [部署](./deployment)——了解怎么把网站上线
+3. 想了解评论功能就看 [评论系统](./comments)
 
-## 自动化
+如果你只是想了解架构设计：
 
-生成后的站点会暴露 `/openapi.json`。接入外部发布工具或 API client 前，先在后台设置页创建受限 API Token。
-
-## License
-
-MIT. See `LICENSE`.
+- [内容系统](./content-systems)——为什么要有两套内容系统
+- [发布方式](./publishing)——文章有哪些发布途径
+- [API](./api)——如何用自动化工具和网站交互

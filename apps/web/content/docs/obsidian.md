@@ -1,106 +1,69 @@
 ---
-title: Obsidian-Compatible Markdown
-description: Publish Git-managed Markdown or MDX notes with Obsidian-style syntax.
+title: Obsidian Workflow
+description: Write notes in Obsidian, publish them to your blog automatically.
 ---
 
-Obsidian is a good writing environment for a personal site because it keeps notes as plain Markdown files. 01mvp-blog-starter supports that file format through a Git-based publishing workflow.
+# Blogging with Obsidian
 
-This is Markdown file publishing, not an Obsidian plugin. The site does not connect to the Obsidian desktop app, watch your vault in real time, or publish directly from Obsidian. It works when the selected Markdown or MDX files are committed to the project repository and deployed through your normal Git or GitHub workflow.
+## What is Obsidian?
 
-Published notes become normal blog posts. They use the same blog pages, tags, RSS feed, sitemap, comments, moderation, and email reply notifications as posts created in the admin area.
+**Obsidian is a local note-taking app** — think of it as a supercharged Notepad. It stores your notes as Markdown files (a plain text format) on your own computer, not on some company's server.
 
-## When To Use It
+Many knowledge workers use it to manage personal notes, knowledge bases, and writing projects.
 
-Use this workflow when:
-
-- you are comfortable keeping selected notes in Git
-- your site is deployed from GitHub or another Git remote
-- you want writing files to stay as Markdown instead of browser-edited posts
-- you want Obsidian-style images, callouts, and internal links to be handled during deployment
-
-If you do not use Git, use the admin editor, Markdown import, ZIP import, or OpenAPI publishing instead. Those paths do not require an Obsidian vault or repository-managed note files.
-
-## How To Use It
-
-Put Markdown files under `content/notes`. The folder can be organized however you like. The site does not use folders for navigation; public pages are grouped by tags and publication time.
-
-Only files with `publish: true` are synced:
-
-```md
----
-publish: true
-tags: [writing, ai]
 ---
 
-# My first Obsidian post
+## How Does This Blog Template Relate to Obsidian?
 
-Write normally in Obsidian.
-```
+**Important: This is NOT an Obsidian plugin.**
 
-Commit the file and deploy the site. In a GitHub-based setup, the usual shape is:
+This blog template simply **supports Obsidian's file format**. What that means:
 
-1. Write or edit notes under `content/notes`.
-2. Commit and push the changes to GitHub.
-3. Let GitHub Actions or your deployment command run the web deploy.
-4. The deployment syncs published notes into the blog when the sync environment variables are configured.
+- The note formats you use in Obsidian (like `[[wikilinks]]` and image references) will display correctly on your blog
+- You don't need to install any Obsidian plugins
+- You just put your finished files into the blog project's designated folder
 
-The deployment sync needs `CMS_PUBLIC_SITE_URL` and `CMS_API_TOKEN`. The API token needs `posts:write`, `posts:publish`, and `assets:write`.
+> Analogy: Obsidian is your "pen," and this blog template is your "publisher." Whatever format your pen produces, the publisher can read it.
 
-You can run a local preview when debugging a note:
+---
 
-```bash
-pnpm sync:obsidian -- --dry-run
-```
+## The Workflow (4 Simple Steps)
 
-Dry-run scans `content/notes`, prints the entries that would sync, and does not require `CMS_API_TOKEN`.
+| Step                   | What you do                                         | What happens                                       |
+| ---------------------- | --------------------------------------------------- | -------------------------------------------------- |
+| 1. Write               | Write your article in Obsidian                      | File is saved on your computer                     |
+| 2. Mark for publishing | Add a few lines of config at the top of the article | Tells the system "publish this one"                |
+| 3. Push to GitHub      | Use a tool to "upload" your files                   | Files sync to the cloud                            |
+| 4. Auto-publish        | Nothing — just wait                                 | Your site updates automatically, article goes live |
 
-You can also run the sync command manually for advanced automation:
+### About Git and GitHub
 
-```bash
-CMS_PUBLIC_SITE_URL=https://your-site.example.com \
-CMS_API_TOKEN=your-api-token \
-pnpm sync:obsidian
-```
+- **Git** is a version control tool — think of it as a "time machine for files." It records every change you make, so you can always go back
+- **GitHub** is an online platform for storing your project files (like "Google Drive for programmers")
 
-During deployment, `pnpm deploy:web` runs this sync after deploy when the required environment variables are configured. If those values are missing, deployment continues and the note sync is skipped.
+> If Git is completely new to you, ask a technical colleague to do the initial setup. After that, day-to-day operations can be done with GitHub Desktop (a visual app with buttons and menus) — no command line needed.
 
-## Images And Links
+---
 
-The sync command understands the image forms Obsidian users commonly write:
+## How Are Images Handled?
 
-```md
-![[cover.png]]
-![[Assets/cover.png|Cover image]]
-![Cover](../Assets/cover.png)
-```
+Put images in the designated folder in your Obsidian vault. The blog system automatically recognizes Obsidian's image format (`![[image-name.png]]`) and displays them correctly on your site.
 
-When the referenced file can be found under `content/notes`, it is uploaded to R2 through the existing asset API and the Markdown is rewritten to the uploaded URL. If an image name is ambiguous, the command leaves the reference unchanged so one note cannot accidentally publish the wrong image.
+---
 
-Internal note links are converted when the target note is also published:
+## How Are Links Handled?
 
-```md
-[[My other note]]
-[[My other note|read the companion note]]
-```
+Obsidian's wikilink format `[[Another Note]]` is automatically converted into regular blog links. You don't need to change anything manually.
 
-If the target is not published, the link text remains as plain text.
+---
 
-Obsidian callouts are preserved as blockquotes:
+## Who Is This For?
 
-```md
-> [!NOTE] Small detail
-```
+| Good fit                                            | Not ideal for                                    |
+| --------------------------------------------------- | ------------------------------------------------ |
+| People already using Obsidian for notes             | People who don't want to install software        |
+| People who like writing locally and offline         | People who just want to open a browser and write |
+| People who want their notes and blog connected      | People who find file management stressful        |
+| People with a technical colleague for initial setup | People with no one to help with tech setup       |
 
-MDX files are accepted too. Markdown-compatible MDX works the same as `.md`; custom JSX is kept inside the Markdown body and must still be safe to render in the blog page.
-
-## How It Works
-
-The Worker cannot read Git files at request time, so syncing happens during deployment or from an explicit automation command. The sync scans `content/notes`, finds published `.md` and `.mdx` files, uploads referenced images, rewrites Obsidian-specific syntax, and sends the normalized posts to the deployed site.
-
-The server stores synced notes as normal posts and keeps enough source metadata to match future syncs back to the same files.
-
-The admin area shows these posts as Git-managed Markdown posts. They are read-only in the browser because the source of truth is the Markdown file. To change a synced post, edit the file, commit it, and deploy again.
-
-If a previously synced source file disappears or no longer has `publish: true`, the sync hides the matching post by marking it deleted. The row is not physically removed, so comments and history are not destroyed by a file move or a temporary Git mistake.
-
-Changing the file path is treated as publishing a different post. Keep the same path when you want comments and the existing post identity to continue carrying forward.
+> **If this feels too complex**, that's okay! Just use the dashboard writing method instead. See the [Publishing](/docs/publishing) page for details.

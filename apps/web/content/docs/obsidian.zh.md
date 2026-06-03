@@ -1,106 +1,69 @@
 ---
-title: Obsidian 兼容 Markdown
-description: 通过 Git 工作流发布带 Obsidian 写法的 Markdown 或 MDX 笔记。
+title: Obsidian 工作流
+description: 用 Obsidian 写笔记，同步发布到你的博客网站。
 ---
 
-Obsidian 很适合个人站点写作，因为它把内容保存在普通 Markdown 文件里。01mvp-blog-starter 支持的是这种文件格式，并通过 Git 工作流把选中的 Markdown 发布成博客文章。
+# 用 Obsidian 写博客
 
-这不是 Obsidian 插件。站点不会连接 Obsidian 桌面应用，不会实时监听 vault，也不会从 Obsidian 内直接发布。它适合把选中的 Markdown 或 MDX 文件提交到项目仓库，再通过 Git / GitHub 部署流程发布。
+## Obsidian 是什么？
 
-同步后的笔记会成为普通博客文章，并共用博客页面、标签、RSS、sitemap、评论、审核和评论回复邮件。
+**Obsidian 是一个本地笔记软件**，可以理解为"高级版记事本"。它把笔记存储为 Markdown 文件（一种纯文本格式），保存在你自己的电脑上，而不是某个公司的服务器里。
 
-## 适用场景
+很多知识工作者用它来管理个人笔记、知识库和写作。
 
-适合使用这条路径的情况：
-
-- 你愿意把选中的笔记放进 Git
-- 站点通过 GitHub 或其他 Git remote 部署
-- 你希望文章源文件保持为 Markdown，而不是只存在后台编辑器里
-- 你希望部署时处理 Obsidian 风格的图片、callout 和内部链接
-
-如果你不使用 Git，请使用后台编辑器、Markdown 导入、ZIP 导入或 OpenAPI 发布。这些路径不要求 Obsidian vault，也不要求用仓库管理笔记文件。
-
-## 使用方法
-
-把 Markdown 文件放在 `content/notes`。这个目录可以按你的习惯自由组织。站点不会按文件夹展示文章，公开页面只按标签和发布时间组织。
-
-只有带 `publish: true` 的文件会同步：
-
-```md
----
-publish: true
-tags: [writing, ai]
 ---
 
-# 我的第一篇 Obsidian 文章
+## 这个模板和 Obsidian 是什么关系？
 
-按平时的方式在 Obsidian 中写作。
-```
+**重要：这不是一个 Obsidian 插件。**
 
-提交文件并部署站点。基于 GitHub 的常见流程是：
+这个博客模板只是**支持 Obsidian 的文件格式**。也就是说：
 
-1. 在 `content/notes` 下写作或修改笔记。
-2. 把变更 commit 并 push 到 GitHub。
-3. 由 GitHub Actions 或你的部署命令运行 Web 部署。
-4. 部署流程在配置好同步环境变量时，把已发布笔记同步到博客。
+- 你用 Obsidian 写的笔记格式（比如 `[[双链]]`、图片引用方式），这个博客都能正确显示
+- 你不需要安装任何 Obsidian 插件
+- 你只需要把写好的文件放到博客项目的指定文件夹里
 
-同步需要配置 `CMS_PUBLIC_SITE_URL` 和 `CMS_API_TOKEN`。API Token 需要 `posts:write`、`posts:publish` 和 `assets:write`。
+> 类比：Obsidian 是你的"笔"，博客模板是你的"出版社"。笔写出来的格式，出版社都认识。
 
-调试某篇笔记时，可以先在本地预览：
+---
 
-```bash
-pnpm sync:obsidian -- --dry-run
-```
+## 工作流程（简单 4 步）
 
-Dry-run 会扫描 `content/notes`，输出将要同步的条目，不需要配置 `CMS_API_TOKEN`。
+| 步骤             | 你做什么                 | 发生了什么             |
+| ---------------- | ------------------------ | ---------------------- |
+| 1. 写笔记        | 在 Obsidian 里正常写文章 | 文件保存在你电脑上     |
+| 2. 标记发布      | 在文章开头加几行配置信息 | 告诉系统"这篇要发布"   |
+| 3. 提交到 GitHub | 用工具把文件"上传"       | 文件同步到云端         |
+| 4. 自动发布      | 什么都不用做             | 网站自动更新，文章上线 |
 
-也可以在高级自动化里手动运行同步命令：
+### 关于 Git 和 GitHub
 
-```bash
-CMS_PUBLIC_SITE_URL=https://your-site.example.com \
-CMS_API_TOKEN=your-api-token \
-pnpm sync:obsidian
-```
+- **Git** 是一个版本管理工具，可以理解为"文件的时光机"——它记录你每次修改了什么，随时可以回退
+- **GitHub** 是一个在线平台，用来存放你的项目文件（类似"程序员的网盘"）
 
-部署时，`pnpm deploy:web` 会在部署完成后尝试运行这一步。如果没有配置所需环境变量，它会跳过笔记同步，不影响部署。
+> 如果你完全不懂 Git，可以让技术同事帮你做初始设置，之后日常操作用 GitHub Desktop（一个图形界面工具）就能完成，不需要敲命令。
 
-## 图片和链接
+---
 
-同步命令会处理 Obsidian 常见的图片写法：
+## 图片怎么处理？
 
-```md
-![[cover.png]]
-![[Assets/cover.png|Cover image]]
-![Cover](../Assets/cover.png)
-```
+把图片放在 Obsidian 笔记库的指定文件夹里即可。博客系统会自动识别 Obsidian 的图片引用格式（`![[图片名.png]]`），正确显示在网站上。
 
-如果能在 `content/notes` 下找到引用的图片，它会通过现有资产 API 上传到 R2，并把 Markdown 改写成上传后的 URL。如果同名图片不止一个，命令会保留原引用，避免误传错图。
+---
 
-当目标笔记也被发布时，内部双链会转成站内链接：
+## 链接怎么处理？
 
-```md
-[[My other note]]
-[[My other note|read the companion note]]
-```
+Obsidian 的双向链接格式 `[[另一篇笔记]]` 会被自动转换为博客内的正常链接。你不需要手动修改。
 
-如果目标笔记没有发布，链接文字会保留为普通文本。
+---
 
-Obsidian callout 会保留为引用块：
+## 适合谁用？
 
-```md
-> [!NOTE] Small detail
-```
+| 适合                         | 不太适合                 |
+| ---------------------------- | ------------------------ |
+| 已经在用 Obsidian 写笔记的人 | 不想在电脑上装软件的人   |
+| 喜欢本地写作、离线可用       | 只想打开浏览器就写的人   |
+| 希望笔记和博客打通           | 对文件管理感到头疼的人   |
+| 有技术同事可以帮忙初始设置   | 完全没有人帮忙搞技术的人 |
 
-`.mdx` 文件也会被扫描。与 Markdown 兼容的 MDX 可以正常同步；自定义 JSX 会留在 Markdown 正文中，仍然需要确保可以被博客页安全渲染。
-
-## 实现原理
-
-Worker 在请求时读不到 Git 文件，所以同步发生在部署时，或由明确的自动化命令触发。同步会扫描 `content/notes`，找到已发布的 `.md` 和 `.mdx` 文件，上传引用图片，改写 Obsidian 特有语法，然后把规范化后的文章发送到已部署站点。
-
-服务端会把同步后的笔记保存成普通文章，并保留必要的来源信息，方便下一次同步继续匹配同一个文件。
-
-后台会把这些文章标记为 Git 管理的 Markdown 文章，并以只读方式展示。源文件才是真正的修改入口。要修改同步文章，编辑对应 Markdown 文件，提交后重新部署即可。
-
-如果某个已经同步过的源文件消失，或者移除了 `publish: true`，同步会把对应文章标记为已删除并从公开页面隐藏。它不会物理删除数据库行，所以评论和历史不会因为一次文件移动或临时 Git 错误直接丢失。
-
-修改文件路径会被视为发布另一篇文章。如果希望评论和原文章身份继续保留，请保持源文件路径不变。
+> **如果你觉得这个方式太复杂**，没关系！直接用后台写作就好，参见 [发布文章](/docs/publishing) 页面。

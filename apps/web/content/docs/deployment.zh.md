@@ -1,11 +1,62 @@
 ---
 title: 部署
-description: 将博客站点部署到 Cloudflare Workers。
+description: 把你的博客网站发布到互联网上。
 ---
 
-01mvp-blog-starter 面向 Cloudflare Workers、D1、R2 和可选 KV 设计。
+## 什么是「部署」
 
-## 本地开发管理员
+**部署 = 把你的网站上传到互联网，让全世界都能通过网址访问。**
+
+打个比方：你在电脑上写好了一本书，「部署」就是把这本书送到书店的书架上，这样读者才能看到。在部署之前，网站只存在于技术人员的电脑上，只有他自己能看到。
+
+## 你的网站住在哪里：Cloudflare
+
+你的网站运行在 **Cloudflare** 的服务器上。
+
+| 问题                | 回答                                               |
+| ------------------- | -------------------------------------------------- |
+| Cloudflare 是什么？ | 一家美国上市公司，全球最大的网络基础设施服务商之一 |
+| 为什么选它？        | 免费额度慷慨、速度快（全球都有服务器）、稳定可靠   |
+| 要花钱吗？          | 个人博客通常在免费额度内，不需要付费               |
+
+## 网站需要哪些「基础设施」
+
+你的网站由三个核心组件支撑，可以用一个餐厅来类比：
+
+| 组件        | 类比               | 做什么                                       |
+| ----------- | ------------------ | -------------------------------------------- |
+| **Workers** | 服务员             | 接待每一位访问你网站的人，把页面送到他们面前 |
+| **D1**      | 表格仓库（数据库） | 存储你的文章、评论、用户信息等结构化数据     |
+| **R2**      | 文件柜             | 存储你上传的图片、备份文件等                 |
+
+> 还有一些可选组件（比如 KV 缓存、邮件发送），不影响核心功能，按需开启即可。
+
+## 部署步骤概述
+
+对你来说，部署的体验是这样的：
+
+1. 你在后台写好文章、调整好设置
+2. 技术人员在终端运行**一个命令**，网站就更新了
+
+整个过程通常只需要几十秒。
+
+## 本地开发是什么
+
+「本地开发」是指技术人员**在自己的电脑上运行一个网站的副本**来测试效果。就像厨师在后厨试菜——只有他自己能吃到，顾客看不到。
+
+本地开发的用途：
+
+- 开发新功能时先在本地验证
+- 修改样式后先看看效果对不对
+- 不会影响已经上线的正式网站
+
+---
+
+## 技术人员参考
+
+> 以下内容面向负责部署和维护的开发人员。如果你是产品经理或站点拥有者，可以跳过这部分。
+
+### 本地开发管理员
 
 给本地 Wrangler D1 数据库写入固定管理员账号：
 
@@ -20,29 +71,25 @@ email: a@a.test
 password: 1
 ```
 
-这个命令只会写入 `.wrangler/state` 下的本地 D1，不会创建生产管理员账号。需要覆盖默认值时，可以设置 `BLOGCMS_LOCAL_ADMIN_EMAIL`、`BLOGCMS_LOCAL_ADMIN_NAME` 或 `BLOGCMS_LOCAL_ADMIN_PASSWORD`。
+此命令只写入 `.wrangler/state` 下的本地 D1，不会创建生产管理员账号。需要覆盖默认值时设置 `BLOGCMS_LOCAL_ADMIN_EMAIL`、`BLOGCMS_LOCAL_ADMIN_NAME` 或 `BLOGCMS_LOCAL_ADMIN_PASSWORD`。
 
-## 生产站点
+### 生产部署
 
-部署前先替换 `apps/web/wrangler.jsonc` 里的 D1 database id、KV namespace id、公开站点 URL，以及可选自定义域名配置。默认配置是模板安全配置；只要 placeholder 还在，`pnpm deploy:web` 会提前失败。
+部署前替换 `apps/web/wrangler.jsonc` 里的 D1 database id、KV namespace id、公开站点 URL 及可选自定义域名。Placeholder 未替换时 `pnpm deploy:web` 会提前失败。
 
 ```sh
 pnpm deploy:web
 ```
 
-这会先检查必要的 R2 存储桶，再构建 Web 应用、应用远程 D1 migrations、使用生成的 Cloudflare 配置部署 Worker，并在配置 `CMS_PUBLIC_SITE_URL` 和 `CMS_API_TOKEN` 后同步 Git 管理的笔记。
+此命令会：检查 R2 存储桶 → 构建 Web 应用 → 应用远程 D1 migrations → 部署 Worker → 同步 Git 管理的笔记（需配置 `CMS_PUBLIC_SITE_URL` 和 `CMS_API_TOKEN`）。
 
-R2 存储桶需要在目标 Cloudflare 账号里先开通 R2 后才能创建。Cloudflare 提供 R2 免费月额度，但 R2 仍然是按量计费产品，新账号可能需要先完成 R2 subscription checkout，并添加有效付款方式。
-
-如果部署前检查提示缺少 R2 存储桶，在同一个 Cloudflare 账号里创建：
+如果提示缺少 R2 存储桶：
 
 ```sh
 pnpm --filter @repo/web exec wrangler r2 bucket create blog-starter-assets --config wrangler.jsonc
 ```
 
-默认只使用一个 R2 存储桶。对象前缀负责区分用途：`uploads/` 保存公开资源，`imports/` 保存导入包，`exports/` 保存 JSON/ZIP 备份。
-
-## 运行时资源
+### 运行时资源
 
 ```txt
 Workers: 公开站点、后台、API 路由、feeds、sitemap、robots
@@ -51,27 +98,11 @@ R2: 资产、导入包、导出包、备份
 KV: 缓存元数据和可选短期记录
 ```
 
-Turnstile 和 Cloudflare Email Sending 是可选能力。未配置可选 binding 不应该阻塞登录、发布、导入、导出、备份或评论审核。
+### 环境变量
 
-配置步骤和后台状态检测说明见 [进阶配置](./advanced-configuration)。
+本地开发读取 `apps/web/.env`，生产环境读取 Wrangler vars 与 secrets。变量名以 `apps/web/wrangler.jsonc` 为准。
 
-## 必要 Migration
-
-`pnpm deploy:web` 已经会通过根目录 `db:migrate:remote` 脚本自动应用远程 D1 migrations。只有自定义部署流水线或定向维护时，才需要单独运行：
-
-```sh
-pnpm --filter @repo/web exec wrangler d1 migrations apply <d1-database-name> --remote --config wrangler.jsonc
-```
-
-Better Auth 表由 `0002_better_auth_d1.sql` 创建；评论作者关联由 `0004_comment_moderation.sql` 创建。
-
-## 环境变量
-
-本地开发读取 `apps/web/.env`。Cloudflare preview 和 production 读取 Wrangler vars 与 secrets。
-
-公开站点地址、备份保留时间、邮件发送、Turnstile、鉴权密钥和评论 OAuth 都放在 Wrangler vars 与 secrets 里。变量名以 `apps/web/wrangler.jsonc` 为准。
-
-生产环境把 `BETTER_AUTH_SECRET` 和已启用 OAuth provider 的 secret 写成 Wrangler secret：
+生产环境设置 secrets：
 
 ```sh
 pnpm --filter @repo/web exec wrangler secret put BETTER_AUTH_SECRET --config wrangler.jsonc
@@ -79,42 +110,18 @@ pnpm --filter @repo/web exec wrangler secret put GITHUB_CLIENT_SECRET --config w
 pnpm --filter @repo/web exec wrangler secret put GOOGLE_CLIENT_SECRET --config wrangler.jsonc
 ```
 
-## 可选 Email Sending
+### D1 Migrations
 
-Cloudflare Email Sending 默认关闭，因为出站邮件需要 Workers Paid。按 Cloudflare 当前价格，Workers Paid 每月包含 3,000 封出站邮件，超出后按 $0.35 / 1,000 封计费。Email Routing 的收信转发仍然是 unlimited。
+`pnpm deploy:web` 自动应用远程 D1 migrations。仅自定义流水线或定向维护时手动运行：
 
-需要密码重置链接、后台通知、导入导出完成通知、备份通知，或在后台开启评论账号邮箱验证时，再配置 Email Sending 或 Resend。邮箱验证默认关闭，保持关闭或未配置出站邮件时，站点的后台登录、发布、评论、审核、导入、导出和备份仍然可用。
-
-当前 Cloudflare 限制包括：
-
-- 新账号刚开始可能只能发给 Cloudflare 账号内已验证的邮箱
-- 付费账号可以发给任意收件人，但受每日发送限制
-- 单封邮件最多包含 50 个 `to`、`cc`、`bcc` 收件人
-- 单封邮件总大小最多 5 MiB，包含附件
-- Workers binding 发送还受标准 Workers CPU、subrequest 和内存限制
-
-启用生产邮件前，先查看 Cloudflare 的 [Email Service pricing](https://developers.cloudflare.com/email-service/platform/pricing/) 和 [Email Service limits](https://developers.cloudflare.com/email-service/platform/limits/)。
-
-## 社交账号评论登录
-
-GitHub 和 Google OAuth 为读者评论提供一键登录。为每个 provider 和需要独立 callback URL 的环境创建 OAuth app/client：
-
-```txt
-http://localhost:3000/api/auth/callback/github
-http://localhost:3000/api/auth/callback/google
-https://your-domain.example/api/auth/callback/github
-https://your-domain.example/api/auth/callback/google
+```sh
+pnpm --filter @repo/web exec wrangler d1 migrations apply <d1-database-name> --remote --config wrangler.jsonc
 ```
 
-GitHub OAuth app 只有一个 authorization callback URL，所以本地和生产通常使用两个 OAuth app。Google OAuth client 可以配置多个 authorized redirect URIs，但本地和生产分开会让 secret 轮换更清楚。
+### 可选 Email Sending
 
-`GITHUB_CLIENT_ID` 和 `GOOGLE_CLIENT_ID` 可以放在对应的 Wrangler 配置或 Cloudflare dashboard。任一 OAuth provider 未配置时，邮箱和密码登录仍然可用。
+Cloudflare Email Sending 默认关闭（需要 Workers Paid）。用于密码重置、后台通知、导入导出通知等场景。未配置时核心功能不受影响。
 
-## 评论审核
+### 社交账号评论登录
 
-评论需要读者会话。站点所有者可以在后台设置里配置评论行为：
-
-- 评论是否必须审核通过后才公开展示
-- 命中屏蔽关键词时是否自动拦截
-- 不改代码直接维护屏蔽关键词
-- 在评论队列里处理待审核和已拦截评论
+GitHub/Google OAuth 配置详见 [评论文档](./comments)。

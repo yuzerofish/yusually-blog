@@ -1,69 +1,64 @@
 ---
 title: 01mvp-blog-starter
-description: A Cloudflare-native personal blog with a Git-managed documentation system.
+description: A ready-to-use personal blog system — get your own website up and running quickly.
 ---
 
-01mvp-blog-starter is a Cloudflare-native personal blog and AI initialization workflow for `github.com/01mvp/blog-starter`.
+## Understand This Project in 30 Seconds
 
-It ships with two content surfaces by default:
+**In one sentence**: This is a personal blog website template — fork it, configure it, deploy it, and you have your own website.
 
-- `/blog` is powered by the publishing backend. It is for public posts, visual admin writing, comments, RSS, OpenAPI publishing, imports, exports, and backups.
-- `/docs` is powered by Fumadocs and GitHub Markdown/MDX. It is for product docs, developer docs, API guides, and template usage notes.
+**Who is it for**: Anyone who wants to build a long-term personal brand, write articles, and own their content. Whether you're a product manager, designer, indie maker, or content creator — if you want a website you fully control (independent of any platform), this template is for you.
 
-中文简介：01mvp-blog-starter 是一个基于 Cloudflare Workers、D1、R2 的个人长期博客系统。默认同时提供博客发布系统和 Git 管理的 Fumadocs 文档系统。
+**What problem does it solve**:
 
-## Stack
+- Content on platforms like Medium, Substack, or social media doesn't truly belong to you — platforms can remove posts, throttle reach, or shut down
+- Building your own website usually requires extensive technical knowledge
+- This template packages the technical parts so you can focus on "what to write"
 
-- TanStack Start + TanStack Router
-- React 19 + React Compiler
-- Tailwind CSS + shadcn/ui + Base UI
-- Fumadocs for Git-managed documentation
-- Paraglide.js for compiled English and Chinese UI messages
-- Cloudflare Workers runtime through `@cloudflare/vite-plugin`
-- Cloudflare D1 for posts, comments, settings, users, sessions, and API tokens
-- Cloudflare R2 for assets, imports, exports, and backups
-- OpenAPI for publishing automation
+## What Can This Website Do
 
-## Configuration
+Your website comes with two core areas by default:
 
-Start with the deployment and comment guides when configuring a new site:
+| Area | URL     | Purpose                                     | Analogy                                        |
+| ---- | ------- | ------------------------------------------- | ---------------------------------------------- |
+| Blog | `/blog` | Write articles, receive reader comments     | Like your own newsletter, but fully self-owned |
+| Docs | `/docs` | Write product guides, tutorials, references | Like a knowledge base (Notion/GitBook)         |
 
-- [Deployment](./deployment): Cloudflare Workers, D1, R2, KV, migrations, environment variables, and deploy targets.
-- [Comments](./comments): reader login, social OAuth, email/password fallback, approval mode, keyword blocking, and moderation.
-- [Advanced configuration](./advanced-configuration): optional email delivery, comment OAuth, and Turnstile status checks.
-- [API](./api): automation routes, OpenAPI, and comment-auth endpoints.
+**Blog** is for frequently updated content — today's thoughts, this week's recap, a new product announcement.
 
-## Development
+**Docs** is for long-lived stable content — product manuals, tutorials, team guidelines. Things that don't change often but need to always be there.
 
-```sh
-pnpm install
-pnpm dev:web
-```
+## Tech Stack Overview
 
-The local web app runs on `http://localhost:3000`.
+> You don't need to understand every item below. This is just to give you a rough picture. If a technical partner maintains your site, this information is useful for them.
 
-## Build
+| Technology         | What it does                                                                                    |
+| ------------------ | ----------------------------------------------------------------------------------------------- |
+| Cloudflare Workers | Where your website runs (analogy: a waiter who greets every visitor)                            |
+| Cloudflare D1      | Database that stores articles, comments, and user info (analogy: a giant spreadsheet warehouse) |
+| Cloudflare R2      | File storage for images, attachments, and backups (analogy: a filing cabinet)                   |
+| React              | Tool for building the web interface (analogy: construction materials)                           |
+| Tailwind CSS       | Tool for making the website look good                                                           |
+| Markdown           | A simple writing format — plain text that produces formatted output                             |
 
-```sh
-pnpm build:web
-```
+**Why Cloudflare?**
 
-The build compiles Paraglide output, builds TanStack Start, and writes the Cloudflare Worker bundle.
+Cloudflare is one of the world's largest network infrastructure companies. We chose it because:
 
-## Deploy
+1. **Generous free tier** — a personal blog's traffic rarely exceeds the free limits
+2. **Global speed** — your site loads fast regardless of where your readers are
+3. **Reliable** — enterprise-grade infrastructure, no downtime worries
 
-Production site:
+## What's Next
 
-```sh
-pnpm deploy:web
-```
+If this is your first time with this project:
 
-This checks the required R2 bucket, builds the web app, applies remote D1 migrations, deploys the Worker, and runs the Git-managed notes sync when `CMS_PUBLIC_SITE_URL` and `CMS_API_TOKEN` are configured.
+1. Read the [Usage Guide](./usage) — learn what you can do with this website
+2. Then check [Deployment](./deployment) — learn how to get your site online
+3. Interested in reader comments? See [Comments](./comments)
 
-## Automation
+If you just want to understand the architecture:
 
-Generated sites expose `/openapi.json`. Create scoped API tokens in the admin settings before connecting external publishing tools or API clients.
-
-## License
-
-MIT. See `LICENSE`.
+- [Content Systems](./content-systems) — why there are two content systems
+- [Publishing](./publishing) — different ways to publish articles
+- [API](./api) — how automation tools interact with your site

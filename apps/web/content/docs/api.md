@@ -1,66 +1,44 @@
 ---
 title: API
-description: API and automation surfaces for 01mvp-blog-starter.
+description: What your website's API can do, and who uses it.
 ---
 
-01mvp-blog-starter exposes an OpenAPI document at `/openapi.json`.
+## What Is an API
 
-The API is used by:
+Think of a **restaurant service window**: you tell the waiter what you want, and they go to the kitchen to prepare it for you. You never need to enter the kitchen yourself.
 
-- the admin UI
-- AI initialization and maintenance workflows
-- custom automation scripts
+An API is your website's "service window" for other programs. Through this window, tools and scripts can send commands to your site — like "publish this article" or "export all my content."
 
-## Main Endpoints
+## What Can Your Website's API Do
 
-```txt
-POST   /api/posts
-PATCH  /api/posts/:id
-GET    /api/posts
-GET    /api/posts/:id
-DELETE /api/posts/:id
+| Capability                   | Example                                                                       |
+| ---------------------------- | ----------------------------------------------------------------------------- |
+| **Publish and manage posts** | Let an AI tool automatically publish articles to your site after writing them |
+| **Bulk import content**      | Move all your old articles from another platform in one go                    |
+| **Export and backup**        | Download all your content as a package to prevent data loss                   |
+| **Manage comments**          | Approve or delete spam comments in bulk                                       |
+| **Manage media assets**      | Upload and browse images used on your site                                    |
 
-POST   /api/import/markdown
-POST   /api/import/html
-POST   /api/import/zip
+## Who Uses the API
 
-POST   /api/assets
-GET    /api/assets
+Most of the time, you won't need to use the API directly. These are the typical users:
 
-GET    /api/export
-POST   /api/backups
+- **A developer helping you automate things** — for example, setting up automatic daily backups
+- **AI writing tools** — publishing finished articles to your site without you copying and pasting
+- **Other platforms and integrations** — syncing your content to other places
 
-POST   /api/comments/:id/approve
-POST   /api/comments/:id/spam
-POST   /api/comments/:id/delete
+## Security: API Tokens
 
-GET    /api/comment-auth/me
-POST   /api/comment-auth/login
-POST   /api/comment-auth/signup
-POST   /api/comment-auth/logout
-GET    /api/comment-auth/github/start
-GET    /api/comment-auth/verify-email
-GET    /api/admin/email-status
-```
+An API Token is like a **key**. Only programs that have this key can operate your website through the API.
 
-API tokens are scoped. Publishing requires write permissions, and publishing or scheduling posts also requires publish permissions.
+You can create tokens in the admin settings page and give each key different permissions — some can only read posts, others can publish, others can moderate comments. That way, even if one key is leaked, the damage is limited.
 
-Create API tokens from the admin settings. Use the smallest scope set that fits the automation task: posts need `posts:read`, `posts:write`, and sometimes `posts:publish`; comment moderation needs `comments:moderate`; exports need `export:read`; site settings need `site:read` or `site:write`.
+> **Tip:** Just like you wouldn't hand out a master key to your house, each token should only have the minimum permissions it needs.
 
-## Comments And Reader Auth
+## What Is OpenAPI
 
-`POST /api/comments` requires a reader session. The request accepts comment body, post id, and optional parent id for replies. The server applies honeypot checks, optional Turnstile verification, rate limits, body length limits, link limits, and blocked-keyword checks.
+Your website provides a **standardized instruction manual** at `/openapi.json`.
 
-Reader and admin identities share Better Auth. `/api/comment-auth/*` keeps a comment-facing response shape while sessions and accounts live in the shared Better Auth tables. If email verification is enabled in admin settings, email/password comment accounts must confirm the verification link before signing in.
+This document describes all of your API's capabilities in a format that any program can understand. When a developer or AI tool reads this file, they automatically know how to talk to your website — no need to look up each endpoint manually.
 
-Comments are created as `pending` when manual approval is enabled, `approved` when approval is disabled, and `spam` when blocked keywords match and auto-blocking is enabled.
-
-## OpenAPI
-
-Open the machine-readable schema:
-
-```txt
-/openapi.json
-```
-
-Use the schema when generating clients, testing integrations, or wiring external automation.
+> You don't need to open or read this file yourself — it's meant for programs to read.

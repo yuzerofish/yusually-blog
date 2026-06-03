@@ -3,13 +3,24 @@ title: 进阶配置
 description: 可选的邮件、评论 OAuth 和 Turnstile 配置。
 ---
 
-初始模板不强制配置邮件发送、评论 OAuth 或 Cloudflare Turnstile。后台设置页只检测这些可选集成是否已经配置，不会写入 Cloudflare secrets、创建 OAuth app，或修改第三方服务账号。
+> **这个页面是给帮你配置网站的技术人员看的。** 如果你是网站的所有者但不亲自动手配置，可以把这个页面分享给你的技术伙伴。
+
+这些配置都是**可选的**。不配置它们，你的博客照样能发布文章、接收评论。只有当你需要以下额外能力时，才需要设置。
+
+| 配置项       | 一句话解释                                           |
+| ------------ | ---------------------------------------------------- |
+| 邮件发送     | 让网站能发邮件（比如通知你有新评论、发密码重置链接） |
+| GitHub OAuth | 让读者用 GitHub 账号一键登录来评论                   |
+| Google OAuth | 让读者用 Google 账号一键登录来评论                   |
+| Turnstile    | 防机器人的验证码（像"我不是机器人"那种）             |
 
 修改 Cloudflare vars、secrets 或 bindings 后，重新部署 Worker，再刷新 `/admin/settings`。
 
+---
+
 ## 邮件发送
 
-邮件发送是一个可选的进阶能力。不配置邮件发送时，博客仍然可以发布文章、接收评论，并使用后台评论审核队列。
+**让你的网站能发邮件** — 比如通知你有新评论、给读者发密码重置链接、发送备份完成通知。
 
 配置邮件发送之后，博客可以：
 
@@ -18,7 +29,7 @@ description: 可选的邮件、评论 OAuth 和 Turnstile 配置。
 - 发送导入、导出和备份完成通知
 - 在后台开启邮箱密码评论账号的邮箱验证
 
-不需要出站邮件时，可以保持关闭。核心发布和评论流程会继续正常工作。
+> 不需要这些功能？保持关闭即可。核心发布和评论流程会继续正常工作。
 
 ### Cloudflare Email Service
 
@@ -60,9 +71,11 @@ pnpm --filter @repo/web exec wrangler secret put RESEND_API_KEY --config wrangle
 
 检测到 Cloudflare Email Service 或 Resend 后，后台设置页才允许开启新的邮箱密码评论账号邮箱验证。
 
+---
+
 ## GitHub OAuth
 
-GitHub OAuth 为读者评论提供一键登录。未配置 GitHub OAuth 时，邮箱和密码评论登录仍然可用。
+**让读者用 GitHub 账号一键登录来评论** — 不配置的话，邮箱和密码登录仍然可用。
 
 每个需要独立 callback URL 的环境创建一个 GitHub OAuth app。GitHub OAuth app 只有一个 authorization callback URL，所以本地和生产通常使用两个 OAuth app。
 
@@ -91,9 +104,11 @@ pnpm --filter @repo/web exec wrangler secret put GITHUB_CLIENT_SECRET --config w
 
 本地开发时，把两个值放入 `apps/web/.env`。
 
+---
+
 ## Google OAuth
 
-Google OAuth 为读者评论提供另一种一键登录方式。未配置 Google OAuth 时，邮箱密码登录和已配置的 GitHub 登录仍然可用。
+**让读者用 Google 账号一键登录来评论** — 不配置的话，邮箱密码登录和已配置的 GitHub 登录仍然可用。
 
 创建 Google OAuth client，并把 callback URL 加到 authorized redirect URIs：
 
@@ -120,14 +135,16 @@ pnpm --filter @repo/web exec wrangler secret put GOOGLE_CLIENT_SECRET --config w
 
 本地开发时，把两个值放入 `apps/web/.env`。
 
+---
+
 ## Cloudflare Turnstile
 
-Turnstile 是可选的评论防滥用校验。未配置 Turnstile 时，评论仍然需要读者会话，并继续使用服务端限流和审核。
+**防机器人的验证码** — 像网页上"我不是机器人"那种验证。不配置的话，评论仍然需要读者会话，并继续使用服务端限流和审核。
 
 在 Cloudflare 创建 Turnstile widget，并允许博客运行的域名。Widget 会提供两个值：
 
-- site key：给浏览器使用的公开 key
-- secret key：给 Worker 服务端校验 token 使用的私密 key
+- **site key**：给浏览器使用的公开 key
+- **secret key**：给 Worker 服务端校验 token 使用的私密 key
 
 把公开 site key 放到 Wrangler var：
 
@@ -146,6 +163,8 @@ pnpm --filter @repo/web exec wrangler secret put CMS_TURNSTILE_SECRET_KEY --conf
 ```
 
 只有同时存在 `VITE_TURNSTILE_SITE_KEY` 和 `CMS_TURNSTILE_SECRET_KEY` 时，评论提交才会启用 Turnstile 校验。
+
+---
 
 ## 查看状态
 
