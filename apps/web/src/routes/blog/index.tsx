@@ -251,5 +251,7 @@ function dedupeBySlug<TItem extends { slug: string; name: string }>(items: TItem
 function isReaderFacingPost(post: { title: string; slug: string }) {
   const normalized = `${post.title} ${post.slug}`.toLowerCase();
 
-  return !normalized.includes("e2e comment flow");
+  return !["e2e comment flow", "smoke post", "e2e edit smoke"].some((marker) =>
+    normalized.includes(marker),
+  );
 }

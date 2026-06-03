@@ -8,13 +8,13 @@ import {
   BookOpenIcon,
   FileTextIcon,
   HomeIcon,
-  LanguagesIcon,
   Loader2Icon,
   SearchIcon,
   UserCircleIcon,
 } from "lucide-react";
 import { useEffect } from "react";
 
+import { LanguageToggle } from "#/components/language-toggle";
 import { siteBrandLinkClassName, SiteBrandText } from "#/components/site-brand";
 import {
   resolveStylePreset,
@@ -24,7 +24,7 @@ import {
 } from "#/components/style-preset-switcher";
 import { ThemeToggle } from "#/components/theme-toggle";
 import { getLocalizedDocsHref } from "#/lib/docs-i18n";
-import { getCurrentLocale, setCurrentLocale } from "#/lib/i18n";
+import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
 export function SiteShell({
@@ -83,7 +83,7 @@ export function SiteShell({
               <SearchIcon className="size-4" />
               <span>{searchLabel}</span>
             </Link>
-            <PublicLanguageToggle locale={locale} />
+            <LanguageToggle currentLocale={locale} labelLocale={locale} />
             <StylePresetCycleButton
               locale={locale}
               nextPreset={nextPreset}
@@ -214,35 +214,6 @@ function MobileTabBar({ locale }: { readonly locale: ReturnType<typeof getCurren
         })}
       </div>
     </nav>
-  );
-}
-
-function PublicLanguageToggle({
-  locale,
-  className,
-}: {
-  readonly locale: ReturnType<typeof getCurrentLocale>;
-  readonly className?: string;
-}) {
-  const nextLocale = locale === "zh" ? "en" : "zh";
-  const nextLocaleLabel = nextLocale === "zh" ? m.language_zh() : m.language_english();
-  const label = `${m.language()}: ${nextLocaleLabel}`;
-
-  return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon-sm"
-      onClick={() => {
-        void setCurrentLocale(nextLocale);
-      }}
-      className={className}
-      aria-label={label}
-      title={label}
-    >
-      <LanguagesIcon className="size-4" />
-      <span className="sr-only">{m.language()}</span>
-    </Button>
   );
 }
 

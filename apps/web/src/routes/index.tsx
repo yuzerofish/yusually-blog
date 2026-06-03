@@ -167,6 +167,14 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
         </div>
       </section>
 
+      <LatestPostsSection
+        copy={copy}
+        displayPosts={displayPosts}
+        locale={locale}
+        visibleFeaturedPosts={visibleFeaturedPosts}
+        visibleTags={visibleTags}
+      />
+
       {/* ── Your Own Corner ── */}
       <section className="border-b border-border bg-muted/35">
         <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
@@ -341,58 +349,78 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
           </div>
         </div>
       </section>
+    </div>
+  );
+}
 
-      {/* ── Site Content ── */}
-      <section className="bg-background">
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
-          <div data-home-reveal className="border-t border-border pt-10">
+function LatestPostsSection({
+  copy,
+  displayPosts,
+  locale,
+  visibleFeaturedPosts,
+  visibleTags,
+}: {
+  readonly copy: ReturnType<typeof getHomeCopy>;
+  readonly displayPosts: Post[];
+  readonly locale: SupportedLocale;
+  readonly visibleFeaturedPosts: Post[];
+  readonly visibleTags: Tag[];
+}) {
+  return (
+    <section className="border-b border-border bg-background">
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
+        <div data-home-reveal className="grid gap-5 lg:grid-cols-[0.38fr_0.62fr] lg:items-end">
+          <div>
             <p className="text-sm font-semibold text-link uppercase">{copy.contentEyebrow}</p>
             <h2 className="mt-3 text-3xl leading-tight font-semibold text-balance">
               {copy.contentTitle}
             </h2>
           </div>
-
-          {visibleFeaturedPosts.length ? (
-            <FeaturedPostsBlock posts={visibleFeaturedPosts} locale={locale} />
+          {copy.contentBody ? (
+            <p className="max-w-2xl text-sm leading-7 text-muted-foreground">{copy.contentBody}</p>
           ) : null}
-
-          {visibleTags.length ? (
-            <div data-home-reveal className="mt-8 flex flex-wrap gap-2">
-              {visibleTags.map((tag) => (
-                <Link
-                  key={tag.slug}
-                  to="/tags/$slug"
-                  params={{ slug: tag.slug }}
-                  className="rounded-full bg-muted px-4 py-2 text-sm font-semibold transition hover:bg-foreground hover:text-background"
-                >
-                  {tag.name}
-                </Link>
-              ))}
-            </div>
-          ) : null}
-
-          {displayPosts.length ? (
-            <div className="mt-10 divide-y divide-border border-y border-border">
-              {displayPosts.map((post, index) => (
-                <ArticleRow key={post.id} post={post} locale={locale} index={index} />
-              ))}
-            </div>
-          ) : null}
-
-          <div data-home-reveal className="mt-7">
-            <Button
-              render={<Link to="/blog" search={{ q: "", tag: "", series: "", page: 1 }} />}
-              variant="outline"
-              nativeButton={false}
-              className="hover:-translate-y-0.5"
-            >
-              {m.read_latest_posts()}
-              <ArrowRightIcon />
-            </Button>
-          </div>
         </div>
-      </section>
-    </div>
+
+        {visibleFeaturedPosts.length ? (
+          <FeaturedPostsBlock posts={visibleFeaturedPosts} locale={locale} />
+        ) : null}
+
+        {visibleTags.length ? (
+          <div data-home-reveal className="mt-8 flex flex-wrap gap-2">
+            {visibleTags.map((tag) => (
+              <Link
+                key={tag.slug}
+                to="/tags/$slug"
+                params={{ slug: tag.slug }}
+                className="rounded-full bg-muted px-4 py-2 text-sm font-semibold transition hover:bg-foreground hover:text-background"
+              >
+                {tag.name}
+              </Link>
+            ))}
+          </div>
+        ) : null}
+
+        {displayPosts.length ? (
+          <div className="mt-10 divide-y divide-border border-y border-border">
+            {displayPosts.map((post, index) => (
+              <ArticleRow key={post.id} post={post} locale={locale} index={index} />
+            ))}
+          </div>
+        ) : null}
+
+        <div data-home-reveal className="mt-7">
+          <Button
+            render={<Link to="/blog" search={{ q: "", tag: "", series: "", page: 1 }} />}
+            variant="outline"
+            nativeButton={false}
+            className="hover:-translate-y-0.5"
+          >
+            {m.read_latest_posts()}
+            <ArrowRightIcon />
+          </Button>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -788,7 +816,9 @@ function PostTags({ post }: { readonly post: Post }) {
 function isReaderFacingPost(post: { title: string; slug: string }) {
   const normalized = `${post.title} ${post.slug}`.toLowerCase();
 
-  return !normalized.includes("e2e comment flow");
+  return !["e2e comment flow", "smoke post", "e2e edit smoke"].some((marker) =>
+    normalized.includes(marker),
+  );
 }
 
 // Cloudflare brand color
@@ -1036,9 +1066,9 @@ function getHomeCopy(locale: SupportedLocale) {
       ],
 
       // ── Content ──
-      contentEyebrow: "最新文章",
-      contentTitle: "从这里开始阅读。",
-      contentBody: "",
+      contentEyebrow: "博客",
+      contentTitle: "最新文章。",
+      contentBody: "最新发布、精选文章和标签，集中在一个清晰的阅读入口。",
     };
   }
 
@@ -1263,6 +1293,6 @@ function getHomeCopy(locale: SupportedLocale) {
     // ── Content ──
     contentEyebrow: "Blog",
     contentTitle: "Latest posts.",
-    contentBody: "",
+    contentBody: "Fresh posts, featured writing, and tags share one clear reading entry point.",
   };
 }
