@@ -9,10 +9,8 @@ import {
   formatDate,
   localizePost,
   localizeSiteSettings,
-  localizeTag,
   type Post,
   type SupportedLocale,
-  type Tag,
 } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -25,7 +23,6 @@ import {
   FileTextIcon,
   GitBranchIcon,
   GlobeIcon,
-  HashIcon,
   ImageIcon,
   LockKeyholeIcon,
   MessageSquareTextIcon,
@@ -43,7 +40,6 @@ import { SiteShell } from "#/components/site-shell";
 import { $getHomePageData, type HomePageData } from "#/lib/cms-server";
 import { getDocsUrl } from "#/lib/docs-i18n";
 import { getCurrentLocale } from "#/lib/i18n";
-import { resolvePostCoverImage } from "#/lib/post-cover-image";
 import { m } from "#/paraglide/messages.js";
 
 export const Route = createFileRoute("/")({
@@ -53,8 +49,6 @@ export const Route = createFileRoute("/")({
 
 type HomeViewProps = {
   readonly posts: Post[];
-  readonly featuredPosts: Post[];
-  readonly tags: Tag[];
   readonly locale: SupportedLocale;
 };
 
@@ -90,12 +84,8 @@ function HomePage() {
   const data: HomePageData = Route.useLoaderData();
   const locale = getCurrentLocale();
   const posts = data.posts.map((post) => localizePost(post, locale)).filter(isReaderFacingPost);
-  const featuredPosts = data.featuredPosts
-    .map((post) => localizePost(post, locale))
-    .filter(isReaderFacingPost);
   const siteSettings = localizeSiteSettings(data.siteSettings, locale);
-  const tags = data.tags.map((tag) => localizeTag(tag, locale));
-  const homeProps = { posts, featuredPosts, tags, locale };
+  const homeProps = { posts, locale };
 
   return (
     <SiteShell siteSettings={siteSettings}>
@@ -104,14 +94,11 @@ function HomePage() {
   );
 }
 
-function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
+function ShelfHome({ posts, locale }: HomeViewProps) {
   const copy = getHomeCopy(locale);
   const docsHref = getDocsUrl([], locale);
   const obsidianDocsHref = getDocsUrl(["obsidian"], locale);
-  const visibleFeaturedPosts = featuredPosts.slice(0, 3);
-  const visibleFeaturedIds = new Set(visibleFeaturedPosts.map((post) => post.id));
-  const displayPosts = posts.filter((post) => !visibleFeaturedIds.has(post.id)).slice(0, 5);
-  const visibleTags = tags.slice(0, 16);
+  const latestPosts = posts.slice(0, 3);
 
   return (
     <div data-home-surface className="bg-background">
@@ -167,13 +154,7 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
         </div>
       </section>
 
-      <LatestPostsSection
-        copy={copy}
-        displayPosts={displayPosts}
-        locale={locale}
-        visibleFeaturedPosts={visibleFeaturedPosts}
-        visibleTags={visibleTags}
-      />
+      <LatestPostsSection copy={copy} latestPosts={latestPosts} locale={locale} />
 
       {/* ── Your Own Corner ── */}
       <section className="border-b border-border bg-muted/35">
@@ -355,55 +336,27 @@ function ShelfHome({ posts, featuredPosts, tags, locale }: HomeViewProps) {
 
 function LatestPostsSection({
   copy,
-  displayPosts,
+  latestPosts,
   locale,
-  visibleFeaturedPosts,
-  visibleTags,
 }: {
   readonly copy: ReturnType<typeof getHomeCopy>;
-  readonly displayPosts: Post[];
+  readonly latestPosts: Post[];
   readonly locale: SupportedLocale;
-  readonly visibleFeaturedPosts: Post[];
-  readonly visibleTags: Tag[];
 }) {
   return (
     <section className="border-b border-border bg-background">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
-        <div data-home-reveal className="grid gap-5 lg:grid-cols-[0.38fr_0.62fr] lg:items-end">
-          <div>
+        <div data-home-reveal className="flex items-end justify-between gap-4">
+          <div className="min-w-0">
             <p className="text-sm font-semibold text-link uppercase">{copy.contentEyebrow}</p>
-            <h2 className="mt-3 text-3xl leading-tight font-semibold text-balance">
-              {copy.contentTitle}
-            </h2>
+            <h2 className="mt-3 text-3xl leading-tight font-semibold">{copy.contentTitle}</h2>
           </div>
-          {copy.contentBody ? (
-            <p className="max-w-2xl text-sm leading-7 text-muted-foreground">{copy.contentBody}</p>
-          ) : null}
         </div>
 
-        {visibleFeaturedPosts.length ? (
-          <FeaturedPostsBlock posts={visibleFeaturedPosts} locale={locale} />
-        ) : null}
-
-        {visibleTags.length ? (
-          <div data-home-reveal className="mt-8 flex flex-wrap gap-2">
-            {visibleTags.map((tag) => (
-              <Link
-                key={tag.slug}
-                to="/tags/$slug"
-                params={{ slug: tag.slug }}
-                className="rounded-full bg-muted px-4 py-2 text-sm font-semibold transition hover:bg-foreground hover:text-background"
-              >
-                {tag.name}
-              </Link>
-            ))}
-          </div>
-        ) : null}
-
-        {displayPosts.length ? (
-          <div className="mt-10 divide-y divide-border border-y border-border">
-            {displayPosts.map((post, index) => (
-              <ArticleRow key={post.id} post={post} locale={locale} index={index} />
+        {latestPosts.length ? (
+          <div className="mt-7 grid gap-px border border-border bg-border md:grid-cols-3">
+            {latestPosts.map((post, index) => (
+              <LatestPostCard key={post.id} post={post} locale={locale} index={index} />
             ))}
           </div>
         ) : null}
@@ -415,12 +368,44 @@ function LatestPostsSection({
             nativeButton={false}
             className="hover:-translate-y-0.5"
           >
-            {m.read_latest_posts()}
+            {m.view_all_posts()}
             <ArrowRightIcon />
           </Button>
         </div>
       </div>
     </section>
+  );
+}
+
+function LatestPostCard({
+  index,
+  locale,
+  post,
+}: {
+  readonly index: number;
+  readonly locale: SupportedLocale;
+  readonly post: Post;
+}) {
+  return (
+    <article
+      data-home-reveal
+      data-home-card
+      style={getRevealStyle(index * 70)}
+      className="flex min-h-44 flex-col bg-background p-4 transition hover:bg-muted/35"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <time dateTime={post.publishedAt} className="text-xs font-medium text-muted-foreground">
+          {formatDate(post.publishedAt, locale)}
+        </time>
+        <PostBadges post={post} />
+      </div>
+      <Link to="/blog/$slug" params={{ slug: post.slug }} className="group mt-5 block">
+        <h3 className="line-clamp-2 text-lg leading-tight font-semibold text-balance group-hover:text-link">
+          {post.title}
+        </h3>
+      </Link>
+      <p className="mt-3 line-clamp-3 text-sm leading-6 text-muted-foreground">{post.excerpt}</p>
+    </article>
   );
 }
 
@@ -631,149 +616,6 @@ function ThemePreviewCard({
   );
 }
 
-function FeaturedPostsBlock({
-  locale,
-  posts,
-}: {
-  readonly locale: SupportedLocale;
-  readonly posts: Post[];
-}) {
-  return (
-    <section className="mt-8 border-y border-border">
-      <div className="grid gap-px bg-border lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]">
-        <FeaturedPostLarge post={posts[0]} locale={locale} />
-        <div className="divide-y divide-border bg-background">
-          {posts.slice(1).map((post, index) => (
-            <FeaturedPostCompact key={post.id} post={post} locale={locale} index={index} />
-          ))}
-          {posts.length === 1 ? (
-            <div className="flex h-full min-h-32 items-center px-5 py-5 text-sm leading-6 text-muted-foreground">
-              {locale === "zh"
-                ? "继续在后台把文章设为精选，它们会出现在这里。"
-                : "Feature more posts in admin and they will appear here."}
-            </div>
-          ) : null}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FeaturedPostLarge({
-  locale,
-  post,
-}: {
-  readonly locale: SupportedLocale;
-  readonly post: Post;
-}) {
-  const coverImage = resolvePostCoverImage(post.coverImage);
-
-  return (
-    <article
-      data-home-reveal
-      data-home-card
-      className="grid gap-5 bg-background p-5 sm:grid-cols-[minmax(0,1fr)_220px] sm:items-start"
-    >
-      <div className="min-w-0">
-        <span className="inline-flex items-center gap-1.5 rounded-sm bg-accent px-2 py-1 text-xs font-semibold text-accent-foreground">
-          <SparklesIcon className="size-3.5" />
-          {m.home_featured_title()}
-        </span>
-        <Link to="/blog/$slug" params={{ slug: post.slug }} className="group mt-4 block">
-          <h3 className="text-3xl leading-tight font-semibold text-balance group-hover:text-link">
-            {post.title}
-          </h3>
-        </Link>
-        <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">{post.excerpt}</p>
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          <PostBadges post={post} />
-          <time dateTime={post.publishedAt} className="text-sm text-muted-foreground">
-            {formatDate(post.publishedAt, locale)}
-          </time>
-        </div>
-      </div>
-      <Link
-        to="/blog/$slug"
-        params={{ slug: post.slug }}
-        data-home-cover
-        className="block aspect-[4/3] overflow-hidden rounded-md bg-muted"
-        aria-label={post.title}
-      >
-        {coverImage ? (
-          <img src={coverImage} alt="" loading="lazy" className="size-full object-cover" />
-        ) : (
-          <div className="flex size-full items-center justify-center text-muted-foreground">
-            <FileTextIcon className="size-9" />
-          </div>
-        )}
-      </Link>
-    </article>
-  );
-}
-
-function FeaturedPostCompact({
-  index,
-  locale,
-  post,
-}: {
-  readonly index: number;
-  readonly locale: SupportedLocale;
-  readonly post: Post;
-}) {
-  return (
-    <article
-      data-home-reveal
-      data-home-row
-      style={getRevealStyle((index + 1) * 70)}
-      className="p-5"
-    >
-      <PostBadges post={post} />
-      <Link to="/blog/$slug" params={{ slug: post.slug }} className="group mt-3 block">
-        <h3 className="text-xl leading-tight font-semibold text-balance group-hover:text-link">
-          {post.title}
-        </h3>
-      </Link>
-      <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">{post.excerpt}</p>
-      <time dateTime={post.publishedAt} className="mt-4 block text-sm text-muted-foreground">
-        {formatDate(post.publishedAt, locale)}
-      </time>
-    </article>
-  );
-}
-
-function ArticleRow({
-  index,
-  locale,
-  post,
-}: {
-  readonly index: number;
-  readonly locale: SupportedLocale;
-  readonly post: Post;
-}) {
-  return (
-    <article
-      data-home-reveal
-      data-home-row
-      style={getRevealStyle(index * 55)}
-      className="grid gap-4 py-7 sm:grid-cols-[minmax(0,1fr)_150px] sm:items-start"
-    >
-      <div className="min-w-0">
-        <PostBadges post={post} />
-        <Link to="/blog/$slug" params={{ slug: post.slug }} className="group">
-          <h3 className="mt-2 text-2xl leading-tight font-semibold text-balance group-hover:text-link">
-            {post.title}
-          </h3>
-        </Link>
-        <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">{post.excerpt}</p>
-        <PostTags post={post} />
-      </div>
-      <time dateTime={post.publishedAt} className="text-sm text-muted-foreground sm:text-right">
-        {formatDate(post.publishedAt, locale)}
-      </time>
-    </article>
-  );
-}
-
 function PostBadges({ post }: { readonly post: Post }) {
   if (!post.pinned && !post.featured) {
     return null;
@@ -791,24 +633,6 @@ function PostBadges({ post }: { readonly post: Post }) {
           {m.featured()}
         </span>
       ) : null}
-    </div>
-  );
-}
-
-function PostTags({ post }: { readonly post: Post }) {
-  return (
-    <div className="mt-4 flex flex-wrap gap-2">
-      {post.tags.slice(0, 3).map((tag) => (
-        <Link
-          key={tag.slug}
-          to="/tags/$slug"
-          params={{ slug: tag.slug }}
-          className="inline-flex items-center gap-1 rounded-sm bg-muted px-2 py-1 text-xs text-muted-foreground transition hover:text-foreground"
-        >
-          <HashIcon className="size-3" />
-          {tag.name}
-        </Link>
-      ))}
     </div>
   );
 }
@@ -1067,8 +891,7 @@ function getHomeCopy(locale: SupportedLocale) {
 
       // ── Content ──
       contentEyebrow: "博客",
-      contentTitle: "最新文章。",
-      contentBody: "最新发布、精选文章和标签，集中在一个清晰的阅读入口。",
+      contentTitle: "最新文章",
     };
   }
 
@@ -1292,7 +1115,6 @@ function getHomeCopy(locale: SupportedLocale) {
 
     // ── Content ──
     contentEyebrow: "Blog",
-    contentTitle: "Latest posts.",
-    contentBody: "Fresh posts, featured writing, and tags share one clear reading entry point.",
+    contentTitle: "Latest posts",
   };
 }
