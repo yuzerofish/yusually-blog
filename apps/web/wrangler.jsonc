@@ -10,9 +10,15 @@
   "triggers": {
     "crons": ["0 9 * * *"],
   },
+  "routes": [
+    {
+      "pattern": "blog.01mvp.com",
+      "custom_domain": true,
+    },
+  ],
   "vars": {
-    "VITE_BASE_URL": "https://your-domain.example",
-    "CMS_PUBLIC_SITE_URL": "https://your-domain.example",
+    "VITE_BASE_URL": "https://blog.01mvp.com",
+    "CMS_PUBLIC_SITE_URL": "https://blog.01mvp.com",
     "CMS_BACKUP_RETENTION_DAYS": "30",
     "CMS_EMAIL_SENDING_ENABLED": "false",
     "CMS_EMAIL_FROM": "",
@@ -26,7 +32,7 @@
     {
       "binding": "CMS_DB",
       "database_name": "blog-starter-cms",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "b267c97c-72a5-45a1-9f5a-cfd0b8e8067c",
       "migrations_dir": "../../packages/db/migrations",
     },
   ],
@@ -39,7 +45,7 @@
   "kv_namespaces": [
     {
       "binding": "CMS_CACHE",
-      "id": "00000000000000000000000000000000",
+      "id": "c1150cc286374ba9919f48f48a985f36",
     },
   ],
 }
