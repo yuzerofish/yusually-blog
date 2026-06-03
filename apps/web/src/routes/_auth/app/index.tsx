@@ -1,4 +1,3 @@
-import { useAuthSuspense } from "@repo/auth/tanstack/hooks";
 import type { EmailPreference } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -13,7 +12,7 @@ export const Route = createFileRoute("/_auth/app/")({
 });
 
 function AppIndex() {
-  const { user } = useAuthSuspense();
+  const { user } = Route.useRouteContext();
   const locale = getCurrentLocale();
   const copy = getAccountEmailCopy(locale);
   const pageCopy = getAccountPageCopy(locale);

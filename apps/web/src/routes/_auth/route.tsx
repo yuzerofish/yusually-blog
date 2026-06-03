@@ -15,6 +15,8 @@ export const Route = createFileRoute("/_auth")({
     const serverUser = await getServerAuthUser();
 
     if (serverUser !== undefined) {
+      context.queryClient.setQueryData(authQueryOptions().queryKey, serverUser);
+
       if (!serverUser) {
         throw redirect({ to: "/login" });
       }
