@@ -1,3 +1,4 @@
+import { SiGithub } from "@icons-pack/react-simple-icons";
 import type { SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { cn } from "@repo/ui/lib/utils";
@@ -24,7 +25,9 @@ interface DocsLayoutOptions {
 }
 
 const docsSidebarControlClassName =
-  "text-fd-muted-foreground hover:bg-fd-accent hover:text-fd-accent-foreground size-8 rounded-md";
+  "text-fd-muted-foreground hover:bg-fd-accent hover:text-fd-accent-foreground size-8 shrink-0 rounded-md";
+
+const githubRepositoryUrl = "https://github.com/01mvp/blog-starter";
 
 function DocsSidebarControls({
   locale,
@@ -39,6 +42,8 @@ function DocsSidebarControls({
   readonly rssLink?: { href: string; label: string };
   readonly slugs: string[];
 }) {
+  const githubRepositoryLabel = locale === "zh" ? "GitHub 仓库" : "GitHub repository";
+
   function handleLocaleChange(nextLocale: DocsLocale) {
     void Promise.resolve(setCurrentLocale(nextLocale, { reload: false })).finally(() => {
       window.location.href = getDocsUrl(slugs, nextLocale);
@@ -48,8 +53,20 @@ function DocsSidebarControls({
   return (
     <div
       data-docs-sidebar-controls=""
-      className="text-fd-muted-foreground flex items-center gap-1.5 pt-2"
+      className="text-fd-muted-foreground flex flex-nowrap items-center gap-1.5 pt-2"
     >
+      <Button
+        render={<FumadocsLink href={githubRepositoryUrl} />}
+        variant="ghost"
+        size="icon-sm"
+        nativeButton={false}
+        aria-label={githubRepositoryLabel}
+        title={githubRepositoryLabel}
+        className={cn(docsSidebarControlClassName)}
+      >
+        <SiGithub className="size-4" />
+        <span className="sr-only">{githubRepositoryLabel}</span>
+      </Button>
       {rssLink ? (
         <Button
           render={<FumadocsLink href={rssLink.href} />}
@@ -118,7 +135,6 @@ export function getDocsLayoutOptions({
     themeSwitch: {
       enabled: false,
     },
-    githubUrl: "https://github.com/01mvp/blog-starter",
   };
 }
 
