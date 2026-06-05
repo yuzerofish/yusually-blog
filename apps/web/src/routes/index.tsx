@@ -768,7 +768,7 @@ function getHomeCopy(locale: SupportedLocale) {
         {
           icon: GlobeIcon,
           label: "自带访问地址",
-          body: "默认提供 *.workers.dev 子域名。正式公开、品牌展示或面向中国大陆读者时，建议绑定自己的域名。",
+          body: "默认提供 *.workers.dev 子域名，适合测试。面向中国大陆读者时，建议绑定自己的域名；长期大量访问还要考虑备案。",
         },
         {
           icon: ShieldCheckIcon,
@@ -999,7 +999,7 @@ function getHomeCopy(locale: SupportedLocale) {
       {
         icon: GlobeIcon,
         label: "Built-in URL",
-        body: "A free *.workers.dev subdomain is included. For public branding or mainland China readers, bind your own domain.",
+        body: "A free *.workers.dev subdomain is included for testing. For mainland China readers, bind your own domain; long-term high-volume access may need filing work.",
       },
       {
         icon: ShieldCheckIcon,

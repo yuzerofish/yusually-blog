@@ -15,7 +15,7 @@ Prepare these before you start:
 | Cloudflare plugin / connector | Recommended | Lets AI create D1, KV, R2, Workers, and DNS records        |
 | Custom domain                 | Optional    | You can start with a `*.workers.dev` URL                   |
 
-For readers in mainland China, a custom domain is recommended. `*.workers.dev` may be unreliable in some network environments. For long-term public operation, high traffic, or commercial usage in mainland China, handle the relevant domain, access, and compliance requirements separately.
+For readers in mainland China, a custom domain is recommended. Cloudflare's default `*.workers.dev` domain is often unavailable or unreliable in many mainland China network environments. A custom domain usually gives you more control. For long-term public operation, high traffic, or commercial usage in mainland China, handle the relevant domain, access, and compliance requirements separately.
 
 ## Recommended: Install the Skill
 
@@ -126,11 +126,12 @@ Cloudflare Email Sending currently requires Workers Paid, while Email Routing ca
 
 ### Custom Domain
 
-You can launch without a custom domain and use the default `*.workers.dev` URL. For a public personal brand, bind your own domain:
+You can launch without a custom domain and use the default `*.workers.dev` URL. That URL is fine for testing, but it is often unavailable or unreliable in many mainland China network environments. For a public personal brand, bind your own domain:
 
 - It looks and feels like a durable personal asset.
 - It preserves links if you move infrastructure later.
 - It gives you more control for mainland China access.
+- Long-term stable, high-volume public access may require separate filing and access compliance work.
 
 ### API Tokens
 

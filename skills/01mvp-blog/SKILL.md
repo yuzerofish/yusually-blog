@@ -118,7 +118,7 @@ For maintenance-only tasks, collect only:
 
 Ask the user to act only for Cloudflare login, account registration, Cloudflare account selection, payment-method confirmation, domain purchase, nameserver changes, OAuth app creation, email verification, first admin account creation, or API token creation when no authenticated session is available.
 
-If the user targets mainland China readers, recommend a custom domain instead of relying only on `*.workers.dev`. For long-term public operation, high traffic, or commercial usage in mainland China, remind the user to handle domain, access, and compliance requirements separately.
+If the user targets mainland China readers, recommend a custom domain instead of relying only on `*.workers.dev`, because the default Workers domain is often unavailable or unreliable there. For long-term public operation, high traffic, or commercial usage in mainland China, remind the user to handle domain, access, and compliance requirements separately.
 
 ## Canonical Target
 
