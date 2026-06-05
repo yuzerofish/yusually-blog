@@ -66,9 +66,9 @@ function DemoBlogPage() {
     <SiteShell siteSettings={localizedSiteSettings}>
       <div className="bg-background">
         <section className="border-b border-border bg-background">
-          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20">
-            <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(320px,0.46fr)] lg:items-end">
-              <div>
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+            <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(320px,0.46fr)] lg:items-start lg:gap-16">
+              <div className="lg:pt-2">
                 <p className="text-sm font-semibold tracking-wide text-link uppercase">
                   {copy.eyebrow}
                 </p>
@@ -78,6 +78,26 @@ function DemoBlogPage() {
                 <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
                   {copy.description}
                 </p>
+
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <Button
+                    render={<a href="#crystal-home" aria-label={copy.primaryAction} />}
+                    nativeButton={false}
+                    size="lg"
+                  >
+                    <SparklesIcon />
+                    {copy.primaryAction}
+                  </Button>
+                  <Button
+                    render={<a href={docsHref} aria-label={copy.docsAction} />}
+                    variant="outline"
+                    nativeButton={false}
+                    size="lg"
+                  >
+                    <FileTextIcon />
+                    {copy.docsAction}
+                  </Button>
+                </div>
               </div>
 
               <nav className="border border-border bg-muted/30 p-4" aria-label={copy.choiceTitle}>
@@ -97,26 +117,6 @@ function DemoBlogPage() {
                   ))}
                 </div>
               </nav>
-            </div>
-
-            <div className="mt-10 flex flex-wrap gap-3">
-              <Button
-                render={<a href="#crystal-home" aria-label={copy.primaryAction} />}
-                nativeButton={false}
-                size="lg"
-              >
-                <SparklesIcon />
-                {copy.primaryAction}
-              </Button>
-              <Button
-                render={<a href={docsHref} aria-label={copy.docsAction} />}
-                variant="outline"
-                nativeButton={false}
-                size="lg"
-              >
-                <FileTextIcon />
-                {copy.docsAction}
-              </Button>
             </div>
           </div>
         </section>
