@@ -176,7 +176,7 @@ function getAboutCopy(locale: ReturnType<typeof getCurrentLocale>) {
         },
         {
           title: "面向交付",
-          description: "不把 Demo 当终点，而是尽量推进到发布、反馈和下一轮迭代。",
+          description: "把 Demo 作为阶段检查点，继续推进到发布、反馈和下一轮迭代。",
         },
       ],
       paths: [

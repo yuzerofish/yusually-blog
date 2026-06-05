@@ -955,7 +955,7 @@ function getHomeCopy(locale: SupportedLocale) {
 
     // ── Core Features ──
     featuresEyebrow: "Core features",
-    featuresTitle: "A full dynamic publishing system, not just a static blog.",
+    featuresTitle: "A full dynamic publishing system for a living blog.",
     featuresBody:
       "Real database, real admin panel, built-in comments and media management — all on Cloudflare's free tier.",
     features: [

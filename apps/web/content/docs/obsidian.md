@@ -36,6 +36,16 @@ This blog template simply **supports Obsidian's file format**. What that means:
 | 3. Push to GitHub      | Use a tool to "upload" your files                   | Files sync to the cloud                            |
 | 4. Auto-publish        | Nothing — just wait                                 | Your site updates automatically, article goes live |
 
+Put publishable notes in `content/notes` by default, or set `OBSIDIAN_NOTES_DIR` if your notes live somewhere else. Each note must opt in to publishing with one of these markers:
+
+```md
+---
+publish: true
+---
+```
+
+`published: true` also works, and so does a `#publish` tag in the note.
+
 ### About Git and GitHub
 
 - **Git** is a version control tool — think of it as a "time machine for files." It records every change you make, so you can always go back
@@ -66,4 +76,4 @@ Obsidian's wikilink format `[[Another Note]]` is automatically converted into re
 | People who want their notes and blog connected      | People who find file management stressful        |
 | People with a technical colleague for initial setup | People with no one to help with tech setup       |
 
-> **If this feels too complex**, that's okay! Just use the dashboard writing method instead. See the [Publishing](/docs/publishing) page for details.
+> **If this feels too complex**, that's okay! Just use the dashboard writing method instead. See the [Publishing](./publishing) page for details.

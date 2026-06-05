@@ -39,8 +39,8 @@ pnpm deploy:web
 生产环境必需的 secret：
 
 - `BETTER_AUTH_SECRET`：用 `pnpm auth:secret` 生成
-- `GITHUB_CLIENT_SECRET`：只有启用 GitHub 评论登录时才需要
-- `GOOGLE_CLIENT_SECRET`：只有启用 Google 评论登录时才需要
+- `GITHUB_CLIENT_ID` 和 `GITHUB_CLIENT_SECRET`：只有启用 GitHub 登录时才需要
+- `GOOGLE_CLIENT_ID` 和 `GOOGLE_CLIENT_SECRET`：只有启用 Google 登录时才需要
 
 ## Push 后自动部署
 

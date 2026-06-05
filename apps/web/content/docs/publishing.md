@@ -45,7 +45,7 @@ Use [Obsidian](https://obsidian.md) (a popular local note-taking app) to write a
 - You already use Obsidian for your knowledge base
 - You want your articles saved as files on your own computer
 
-> There's a small learning curve, but the benefit is that your content always stays in your hands. See the [Obsidian workflow guide](/docs/obsidian) for details.
+> There's a small learning curve, but the benefit is that your content always stays in your hands. See the [Obsidian workflow guide](./obsidian) for details.
 
 ---
 

@@ -6,7 +6,9 @@ import { Label } from "@repo/ui/components/label";
 import { CheckIcon, LoaderCircleIcon, LogOutIcon, MailIcon } from "lucide-react";
 import { useEffect, useState, type ComponentProps } from "react";
 
+import { $getAccountLoginOptions } from "#/lib/account-login-options";
 import { getCurrentLocale } from "#/lib/i18n";
+import type { SocialProvider } from "#/lib/social-providers";
 import { m } from "#/paraglide/messages.js";
 
 type CommentFormProps = {
@@ -49,10 +51,14 @@ export function CommentForm({
   const [authMode, setAuthMode] = useState<AuthMode>("login");
   const [user, setUser] = useState<CommentAuthUser | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [socialProviders, setSocialProviders] = useState<SocialProvider[]>([]);
   const [emailPreferenceStatus, setEmailPreferenceStatus] = useState<"idle" | "saving" | "saved">(
     "idle",
   );
   const emailCopy = getCommentEmailPreferenceCopy(getCurrentLocale());
+  const availableSocialLogins = socialLoginOptions.filter((option) =>
+    socialProviders.includes(option.provider),
+  );
 
   useEffect(() => {
     let ignore = false;
@@ -72,6 +78,22 @@ export function CommentForm({
           setAuthLoading(false);
         }
       });
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let ignore = false;
+
+    void $getAccountLoginOptions()
+      .then((options) => {
+        if (!ignore) {
+          setSocialProviders(options.socialProviders);
+        }
+      })
+      .catch(() => undefined);
 
     return () => {
       ignore = true;
@@ -232,26 +254,29 @@ export function CommentForm({
         </div>
 
         <div className="grid gap-3">
-          <a
-            href={socialLoginHref("github", postSlug)}
-            className={buttonVariants({ variant: "secondary", className: "w-full justify-center" })}
-          >
-            <SiGithub className="size-4" />
-            {m.comment_continue_github()}
-          </a>
-          <a
-            href={socialLoginHref("google", postSlug)}
-            className={buttonVariants({ variant: "secondary", className: "w-full justify-center" })}
-          >
-            <SiGoogle className="size-4" />
-            {m.comment_continue_google()}
-          </a>
+          {availableSocialLogins.length ? (
+            <>
+              {availableSocialLogins.map(({ Icon, label, provider }) => (
+                <a
+                  key={provider}
+                  href={socialLoginHref(provider, postSlug)}
+                  className={buttonVariants({
+                    variant: "secondary",
+                    className: "w-full justify-center",
+                  })}
+                >
+                  <Icon className="size-4" />
+                  {label}
+                </a>
+              ))}
 
-          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <span className="h-px flex-1 bg-border" />
-            {m.login_alternative()}
-            <span className="h-px flex-1 bg-border" />
-          </div>
+              <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                <span className="h-px flex-1 bg-border" />
+                {m.login_alternative()}
+                <span className="h-px flex-1 bg-border" />
+              </div>
+            </>
+          ) : null}
 
           <form onSubmit={handleEmailAuth} className="grid gap-3">
             {authMode === "signup" ? (
@@ -475,7 +500,16 @@ export function CommentForm({
   );
 }
 
-function socialLoginHref(provider: "github" | "google", postSlug: string) {
+const socialLoginOptions = [
+  { provider: "github", label: m.comment_continue_github(), Icon: SiGithub },
+  { provider: "google", label: m.comment_continue_google(), Icon: SiGoogle },
+] satisfies Array<{
+  provider: SocialProvider;
+  label: string;
+  Icon: React.ComponentType<{ className?: string }>;
+}>;
+
+function socialLoginHref(provider: SocialProvider, postSlug: string) {
   const redirectTo =
     typeof window === "undefined"
       ? `/blog/${postSlug}#comments`

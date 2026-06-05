@@ -66,6 +66,8 @@ pnpm deploy:web
 
 `pnpm deploy:web` runs the matching Vite+ build, applies remote D1 migrations, and deploys with the generated Cloudflare Vite config. The underlying commands remain available for targeted maintenance:
 
+The checked-in `apps/web/wrangler.jsonc` targets the official `blog.01mvp.com` demo deployment. For a manual deploy of that official environment, run `ALLOW_01MVP_DEMO_DEPLOY=1 pnpm deploy:web`. Template users should leave the override unset and replace the demo domain plus D1/KV/R2 values before deploying their own site.
+
 ```sh
 pnpm build:web
 pnpm --filter @repo/web exec wrangler d1 migrations apply blog-starter-cms --remote --config wrangler.jsonc
