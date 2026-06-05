@@ -55,8 +55,8 @@ Cloudflare is one of the world's largest network infrastructure companies. We ch
 
 If this is your first time with this project:
 
-1. Read the [Usage Guide](./usage) — learn what you can do with this website
-2. Then check [Deployment](./deployment) — learn how to get your site online
+1. Read [AI Setup](./ai-setup) — let AI deploy the template to Cloudflare
+2. Then read the [Usage Guide](./usage) — learn what you can do with this website
 3. Interested in reader comments? See [Comments](./comments)
 
 If you just want to understand the architecture:

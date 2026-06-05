@@ -13,11 +13,11 @@ Think of it this way: you've written a book on your computer. "Deploying" is lik
 
 Your website runs on **Cloudflare's** servers.
 
-| Question            | Answer                                                                                     |
-| ------------------- | ------------------------------------------------------------------------------------------ |
-| What is Cloudflare? | A publicly-traded US company, one of the world's largest internet infrastructure providers |
-| Why use it?         | Generous free tier, fast (servers worldwide), stable and reliable                          |
-| Does it cost money? | Personal blogs typically stay within the free tier — no payment needed                     |
+| Question            | Answer                                                                                                                  |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| What is Cloudflare? | A publicly-traded US company, one of the world's largest internet infrastructure providers                              |
+| Why use it?         | Generous free tier, fast (servers worldwide), stable and reliable                                                       |
+| Does it cost money? | Core blog usage usually stays in the free tier; R2 may require a payment method, and Email Sending requires a paid plan |
 
 ## The "infrastructure" your website needs
 
@@ -39,6 +39,8 @@ From your perspective, deployment looks like this:
 2. A developer runs **one command** in their terminal, and the site is updated
 
 The whole process usually takes less than a minute.
+
+If you use [AI Setup](./ai-setup), the AI agent can also create D1, KV, R2, the Worker, DNS bindings, D1 migrations, and live verification. You only step in for Cloudflare login, payment-method confirmation, domain nameservers, OAuth apps, or email verification.
 
 ## What is "local development"
 

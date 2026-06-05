@@ -70,6 +70,13 @@ type FreeHighlight = {
   readonly body: string;
 };
 
+type SetupPath = {
+  readonly title: string;
+  readonly description: string;
+  readonly cta: string;
+  readonly icon: LucideIcon;
+};
+
 type TechItem = {
   readonly name: string;
   readonly label: string;
@@ -96,7 +103,7 @@ function HomePage() {
 
 function ShelfHome({ posts, locale }: HomeViewProps) {
   const copy = getHomeCopy(locale);
-  const docsHref = getDocsUrl([], locale);
+  const aiSetupDocsHref = getDocsUrl(["ai-setup"], locale);
   const obsidianDocsHref = getDocsUrl(["obsidian"], locale);
   const latestPosts = posts.slice(0, 3);
 
@@ -132,7 +139,7 @@ function ShelfHome({ posts, locale }: HomeViewProps) {
           </p>
           <div data-home-reveal style={getRevealStyle(270)} className="mt-8 flex flex-wrap gap-3">
             <Button
-              render={<Link to="/demo" />}
+              render={<a href={aiSetupDocsHref} aria-label={copy.primaryCta} />}
               nativeButton={false}
               size="lg"
               className="hover:-translate-y-0.5"
@@ -141,7 +148,7 @@ function ShelfHome({ posts, locale }: HomeViewProps) {
               <ArrowRightIcon />
             </Button>
             <Button
-              render={<a href={docsHref} aria-label={copy.secondaryCta} />}
+              render={<Link to="/demo" />}
               variant="outline"
               nativeButton={false}
               size="lg"
@@ -234,6 +241,11 @@ function ShelfHome({ posts, locale }: HomeViewProps) {
               </h2>
             </div>
             <p className="self-end text-sm leading-7 text-muted-foreground">{copy.skillBody}</p>
+          </div>
+          <div className="mt-8 grid gap-px border border-border bg-border md:grid-cols-2">
+            {copy.setupPaths.map((path, index) => (
+              <SetupPathCard key={path.title} href={aiSetupDocsHref} path={path} index={index} />
+            ))}
           </div>
           <ol className="mt-10 divide-y divide-border border-y border-border">
             {copy.skillSteps.map((step, index) => (
@@ -509,6 +521,41 @@ function FreeHighlightCard({
   );
 }
 
+function SetupPathCard({
+  href,
+  index,
+  path,
+}: {
+  readonly href: string;
+  readonly index: number;
+  readonly path: SetupPath;
+}) {
+  const Icon = path.icon;
+
+  return (
+    <a
+      href={href}
+      data-home-reveal
+      data-home-card
+      style={getRevealStyle(index * 70)}
+      className="group bg-background p-5 transition hover:bg-muted/35"
+    >
+      <span
+        data-home-icon
+        className="flex size-10 items-center justify-center rounded-md bg-muted text-foreground"
+      >
+        <Icon className="size-5" />
+      </span>
+      <span className="mt-5 block text-lg font-semibold group-hover:text-link">{path.title}</span>
+      <span className="mt-2 block text-sm leading-6 text-muted-foreground">{path.description}</span>
+      <span className="mt-4 flex items-center gap-2 text-sm font-semibold text-link">
+        {path.cta}
+        <ArrowRightIcon className="size-4" />
+      </span>
+    </a>
+  );
+}
+
 function OwnershipRow({
   index,
   point,
@@ -704,8 +751,8 @@ function getHomeCopy(locale: SupportedLocale) {
       heroTitle: "搭建你的永久精神家园",
       heroBody:
         "01mvp-blog-starter 是一套 Cloudflare 原生的个人博客内容系统。后台、评论、图床、RSS 开箱即用，初始化流程可以从配置一路跑到上线。",
-      primaryCta: "查看博客 Demo",
-      secondaryCta: "阅读使用文档",
+      primaryCta: "开始 AI 建站",
+      secondaryCta: "查看博客 Demo",
 
       // ── Why Free ──
       freeEyebrow: "免费边界",
@@ -721,7 +768,7 @@ function getHomeCopy(locale: SupportedLocale) {
         {
           icon: GlobeIcon,
           label: "自带访问地址",
-          body: "默认提供 *.workers.dev 子域名。如需自定义品牌或国内访问，再绑定自己的域名即可。",
+          body: "默认提供 *.workers.dev 子域名。正式公开、品牌展示或面向中国大陆读者时，建议绑定自己的域名。",
         },
         {
           icon: ShieldCheckIcon,
@@ -767,7 +814,8 @@ function getHomeCopy(locale: SupportedLocale) {
         },
         {
           title: "图床（R2 存储）",
-          description: "10 GB 免费存储，下载流量不计费。开通需绑定信用卡，免费额度内不扣款。",
+          description:
+            "用于图片、导入、导出和备份。开通通常需要绑定付款方式，小型个人站一般落在免费额度内。",
           icon: CloudIcon,
         },
         {
@@ -820,29 +868,46 @@ function getHomeCopy(locale: SupportedLocale) {
 
       // ── Automation ──
       skillEyebrow: "自动化初始化",
-      skillTitle: "从模板到上线，初始化流程可以连续完成。",
+      skillTitle: "两种方式，把模板交给 AI 跑完整流程。",
       skillBody:
-        "准备好 Cloudflare 授权和站点信息后，自动化流程会创建资源、写入配置、运行迁移并完成部署。",
+        "推荐安装 01mvp-blog Skill；不想安装也可以直接复制文档里的 Prompt。AI 负责创建 Cloudflare 资源、写配置、跑迁移和部署，你只在账号、域名和付款确认等环节手动处理。",
+      setupPaths: [
+        {
+          title: "安装 01mvp-blog Skill",
+          description:
+            "适合长期使用。后续初始化命令、Cloudflare 资源创建和验收清单都可以跟着 Skill 更新。",
+          cta: "查看安装步骤",
+          icon: SparklesIcon,
+        },
+        {
+          title: "复制 AI 建站 Prompt",
+          description:
+            "适合先快速体验。把完整 Prompt 发给 Codex、Claude Code 或 Cursor，让 AI 按同一套流程执行。",
+          cta: "复制教程 Prompt",
+          icon: FileTextIcon,
+        },
+      ] satisfies SetupPath[],
       skillSteps: [
         {
           number: "01",
-          title: "获取 Cloudflare 授权",
-          description: "在 AI 编辑器里安装 Cloudflare 插件，或配置 API Token。只做一次。",
+          title: "安装 Cloudflare 插件",
+          description: "在 Codex、Claude Code 或 Cursor 里连接 Cloudflare 账号，让 AI 能操作资源。",
         },
         {
           number: "02",
-          title: "填写站点信息",
-          description: "提供站点名称、域名、语言、社交登录和邮件发送配置。",
+          title: "Fork 或 clone 模板",
+          description: "使用 01MVP/blog-starter 作为起点，也可以让 AI 创建新的 GitHub 仓库。",
         },
         {
           number: "03",
-          title: "执行部署流程",
-          description: "自动创建 D1、R2、Workers，执行迁移，写入配置，部署上线。",
+          title: "让 AI 执行初始化",
+          description: "自动创建 D1、KV、R2、Worker，写入配置，执行 migrations，部署上线。",
         },
         {
           number: "04",
-          title: "开始写作",
-          description: "AI 给你站点地址，打开 /admin 设置账号，写第一篇文章。",
+          title: "处理少量人工确认",
+          description:
+            "登录 Cloudflare、确认付款方式、切换 nameserver、创建 OAuth 应用或验证邮件。",
         },
       ],
 
@@ -864,7 +929,7 @@ function getHomeCopy(locale: SupportedLocale) {
         {
           service: "R2 图床",
           quota: "10 GB，下载免费",
-          note: "需绑信用卡开通，额度内不扣款。",
+          note: "用于图片、导入、导出和备份；通常需先确认付款方式。",
         },
         {
           service: "KV 缓存",
@@ -917,8 +982,8 @@ function getHomeCopy(locale: SupportedLocale) {
     heroTitle: "Build your permanent home on the internet",
     heroBody:
       "01mvp-blog-starter is a Cloudflare-native personal blog system. Writing dashboard, comments, image hosting, and RSS ship out of the box, and the setup flow can take it from configuration to live deploy.",
-    primaryCta: "View blog demo",
-    secondaryCta: "Read the docs",
+    primaryCta: "Start AI setup",
+    secondaryCta: "View blog demo",
 
     // ── Why Free ──
     freeEyebrow: "Cost boundary",
@@ -934,7 +999,7 @@ function getHomeCopy(locale: SupportedLocale) {
       {
         icon: GlobeIcon,
         label: "Built-in URL",
-        body: "A free *.workers.dev subdomain is included. Bring your own domain anytime for a custom URL.",
+        body: "A free *.workers.dev subdomain is included. For public branding or mainland China readers, bind your own domain.",
       },
       {
         icon: ShieldCheckIcon,
@@ -983,7 +1048,7 @@ function getHomeCopy(locale: SupportedLocale) {
       {
         title: "Image hosting (R2)",
         description:
-          "Paste to upload. 10 GB free, free egress. Credit card required to activate, but no charge within the free tier.",
+          "Images, imports, exports, and backups. Activation usually requires a payment method; small personal sites usually stay inside the free tier.",
         icon: CloudIcon,
       },
       {
@@ -1039,33 +1104,49 @@ function getHomeCopy(locale: SupportedLocale) {
 
     // ── Automation ──
     skillEyebrow: "Automated setup",
-    skillTitle: "Go from template to live site in one setup flow.",
+    skillTitle: "Give the template to AI in either of two ways.",
     skillBody:
-      "After Cloudflare access and site details are ready, the setup flow creates resources, writes configuration, runs migrations, and deploys the Worker.",
+      "Install the 01mvp-blog Skill for the best long-term flow, or copy the setup prompt from the docs. AI creates Cloudflare resources, writes config, runs migrations, and deploys; you only handle account, domain, and payment confirmations.",
+    setupPaths: [
+      {
+        title: "Install the 01mvp-blog Skill",
+        description:
+          "Best for repeated use. Setup commands, Cloudflare provisioning, and verification checks can keep improving with the Skill.",
+        cta: "Read install steps",
+        icon: SparklesIcon,
+      },
+      {
+        title: "Copy the AI setup prompt",
+        description:
+          "Best for quick trials. Paste the full prompt into Codex, Claude Code, or Cursor and let AI follow the same workflow.",
+        cta: "Copy the prompt",
+        icon: FileTextIcon,
+      },
+    ] satisfies SetupPath[],
     skillSteps: [
       {
         number: "01",
-        title: "Authorize Cloudflare",
+        title: "Install Cloudflare access",
         description:
-          "Install the Cloudflare plugin in Cursor / Codex, or configure an API Token. One-time setup.",
+          "Connect your Cloudflare account inside Codex, Claude Code, Cursor, or another AI coding agent.",
       },
       {
         number: "02",
-        title: "Fill in site details",
+        title: "Fork or clone the template",
         description:
-          "Provide the site name, domain, language, social login, and email sending settings.",
+          "Start from 01MVP/blog-starter, or let AI create a fresh GitHub repository for your blog.",
       },
       {
         number: "03",
-        title: "Run the deploy flow",
+        title: "Let AI initialize the site",
         description:
-          "Creates D1, R2, Workers — runs migrations, writes config, deploys. Fully automatic.",
+          "Creates D1, KV, R2, and Worker resources, writes config, runs migrations, and deploys.",
       },
       {
         number: "04",
-        title: "Start writing",
+        title: "Handle manual confirmations",
         description:
-          "Open /admin on the live URL, create your account, and publish your first post.",
+          "Cloudflare login, payment-method confirmation, nameservers, OAuth apps, or email verification.",
       },
     ],
 
@@ -1087,7 +1168,7 @@ function getHomeCopy(locale: SupportedLocale) {
       {
         service: "R2 image storage",
         quota: "10 GB, free egress",
-        note: "Credit card to activate; no charge within 10 GB.",
+        note: "Images, imports, exports, and backups; payment-method confirmation is usually needed.",
       },
       {
         service: "KV cache",

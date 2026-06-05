@@ -1,6 +1,6 @@
 ---
 name: 01mvp-blog
-description: Create and maintain a 01mvp-blog-starter site. Use Cloudflare skills for provisioning/deploy work, then use the site's OpenAPI contract and scoped API tokens for blog maintenance.
+description: Create, deploy, verify, and maintain a 01mvp-blog-starter site. Orchestrate GitHub setup, Cloudflare provisioning, deployment, first admin setup, and OpenAPI-based maintenance.
 ---
 
 # 01mvp-blog Skill
@@ -9,7 +9,9 @@ Use this Skill when creating a new personal blog from the 01mvp-blog-starter tem
 
 ## Dependency Skills
 
-For Cloudflare account, resource, DNS, and deployment work, recommend that the user install and use the relevant Cloudflare skills in their agent environment. Prefer the comprehensive Cloudflare skill plus the Wrangler and Workers best-practices skills, commonly exposed as `cloudflare:cloudflare`, `cloudflare:wrangler`, and `cloudflare:workers-best-practices`. This Skill owns the blog-specific workflow, expected outputs, OpenAPI usage, and verification contract; do not duplicate Cloudflare platform setup instructions here.
+For Cloudflare account, resource, DNS, and deployment work, use the relevant Cloudflare skills, plugin, connector, MCP tools, Wrangler CLI, or Cloudflare API already available in the agent environment. Prefer the comprehensive Cloudflare skill plus Wrangler and Workers best-practices guidance when present.
+
+This Skill owns the end-to-end blog workflow. Do not tell the user to manually create D1, KV, R2, Workers, DNS routes, or run migrations when the available tools can do it. Ask the user to act only for browser-only or account-owner steps such as login, account registration, payment-method confirmation, domain purchase, nameserver changes, OAuth app creation, and email verification.
 
 ## Install And Load
 
@@ -37,11 +39,12 @@ Ask for missing values only when they are not already provided:
 - Author name
 - Author email
 - Primary language: `en` or `zh`
-- Domain
-- Theme preset: `maker`, `apple`, or `editorial`
+- Domain, or confirmation to start with `*.workers.dev`
+- Theme preset: `maker`, `apple`, `editorial`, or `brutalist`
 - Layout preset: `shelf`, `developer`, or `journal`
 - Comments enabled
-- Email Sending enabled
+- Email Sending enabled; clarify that it is optional and currently requires Workers Paid
+- R2 enabled; clarify that it is needed for images, imports, exports, and backups, and may require a payment method before activation
 - GitHub Actions enabled
 
 For maintenance-only tasks, collect only:
@@ -57,19 +60,28 @@ For maintenance-only tasks, collect only:
 2. Create or clone the project from the template.
 3. Write site config from `templates/site.config.json`.
 4. Keep `locales: ["en", "zh"]`, `primaryLanguage`, and `i18nRuntime: "paraglide-js"` in generator config. Site settings use `i18n` for localized text fields.
-5. Use the user's Cloudflare skills for account authentication, resource provisioning, DNS, bindings, and deployment.
-6. Verify that the deployed Worker and custom domain route match the selected target.
-7. Create the first admin user through the deployed API or admin UI.
-8. Create a scoped API token from the admin settings, or create it through `POST /api/tokens` when an authenticated admin session is available.
-9. Store the API token securely outside the repository.
-10. Push settings through `PUT /api/site`.
-11. Publish the first bilingual post through `POST /api/posts`.
-12. Upload a media asset through `POST /api/assets`.
-13. Submit a public comment and approve it through `POST /api/comments/:id/approve`.
-14. If Email Sending is enabled, request a password reset email.
-15. Export the site through `GET /api/export` and create a ZIP backup through `POST /api/backups`.
-16. Verify public page, post page, admin login, RSS, sitemap, robots, OpenAPI, OG metadata, localized post API response, R2 asset, JSON export, and ZIP backup.
-17. Save an execution log for the generated site.
+5. Confirm Cloudflare access. If a Cloudflare plugin, connector, MCP tool, or Wrangler login is missing, guide the user through installing or authorizing it, then continue.
+6. Create or select Cloudflare resources:
+   - Worker for the web app
+   - D1 database for posts, comments, settings, users, sessions, and tokens
+   - KV namespace for cache metadata and short-lived records
+   - R2 bucket for images, imports, exports, and backups when R2 is enabled
+7. If R2 cannot be activated because the account needs a payment method, ask the user to confirm the payment method or explicitly choose a reduced setup. Reduced setup must document that image upload, import, export, and ZIP backups are affected.
+8. Generate required secrets, update `wrangler.jsonc`, and apply D1 migrations.
+9. Deploy the Worker.
+10. Bind the custom domain when provided. If the domain is not on Cloudflare, ask the user to complete domain purchase, zone setup, nameserver changes, or route confirmation.
+11. Verify that the deployed Worker and custom domain route match the selected target.
+12. Create the first admin user through the deployed API or admin UI.
+13. Create a scoped API token from the admin settings, or create it through `POST /api/tokens` when an authenticated admin session is available.
+14. Store the API token securely outside the repository.
+15. Push settings through `PUT /api/site`.
+16. Publish the first bilingual post through `POST /api/posts`.
+17. Upload a media asset through `POST /api/assets` when R2 is enabled.
+18. Submit a public comment and approve it through `POST /api/comments/:id/approve` when comments are enabled.
+19. If Email Sending is enabled, request a password reset email. If it is disabled, verify that email verification, password-reset email, and notification copy do not block core publishing.
+20. Export the site through `GET /api/export` and create a ZIP backup through `POST /api/backups` when R2 is enabled.
+21. Verify public page, post page, admin login, RSS, sitemap, robots, OpenAPI, OG metadata, localized post API response, D1 data, R2 asset when enabled, JSON export, and ZIP backup when enabled.
+22. Save an execution log for the generated site.
 
 ## Maintain Blog Workflow
 
@@ -104,7 +116,9 @@ For maintenance-only tasks, collect only:
 
 ## User Intervention Points
 
-Ask the user to act only for Cloudflare login, account registration, paid-plan confirmation, API token creation, DNS confirmation, domain verification, and email verification.
+Ask the user to act only for Cloudflare login, account registration, Cloudflare account selection, payment-method confirmation, domain purchase, nameserver changes, OAuth app creation, email verification, first admin account creation, or API token creation when no authenticated session is available.
+
+If the user targets mainland China readers, recommend a custom domain instead of relying only on `*.workers.dev`. For long-term public operation, high traffic, or commercial usage in mainland China, remind the user to handle domain, access, and compliance requirements separately.
 
 ## Canonical Target
 

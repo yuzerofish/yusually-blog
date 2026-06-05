@@ -111,6 +111,7 @@ The public documentation source is `apps/web/content/docs`. It is rendered at `/
 
 Start with these guides:
 
+- [AI Setup](./apps/web/content/docs/ai-setup.md)
 - [Deployment](./apps/web/content/docs/deployment.md)
 - [Comments](./apps/web/content/docs/comments.md)
 - [Advanced configuration](./apps/web/content/docs/advanced-configuration.md)
@@ -137,6 +138,8 @@ npx skills@latest add 01MVP/blog-starter --skill 01mvp-blog --agent codex --yes
 Replace `codex` with another lowercase agent id when installing for a different agent.
 
 Use the `01mvp-blog` Skill for site creation and OpenAPI-based maintenance. Cloudflare provisioning still needs Cloudflare-capable agent skills or tooling. Generated sites expose `/openapi.json`; create scoped API tokens in the admin settings before wiring external automation.
+
+If you do not want to install the Skill, copy the prompt in [AI Setup](./apps/web/content/docs/ai-setup.md) into your AI agent. The Skill is still recommended because setup commands, Cloudflare provisioning, and verification checks can be updated over time.
 
 ## License
 
