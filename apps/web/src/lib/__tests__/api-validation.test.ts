@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 
 import {
   AccountEmailPreferencesPatchSchema,
+  ApiTokenCreateSchema,
   BatchPostSchema,
   CreateCommentSchema,
   PostPatchSchema,
@@ -212,6 +213,38 @@ describe("AccountEmailPreferencesPatchSchema", () => {
   it("rejects invalid comment reply notification values", () => {
     const result = AccountEmailPreferencesPatchSchema.safeParse({
       commentReplyNotificationsEnabled: "false",
+    });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe("ApiTokenCreateSchema", () => {
+  it("accepts a future token expiry", () => {
+    const result = ApiTokenCreateSchema.safeParse({
+      expiresAt: new Date(Date.now() + 60_000).toISOString(),
+      name: "AI publisher",
+      scopes: ["posts:read"],
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("normalizes an empty token expiry to null", () => {
+    const result = ApiTokenCreateSchema.safeParse({
+      expiresAt: "",
+      name: "AI publisher",
+      scopes: ["posts:read"],
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.expiresAt).toBeNull();
+    }
+  });
+
+  it("rejects a past token expiry", () => {
+    const result = ApiTokenCreateSchema.safeParse({
+      expiresAt: new Date(Date.now() - 60_000).toISOString(),
+      name: "AI publisher",
+      scopes: ["posts:read"],
     });
     expect(result.success).toBe(false);
   });

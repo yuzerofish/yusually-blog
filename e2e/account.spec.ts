@@ -8,6 +8,60 @@ const localAdmin = {
 };
 
 test.describe("Account preferences", () => {
+  test("changes an email/password account password from the account page", async ({ page }) => {
+    await prepareEmailPasswordSignup(page);
+
+    const runId = `${Date.now()}-${test.info().parallelIndex}`;
+    const email = `reader-password-${runId}@example.test`;
+    const oldPassword = "password123";
+    const newPassword = "password456";
+    await signUpReaderAccount(page, {
+      email,
+      name: `Reader Password ${runId}`,
+      password: oldPassword,
+    });
+
+    await gotoAccountPage(page);
+    await page.locator("#current_password").fill(oldPassword);
+    await page.locator("#new_password").fill(newPassword);
+    await page.locator("#confirm_password").fill(newPassword);
+    await page.getByRole("button", { name: "Update password" }).click();
+    await expect(page.getByText("Password updated.")).toBeVisible();
+
+    await page.context().clearCookies();
+
+    const oldLoginResponse = await page.context().request.post("/api/account/login", {
+      data: { email, password: oldPassword },
+      headers: sameOriginHeaders(),
+    });
+    expect(oldLoginResponse.status()).toBe(401);
+
+    const newLoginResponse = await page.context().request.post("/api/account/login", {
+      data: { email, password: newPassword },
+      headers: sameOriginHeaders(),
+    });
+    expect(newLoginResponse.status()).toBe(200);
+  });
+
+  test("accepts password reset requests without exposing account existence", async ({
+    request,
+  }) => {
+    const requestResponse = await request.post("/api/account/password-reset", {
+      data: { email: "missing-reader@example.test" },
+      headers: sameOriginHeaders(),
+    });
+    expect(requestResponse.status()).toBe(202);
+    await expect(requestResponse.json()).resolves.toMatchObject({
+      data: { accepted: true },
+    });
+
+    const invalidConfirmResponse = await request.post("/api/account/password-reset", {
+      data: { token: "invalid-token", password: "password456" },
+      headers: sameOriginHeaders(),
+    });
+    expect(invalidConfirmResponse.status()).toBe(400);
+  });
+
   test("saves blog update and comment reply email preferences", async ({ page }) => {
     await prepareEmailPasswordSignup(page);
 

@@ -111,6 +111,64 @@ test.describe("Admin authentication", () => {
     }
   });
 
+  test("lets an admin send a reader reset email and revoke reader sessions", async ({
+    browser,
+    page,
+  }) => {
+    await prepareEmailPasswordSignup(page);
+
+    const runId = `${Date.now()}-${test.info().parallelIndex}`;
+    const email = `reader-admin-security-${runId}@example.test`;
+    const readerContext = await browser.newContext({ baseURL });
+    const readerPage = await readerContext.newPage();
+
+    const signupResponse = await readerPage.context().request.post("/api/account/signup", {
+      data: {
+        email,
+        name: `Reader Admin Security ${runId}`,
+        password: "password123",
+      },
+      headers: sameOriginHeaders(),
+    });
+    expect(signupResponse.status()).toBe(201);
+
+    const readerMeBefore = await readerPage
+      .context()
+      .request.get("/api/account/me?disableCookieCache=true&disableRefresh=true");
+    expect(readerMeBefore.status()).toBe(200);
+
+    await logInAsLocalAdmin(page);
+
+    const usersResponse = await page.context().request.get("/api/admin/users");
+    expect(usersResponse.status()).toBe(200);
+    const usersPayload = (await usersResponse.json()) as {
+      data?: Array<{ email?: string; id?: string }>;
+    };
+    const reader = usersPayload.data?.find((user) => user.email === email);
+    expect(reader?.id).toBeTruthy();
+
+    const resetResponse = await page
+      .context()
+      .request.post(`/api/admin/users/${reader?.id}/password-reset`, {
+        headers: sameOriginHeaders(),
+      });
+    expect(resetResponse.status()).toBe(202);
+
+    const revokeResponse = await page
+      .context()
+      .request.post(`/api/admin/users/${reader?.id}/sessions`, {
+        headers: sameOriginHeaders(),
+      });
+    expect(revokeResponse.status()).toBe(200);
+
+    const readerMeAfter = await readerPage
+      .context()
+      .request.get("/api/account/me?disableCookieCache=true&disableRefresh=true");
+    expect(readerMeAfter.status()).toBe(401);
+
+    await readerContext.close();
+  });
+
   test("loads the new post editor without client runtime errors", async ({ page }) => {
     const pageErrors: string[] = [];
     page.on("pageerror", (error) => pageErrors.push(error.message));

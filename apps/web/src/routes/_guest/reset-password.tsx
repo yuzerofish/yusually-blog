@@ -20,7 +20,7 @@ function ResetPasswordForm() {
     typeof window === "undefined" ? "" : new URLSearchParams(window.location.search).get("token");
   const requestReset = useMutation({
     mutationFn: async (email: string) => {
-      const response = await fetch("/api/admin/password-reset", {
+      const response = await fetch("/api/account/password-reset", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email }),
@@ -40,7 +40,7 @@ function ResetPasswordForm() {
   });
   const confirmReset = useMutation({
     mutationFn: async (password: string) => {
-      const response = await fetch("/api/admin/password-reset", {
+      const response = await fetch("/api/account/password-reset", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ token, password }),
