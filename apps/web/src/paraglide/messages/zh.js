@@ -1353,7 +1353,7 @@ export const comment_error = /** @type {(inputs: Comment_ErrorInputs) => Localiz
 };
 
 export const comment_login_description = /** @type {(inputs: Comment_Login_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`请先用 GitHub、Google 或邮箱登录，再发表评论。`)
+	return /** @type {LocalizedString} */ (`请先登录。`)
 };
 
 export const comment_login_required = /** @type {(inputs: Comment_Login_RequiredInputs) => LocalizedString} */ () => {
