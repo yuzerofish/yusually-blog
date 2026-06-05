@@ -18,8 +18,8 @@ This website template works the same way — **Blog** is your newsletter, **Docs
 | -------------------- | ------------------------------ | ------------------------------------------------ |
 | **Analogy**          | Newsletter / social feed       | Company handbook / wiki                          |
 | **Update frequency** | Often                          | Rarely                                           |
-| **Where you write**  | Admin panel (in browser)       | Markdown files in the project folder             |
-| **Who manages it**   | The author, solo               | Team collaboration with review process           |
+| **Where you write**  | Admin panel (in browser)       | Markdown/MDX files in the Git repository         |
+| **Who manages it**   | The author, solo               | Repository maintainers through Git commits       |
 | **Drafts?**          | Yes, with scheduled publishing | Via Git branches (like a document approval flow) |
 | **Comments?**        | Yes                            | No                                               |
 | **Image uploads?**   | Yes, directly in admin         | Yes, but placed in project files                 |
@@ -39,10 +39,11 @@ In the admin panel (`/admin`), you can:
 
 ## Docs: Your "Company Wiki"
 
-Documentation pages (like the one you're reading now) live in the project code, like a product manual:
+Documentation pages (like the one you're reading now) live in the project code, like a product manual or an Obsidian-style local Markdown notebook:
 
 - Content is stable and doesn't change often
-- Changes go through a review process (via Git, similar to document approvals)
+- You maintain it as local files in your Git repository
+- Changes are committed and redeployed with the site
 - Published together with the website code, keeping everything in sync
 
 **Put this here**: Product manuals, how-to guides, developer docs, deployment instructions — anything you "write once and rarely touch."

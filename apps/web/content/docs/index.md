@@ -17,16 +17,18 @@ description: A ready-to-use personal blog system — get your own website up and
 
 ## What Can This Website Do
 
-Your website comes with two core areas by default:
+Your website comes with two core areas by default. The key difference is how you manage them:
 
-| Area | URL     | Purpose                                     | Analogy                                        |
-| ---- | ------- | ------------------------------------------- | ---------------------------------------------- |
-| Blog | `/blog` | Write articles, receive reader comments     | Like your own newsletter, but fully self-owned |
-| Docs | `/docs` | Write product guides, tutorials, references | Like a knowledge base (Notion/GitBook)         |
+| Area | URL     | Purpose                                     | How you manage it                                  |
+| ---- | ------- | ------------------------------------------- | -------------------------------------------------- |
+| Blog | `/blog` | Write articles, receive reader comments     | Write, draft, and publish from the `/admin` panel  |
+| Docs | `/docs` | Write product guides, tutorials, references | Maintain Markdown/MDX files in your Git repository |
 
-**Blog** is for frequently updated content — today's thoughts, this week's recap, a new product announcement.
+**Blog** is for frequently updated content — today's thoughts, this week's recap, a new product announcement. It is a dashboard-managed dynamic content system for drafts, covers, comments, and publishing status.
 
-**Docs** is for long-lived stable content — product manuals, tutorials, team guidelines. Things that don't change often but need to always be there.
+**Docs** is for long-lived stable content — product manuals, tutorials, team guidelines. It is closer to an Obsidian-style local Markdown workflow: edit files in your own Git repository, commit them, and redeploy the site.
+
+If you're unsure where a piece of content belongs, see the detailed [Content Systems](./content-systems) comparison.
 
 ## Tech Stack Overview
 
