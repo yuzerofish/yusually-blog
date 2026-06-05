@@ -354,7 +354,11 @@ function LatestPostsSection({
         </div>
 
         {latestPosts.length ? (
-          <div className="mt-7 grid gap-px border border-border bg-border md:grid-cols-3">
+          <div
+            className={`mt-7 grid gap-px border border-border bg-border ${getLatestPostsGridClassName(
+              latestPosts.length,
+            )}`}
+          >
             {latestPosts.map((post, index) => (
               <LatestPostCard key={post.id} post={post} locale={locale} index={index} />
             ))}
@@ -375,6 +379,18 @@ function LatestPostsSection({
       </div>
     </section>
   );
+}
+
+function getLatestPostsGridClassName(count: number) {
+  if (count <= 1) {
+    return "md:grid-cols-1";
+  }
+
+  if (count === 2) {
+    return "md:grid-cols-2";
+  }
+
+  return "md:grid-cols-3";
 }
 
 function LatestPostCard({

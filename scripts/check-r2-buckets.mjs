@@ -75,8 +75,6 @@ function assertDeployConfig(config) {
   const vars = config.vars && typeof config.vars === "object" ? config.vars : {};
   const d1Databases = Array.isArray(config.d1_databases) ? config.d1_databases : [];
   const kvNamespaces = Array.isArray(config.kv_namespaces) ? config.kv_namespaces : [];
-  const routes = Array.isArray(config.routes) ? config.routes : [];
-  const allowOfficialDemoDeploy = process.env.ALLOW_01MVP_DEMO_DEPLOY === "1";
   const problems = [];
 
   const publicSiteUrl = String(vars.CMS_PUBLIC_SITE_URL ?? "");
@@ -86,27 +84,10 @@ function assertDeployConfig(config) {
     problems.push("Set CMS_PUBLIC_SITE_URL and VITE_BASE_URL to your production URL.");
   }
 
-  if (
-    !allowOfficialDemoDeploy &&
-    (publicSiteUrl.includes("blog.01mvp.com") || viteBaseUrl.includes("blog.01mvp.com"))
-  ) {
-    problems.push("Replace the 01mvp demo site URL before deploying this template.");
-  }
-
-  if (
-    !allowOfficialDemoDeploy &&
-    routes.some((route) => String(route.pattern ?? "").includes("blog.01mvp.com"))
-  ) {
-    problems.push("Remove or replace the 01mvp custom domain route.");
-  }
-
   for (const database of d1Databases) {
     const id = String(database.database_id ?? "");
 
-    if (
-      isPlaceholderUuid(id) ||
-      (!allowOfficialDemoDeploy && id === "b267c97c-72a5-45a1-9f5a-cfd0b8e8067c")
-    ) {
+    if (isPlaceholderUuid(id)) {
       problems.push(`Set a real D1 database_id for ${database.binding ?? "CMS_DB"}.`);
     }
   }
@@ -114,21 +95,14 @@ function assertDeployConfig(config) {
   for (const namespace of kvNamespaces) {
     const id = String(namespace.id ?? "");
 
-    if (
-      isPlaceholderHexId(id) ||
-      (!allowOfficialDemoDeploy && id === "c1150cc286374ba9919f48f48a985f36")
-    ) {
+    if (isPlaceholderHexId(id)) {
       problems.push(`Set a real KV namespace id for ${namespace.binding ?? "CMS_CACHE"}.`);
     }
   }
 
-  if (!allowOfficialDemoDeploy && String(vars.CMS_EMAIL_FROM ?? "").includes("01mvp.com")) {
-    problems.push("Replace the 01mvp email sender before enabling production email.");
-  }
-
   if (problems.length) {
     fail([
-      "apps/web/wrangler.jsonc still contains template or demo deployment values.",
+      "apps/web/wrangler.jsonc still contains template deployment values.",
       "",
       ...Array.from(new Set(problems)).map((problem) => `- ${problem}`),
     ]);

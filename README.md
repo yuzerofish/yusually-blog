@@ -34,7 +34,7 @@ The button works for Workers applications. This repository is a pnpm monorepo, s
 pnpm deploy:web
 ```
 
-Before the first production deploy, create or choose the target D1 database, R2 bucket, and KV namespace, then replace the placeholders in `apps/web/wrangler.jsonc`. The deploy script fails early while placeholder IDs or demo URLs remain.
+Before the first production deploy, create or choose the target D1 database, R2 bucket, and KV namespace, then replace the placeholders in `apps/web/wrangler.jsonc`. The deploy script fails early while placeholder IDs or placeholder URLs remain.
 
 Required production secrets:
 

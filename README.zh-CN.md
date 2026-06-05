@@ -34,7 +34,7 @@
 pnpm deploy:web
 ```
 
-第一次生产部署前，先创建或选择目标 D1 数据库、R2 存储桶和 KV namespace，然后替换 `apps/web/wrangler.jsonc` 里的 placeholder。只要 placeholder ID 或演示站 URL 还在，部署脚本会提前失败。
+第一次生产部署前，先创建或选择目标 D1 数据库、R2 存储桶和 KV namespace，然后替换 `apps/web/wrangler.jsonc` 里的 placeholder。只要 placeholder ID 或 placeholder URL 还在，部署脚本会提前失败。
 
 生产环境必需的 secret：
 
