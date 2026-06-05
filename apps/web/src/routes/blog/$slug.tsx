@@ -294,9 +294,11 @@ function BlogPostPage() {
                 ) : (
                   <p className="mt-6 text-sm text-muted-foreground">{m.comments_disabled()}</p>
                 )}
-                <div className="mt-6 grid gap-4">
-                  <CommentList comments={visibleComments} onReply={setReplyTarget} />
-                </div>
+                {visibleComments.length ? (
+                  <div className="mt-8">
+                    <CommentList comments={visibleComments} onReply={setReplyTarget} />
+                  </div>
+                ) : null}
               </section>
             ) : null}
           </div>
@@ -336,6 +338,7 @@ type CommentListProps = {
 };
 
 function CommentList({ comments, depth = 0, onReply, parentId = null }: CommentListProps) {
+  const locale = getCurrentLocale();
   const visibleIds = new Set(comments.map((comment) => comment.id));
   const children = comments.filter((comment) => {
     if (parentId) {
@@ -346,40 +349,57 @@ function CommentList({ comments, depth = 0, onReply, parentId = null }: CommentL
   });
 
   return (
-    <>
+    <div className={cn("grid gap-4", depth ? "mt-3 border-l border-border/70 pl-4 md:pl-5" : "")}>
       {children.map((comment) => (
         <div key={comment.id} className="grid gap-3">
-          <div
+          <article
             className={cn(
-              "border-l py-1 pl-4",
-              comment.status === "pending"
-                ? "border-success/60 bg-success/5 py-3 pr-4"
-                : "border-border/80",
+              "rounded-md border p-4 shadow-xs",
+              depth ? "bg-muted/25" : "bg-background",
+              comment.status === "pending" ? "border-success/45 bg-success/5" : "border-border/80",
             )}
-            style={{ marginLeft: depth ? Math.min(depth, 3) * 16 : 0 }}
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="font-medium">{comment.authorName}</p>
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-sm font-semibold text-foreground">
+                  {commentInitial(comment.authorName)}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate font-medium">{comment.authorName}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatDate(comment.createdAt, locale)}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
                 {comment.status === "pending" ? (
                   <span className="rounded-full border border-success/35 bg-success/10 px-2 py-0.5 text-xs font-medium text-success">
                     {m.comment_pending_badge()}
                   </span>
                 ) : null}
+                {depth < 1 && comment.status === "approved" ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="ghost"
+                    className="min-h-10"
+                    onClick={() => onReply(comment)}
+                  >
+                    <MessageSquareIcon className="size-4" />
+                    {m.comment_reply()}
+                  </Button>
+                ) : null}
               </div>
-              {depth < 1 && comment.status === "approved" ? (
-                <Button type="button" size="sm" variant="outline" onClick={() => onReply(comment)}>
-                  {m.comment_reply()}
-                </Button>
-              ) : null}
             </div>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">{comment.body}</p>
+            <p className="mt-3 text-sm leading-6 break-words whitespace-pre-wrap text-foreground/80">
+              {comment.body}
+            </p>
             {comment.status === "pending" ? (
               <p className="mt-2 text-xs leading-5 text-success">
                 {m.comment_pending_visible_note()}
               </p>
             ) : null}
-          </div>
+          </article>
           {depth < 1 ? (
             <CommentList
               comments={comments}
@@ -390,8 +410,12 @@ function CommentList({ comments, depth = 0, onReply, parentId = null }: CommentL
           ) : null}
         </div>
       ))}
-    </>
+    </div>
   );
+}
+
+function commentInitial(name: string) {
+  return name.trim().slice(0, 1).toUpperCase() || "?";
 }
 
 function mergeCommentLists(comments: Comment[], submittedComments: Comment[]) {

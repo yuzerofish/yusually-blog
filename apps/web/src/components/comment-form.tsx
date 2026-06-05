@@ -1,14 +1,12 @@
-import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
 import type { Comment, EmailPreference } from "@repo/core";
 import { Button, buttonVariants } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
-import { CheckIcon, LoaderCircleIcon, LogOutIcon, MailIcon } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { CheckIcon, LoaderCircleIcon, LogInIcon, LogOutIcon, MailIcon } from "lucide-react";
 import { useEffect, useState, type ComponentProps } from "react";
 
-import { $getAccountLoginOptions } from "#/lib/account-login-options";
 import { getCurrentLocale } from "#/lib/i18n";
-import type { SocialProvider } from "#/lib/social-providers";
 import { m } from "#/paraglide/messages.js";
 
 type CommentFormProps = {
@@ -21,8 +19,6 @@ type CommentFormProps = {
 };
 
 type SubmitState = "idle" | "submitting" | "success" | "error";
-type AuthState = "idle" | "submitting" | "error" | "verification";
-type AuthMode = "login" | "signup";
 type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>;
 
 type CommentAuthUser = {
@@ -47,18 +43,12 @@ export function CommentForm({
 }: CommentFormProps) {
   const [state, setState] = useState<SubmitState>("idle");
   const [submittedStatus, setSubmittedStatus] = useState<Comment["status"] | null>(null);
-  const [authState, setAuthState] = useState<AuthState>("idle");
-  const [authMode, setAuthMode] = useState<AuthMode>("login");
   const [user, setUser] = useState<CommentAuthUser | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const [socialProviders, setSocialProviders] = useState<SocialProvider[]>([]);
   const [emailPreferenceStatus, setEmailPreferenceStatus] = useState<"idle" | "saving" | "saved">(
     "idle",
   );
   const emailCopy = getCommentEmailPreferenceCopy(getCurrentLocale());
-  const availableSocialLogins = socialLoginOptions.filter((option) =>
-    socialProviders.includes(option.provider),
-  );
 
   useEffect(() => {
     let ignore = false;
@@ -78,22 +68,6 @@ export function CommentForm({
           setAuthLoading(false);
         }
       });
-
-    return () => {
-      ignore = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    let ignore = false;
-
-    void $getAccountLoginOptions()
-      .then((options) => {
-        if (!ignore) {
-          setSocialProviders(options.socialProviders);
-        }
-      })
-      .catch(() => undefined);
 
     return () => {
       ignore = true;
@@ -144,61 +118,6 @@ export function CommentForm({
     }
   };
 
-  const handleEmailAuth: FormSubmitHandler = async (event) => {
-    event.preventDefault();
-    if (authState === "submitting") return;
-
-    setAuthState("submitting");
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    let response: Response;
-    let payload: {
-      data?: CommentAuthUser | null;
-      verificationRequired?: boolean;
-    };
-
-    try {
-      const nameInput = formData.get("name");
-      const name = typeof nameInput === "string" ? nameInput.trim() : "";
-
-      if (authMode === "signup" && !name) {
-        setAuthState("error");
-        return;
-      }
-
-      response = await fetch(`/api/comment-auth/${authMode}`, {
-        method: "POST",
-        credentials: "same-origin",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          name,
-          email: formData.get("email"),
-          emailPreference: formData.get("emailPreference"),
-          password: formData.get("password"),
-        }),
-      });
-      payload = (await response.json().catch(() => ({}))) as typeof payload;
-    } catch {
-      setAuthState("error");
-      return;
-    }
-
-    if (payload.verificationRequired) {
-      setAuthState("verification");
-      form.reset();
-      return;
-    }
-
-    if (!response.ok || !payload.data) {
-      setAuthState("error");
-      return;
-    }
-
-    setUser(payload.data);
-    setAuthState("idle");
-    form.reset();
-  };
-
   const updateEmailPreference = async (
     input: Partial<Pick<CommentAuthUser, "commentReplyNotificationsEnabled" | "emailPreference">>,
   ) => {
@@ -247,114 +166,28 @@ export function CommentForm({
 
   if (!user) {
     return (
-      <div className="mt-6 grid gap-4">
-        <div>
-          <h3 className="font-semibold">{m.comment_login_required()}</h3>
-          <p className="mt-1 text-sm text-muted-foreground">{m.comment_login_description()}</p>
+      <div className="mt-6 rounded-md border border-border bg-muted/25 p-4 shadow-xs sm:flex sm:items-center sm:justify-between sm:gap-4">
+        <div className="flex items-start gap-3">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground">
+            <LogInIcon className="size-4" />
+          </div>
+          <div>
+            <h3 className="font-semibold">{m.comment_login_required()}</h3>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+              {m.comment_login_description()}
+            </p>
+          </div>
         </div>
-
-        <div className="grid gap-3">
-          {availableSocialLogins.length ? (
-            <>
-              {availableSocialLogins.map(({ Icon, label, provider }) => (
-                <a
-                  key={provider}
-                  href={socialLoginHref(provider, postSlug)}
-                  className={buttonVariants({
-                    variant: "secondary",
-                    className: "w-full justify-center",
-                  })}
-                >
-                  <Icon className="size-4" />
-                  {label}
-                </a>
-              ))}
-
-              <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                <span className="h-px flex-1 bg-border" />
-                {m.login_alternative()}
-                <span className="h-px flex-1 bg-border" />
-              </div>
-            </>
-          ) : null}
-
-          <form onSubmit={handleEmailAuth} className="grid gap-3">
-            {authMode === "signup" ? (
-              <div className="grid gap-2">
-                <Label htmlFor="comment-auth-name">{m.signup_name()}</Label>
-                <Input
-                  id="comment-auth-name"
-                  name="name"
-                  autoComplete="username"
-                  maxLength={80}
-                  required
-                />
-              </div>
-            ) : null}
-            <div className="grid gap-2">
-              <Label htmlFor="comment-auth-email">{m.login_email()}</Label>
-              <Input
-                id="comment-auth-email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="comment-auth-password">{m.login_password()}</Label>
-              <Input
-                id="comment-auth-password"
-                name="password"
-                type="password"
-                autoComplete={authMode === "login" ? "current-password" : "new-password"}
-                minLength={8}
-                required
-              />
-            </div>
-            {authMode === "signup" ? (
-              <div className="flex items-start gap-2 rounded-md border border-border bg-muted/30 p-3 text-sm">
-                <input
-                  id="comment-auth-email-preference"
-                  type="checkbox"
-                  name="emailPreference"
-                  value="weekly_blog_updates"
-                  className="mt-0.5 size-4 rounded border-input accent-primary"
-                />
-                <label htmlFor="comment-auth-email-preference" className="cursor-pointer">
-                  <span className="block font-medium">{emailCopy.weekly}</span>
-                  <span className="mt-1 block text-xs leading-5 text-muted-foreground">
-                    {emailCopy.weeklyDescription}
-                  </span>
-                </label>
-              </div>
-            ) : null}
-            <div className="flex flex-wrap items-center gap-3">
-              <Button type="submit" disabled={authState === "submitting"}>
-                {authState === "submitting" ? (
-                  <LoaderCircleIcon className="size-4 animate-spin" />
-                ) : null}
-                {authMode === "login" ? m.login() : m.signup()}
-              </Button>
-              <button
-                type="button"
-                className="text-sm text-link hover:underline"
-                onClick={() => {
-                  setAuthMode(authMode === "login" ? "signup" : "login");
-                  setAuthState("idle");
-                }}
-              >
-                {authMode === "login" ? m.comment_switch_to_signup() : m.comment_switch_to_login()}
-              </button>
-            </div>
-            {authState === "error" ? (
-              <p className="text-sm text-destructive">{m.comment_auth_error()}</p>
-            ) : null}
-            {authState === "verification" ? (
-              <p className="text-sm text-success">{m.comment_email_verification_sent()}</p>
-            ) : null}
-          </form>
-        </div>
+        <Link
+          to="/login"
+          search={{ redirectTo: commentLoginRedirect(postSlug) }}
+          className={buttonVariants({
+            className: "mt-4 w-full sm:mt-0 sm:w-auto",
+          })}
+        >
+          <LogInIcon className="size-4" />
+          {m.login()}
+        </Link>
       </div>
     );
   }
@@ -380,7 +213,10 @@ export function CommentForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
+    <form
+      onSubmit={handleSubmit}
+      className="mt-6 grid gap-4 rounded-md border border-border bg-background p-4 shadow-xs"
+    >
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 pb-3 text-sm">
         <span className="text-muted-foreground">{m.comment_signed_in_as({ name: user.name })}</span>
         <button
@@ -476,7 +312,7 @@ export function CommentForm({
           required
           minLength={2}
           maxLength={4000}
-          className="min-h-32 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          className="min-h-32 resize-y rounded-md border border-input bg-background px-3 py-2 text-sm leading-6 shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         />
       </div>
       {turnstileSiteKey ? (
@@ -500,22 +336,10 @@ export function CommentForm({
   );
 }
 
-const socialLoginOptions = [
-  { provider: "github", label: m.comment_continue_github(), Icon: SiGithub },
-  { provider: "google", label: m.comment_continue_google(), Icon: SiGoogle },
-] satisfies Array<{
-  provider: SocialProvider;
-  label: string;
-  Icon: React.ComponentType<{ className?: string }>;
-}>;
-
-function socialLoginHref(provider: SocialProvider, postSlug: string) {
-  const redirectTo =
-    typeof window === "undefined"
-      ? `/blog/${postSlug}#comments`
-      : `${window.location.pathname}${window.location.search}#comments`;
-
-  return `/api/comment-auth/${provider}/start?redirectTo=${encodeURIComponent(redirectTo)}`;
+function commentLoginRedirect(postSlug: string) {
+  return typeof window === "undefined"
+    ? `/blog/${postSlug}#comments`
+    : `${window.location.pathname}${window.location.search}#comments`;
 }
 
 function getCommentEmailPreferenceCopy(locale: ReturnType<typeof getCurrentLocale>) {
