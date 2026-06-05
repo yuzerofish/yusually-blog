@@ -302,9 +302,7 @@ function BlogPostPage() {
                   <p className="mt-6 text-sm text-muted-foreground">{m.comments_disabled()}</p>
                 )}
                 {visibleComments.length ? (
-                  <div className="mt-8">
-                    <CommentList comments={visibleComments} onReply={setReplyTarget} />
-                  </div>
+                  <CommentList comments={visibleComments} onReply={setReplyTarget} />
                 ) : null}
               </section>
             ) : null}
@@ -356,56 +354,60 @@ function CommentList({ comments, depth = 0, onReply, parentId = null }: CommentL
   });
 
   return (
-    <div className={cn("grid gap-4", depth ? "mt-3 border-l border-border/70 pl-4 md:pl-5" : "")}>
+    <div
+      className={cn(
+        "mt-6 grid gap-3",
+        depth ? "mt-2 ml-7 border-l border-border/70 pl-3 sm:ml-9" : "",
+      )}
+    >
       {children.map((comment) => (
-        <div key={comment.id} className="grid gap-3">
+        <div key={comment.id} className="grid gap-2">
           <article
             className={cn(
-              "rounded-md border p-4 shadow-xs",
-              depth ? "bg-muted/25" : "bg-background",
-              comment.status === "pending" ? "border-success/45 bg-success/5" : "border-border/80",
+              "rounded-md",
+              comment.status === "pending"
+                ? "border border-success/45 bg-success/5 px-3 py-2.5"
+                : "py-1",
             )}
           >
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex min-w-0 items-center gap-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-sm font-semibold text-foreground">
-                  {commentInitial(comment.authorName)}
-                </div>
-                <div className="min-w-0">
-                  <p className="truncate font-medium">{comment.authorName}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatDate(comment.createdAt, locale)}
-                  </p>
-                </div>
+            <div className="flex gap-2.5">
+              <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted text-xs font-semibold text-foreground">
+                {commentInitial(comment.authorName)}
               </div>
-              <div className="flex items-center gap-2">
-                {comment.status === "pending" ? (
-                  <span className="rounded-full border border-success/35 bg-success/10 px-2 py-0.5 text-xs font-medium text-success">
-                    {m.comment_pending_badge()}
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <p className="truncate text-sm leading-5 font-medium">{comment.authorName}</p>
+                  <span className="text-xs text-muted-foreground">
+                    {formatDate(comment.createdAt, locale)}
                   </span>
-                ) : null}
-                {depth < 1 && comment.status === "approved" ? (
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    className="min-h-10"
-                    onClick={() => onReply(comment)}
-                  >
-                    <MessageSquareIcon className="size-4" />
-                    {m.comment_reply()}
-                  </Button>
+                  {comment.status === "pending" ? (
+                    <span className="rounded-full border border-success/35 bg-success/10 px-2 py-0.5 text-xs font-medium text-success">
+                      {m.comment_pending_badge()}
+                    </span>
+                  ) : null}
+                  {depth < 1 && comment.status === "approved" ? (
+                    <Button
+                      type="button"
+                      size="xs"
+                      variant="ghost"
+                      className="h-7 min-h-7 px-1.5 text-xs text-muted-foreground hover:text-foreground"
+                      onClick={() => onReply(comment)}
+                    >
+                      <MessageSquareIcon className="size-3.5" />
+                      {m.comment_reply()}
+                    </Button>
+                  ) : null}
+                </div>
+                <p className="mt-1.5 text-sm leading-6 break-words whitespace-pre-wrap text-foreground/80">
+                  {comment.body}
+                </p>
+                {comment.status === "pending" ? (
+                  <p className="mt-1.5 text-xs leading-5 text-success">
+                    {m.comment_pending_visible_note()}
+                  </p>
                 ) : null}
               </div>
             </div>
-            <p className="mt-3 text-sm leading-6 break-words whitespace-pre-wrap text-foreground/80">
-              {comment.body}
-            </p>
-            {comment.status === "pending" ? (
-              <p className="mt-2 text-xs leading-5 text-success">
-                {m.comment_pending_visible_note()}
-              </p>
-            ) : null}
           </article>
           {depth < 1 ? (
             <CommentList
