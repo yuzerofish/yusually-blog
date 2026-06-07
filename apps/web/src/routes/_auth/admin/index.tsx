@@ -175,62 +175,63 @@ function AdminOverviewPage() {
   ];
 
   return (
-    <div className="grid gap-5">
+    <div className="grid gap-4">
       <AdminPageHeader
         eyebrow={m.admin_overview_eyebrow()}
         title={m.admin_overview_title()}
         description={m.admin_metric_overview_description({ name: siteSettings.name })}
+        className="pb-4"
         actions={
-          <Button render={<Link to="/admin/posts" />} nativeButton={false}>
+          <Button render={<Link to="/admin/posts" />} size="sm" nativeButton={false}>
             {m.admin_manage_posts()}
             <ArrowRightIcon />
           </Button>
         }
       />
 
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
         {cards.map((card) => {
           const Icon = card.icon;
 
           return (
-            <AdminPanel key={card.label} className="min-h-32">
+            <AdminPanel key={card.label} className="min-h-0 p-3 sm:p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                     {card.label}
                   </p>
-                  <p className="mt-3 text-3xl font-semibold tracking-normal">{card.value}</p>
+                  <p className="mt-2 text-2xl font-semibold tracking-normal">{card.value}</p>
                 </div>
                 <Icon className="size-5 text-link" />
               </div>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">{card.detail}</p>
+              <p className="mt-2 text-xs leading-5 text-muted-foreground">{card.detail}</p>
             </AdminPanel>
           );
         })}
       </div>
 
-      <AdminPanel>
-        <div className="flex flex-wrap items-start justify-between gap-4">
+      <AdminPanel className="p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
               {copy.analyticsEyebrow}
             </p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-normal">{copy.analyticsTitle}</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+            <h2 className="mt-1.5 text-xl font-semibold tracking-normal">{copy.analyticsTitle}</h2>
+            <p className="mt-1.5 max-w-2xl text-sm leading-6 text-muted-foreground">
               {copy.analyticsDescription(analytics)}
             </p>
           </div>
           <BarChart3Icon className="size-5 text-link" />
         </div>
 
-        <div className="mt-5 grid gap-4 md:grid-cols-3">
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
           {readerCards.map((card) => (
             <AnalyticsMetricBlock key={card.label} card={card} locale={locale} />
           ))}
         </div>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.72fr)]">
-          <div className="min-w-0 border-t border-border/70 pt-5">
+        <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.72fr)]">
+          <div className="min-w-0 border-t border-border/70 pt-4">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold">{copy.trendLabel}</p>
@@ -243,7 +244,7 @@ function AdminOverviewPage() {
             <DailyTrend daily={analytics.daily} locale={locale} emptyLabel={copy.noAnalytics} />
           </div>
 
-          <div className="border-t border-border/70 pt-5">
+          <div className="border-t border-border/70 pt-4">
             <p className="text-sm font-semibold">{copy.topPostsLabel}</p>
             <TopPostsList
               posts={analytics.topPosts}
@@ -332,19 +333,19 @@ function AnalyticsMetricBlock({
   const Icon = card.icon;
 
   return (
-    <div className="border-t border-border/70 pt-4">
+    <div className="border-t border-border/70 pt-3">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
             {card.label}
           </p>
-          <p className="mt-3 text-3xl font-semibold tracking-normal">
+          <p className="mt-2 text-2xl font-semibold tracking-normal">
             {formatNumber(card.value, locale)}
           </p>
         </div>
         <Icon className="size-4 text-link" />
       </div>
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">{card.detail}</p>
+      <p className="mt-1.5 text-xs leading-5 text-muted-foreground">{card.detail}</p>
     </div>
   );
 }
@@ -366,7 +367,7 @@ function DailyTrend({
   }
 
   return (
-    <div className="mt-5 flex h-36 items-end gap-2 border-b border-border/70 pb-2">
+    <div className="mt-4 flex h-28 items-end gap-2 border-b border-border/70 pb-2">
       {daily.map((day) => {
         const height = day.views > 0 ? Math.max(8, (day.views / maxViews) * 100) : 2;
 
@@ -408,7 +409,7 @@ function TopPostsList({
   }
 
   return (
-    <ol className="mt-4 grid gap-3">
+    <ol className="mt-3 grid gap-2.5">
       {posts.map((post, index) => (
         <li
           key={post.slug}
