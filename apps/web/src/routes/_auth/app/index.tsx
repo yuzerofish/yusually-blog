@@ -11,6 +11,7 @@ import {
   LoaderCircleIcon,
   MailIcon,
   ShieldCheckIcon,
+  XIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -20,6 +21,8 @@ import { m } from "#/paraglide/messages.js";
 export const Route = createFileRoute("/_auth/app/")({
   component: AppIndex,
 });
+
+type PasswordStatus = "idle" | "saving" | "saved" | "error";
 
 function AppIndex() {
   const { user } = Route.useRouteContext();
@@ -35,9 +38,8 @@ function AppIndex() {
   const [emailPreference, setEmailPreference] = useState<EmailPreference>("none");
   const [marketingOptOut, setMarketingOptOut] = useState(false);
   const [status, setStatus] = useState<"idle" | "saving" | "saved">("idle");
-  const [passwordStatus, setPasswordStatus] = useState<"idle" | "saving" | "saved" | "error">(
-    "idle",
-  );
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [passwordStatus, setPasswordStatus] = useState<PasswordStatus>("idle");
   const [passwordMessage, setPasswordMessage] = useState("");
   const [profileStatus, setProfileStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [profileMessage, setProfileMessage] = useState("");
@@ -134,9 +136,26 @@ function AppIndex() {
     setPasswordStatus("saved");
     setPasswordMessage(pageCopy.passwordSaved);
     window.setTimeout(() => {
+      setIsPasswordDialogOpen(false);
       setPasswordStatus("idle");
       setPasswordMessage("");
     }, 2400);
+  };
+
+  const openPasswordDialog = () => {
+    setPasswordStatus("idle");
+    setPasswordMessage("");
+    setIsPasswordDialogOpen(true);
+  };
+
+  const closePasswordDialog = () => {
+    if (passwordStatus === "saving") {
+      return;
+    }
+
+    setIsPasswordDialogOpen(false);
+    setPasswordStatus("idle");
+    setPasswordMessage("");
   };
 
   const updateProfile = async (event: React.SubmitEvent<HTMLFormElement>) => {
@@ -288,69 +307,37 @@ function AppIndex() {
           </section>
 
           <section className="rounded-md border border-border bg-card p-5 shadow-xs">
-            <div className="flex items-start gap-3">
-              <KeyRoundIcon className="mt-1 size-5 text-link" />
-              <div>
-                <h2 className="font-semibold">{pageCopy.securityTitle}</h2>
-                <p className="mt-1 text-muted-foreground">{pageCopy.securityDescription}</p>
-              </div>
-            </div>
-
-            <form onSubmit={changePassword} className="mt-5 grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="current_password">{pageCopy.currentPassword}</Label>
-                <Input
-                  id="current_password"
-                  name="current_password"
-                  type="password"
-                  autoComplete="current-password"
-                  readOnly={passwordStatus === "saving"}
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="new_password">{pageCopy.newPassword}</Label>
-                <Input
-                  id="new_password"
-                  name="new_password"
-                  type="password"
-                  autoComplete="new-password"
-                  readOnly={passwordStatus === "saving"}
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="confirm_password">{pageCopy.confirmPassword}</Label>
-                <Input
-                  id="confirm_password"
-                  name="confirm_password"
-                  type="password"
-                  autoComplete="new-password"
-                  readOnly={passwordStatus === "saving"}
-                  required
-                />
+            <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+              <div className="flex items-start gap-3">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted text-link">
+                  <KeyRoundIcon className="size-4" />
+                </span>
+                <div>
+                  <h2 className="font-semibold">{pageCopy.securityTitle}</h2>
+                  <p className="mt-1 text-muted-foreground">{pageCopy.securityDescription}</p>
+                </div>
               </div>
               <Button
-                type="submit"
-                className="w-full sm:w-fit"
-                disabled={passwordStatus === "saving"}
+                type="button"
+                variant="outline"
+                className="w-full sm:w-auto"
+                onClick={openPasswordDialog}
               >
-                {passwordStatus === "saving" ? <LoaderCircleIcon className="animate-spin" /> : null}
-                {passwordStatus === "saving" ? pageCopy.passwordSaving : pageCopy.passwordAction}
+                <KeyRoundIcon className="size-4" />
+                {pageCopy.passwordOpenAction}
               </Button>
-            </form>
-
-            {passwordMessage ? (
-              <p
-                className={`mt-4 text-sm ${
-                  passwordStatus === "error" ? "text-destructive" : "text-muted-foreground"
-                }`}
-                aria-live="polite"
-              >
-                {passwordMessage}
-              </p>
-            ) : null}
+            </div>
           </section>
+
+          {isPasswordDialogOpen ? (
+            <PasswordChangeDialog
+              copy={pageCopy}
+              message={passwordMessage}
+              onClose={closePasswordDialog}
+              onSubmit={changePassword}
+              status={passwordStatus}
+            />
+          ) : null}
         </div>
 
         <section className="rounded-md border border-border bg-card p-5 text-left shadow-xs">
@@ -471,6 +458,135 @@ function AppIndex() {
   );
 }
 
+function PasswordChangeDialog({
+  copy,
+  message,
+  onClose,
+  onSubmit,
+  status,
+}: {
+  readonly copy: ReturnType<typeof getAccountPageCopy>;
+  readonly message: string;
+  readonly onClose: () => void;
+  readonly onSubmit: (event: React.SubmitEvent<HTMLFormElement>) => void;
+  readonly status: PasswordStatus;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center px-4 py-8">
+      <button
+        type="button"
+        aria-label={copy.passwordClose}
+        className="absolute inset-0 bg-background/75 backdrop-blur-sm"
+        onClick={() => {
+          if (status !== "saving") {
+            onClose();
+          }
+        }}
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="account-password-dialog-title"
+        aria-describedby="account-password-dialog-description"
+        className="relative w-full max-w-md rounded-md border border-border bg-card p-5 shadow-lg"
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <span className="grid size-9 shrink-0 place-items-center rounded-md bg-muted text-link">
+              <KeyRoundIcon className="size-4" />
+            </span>
+            <div className="min-w-0">
+              <h2 id="account-password-dialog-title" className="text-lg font-semibold">
+                {copy.passwordDialogTitle}
+              </h2>
+              <p
+                id="account-password-dialog-description"
+                className="mt-2 text-sm leading-6 text-muted-foreground"
+              >
+                {copy.passwordDialogDescription}
+              </p>
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label={copy.passwordClose}
+            disabled={status === "saving"}
+            onClick={onClose}
+          >
+            <XIcon className="size-4" />
+            <span className="sr-only">{copy.passwordClose}</span>
+          </Button>
+        </div>
+
+        <form onSubmit={onSubmit} className="mt-5 grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="current_password">{copy.currentPassword}</Label>
+            <Input
+              id="current_password"
+              name="current_password"
+              type="password"
+              autoComplete="current-password"
+              readOnly={status === "saving"}
+              required
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="new_password">{copy.newPassword}</Label>
+            <Input
+              id="new_password"
+              name="new_password"
+              type="password"
+              autoComplete="new-password"
+              readOnly={status === "saving"}
+              required
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="confirm_password">{copy.confirmPassword}</Label>
+            <Input
+              id="confirm_password"
+              name="confirm_password"
+              type="password"
+              autoComplete="new-password"
+              readOnly={status === "saving"}
+              required
+            />
+          </div>
+
+          {message ? (
+            <p
+              className={`text-sm ${
+                status === "error" ? "text-destructive" : "text-muted-foreground"
+              }`}
+              aria-live="polite"
+            >
+              {message}
+            </p>
+          ) : null}
+
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={status === "saving"}
+              onClick={onClose}
+              className="w-full sm:w-auto"
+            >
+              {copy.passwordCancel}
+            </Button>
+            <Button type="submit" className="w-full sm:w-auto" disabled={status === "saving"}>
+              {status === "saving" ? <LoaderCircleIcon className="animate-spin" /> : null}
+              {status === "saving" ? copy.passwordSaving : copy.passwordAction}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 type AccountEmailPreferences = {
   commentReplyNotificationsEnabled: boolean;
   emailPreference: EmailPreference;
@@ -492,6 +608,11 @@ function getAccountPageCopy(locale: ReturnType<typeof getCurrentLocale>) {
       eyebrow: "账号中心",
       fallbackName: "用户",
       nameLabel: "姓名",
+      passwordCancel: "取消",
+      passwordClose: "关闭",
+      passwordDialogDescription: "输入当前密码，并设置一个新的登录密码。",
+      passwordDialogTitle: "修改密码",
+      passwordOpenAction: "修改密码",
       confirmPassword: "确认新密码",
       currentPassword: "当前密码",
       newPassword: "新密码",
@@ -509,7 +630,7 @@ function getAccountPageCopy(locale: ReturnType<typeof getCurrentLocale>) {
       profileSaved: "显示名称已保存",
       profileSaving: "正在保存...",
       securityDescription:
-        "修改 email/password 登录方式的密码。社交登录账号可通过重置密码邮件添加密码。",
+        "需要修改 email/password 登录密码时再打开表单。社交登录账号可通过重置密码邮件添加密码。",
       securityTitle: "账号安全",
     };
   }
@@ -521,6 +642,11 @@ function getAccountPageCopy(locale: ReturnType<typeof getCurrentLocale>) {
     eyebrow: "Account",
     fallbackName: "User",
     nameLabel: "Name",
+    passwordCancel: "Cancel",
+    passwordClose: "Close",
+    passwordDialogDescription: "Enter your current password and set a new sign-in password.",
+    passwordDialogTitle: "Change password",
+    passwordOpenAction: "Change password",
     confirmPassword: "Confirm new password",
     currentPassword: "Current password",
     newPassword: "New password",
@@ -538,7 +664,7 @@ function getAccountPageCopy(locale: ReturnType<typeof getCurrentLocale>) {
     profileSaved: "Display name saved",
     profileSaving: "Saving...",
     securityDescription:
-      "Change the password used for email/password sign-in. Social accounts can add a password through the reset email flow.",
+      "Open the form only when you need to change your email/password sign-in. Social accounts can add a password through the reset email flow.",
     securityTitle: "Security",
   };
 }
