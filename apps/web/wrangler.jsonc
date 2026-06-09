@@ -16,6 +16,7 @@
       "custom_domain": true,
     },
   ],
+  "workers_dev": true,
   "vars": {
     "VITE_BASE_URL": "https://yusually.it.com",
     "CMS_PUBLIC_SITE_URL": "https://yusually.it.com",
