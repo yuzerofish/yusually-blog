@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "blog-starter",
+  "name": "yusually-blog",
   "main": "./src/server.ts",
   "compatibility_date": "2026-05-24",
   "compatibility_flags": ["nodejs_compat"],
@@ -12,13 +12,13 @@
   },
   "routes": [
     {
-      "pattern": "blog.01mvp.com",
+      "pattern": "yusually.it.com",
       "custom_domain": true,
     },
   ],
   "vars": {
-    "VITE_BASE_URL": "https://blog.01mvp.com",
-    "CMS_PUBLIC_SITE_URL": "https://blog.01mvp.com",
+    "VITE_BASE_URL": "https://yusually.it.com",
+    "CMS_PUBLIC_SITE_URL": "https://yusually.it.com",
     "CMS_BACKUP_RETENTION_DAYS": "30",
     "CMS_EMAIL_SENDING_ENABLED": "false",
     "CMS_EMAIL_FROM": "",
@@ -29,21 +29,22 @@
   "d1_databases": [
     {
       "binding": "CMS_DB",
-      "database_name": "blog-starter-cms",
-      "database_id": "b267c97c-72a5-45a1-9f5a-cfd0b8e8067c",
+      "database_name": "yusually-blog-cms",
+      "database_id": "f9bdd8de-34d1-4b22-b0de-4385f90377a2",
       "migrations_dir": "../../packages/db/migrations",
     },
   ],
-  "r2_buckets": [
-    {
-      "binding": "CMS_STORAGE",
-      "bucket_name": "blog-starter-assets",
-    },
-  ],
+  // R2 bucket (disabled until enabled in Cloudflare Dashboard)
+  // "r2_buckets": [
+  //   {
+  //     "binding": "CMS_STORAGE",
+  //     "bucket_name": "yusually-blog-assets",
+  //   },
+  // ],
   "kv_namespaces": [
     {
       "binding": "CMS_CACHE",
-      "id": "c1150cc286374ba9919f48f48a985f36",
+      "id": "c1ad123ec82e4b67822c3e86ddf96aec",
     },
   ],
 }
