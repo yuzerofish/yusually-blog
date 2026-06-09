@@ -1089,9 +1089,8 @@ function getHomeCopy(locale: SupportedLocale) {
 
       // ── Creator ──
       creatorEyebrow: "出品方",
-      creatorTitle: "由 01MVP 和 Jackie 持续维护。",
-      creatorBody:
-        "这个博客模板来自 01MVP 的产品实战体系。Jackie 会继续整理 AI 建站、独立产品和可复用全栈模板，让个人站点不止是页面，而是能长期运营的产品资产。",
+      creatorTitle: "由 MakerJackie 持续维护。",
+      creatorBody: "这里展示 01MVP 的 AI 建站方法、Jackie 的作品，以及可复用的 TanStack 全栈模板。",
       creatorPrimaryCta: "查看 TanStack 全栈模板",
       creatorSecondaryCta: "了解 Jackie",
       creatorSpotlights: [
@@ -1364,9 +1363,9 @@ function getHomeCopy(locale: SupportedLocale) {
 
     // ── Creator ──
     creatorEyebrow: "Made by",
-    creatorTitle: "Maintained by 01MVP and Jackie.",
+    creatorTitle: "Maintained by MakerJackie.",
     creatorBody:
-      "This blog starter comes from 01MVP's practical product-building system. Jackie keeps publishing AI website workflows, indie product notes, and reusable full-stack templates so a personal site can become a durable product asset.",
+      "Explore 01MVP's AI website workflow, Jackie's projects, and the reusable TanStack full-stack template.",
     creatorPrimaryCta: "View TanStack template",
     creatorSecondaryCta: "Meet Jackie",
     creatorSpotlights: [
