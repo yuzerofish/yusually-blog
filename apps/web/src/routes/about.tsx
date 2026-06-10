@@ -211,7 +211,13 @@ function getAboutCopy(locale: ReturnType<typeof getCurrentLocale>) {
           eyebrow: "Research",
           title: "自媒体运营全维度调研",
           description: "2025-2026 年中国主流平台自媒体运营研究报告。",
-          href: "/blog/自媒体运营全维度调研整合",
+          href: "/self-media-report/自媒体运营全维度调研整合.html",
+        },
+        {
+          eyebrow: "Tools",
+          title: "Skills 技能库",
+          description: "交互式技能库目录，展示全部 Claude Code 自定义技能。",
+          href: "/skills-portfolio/",
         },
         {
           eyebrow: "Water",
@@ -285,7 +291,13 @@ function getAboutCopy(locale: ReturnType<typeof getCurrentLocale>) {
         eyebrow: "Research",
         title: "Self-Media Research",
         description: "Comprehensive report on China's self-media landscape 2025-2026.",
-        href: "/blog/自媒体运营全维度调研整合",
+        href: "/self-media-report/自媒体运营全维度调研整合.html",
+      },
+      {
+        eyebrow: "Tools",
+        title: "Skills Portfolio",
+        description: "Interactive directory of all Claude Code skills.",
+        href: "/skills-portfolio/",
       },
       {
         eyebrow: "Water",

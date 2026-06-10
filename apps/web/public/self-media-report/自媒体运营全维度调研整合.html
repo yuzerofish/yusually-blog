@@ -1,0 +1,1384 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>自媒体运营全维度调研报告 2025-2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=ZCOOL+QingKe+HuangYou&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #1557a0;
+        --primary-light: #2b7bd4;
+        --primary-lighter: #5ba0e8;
+        --primary-dark: #0d3b6e;
+        --primary-glow: rgba(21, 87, 160, 0.08);
+        --ink: #0d0a08;
+        --ink-80: #1a1512;
+        --ink-60: #2a2420;
+        --gold: #d4a448;
+        --gold-light: #e8c56a;
+        --red: #c03a2b;
+        --red-light: #e85d4a;
+        --green: #2d7a4a;
+        --paper: #f2f5fa;
+        --paper-dark: #e2e7f0;
+        --paper-darker: #c8d0de;
+        --text-primary: #131a2e;
+        --text-secondary: #3d4760;
+        --text-muted: #6e7a94;
+        --white: #fafcff;
+        --radius: 12px;
+        --shadow: 0 2px 16px rgba(21, 87, 160, 0.06);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Noto Sans SC", sans-serif;
+        background: var(--paper);
+        color: var(--text-primary);
+        line-height: 1.8;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.02;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-repeat: repeat;
+        background-size: 256px 256px;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 240px;
+        height: 100vh;
+        background: linear-gradient(180deg, var(--ink) 0%, var(--ink-80) 100%);
+        color: var(--paper);
+        padding: 36px 20px;
+        z-index: 100;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+      }
+      .sidebar-logo {
+        font-family: "ZCOOL QingKe HuangYou", sans-serif;
+        font-size: 20px;
+        color: var(--primary-lighter);
+        letter-spacing: 2px;
+        margin-bottom: 2px;
+      }
+      .sidebar-sub {
+        font-size: 10px;
+        color: rgba(245, 240, 232, 0.3);
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 24px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid rgba(245, 240, 232, 0.05);
+      }
+      .sidebar-section {
+        font-size: 10px;
+        color: rgba(245, 240, 232, 0.2);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 12px 0 4px 10px;
+      }
+      .sidebar nav a {
+        display: block;
+        color: rgba(245, 240, 232, 0.5);
+        text-decoration: none;
+        font-size: 12px;
+        padding: 5px 0 5px 14px;
+        transition: all 0.2s;
+        border-left: 2px solid transparent;
+      }
+      .sidebar nav a:hover,
+      .sidebar nav a.active {
+        color: var(--primary-lighter);
+        border-left-color: var(--primary-lighter);
+      }
+      .sidebar nav a.sub {
+        padding-left: 24px;
+        font-size: 11px;
+        color: rgba(245, 240, 232, 0.35);
+      }
+      .sidebar-tagline {
+        margin-top: auto;
+        font-size: 10px;
+        color: rgba(245, 240, 232, 0.12);
+        letter-spacing: 1px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(245, 240, 232, 0.04);
+      }
+
+      .main {
+        margin-left: 240px;
+      }
+
+      .hero {
+        position: relative;
+        padding: 80px 80px 60px;
+        background: linear-gradient(135deg, var(--ink) 0%, #0c1a2e 40%, var(--ink-80) 100%);
+        overflow: hidden;
+      }
+      .hero::after {
+        content: "";
+        position: absolute;
+        top: -40%;
+        right: -15%;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(21, 87, 160, 0.08) 0%, transparent 70%);
+        pointer-events: none;
+      }
+      .hero h1 {
+        font-family: "Noto Serif SC", serif;
+        font-size: clamp(28px, 4vw, 48px);
+        font-weight: 900;
+        color: var(--white);
+        line-height: 1.2;
+        max-width: 700px;
+        position: relative;
+        z-index: 1;
+      }
+      .hero h1 span {
+        color: #7ab8e8;
+      }
+      .hero-sub {
+        font-size: 14px;
+        color: rgba(245, 240, 232, 0.4);
+        margin-top: 12px;
+        max-width: 560px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .report-tabs {
+        display: flex;
+        gap: 3px;
+        padding: 0 80px;
+        background: var(--white);
+        border-bottom: 1px solid var(--paper-dark);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        overflow-x: auto;
+      }
+      .report-tab {
+        padding: 14px 24px;
+        font-size: 13px;
+        font-weight: 500;
+        border: none;
+        background: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        position: relative;
+        white-space: nowrap;
+        font-family: inherit;
+        transition: color 0.2s;
+      }
+      .report-tab:hover {
+        color: var(--primary);
+      }
+      .report-tab.active {
+        color: var(--primary);
+        font-weight: 600;
+      }
+      .report-tab.active::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 10%;
+        right: 10%;
+        height: 2px;
+        background: var(--primary);
+        border-radius: 1px;
+      }
+      .report-content {
+        display: none;
+      }
+      .report-content.active {
+        display: block;
+      }
+
+      .section {
+        padding: 48px 80px;
+        max-width: 1000px;
+      }
+      .section-header {
+        margin-bottom: 28px;
+      }
+      .section-number {
+        font-family: "Noto Serif SC", serif;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--primary);
+        letter-spacing: 3px;
+        margin-bottom: 4px;
+      }
+      .section-header h2 {
+        font-family: "Noto Serif SC", serif;
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--ink);
+        line-height: 1.3;
+      }
+      .section-header h2::after {
+        content: "";
+        display: block;
+        width: 32px;
+        height: 3px;
+        background: var(--primary);
+        margin-top: 10px;
+      }
+      .section-header p {
+        color: var(--text-secondary);
+        margin-top: 10px;
+        font-size: 13.5px;
+      }
+      .section-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(90deg, var(--paper-darker) 0%, transparent 100%);
+        margin: 0 80px;
+      }
+
+      .cards {
+        display: grid;
+        gap: 16px;
+      }
+      .cards-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+      .cards-3 {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      .cards-4 {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+      }
+      .card {
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 22px;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        transition: transform 0.2s;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+      }
+      .card-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        margin-bottom: 10px;
+      }
+      .card-icon.primary {
+        background: var(--primary-glow);
+        color: var(--primary);
+      }
+      .card-icon.red {
+        background: rgba(192, 58, 43, 0.06);
+        color: var(--red);
+      }
+      .card-icon.gold {
+        background: rgba(212, 164, 72, 0.08);
+        color: var(--gold);
+      }
+      .card-icon.green {
+        background: rgba(45, 122, 74, 0.08);
+        color: var(--green);
+      }
+      .card-icon.ink {
+        background: rgba(26, 21, 18, 0.05);
+        color: var(--ink);
+      }
+      .card h3 {
+        font-family: "Noto Serif SC", serif;
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: var(--ink);
+      }
+      .card p {
+        font-size: 12.5px;
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+      .card ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 6px;
+      }
+      .card li {
+        font-size: 12px;
+        color: var(--text-secondary);
+        padding: 3px 0 3px 14px;
+        position: relative;
+        line-height: 1.5;
+      }
+      .card li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 11px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--paper-darker);
+      }
+      .card li.danger::before {
+        background: var(--red);
+      }
+      .card li.warn::before {
+        background: var(--gold);
+      }
+      .card li.good::before {
+        background: var(--green);
+      }
+      .card li.prim::before {
+        background: var(--primary);
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        margin-top: 16px;
+        border-radius: var(--radius);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--white);
+        font-size: 12px;
+      }
+      thead {
+        background: linear-gradient(135deg, var(--ink) 0%, var(--ink-80) 100%);
+        color: var(--white);
+      }
+      thead th {
+        text-align: left;
+        padding: 10px 14px;
+        font-weight: 500;
+        font-size: 10px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+      tbody td {
+        padding: 9px 14px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+        color: var(--text-secondary);
+        vertical-align: top;
+      }
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+      tbody tr:hover {
+        background: rgba(21, 87, 160, 0.015);
+      }
+
+      .tag {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 500;
+        padding: 1px 8px;
+        border-radius: 3px;
+      }
+      .tag-pri {
+        background: var(--primary-glow);
+        color: var(--primary);
+        border: 1px solid rgba(21, 87, 160, 0.1);
+      }
+      .tag-red {
+        background: rgba(192, 58, 43, 0.06);
+        color: var(--red);
+        border: 1px solid rgba(192, 58, 43, 0.1);
+      }
+      .tag-green {
+        background: rgba(45, 122, 74, 0.06);
+        color: var(--green);
+        border: 1px solid rgba(45, 122, 74, 0.1);
+      }
+      .tag-gold {
+        background: rgba(212, 164, 72, 0.06);
+        color: #8a6a28;
+        border: 1px solid rgba(212, 164, 72, 0.1);
+      }
+
+      .info-box {
+        background: var(--white);
+        border-left: 3px solid var(--primary);
+        border-radius: 0 var(--radius) var(--radius) 0;
+        padding: 16px 20px;
+        margin-top: 16px;
+        box-shadow: var(--shadow);
+      }
+      .info-box.red {
+        border-left-color: var(--red);
+      }
+      .info-box.gold {
+        border-left-color: var(--gold);
+      }
+      .info-box.green {
+        border-left-color: var(--green);
+      }
+      .info-box-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 3px;
+      }
+      .info-box p {
+        font-size: 12.5px;
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+
+      .timeline {
+        margin-top: 16px;
+      }
+      .timeline-item {
+        position: relative;
+        padding-left: 24px;
+        padding-bottom: 14px;
+        border-left: 1px solid var(--paper-darker);
+      }
+      .timeline-item:last-child {
+        padding-bottom: 0;
+        border-left-color: transparent;
+      }
+      .timeline-item::before {
+        content: "";
+        position: absolute;
+        left: -4px;
+        top: 4px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--primary);
+        border: 2px solid var(--white);
+      }
+      .timeline-item .label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--primary);
+        font-family: "Noto Serif SC", serif;
+      }
+      .timeline-item p {
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-top: 1px;
+        line-height: 1.6;
+      }
+
+      .word-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+      }
+      .word-item {
+        font-size: 12px;
+        padding: 4px 12px;
+        border-radius: 5px;
+        background: var(--white);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        color: var(--text-secondary);
+        transition: all 0.2s;
+      }
+      .word-item:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .word-item.danger {
+        background: rgba(192, 58, 43, 0.04);
+        border-color: rgba(192, 58, 43, 0.12);
+        color: var(--red);
+      }
+
+      .platform-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 3px;
+      }
+      .platform-badge.dy {
+        background: rgba(21, 87, 160, 0.06);
+        color: var(--primary);
+      }
+      .platform-badge.xhs {
+        background: rgba(255, 70, 0, 0.06);
+        color: #d44a00;
+      }
+      .platform-badge.ks {
+        background: rgba(255, 130, 0, 0.06);
+        color: #d47000;
+      }
+      .platform-badge.wx {
+        background: rgba(0, 190, 0, 0.06);
+        color: #007a00;
+      }
+      .platform-badge.tt {
+        background: rgba(255, 0, 0, 0.05);
+        color: #c00;
+      }
+      .platform-badge.ig {
+        background: rgba(88, 81, 219, 0.08);
+        color: #5851db;
+      }
+      .platform-badge.yt {
+        background: rgba(255, 0, 0, 0.05);
+        color: #c00;
+      }
+
+      .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 240px;
+        right: 0;
+        height: 2px;
+        z-index: 101;
+      }
+      .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), var(--primary-lighter));
+        width: 0%;
+        transition: width 0.1s;
+      }
+
+      .footer {
+        margin-left: 240px;
+        padding: 28px 80px;
+        background: var(--ink-80);
+        border-top: 1px solid rgba(245, 240, 232, 0.04);
+      }
+      .footer p {
+        font-size: 11px;
+        color: rgba(245, 240, 232, 0.15);
+        letter-spacing: 1px;
+        line-height: 1.8;
+      }
+      .footer a {
+        color: rgba(245, 240, 232, 0.25);
+        text-decoration: none;
+      }
+      .footer a:hover {
+        color: var(--primary-lighter);
+      }
+
+      .file-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        background: var(--white);
+        border: 1px solid var(--paper-dark);
+        border-radius: 8px;
+        font-size: 12px;
+        color: var(--primary);
+        text-decoration: none;
+        transition: all 0.2s;
+      }
+      .file-link:hover {
+        border-color: var(--primary);
+        background: var(--primary-glow);
+      }
+
+      .fade-in {
+        opacity: 0;
+        transform: translateY(12px);
+        animation: fadeIn 0.4s ease-out forwards;
+      }
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .sum-list {
+        margin-top: 20px;
+      }
+      .sum-item {
+        display: flex;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      }
+      .sum-item:last-child {
+        border-bottom: none;
+      }
+      .sum-num {
+        font-family: "Noto Serif SC", serif;
+        font-size: 22px;
+        font-weight: 900;
+        color: var(--primary);
+        line-height: 1;
+        min-width: 32px;
+      }
+      .sum-item h4 {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 2px;
+      }
+      .sum-item p {
+        font-size: 12px;
+        color: var(--text-secondary);
+        line-height: 1.6;
+      }
+
+      @media (max-width: 1024px) {
+        .sidebar {
+          width: 200px;
+          padding: 28px 16px;
+        }
+        .main {
+          margin-left: 200px;
+        }
+        .hero {
+          padding: 60px 40px 40px;
+        }
+        .report-tabs {
+          padding: 0 40px;
+        }
+        .section {
+          padding: 36px 40px;
+        }
+        .section-divider {
+          margin: 0 40px;
+        }
+        .footer {
+          padding: 20px 40px;
+        }
+      }
+      @media (max-width: 768px) {
+        .sidebar {
+          width: 100%;
+          height: auto;
+          position: relative;
+          padding: 14px 20px;
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-items: center;
+        }
+        .sidebar nav,
+        .sidebar-tagline {
+          display: none;
+        }
+        .sidebar-sub {
+          margin-bottom: 0;
+          border: none;
+          padding-bottom: 0;
+        }
+        .main {
+          margin-left: 0;
+        }
+        .hero {
+          padding: 40px 24px 30px;
+        }
+        .report-tabs {
+          padding: 0 16px;
+          overflow-x: auto;
+        }
+        .report-tab {
+          padding: 12px 14px;
+          font-size: 12px;
+        }
+        .section {
+          padding: 28px 24px;
+        }
+        .section-divider {
+          margin: 0 24px;
+        }
+        .footer {
+          margin-left: 0;
+          padding: 16px 24px;
+        }
+        .cards-2,
+        .cards-3,
+        .cards-4 {
+          grid-template-columns: 1fr;
+        }
+        .hero h1 {
+          font-size: 24px;
+        }
+        .section-header h2 {
+          font-size: 20px;
+        }
+        .progress-bar {
+          left: 0;
+        }
+      }
+      ::-webkit-scrollbar {
+        width: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--ink);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(245, 240, 232, 0.06);
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
+
+    <aside class="sidebar">
+      <div>
+        <div class="sidebar-logo">运营全览</div>
+        <div class="sidebar-sub">Research Hub 2025-2026</div>
+        <div class="sidebar-section">— 报告导航 —</div>
+        <nav>
+          <a href="#hub" class="active">总览仪表盘</a>
+          <a href="#risk" class="sub">① 平台风控规则</a>
+          <a href="#domestic" class="sub">② 国内运营体系</a>
+          <a href="#overseas" class="sub">③ 海外运营体系</a>
+          <a href="#ecom" class="sub">④ 电商变现规则</a>
+        </nav>
+      </div>
+      <div class="sidebar-tagline">四大主题 · 全平台覆盖</div>
+    </aside>
+
+    <div class="main">
+      <!-- ==================== HERO ==================== -->
+      <section class="hero" id="hub">
+        <div class="" style="position: relative; z-index: 1">
+          <h1>自媒体运营全维度<br /><span>调研报告整合</span></h1>
+          <p class="hero-sub">
+            涵盖国内/海外平台运营、风控规则、电商变现四大主题，总计超过 200KB 调研内容整合于一处。
+          </p>
+        </div>
+      </section>
+
+      <!-- ==================== TABS ==================== -->
+      <div class="report-tabs" id="mainTabs">
+        <button class="report-tab active" data-tab="tab-risk">平台风控规则</button>
+        <button class="report-tab" data-tab="tab-domestic">国内运营体系</button>
+        <button class="report-tab" data-tab="tab-overseas">海外运营体系</button>
+        <button class="report-tab" data-tab="tab-ecom">电商变现规则</button>
+      </div>
+
+      <!-- ==================== TAB 1: 风控规则 ==================== -->
+      <div class="report-content active" id="tab-risk">
+        <section class="section fade-in">
+          <div class="section-header">
+            <div class="section-number">报告一</div>
+            <h2>国内自媒体平台风控规则</h2>
+            <p>
+              覆盖抖音、小红书、微信、快手等主流平台，系统性梳理2025-2026年风控体系升级要点。含敏感词库、违规红线、合规变现路径。
+            </p>
+            <div style="margin-top: 12px">
+              <a class="file-link" href="自媒体风控调研.html" target="_blank">📂 打开完整报告</a>
+            </div>
+          </div>
+
+          <div class="cards cards-2">
+            <div class="card">
+              <div class="card-icon red">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+                  />
+                  <path d="M12 9v4M12 17h.01" />
+                </svg>
+              </div>
+              <h3>13类负面清单（网信办2025.12）</h3>
+              <ul>
+                <li class="danger">低俗内容、软色情、黑话烂梗</li>
+                <li class="danger">炫富拜金、躺平摆烂、贩卖焦虑</li>
+                <li class="danger">审丑人设、装疯卖傻、以丑为美</li>
+                <li class="danger">传播不实信息、伪科普、摆拍演绎</li>
+                <li>煽动群体对立、开盒挂人、网络暴力</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-icon gold">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="3" y="11" width="18" height="11" rx="2" />
+                  <path d="M7 11V7a5 5 0 0110 0v4" />
+                </svg>
+              </div>
+              <h3>内容标注新规（2026）</h3>
+              <p>
+                6类"必选标签"成为发布前置条件：虚构演绎、AI生成、营销信息、转载、个人观点、无需标注。2026年5月已有9.8万账号被处置。
+              </p>
+            </div>
+          </div>
+
+          <div class="section-divider" style="margin: 20px 0"></div>
+
+          <div class="cards cards-2">
+            <div class="card">
+              <div class="card-icon red">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 8v4M12 16h.01" />
+                </svg>
+              </div>
+              <h3>全平台敏感词分类</h3>
+              <p>
+                绝对化用语（最/第一/唯一）、虚假承诺（包过/稳赚不赔）、医疗功效（根治/治愈率/消炎）、权威背书（国家领导人推荐/特供）、迷信用语（招财进宝/旺夫）、诱导互动（不转不是中国人）
+              </p>
+            </div>
+            <div class="card">
+              <div class="card-icon ink">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </div>
+              <h3>平台风控差异</h3>
+              <ul>
+                <li class="prim"><strong>抖音</strong>：行为预测模型，收藏>复访>评论>点赞</li>
+                <li class="prim"><strong>小红书</strong>：CES评分，评论(4x)+关注(8x)权重极高</li>
+                <li class="prim"><strong>视频号</strong>：社交关系链驱动，私域是冷启动核心</li>
+                <li class="prim"><strong>快手</strong>：有效评论权重是点赞的4.7倍</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-box-title">合规变现原则</div>
+            <p>
+              通过平台官方工具（小黄车、小红书店铺、视频号小店）进行转化。不要试图用谐音/缩写/emoji规避检测——AI模型会识别变体。政治敏感触碰即永久封号，无申诉余地。
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <!-- ==================== TAB 2: 国内运营 ==================== -->
+      <div class="report-content" id="tab-domestic">
+        <section class="section fade-in">
+          <div class="section-header">
+            <div class="section-number">报告二</div>
+            <h2>国内社交媒体运营体系</h2>
+            <p>
+              四大维度深度调研：推流分发机制、账号价值维度、话题标签规则、发布时间指南。覆盖抖音、小红书、视频号、公众号、快手、B站、微博。
+            </p>
+            <div style="margin-top: 12px">
+              <a class="file-link" href="自媒体运营深度调研.html" target="_blank"
+                >📂 打开完整报告</a
+              >
+            </div>
+          </div>
+
+          <div class="cards cards-2">
+            <div class="card">
+              <div class="card-icon primary">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 2a15 15 0 014 10 15 15 0 01-4 10 15 15 0 01-4-10A15 15 0 0112 2z" />
+                </svg>
+              </div>
+              <h3>推流分发机制 — 核心变化</h3>
+              <p>
+                2026年最大变化：抖音从"标签匹配"全面转向<strong>"行为预测模型"</strong>。小红书进入CES第5代"星云5.0"。B站下线"猜你喜欢"上线AI新推荐系统。
+              </p>
+              <ul>
+                <li class="prim">
+                  <strong>抖音</strong>：收藏>复访>铁粉互动(5x权重)>5秒完播率>>点赞
+                </li>
+                <li class="prim"><strong>小红书</strong>：关注(+8)>评论(+4)>收藏(=1)=点赞(=1)</li>
+                <li class="prim"><strong>视频号</strong>：社交推荐~55%+算法推荐15%-25%</li>
+                <li class="danger">所有平台：点赞已成为最不值钱的指标</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-icon gold">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 00-3-3.87" />
+                  <path d="M16 3.13a4 4 0 010 7.75" />
+                </svg>
+              </div>
+              <h3>账号价值 — 从数量到质量</h3>
+              <p>粉丝数不等于账号价值。高互动率+高质量粉丝画像+垂直内容深度=真正的账号价值。</p>
+              <ul>
+                <li class="danger">
+                  一个3万粉但互动率12%的账号，商业价值远超20万粉但互动率0.5%的账号
+                </li>
+                <li>抖音铁粉占比≥20%是账号升A级/S级的硬性门槛</li>
+                <li>小红书搜索流量占比已升至40%-65%</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="section-divider" style="margin: 20px 0"></div>
+
+          <h3
+            style="
+              font-family: &quot;Noto Serif SC&quot;, serif;
+              font-size: 18px;
+              font-weight: 700;
+              margin-bottom: 10px;
+            "
+          >
+            话题标签规则（跨平台通用）
+          </h3>
+          <div class="cards cards-3">
+            <div class="card">
+              <div class="card-icon primary"><span style="font-size: 16px">①</span></div>
+              <h3>3-5个标签</h3>
+              <p>是所有平台的黄金共识</p>
+            </div>
+            <div class="card">
+              <div class="card-icon red"><span style="font-size: 16px">②</span></div>
+              <h3>标签放评论区=无效</h3>
+              <p>所有平台算法只识别正文/标题中的标签</p>
+            </div>
+            <div class="card">
+              <div class="card-icon gold"><span style="font-size: 16px">③</span></div>
+              <h3>搜推互通已成趋势</h3>
+              <p>搜索流量反哺推荐流量，关键词布局日益重要</p>
+            </div>
+          </div>
+
+          <div class="info-box" style="margin-top: 20px">
+            <div class="info-box-title">2026年运营核心法则</div>
+            <p>
+              <strong>从粉丝崇拜到质量崇拜</strong> — 收藏率>点赞率<br />
+              <strong>搜推互通</strong> — 标题关键词布局影响搜索+推荐<br />
+              <strong>私域能力决定冷启动</strong> — 社群/朋友圈是发动机<br />
+              <strong>垂直深耕</strong> — 跨领域发内容是所有平台降权的共通原因<br />
+              <strong>AI合规</strong> — AI内容须标注，低质AI号批量清洗
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <!-- ==================== TAB 3: 海外运营 ==================== -->
+      <div class="report-content" id="tab-overseas">
+        <section class="section fade-in">
+          <div class="section-header">
+            <div class="section-number">报告三</div>
+            <h2>海外社交媒体运营体系</h2>
+            <p>
+              覆盖 TikTok、Instagram、YouTube、Reddit、X/Twitter、Facebook
+              六大海外主流平台，七大维度深度调研。蓝色主色调设计。
+            </p>
+            <div style="margin-top: 12px">
+              <a class="file-link" href="海外社交媒体平台调研.html" target="_blank"
+                >📂 打开完整报告</a
+              >
+            </div>
+          </div>
+
+          <div class="cards cards-2">
+            <div class="card">
+              <div class="card-icon primary">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 2a15 15 0 014 10 15 15 0 01-4 10 15 15 0 01-4-10A15 15 0 0112 2z" />
+                </svg>
+              </div>
+              <h3>核心分发逻辑对比</h3>
+              <ul>
+                <li class="prim">
+                  <strong>TikTok</strong>：兴趣图谱，完播率+复看率>分享>评论>点赞
+                </li>
+                <li class="prim">
+                  <strong>Instagram</strong>：多算法并行，观看时间+DM分享最强信号
+                </li>
+                <li class="prim">
+                  <strong>YouTube</strong>：SEO+搜索+订阅，平均观看时长>CTR>留存率
+                </li>
+                <li class="prim">
+                  <strong>Reddit</strong>：Subreddit社区共识，早期互动速度>Upvote比例
+                </li>
+                <li>标签重要性全面下降，Caption关键词SEO已成主流</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-icon gold">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 6v6l4 2" />
+                </svg>
+              </div>
+              <h3>关键指标区别</h3>
+              <ul>
+                <li><strong>完播率</strong> — 看到最后的人占比，TikTok最看重</li>
+                <li><strong>观看时间</strong> — 总共看了多久，Instagram最看重</li>
+                <li><strong>平均观看时长(AVD)</strong> — 每人平均看了多久，YouTube最看重</li>
+                <li><strong>Nano创作者</strong>（1K-10K粉）— 互动率5-7%，品牌方最爱（44%）</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="section-divider" style="margin: 20px 0"></div>
+
+          <div class="cards cards-2">
+            <div class="card">
+              <div class="card-icon red">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              </div>
+              <h3>地理分发机制</h3>
+              <p>
+                TikTok是地域限制最严格的平台——SIM卡+IP+GPS三重判定。Reddit不受地域限制，Subreddit决定用户群。
+              </p>
+              <ul>
+                <li>出海想主攻美国→需美国SIM+IP的手机注册</li>
+                <li>Reddit是出海营销的"漏网之鱼"</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-icon ink">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+                </svg>
+              </div>
+              <h3>Caption策略（社交SEO）</h3>
+              <p>
+                "三重对齐"框架：封面/首帧 + 口播前3秒 + Caption开头
+                包含相同关键词。Caption已取代Hashtag成为发现内容的第一入口。
+              </p>
+            </div>
+          </div>
+
+          <div class="info-box gold">
+            <div class="info-box-title">海外平台定位速记</div>
+            <p>
+              <strong>TikTok</strong> = 增长引擎 · <strong>Instagram</strong> = 品牌商业化 ·
+              <strong>YouTube</strong> = 深度变现+长尾资产<br />
+              <strong>Reddit</strong> = 社区信任+SEO外挂 · <strong>X/Twitter</strong> = 实时话题 ·
+              <strong>Facebook</strong> = 社区+长视频
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <!-- ==================== TAB 4: 电商变现 ==================== -->
+      <div class="report-content" id="tab-ecom">
+        <section class="section fade-in">
+          <div class="section-header">
+            <div class="section-number">报告四</div>
+            <h2>自媒体电商变现规则</h2>
+            <p>
+              系统性梳理商品上架规则、类目禁区、购买服务风险及新手冷启动的正确路径。包含司法机关正式公布的诈骗判例。
+            </p>
+            <div style="margin-top: 12px">
+              <a class="file-link" href="自媒体电商变现规则调研.html" target="_blank"
+                >📂 打开完整报告</a
+              >
+            </div>
+          </div>
+
+          <div class="cards cards-2">
+            <div class="card">
+              <div class="card-icon primary">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                  <path d="M2 17l10 5 10-5" />
+                  <path d="M2 12l10 5 10-5" />
+                </svg>
+              </div>
+              <h3>各平台带货门槛一览</h3>
+              <ul>
+                <li class="good">
+                  橱窗开通：抖音/小红书/快手/视频号均<span class="tag tag-green">0粉</span>
+                </li>
+                <li class="warning">
+                  短视频带货：抖音需<span class="tag tag-pri">500粉</span>，其他平台0粉即可
+                </li>
+                <li class="warn">
+                  直播带货：小红书需<span class="tag tag-red">1,000粉</span>，快手100粉，抖音200粉
+                </li>
+                <li>
+                  保证金：小红书<span class="tag tag-green">0元</span>，抖音50元起（0元试运营）
+                </li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-icon red">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+                  />
+                </svg>
+              </div>
+              <h3>购买服务 = 高风险</h3>
+              <p>
+                2025年已有多起判刑案例：3141人被骗440万（主犯判11年6个月），300余万代运营诈骗（主犯判10年）。
+              </p>
+              <ul>
+                <li class="danger">代开橱窗/代运营 = 90%以上是诈骗</li>
+                <li class="danger">买粉不计入有效粉丝门槛，且账号被封</li>
+                <li class="warn">"陪跑"服务2,980-29,800元，合同难维权</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="section-divider" style="margin: 20px 0"></div>
+
+          <div class="cards cards-3">
+            <div class="card">
+              <div class="card-icon gold">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
+                  />
+                </svg>
+              </div>
+              <h3>新手首选：快手</h3>
+              <p>0粉短视频带货，新号3个月流量扶持，技术服务费1%-5%最低。适合轻度刚需、低价品。</p>
+            </div>
+            <div class="card">
+              <div class="card-icon primary">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                </svg>
+              </div>
+              <h3>爆发力：抖音</h3>
+              <p>流量天花板最高，需先冲500粉。"三低一高"选品：低单价/低决策/低售后/高佣金。</p>
+            </div>
+            <div class="card">
+              <div class="card-icon gold">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 6v6l4 2" />
+                </svg>
+              </div>
+              <h3>女性品类：小红书</h3>
+              <p>0粉挂笔记带货，0%技术服务费，搜索流量长尾6-12个月。适合美妆/母婴/家居/穿搭。</p>
+            </div>
+          </div>
+
+          <div class="info-box green">
+            <div class="info-box-title">新手正确路径（第1天→第3个月）</div>
+            <p>
+              <strong>第1周</strong>：注册实名→学习官方课程→确定选品<br />
+              <strong>第2-3周</strong>：发干货内容养号（快手直接起步，抖音冲500粉）<br />
+              <strong>第4周</strong>：开橱窗→上架选品→每天2-3条带货内容<br />
+              <strong>第2个月</strong>：数据复盘聚焦高转化内容<br />
+              <strong>第3个月</strong>：小额投流测试(100-200元/天)
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <footer class="footer">
+        <p>
+          自媒体运营全维度调研报告整合 &bull; 2025-2026 &bull; 完整报告文件：<a
+            href="自媒体风控调研.html"
+            target="_blank"
+            >风控规则</a
+          >
+          · <a href="自媒体运营深度调研.html" target="_blank">国内运营</a> ·
+          <a href="海外社交媒体平台调研.html" target="_blank">海外运营</a> ·
+          <a href="自媒体电商变现规则调研.html" target="_blank">电商变现</a>
+        </p>
+      </footer>
+    </div>
+
+    <script>
+      const tabs = document.querySelectorAll(".report-tab");
+      const contents = {
+        "tab-risk": document.getElementById("tab-risk"),
+        "tab-domestic": document.getElementById("tab-domestic"),
+        "tab-overseas": document.getElementById("tab-overseas"),
+        "tab-ecom": document.getElementById("tab-ecom"),
+      };
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+          Object.values(contents).forEach((c) => c.classList.remove("active"));
+          const target = contents[tab.dataset.tab];
+          if (target) target.classList.add("active");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      });
+
+      const sections = document.querySelectorAll(".report-content");
+      const navLinks = document.querySelectorAll(".sidebar nav a");
+      const progressFill = document.getElementById("progressFill");
+      const sidebarNav = document.querySelector(".sidebar nav");
+
+      function updateSidebar() {
+        let current = "";
+        sections.forEach((s) => {
+          if (s.classList.contains("active")) current = s.id;
+        });
+        navLinks.forEach((a) => {
+          const href = a.getAttribute("href");
+          const targetId = href ? href.substring(1) : "";
+          const targetEl = document.getElementById(targetId);
+          if (targetEl && targetEl.classList.contains("active")) {
+            a.classList.add("active");
+          } else {
+            a.classList.remove("active");
+          }
+        });
+      }
+
+      function updateProgress() {
+        const p = document.documentElement.scrollHeight - window.innerHeight;
+        progressFill.style.width = (p > 0 ? (window.scrollY / p) * 100 : 0) + "%";
+      }
+
+      sidebarNav.addEventListener("click", (e) => {
+        if (e.target.tagName === "A") {
+          const href = e.target.getAttribute("href");
+          if (href && href.startsWith("#") && href.length > 1) {
+            const targetId = href.substring(1);
+            const tabMap = {
+              hub: "tab-risk",
+              risk: "tab-risk",
+              domestic: "tab-domestic",
+              overseas: "tab-overseas",
+              ecom: "tab-ecom",
+            };
+            const tabId = tabMap[targetId];
+            if (tabId) {
+              e.preventDefault();
+              const tabBtn = document.querySelector(`[data-tab="${tabId}"]`);
+              if (tabBtn) tabBtn.click();
+            }
+          }
+        }
+      });
+
+      window.addEventListener("scroll", () => {
+        updateActive();
+        updateProgress();
+        updateSidebar();
+      });
+      window.addEventListener("load", updateProgress);
+    </script>
+  </body>
+</html>

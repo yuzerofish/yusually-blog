@@ -23,6 +23,7 @@ export {
   splitSetCookieHeader,
   toIsoString,
 } from "./utils";
+export { portfolioItems, type PortfolioItem } from "./portfolio";
 export type {
   ApiToken,
   ApiTokenScope,
@@ -118,6 +119,7 @@ const defaultNavigationLabels: Record<SupportedLocale, Record<string, string>> =
     "/demo": "Demo",
     "/blog": "Articles",
     "/docs": "Docs",
+    "/works": "Works",
     "/series": "Series",
     "/tags": "Tags",
     "/about": "About",
@@ -126,6 +128,7 @@ const defaultNavigationLabels: Record<SupportedLocale, Record<string, string>> =
     "/demo": "博客 Demo",
     "/blog": "文章",
     "/docs": "文档",
+    "/works": "作品集",
     "/series": "专栏",
     "/tags": "标签",
     "/about": "关于",

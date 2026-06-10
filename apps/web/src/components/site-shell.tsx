@@ -4,7 +4,14 @@ import { getSiteSettingsForLocale, type SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { cn } from "@repo/ui/lib/utils";
 import { Link, useLocation } from "@tanstack/react-router";
-import { BookOpenIcon, FileTextIcon, HomeIcon, SearchIcon, UserCircleIcon } from "lucide-react";
+import {
+  BookOpenIcon,
+  FileTextIcon,
+  GlobeIcon,
+  HomeIcon,
+  SearchIcon,
+  UserCircleIcon,
+} from "lucide-react";
 import { useEffect } from "react";
 
 import { LanguageToggle } from "#/components/language-toggle";
@@ -156,9 +163,9 @@ function MobileTabBar({ locale }: { readonly locale: ReturnType<typeof getCurren
       icon: HomeIcon,
     },
     {
-      href: "/demo",
-      label: locale === "zh" ? "Demo" : "Demo",
-      icon: BookOpenIcon,
+      href: "/works",
+      label: locale === "zh" ? "作品" : "Works",
+      icon: GlobeIcon,
     },
     {
       href: docsHref,

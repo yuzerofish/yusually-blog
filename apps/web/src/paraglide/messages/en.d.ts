@@ -353,6 +353,8 @@
 /** @typedef {{}} UpdatedInputs */
 /** @typedef {{}} UploadInputs */
 /** @typedef {{}} View_All_PostsInputs */
+/** @typedef {{}} Works_TitleInputs */
+/** @typedef {{}} Works_SubtitleInputs */
 export const admin: (inputs: AdminInputs) => LocalizedString;
 export const admin_assets_description: (inputs: Admin_Assets_DescriptionInputs) => LocalizedString;
 export const admin_assets_copied: (inputs: Admin_Assets_CopiedInputs) => LocalizedString;
@@ -707,6 +709,8 @@ export const theme_toggle: (inputs: Theme_ToggleInputs) => LocalizedString;
 export const updated: (inputs: UpdatedInputs) => LocalizedString;
 export const upload: (inputs: UploadInputs) => LocalizedString;
 export const view_all_posts: (inputs: View_All_PostsInputs) => LocalizedString;
+export const works_title: (inputs: Works_TitleInputs) => LocalizedString;
+export const works_subtitle: (inputs: Works_SubtitleInputs) => LocalizedString;
 export type LocalizedString = import("../runtime.js").LocalizedString;
 export type AdminInputs = {};
 export type Admin_Assets_DescriptionInputs = {};
@@ -1105,3 +1109,5 @@ export type Theme_ToggleInputs = {};
 export type UpdatedInputs = {};
 export type UploadInputs = {};
 export type View_All_PostsInputs = {};
+export type Works_TitleInputs = {};
+export type Works_SubtitleInputs = {};

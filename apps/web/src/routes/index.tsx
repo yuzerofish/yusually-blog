@@ -9,6 +9,7 @@ import { Button } from "@repo/ui/components/button";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRightIcon,
+  BarChart3Icon,
   BookOpenIcon,
   CameraIcon,
   ExternalLinkIcon,
@@ -399,9 +400,17 @@ function getHomeCopy(locale: SupportedLocale) {
         {
           title: "自媒体运营全维度调研",
           description: "2025–2026 年中国主流平台自媒体运营的全维度研究报告。",
-          href: "/blog/自媒体运营全维度调研整合",
+          href: "/self-media-report/自媒体运营全维度调研整合.html",
           cta: "阅读",
           icon: BookOpenIcon,
+        },
+        {
+          title: "Skills 技能库",
+          description:
+            "交互式技能库目录，展示全部 Claude Code 自定义技能 — 视频管线、内容创作、人物视角等。",
+          href: "/skills-portfolio/",
+          cta: "探索",
+          icon: BarChart3Icon,
         },
         {
           title: "感受自己的浪",
@@ -453,9 +462,17 @@ function getHomeCopy(locale: SupportedLocale) {
         title: "Self-Media Research",
         description:
           "Comprehensive report on China's self-media operations across major platforms 2025-2026.",
-        href: "/blog/自媒体运营全维度调研整合",
+        href: "/self-media-report/自媒体运营全维度调研整合.html",
         cta: "Read",
         icon: BookOpenIcon,
+      },
+      {
+        title: "Skills Portfolio",
+        description:
+          "Interactive skill directory of all Claude Code skills — video pipeline, content creation, perspectives, and more.",
+        href: "/skills-portfolio/",
+        cta: "Explore",
+        icon: BarChart3Icon,
       },
       {
         title: "Feeling My Own Waves",

@@ -354,6 +354,8 @@
 /** @typedef {{}} UpdatedInputs */
 /** @typedef {{}} UploadInputs */
 /** @typedef {{}} View_All_PostsInputs */
+/** @typedef {{}} Works_TitleInputs */
+/** @typedef {{}} Works_SubtitleInputs */
 
 
 export const admin = /** @type {(inputs: AdminInputs) => LocalizedString} */ () => {
@@ -1770,4 +1772,12 @@ export const upload = /** @type {(inputs: UploadInputs) => LocalizedString} */ (
 
 export const view_all_posts = /** @type {(inputs: View_All_PostsInputs) => LocalizedString} */ () => {
 	return /** @type {LocalizedString} */ (`View all posts`)
+};
+
+export const works_title = /** @type {(inputs: Works_TitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Works`)
+};
+
+export const works_subtitle = /** @type {(inputs: Works_SubtitleInputs) => LocalizedString} */ () => {
+	return /** @type {LocalizedString} */ (`Projects, tools, and ideas built by Yusually.`)
 };

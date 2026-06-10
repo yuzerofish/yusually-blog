@@ -4954,6 +4954,34 @@ export const view_all_posts: ((inputs?: View_All_PostsInputs, options?: {
 }) => LocalizedString) & import("../runtime.js").MessageMetadata<View_All_PostsInputs, {
     locale?: "en" | "zh";
 }, {}>;
+/**
+* | output |
+* | --- |
+* | "Works" |
+*
+* @param {Works_TitleInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const works_title: ((inputs?: Works_TitleInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Works_TitleInputs, {
+    locale?: "en" | "zh";
+}, {}>;
+/**
+* | output |
+* | --- |
+* | "Projects, tools, and ideas built by Yusually." |
+*
+* @param {Works_SubtitleInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const works_subtitle: ((inputs?: Works_SubtitleInputs, options?: {
+    locale?: "en" | "zh";
+}) => LocalizedString) & import("../runtime.js").MessageMetadata<Works_SubtitleInputs, {
+    locale?: "en" | "zh";
+}, {}>;
 export type LocalizedString = import("../runtime.js").LocalizedString;
 export type AdminInputs = {};
 export type Admin_Assets_DescriptionInputs = {};
@@ -5352,3 +5380,5 @@ export type Theme_ToggleInputs = {};
 export type UpdatedInputs = {};
 export type UploadInputs = {};
 export type View_All_PostsInputs = {};
+export type Works_TitleInputs = {};
+export type Works_SubtitleInputs = {};

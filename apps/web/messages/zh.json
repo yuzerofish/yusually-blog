@@ -352,5 +352,7 @@
   "theme_toggle": "切换主题",
   "updated": "更新于",
   "upload": "上传",
-  "view_all_posts": "查看全部文章"
+  "view_all_posts": "查看全部文章",
+  "works_title": "作品集",
+  "works_subtitle": "Yusually 亲手搭建的项目、工具和想法。"
 }

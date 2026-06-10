@@ -356,6 +356,8 @@ import { getLocale, experimentalStaticLocale } from "../runtime.js"
 /** @typedef {{}} UpdatedInputs */
 /** @typedef {{}} UploadInputs */
 /** @typedef {{}} View_All_PostsInputs */
+/** @typedef {{}} Works_TitleInputs */
+/** @typedef {{}} Works_SubtitleInputs */
 import * as __en from "./en.js"
 import * as __zh from "./zh.js"
 /**
@@ -5313,4 +5315,32 @@ export const view_all_posts = /** @type {((inputs?: View_All_PostsInputs, option
 	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
 	if (locale === "en") return __en.view_all_posts(inputs)
 	return __zh.view_all_posts(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Works" |
+*
+* @param {Works_TitleInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const works_title = /** @type {((inputs?: Works_TitleInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Works_TitleInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "en") return __en.works_title(inputs)
+	return __zh.works_title(inputs)
+});
+/**
+* | output |
+* | --- |
+* | "Projects, tools, and ideas built by Yusually." |
+*
+* @param {Works_SubtitleInputs} inputs
+* @param {{ locale?: "en" | "zh" }} options
+* @returns {LocalizedString}
+*/
+export const works_subtitle = /** @type {((inputs?: Works_SubtitleInputs, options?: { locale?: "en" | "zh" }) => LocalizedString) & import('../runtime.js').MessageMetadata<Works_SubtitleInputs, { locale?: "en" | "zh" }, {}>} */ ((inputs = {}, options = {}) => {
+	const locale = experimentalStaticLocale ?? options.locale ?? getLocale()
+	if (locale === "en") return __en.works_subtitle(inputs)
+	return __zh.works_subtitle(inputs)
 });

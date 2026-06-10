@@ -1,0 +1,1711 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>自媒体电商变现规则深度调研 2025-2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=ZCOOL+QingKe+HuangYou&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #1557a0;
+        --primary-light: #2b7bd4;
+        --primary-lighter: #5ba0e8;
+        --primary-dark: #0d3b6e;
+        --primary-glow: rgba(21, 87, 160, 0.08);
+        --ink: #0d0a08;
+        --ink-80: #1a1512;
+        --ink-60: #2a2420;
+        --gold: #d4a448;
+        --gold-light: #e8c56a;
+        --paper: #f2f5fa;
+        --paper-dark: #e2e7f0;
+        --paper-darker: #c8d0de;
+        --text-primary: #131a2e;
+        --text-secondary: #3d4760;
+        --text-muted: #6e7a94;
+        --white: #fafcff;
+        --shadow-sm: 0 1px 4px rgba(21, 87, 160, 0.04);
+        --shadow: 0 2px 16px rgba(21, 87, 160, 0.06);
+        --shadow-lg: 0 8px 32px rgba(21, 87, 160, 0.08);
+        --radius: 12px;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family:
+          "Noto Sans SC",
+          -apple-system,
+          sans-serif;
+        background: var(--paper);
+        color: var(--text-primary);
+        line-height: 1.8;
+        overflow-x: hidden;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.025;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-repeat: repeat;
+        background-size: 256px 256px;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 240px;
+        height: 100vh;
+        background: linear-gradient(180deg, var(--ink) 0%, var(--ink-80) 100%);
+        color: var(--paper);
+        padding: 40px 24px;
+        z-index: 100;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+      }
+      .sidebar-logo {
+        font-family: "ZCOOL QingKe HuangYou", sans-serif;
+        font-size: 20px;
+        color: var(--primary-lighter);
+        letter-spacing: 2px;
+        margin-bottom: 4px;
+      }
+      .sidebar-sub {
+        font-size: 10px;
+        color: rgba(245, 240, 232, 0.35);
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 28px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid rgba(245, 240, 232, 0.06);
+      }
+      .sidebar nav a {
+        display: block;
+        color: rgba(245, 240, 232, 0.5);
+        text-decoration: none;
+        font-size: 13px;
+        padding: 7px 0;
+        transition: all 0.2s;
+        border-left: 2px solid transparent;
+        padding-left: 14px;
+        margin-bottom: 2px;
+      }
+      .sidebar nav a:hover,
+      .sidebar nav a.active {
+        color: var(--primary-lighter);
+        border-left-color: var(--primary-lighter);
+      }
+      .sidebar nav a.active {
+        position: relative;
+      }
+      .sidebar nav a.active::after {
+        content: "";
+        position: absolute;
+        left: -2px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 60%;
+        background: var(--primary-lighter);
+        border-radius: 2px;
+      }
+      .sidebar-tagline {
+        margin-top: auto;
+        font-size: 10px;
+        color: rgba(245, 240, 232, 0.15);
+        letter-spacing: 1px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(245, 240, 232, 0.05);
+      }
+
+      .main {
+        margin-left: 240px;
+        min-height: 100vh;
+      }
+
+      .hero {
+        position: relative;
+        padding: 100px 80px 70px;
+        background: linear-gradient(135deg, var(--ink) 0%, #0c1a2e 40%, var(--ink-80) 100%);
+        overflow: hidden;
+      }
+      .hero::after {
+        content: "";
+        position: absolute;
+        top: -40%;
+        right: -15%;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(21, 87, 160, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--primary),
+          var(--primary-lighter),
+          transparent
+        );
+        opacity: 0.3;
+      }
+      .hero-badge {
+        display: inline-block;
+        font-size: 10px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: #7ab8e8;
+        border: 1px solid rgba(91, 160, 232, 0.25);
+        padding: 4px 14px;
+        margin-bottom: 20px;
+        font-weight: 500;
+      }
+      .hero h1 {
+        font-family: "Noto Serif SC", serif;
+        font-size: clamp(32px, 4.5vw, 56px);
+        font-weight: 900;
+        color: var(--white);
+        line-height: 1.2;
+        max-width: 700px;
+        position: relative;
+        z-index: 1;
+      }
+      .hero h1 span {
+        color: #7ab8e8;
+      }
+      .hero-sub {
+        font-size: 15px;
+        color: rgba(245, 240, 232, 0.45);
+        margin-top: 16px;
+        max-width: 560px;
+        line-height: 1.7;
+        position: relative;
+        z-index: 1;
+      }
+
+      .section {
+        padding: 64px 80px;
+        max-width: 1000px;
+      }
+      .section-header {
+        margin-bottom: 36px;
+      }
+      .section-number {
+        font-family: "Noto Serif SC", serif;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--primary);
+        letter-spacing: 3px;
+        margin-bottom: 6px;
+      }
+      .section-header h2 {
+        font-family: "Noto Serif SC", serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--ink);
+        line-height: 1.3;
+      }
+      .section-header h2::after {
+        content: "";
+        display: block;
+        width: 36px;
+        height: 3px;
+        background: var(--primary);
+        margin-top: 12px;
+      }
+      .section-header p {
+        color: var(--text-secondary);
+        margin-top: 14px;
+        font-size: 14px;
+        max-width: 600px;
+      }
+      .section-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(90deg, var(--paper-darker) 0%, transparent 100%);
+        margin: 0 80px;
+      }
+
+      .cards {
+        display: grid;
+        gap: 18px;
+      }
+      .cards-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+      .cards-3 {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      .cards-4 {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+      }
+      .card {
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 24px;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+      .card-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        margin-bottom: 12px;
+      }
+      .card-icon.primary {
+        background: var(--primary-glow);
+        color: var(--primary);
+      }
+      .card-icon.blue {
+        background: rgba(91, 160, 232, 0.08);
+        color: var(--primary);
+      }
+      .card-icon.gold {
+        background: rgba(212, 164, 72, 0.08);
+        color: var(--gold);
+      }
+      .card-icon.red {
+        background: rgba(192, 58, 43, 0.06);
+        color: #c03a2b;
+      }
+      .card-icon.green {
+        background: rgba(45, 122, 74, 0.08);
+        color: #2d7a4a;
+      }
+      .card h3 {
+        font-family: "Noto Serif SC", serif;
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: var(--ink);
+      }
+      .card p {
+        font-size: 13px;
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+      .card ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 8px;
+      }
+      .card li {
+        font-size: 12.5px;
+        color: var(--text-secondary);
+        padding: 3px 0;
+        padding-left: 14px;
+        position: relative;
+        line-height: 1.6;
+      }
+      .card li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 12px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--paper-darker);
+      }
+      .card li.danger::before {
+        background: #c03a2b;
+      }
+      .card li.warn::before {
+        background: var(--gold);
+      }
+      .card li.good::before {
+        background: #2d7a4a;
+      }
+      .card li.primary::before {
+        background: var(--primary);
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        margin-top: 20px;
+        border-radius: var(--radius);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        box-shadow: var(--shadow-sm);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--white);
+        font-size: 12.5px;
+      }
+      thead {
+        background: linear-gradient(135deg, var(--ink) 0%, var(--ink-80) 100%);
+        color: var(--white);
+      }
+      thead th {
+        text-align: left;
+        padding: 12px 16px;
+        font-weight: 500;
+        font-size: 11px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+      tbody td {
+        padding: 11px 16px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+        color: var(--text-secondary);
+        vertical-align: top;
+      }
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+      tbody tr:hover {
+        background: rgba(21, 87, 160, 0.015);
+      }
+
+      .info-box {
+        background: var(--white);
+        border-left: 3px solid var(--primary);
+        border-radius: 0 var(--radius) var(--radius) 0;
+        padding: 18px 22px;
+        margin-top: 20px;
+        box-shadow: var(--shadow);
+      }
+      .info-box.red {
+        border-left-color: #c03a2b;
+      }
+      .info-box.gold {
+        border-left-color: var(--gold);
+      }
+      .info-box.green {
+        border-left-color: #2d7a4a;
+      }
+      .info-box-title {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 4px;
+      }
+      .info-box p {
+        font-size: 13px;
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+
+      .subsection {
+        margin-top: 28px;
+      }
+      .subsection h3 {
+        font-family: "Noto Serif SC", serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 10px;
+      }
+      .subsection h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ink);
+        margin: 16px 0 6px;
+      }
+      .subsection p,
+      .subsection li {
+        font-size: 13px;
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+
+      /* Tag */
+      .tag {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 500;
+        padding: 2px 10px;
+        border-radius: 4px;
+        letter-spacing: 0.3px;
+      }
+      .tag-blue {
+        background: var(--primary-glow);
+        color: var(--primary);
+        border: 1px solid rgba(21, 87, 160, 0.1);
+      }
+      .tag-red {
+        background: rgba(192, 58, 43, 0.06);
+        color: #c03a2b;
+        border: 1px solid rgba(192, 58, 43, 0.1);
+      }
+      .tag-green {
+        background: rgba(45, 122, 74, 0.06);
+        color: #2d7a4a;
+        border: 1px solid rgba(45, 122, 74, 0.1);
+      }
+      .tag-gold {
+        background: rgba(212, 164, 72, 0.06);
+        color: #8a6a28;
+        border: 1px solid rgba(212, 164, 72, 0.1);
+      }
+
+      /* Timeline */
+      .timeline {
+        margin-top: 20px;
+      }
+      .timeline-item {
+        position: relative;
+        padding-left: 26px;
+        padding-bottom: 20px;
+        border-left: 1px solid var(--paper-darker);
+      }
+      .timeline-item:last-child {
+        padding-bottom: 0;
+        border-left-color: transparent;
+      }
+      .timeline-item::before {
+        content: "";
+        position: absolute;
+        left: -4px;
+        top: 4px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--primary);
+        border: 2px solid var(--white);
+      }
+      .timeline-item .week {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--primary);
+        font-family: "Noto Serif SC", serif;
+      }
+      .timeline-item p {
+        font-size: 12.5px;
+        color: var(--text-secondary);
+        margin-top: 2px;
+        line-height: 1.6;
+      }
+
+      /* Warning cards */
+      .warning-card {
+        background: linear-gradient(135deg, rgba(192, 58, 43, 0.03), rgba(192, 58, 43, 0.06));
+        border: 1px solid rgba(192, 58, 43, 0.1);
+        border-radius: var(--radius);
+        padding: 20px 24px;
+        box-shadow: var(--shadow-sm);
+      }
+      .warning-card h4 {
+        color: #a02a1e;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .warning-card p {
+        font-size: 12.5px;
+        color: var(--text-secondary);
+        line-height: 1.7;
+      }
+      .warning-card ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 6px;
+      }
+      .warning-card li {
+        font-size: 12.5px;
+        color: var(--text-secondary);
+        padding: 2px 0;
+        padding-left: 14px;
+        position: relative;
+        line-height: 1.6;
+      }
+      .warning-card li::before {
+        content: "!";
+        position: absolute;
+        left: 0;
+        top: 2px;
+        color: #c03a2b;
+        font-weight: 700;
+        font-size: 13px;
+      }
+
+      /* Badge / Highlight */
+      .highlight-num {
+        font-family: "Noto Serif SC", serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary);
+        line-height: 1;
+      }
+
+      /* Summary section */
+      .summary-section {
+        background: linear-gradient(135deg, var(--ink) 0%, var(--ink-80) 100%);
+        padding: 64px 80px;
+        max-width: 1000px;
+      }
+      .summary-section .section-header h2 {
+        color: var(--white);
+      }
+      .summary-section .section-header p {
+        color: rgba(245, 240, 232, 0.45);
+      }
+      .summary-list {
+        margin-top: 28px;
+      }
+      .summary-item {
+        display: flex;
+        gap: 14px;
+        padding: 14px 0;
+        border-bottom: 1px solid rgba(245, 240, 232, 0.05);
+      }
+      .summary-item:last-child {
+        border-bottom: none;
+      }
+      .summary-num {
+        font-family: "Noto Serif SC", serif;
+        font-size: 24px;
+        font-weight: 900;
+        color: var(--primary);
+        line-height: 1;
+        min-width: 36px;
+      }
+      .summary-item h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--white);
+        margin-bottom: 3px;
+      }
+      .summary-item p {
+        font-size: 12.5px;
+        color: rgba(245, 240, 232, 0.4);
+        line-height: 1.6;
+      }
+
+      .footer {
+        margin-left: 240px;
+        padding: 32px 80px;
+        background: var(--ink-80);
+        border-top: 1px solid rgba(245, 240, 232, 0.04);
+      }
+      .footer p {
+        font-size: 11px;
+        color: rgba(245, 240, 232, 0.18);
+        letter-spacing: 1px;
+        line-height: 1.8;
+      }
+
+      .fade-in {
+        opacity: 0;
+        transform: translateY(16px);
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-in:nth-child(1) {
+        animation-delay: 0.05s;
+      }
+      .fade-in:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .fade-in:nth-child(3) {
+        animation-delay: 0.15s;
+      }
+
+      .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 240px;
+        right: 0;
+        height: 2px;
+        z-index: 101;
+        background: transparent;
+      }
+      .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), var(--primary-lighter));
+        width: 0%;
+        transition: width 0.1s;
+      }
+      .platform-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 4px;
+      }
+      .platform-badge.dy {
+        background: rgba(21, 87, 160, 0.06);
+        color: var(--primary);
+      }
+      .platform-badge.xhs {
+        background: rgba(255, 70, 0, 0.06);
+        color: #d44a00;
+      }
+      .platform-badge.ks {
+        background: rgba(255, 130, 0, 0.06);
+        color: #d47000;
+      }
+      .platform-badge.wx {
+        background: rgba(0, 190, 0, 0.06);
+        color: #007a00;
+      }
+
+      @media (max-width: 1024px) {
+        .sidebar {
+          width: 200px;
+          padding: 32px 20px;
+        }
+        .main {
+          margin-left: 200px;
+        }
+        .hero {
+          padding: 80px 40px 60px;
+        }
+        .section {
+          padding: 48px 40px;
+        }
+        .section-divider {
+          margin: 0 40px;
+        }
+        .summary-section {
+          padding: 48px 40px;
+        }
+        .footer {
+          padding: 24px 40px;
+        }
+      }
+      @media (max-width: 768px) {
+        .sidebar {
+          width: 100%;
+          height: auto;
+          position: relative;
+          padding: 16px 20px;
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-items: center;
+        }
+        .sidebar nav,
+        .sidebar-tagline {
+          display: none;
+        }
+        .sidebar-sub {
+          margin-bottom: 0;
+          border: none;
+          padding-bottom: 0;
+        }
+        .main {
+          margin-left: 0;
+        }
+        .hero {
+          padding: 48px 24px 40px;
+        }
+        .section,
+        .summary-section {
+          padding: 32px 24px;
+        }
+        .section-divider {
+          margin: 0 24px;
+        }
+        .footer {
+          margin-left: 0;
+          padding: 20px 24px;
+        }
+        .cards-2,
+        .cards-3,
+        .cards-4 {
+          grid-template-columns: 1fr;
+        }
+        .hero h1 {
+          font-size: 26px;
+        }
+        .section-header h2 {
+          font-size: 22px;
+        }
+        .progress-bar {
+          left: 0;
+        }
+      }
+      ::-webkit-scrollbar {
+        width: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--ink);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(245, 240, 232, 0.08);
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
+
+    <aside class="sidebar">
+      <div>
+        <div class="sidebar-logo">电商调研</div>
+        <div class="sidebar-sub">Monetization 2025-2026</div>
+      </div>
+      <nav>
+        <a href="#overview" class="active">总览</a>
+        <a href="#rules">各平台上架规则</a>
+        <a href="#forbidden">类目禁区红线</a>
+        <a href="#risks">购买服务风险</a>
+        <a href="#guide">平台选择指南</a>
+        <a href="#path">新手正确路径</a>
+      </nav>
+      <div class="sidebar-tagline">四大平台 × 电商变现完整指南</div>
+    </aside>
+
+    <div class="main">
+      <section class="hero" id="overview">
+        <div class="hero-badge">Deep Research &bull; May 2026</div>
+        <h1>自媒体电商变现<br /><span>规则与禁区深度调研</span></h1>
+        <p class="hero-sub">
+          覆盖抖音、小红书、快手、视频号四大平台，系统梳理商品上架规则、类目禁区、购买服务风险及新手冷启动的正确路径，为自媒体电商从业者提供合规、实用的变现指南。
+        </p>
+      </section>
+
+      <!-- 一、各平台上架规则 -->
+      <section class="section fade-in" id="rules">
+        <div class="section-header">
+          <div class="section-number">01</div>
+          <h2>各平台商品上架规则对比</h2>
+          <p>
+            2025-2026年，四大平台均已实现"0粉"基础开通橱窗/小店，但短视频带货和直播带货的门槛各不相同。核心变化：有效粉丝校验机制上线，买粉不再能绕过门槛。
+          </p>
+        </div>
+
+        <div class="subsection">
+          <h3>基础准入条件</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>条件</th>
+                  <th><span class="platform-badge dy">抖音</span></th>
+                  <th><span class="platform-badge xhs">小红书</span></th>
+                  <th><span class="platform-badge ks">快手</span></th>
+                  <th><span class="platform-badge wx">视频号</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>年龄</strong></td>
+                  <td>年满18周岁</td>
+                  <td>年满18周岁</td>
+                  <td>年满18周岁</td>
+                  <td>年满18周岁</td>
+                </tr>
+                <tr>
+                  <td><strong>实名认证</strong></td>
+                  <td>✅ 必须</td>
+                  <td>✅ 必须</td>
+                  <td>✅ 必须</td>
+                  <td>✅ 必须</td>
+                </tr>
+                <tr>
+                  <td><strong>保证金</strong></td>
+                  <td>50元起（支持0元试运营）</td>
+                  <td><strong>0元</strong></td>
+                  <td>500元（支持0元试运营）</td>
+                  <td>需开通微信小店</td>
+                </tr>
+                <tr>
+                  <td><strong>专业号认证</strong></td>
+                  <td>—</td>
+                  <td>✅ 必须升级个人专业号</td>
+                  <td>—</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td><strong>电商考试</strong></td>
+                  <td>—</td>
+                  <td>—</td>
+                  <td>✅ 通过电商学院基础考试</td>
+                  <td>—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="subsection" style="margin-top: 32px">
+          <h3>各功能所需粉丝门槛</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>功能</th>
+                  <th><span class="platform-badge dy">抖音</span></th>
+                  <th><span class="platform-badge xhs">小红书</span></th>
+                  <th><span class="platform-badge ks">快手</span></th>
+                  <th><span class="platform-badge wx">视频号</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>橱窗/小店开通</strong></td>
+                  <td><span class="tag tag-green">0粉</span></td>
+                  <td><span class="tag tag-green">0粉</span></td>
+                  <td><span class="tag tag-green">0粉</span></td>
+                  <td><span class="tag tag-green">0粉</span>（开店即可）</td>
+                </tr>
+                <tr>
+                  <td><strong>短视频带货</strong></td>
+                  <td><span class="tag tag-blue">500粉</span></td>
+                  <td><span class="tag tag-green">0粉</span></td>
+                  <td><span class="tag tag-green">0粉</span></td>
+                  <td><span class="tag tag-green">0粉</span></td>
+                </tr>
+                <tr>
+                  <td><strong>直播带货</strong></td>
+                  <td><span class="tag tag-blue">200粉</span></td>
+                  <td><span class="tag tag-red">1,000粉</span></td>
+                  <td><span class="tag tag-green">100粉</span></td>
+                  <td><span class="tag tag-green">0粉</span></td>
+                </tr>
+                <tr>
+                  <td><strong>图文带货</strong></td>
+                  <td><span class="tag tag-red">1,000粉</span></td>
+                  <td><span class="tag tag-green">0粉</span></td>
+                  <td>—</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td><strong>商单接单</strong></td>
+                  <td>1万粉</td>
+                  <td><span class="tag tag-blue">1,000粉</span></td>
+                  <td>5,000粉</td>
+                  <td>500粉（流量主）</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="subsection" style="margin-top: 32px">
+          <h3>技术服务费与流量特点</h3>
+          <div class="cards cards-4">
+            <div class="card">
+              <div class="card-icon primary">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                  <path d="M2 17l10 5 10-5" />
+                </svg>
+              </div>
+              <h3>抖音</h3>
+              <p>技术服务费约<span class="tag tag-red">10%</span></p>
+              <p>
+                公域爆发力最强，流量天花板最高，但竞争也最激烈。2026年7天长效赛马机制，优质带货内容可获持续长尾流量。
+              </p>
+            </div>
+            <div class="card">
+              <div class="card-icon gold">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 6v6l4 2" />
+                </svg>
+              </div>
+              <h3>小红书</h3>
+              <p>技术服务费<span class="tag tag-green">0%</span></p>
+              <p>
+                种草转化率全网最高，优质笔记可获6-12个月搜索长尾流量。适合颜值高、实用性强、女性消费类目。
+              </p>
+            </div>
+            <div class="card">
+              <div class="card-icon red">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+                </svg>
+              </div>
+              <h3>快手</h3>
+              <p>技术服务费<span class="tag tag-blue">1%-5%</span></p>
+              <p>
+                门槛最低，新号有3个月流量扶持，不会0播放。"老铁经济"复购率高。适合低价刚需、接地气风格内容。
+              </p>
+            </div>
+            <div class="card">
+              <div class="card-icon green">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                  <path d="M22 4L12 14.01l-3-3" />
+                </svg>
+              </div>
+              <h3>视频号</h3>
+              <p>技术服务费视类目定</p>
+              <p>
+                社交关系链驱动，私域转化率最高。适合高信任门槛品类（教育、知识付费、养生）。需联动公众号+社群。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box" style="margin-top: 24px">
+          <div class="info-box-title">2026年核心变化：有效粉丝校验</div>
+          <p>
+            各平台已全面上线"有效粉丝"校验机制——<strong>只认可自然涨粉</strong>，互关、刷粉、买粉行为产生的粉丝将被剔除，不计入带货门槛。一个买粉到5000粉的账号，有效粉丝可能仍然是0。这彻底堵死了通过买粉丝绕过门槛的路径。
+          </p>
+        </div>
+      </section>
+
+      <hr class="section-divider" />
+
+      <!-- 二、类目禁区红线 -->
+      <section class="section fade-in" id="forbidden">
+        <div class="section-header">
+          <div class="section-number">02</div>
+          <h2>商品类目禁区与合规红线</h2>
+          <p>无论选哪个平台，以下违规行为一旦触发，轻则限流下架，重则永久封禁带货权限。</p>
+        </div>
+
+        <div class="subsection">
+          <h3>全平台通用禁区</h3>
+          <div class="cards cards-2" style="margin-bottom: 20px">
+            <div class="card">
+              <div class="card-icon red">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+                  />
+                  <path d="M12 9v4M12 17h.01" />
+                </svg>
+              </div>
+              <h3>❌ 虚假宣传</h3>
+              <p>
+                禁用"最、第一、全网最低、根治"等极限词。功效宣称需有权威证明。夸张功效描述被平台AI实时检测。
+              </p>
+            </div>
+            <div class="card">
+              <div class="card-icon red">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </div>
+              <h3>❌ 资质缺失</h3>
+              <p>
+                美妆、食品、保健品、珠宝文玩、教育培训等类目须完成"报白"流程（提交额外资质）。无资质上架=永久封禁带货权限。
+              </p>
+            </div>
+            <div class="card">
+              <div class="card-icon red">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                  <path d="M9 9h.01" />
+                  <path d="M15 9h.01" />
+                </svg>
+              </div>
+              <h3>❌ 假货/侵权</h3>
+              <p>
+                仿品、未经授权品牌、盗版内容。平台与品牌方联合打假，AI可识别商品图片与正品的差异。
+              </p>
+            </div>
+            <div class="card">
+              <div class="card-icon red">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                  <path d="M22 4L12 14.01l-3-3" />
+                </svg>
+              </div>
+              <h3>❌ 违禁品类</h3>
+              <p>
+                处方药、医疗器械、烟草、成人用品（部分平台全部禁止）、野生动物制品、赌博相关等。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h3>特殊类目报白要求</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>类目</th>
+                  <th>所需资质</th>
+                  <th>难度</th>
+                  <th>备注</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>美妆护肤</strong></td>
+                  <td>营业执照 + 化妆品备案/注册</td>
+                  <td><span class="tag tag-gold">中等</span></td>
+                  <td>国产vs进口要求不同</td>
+                </tr>
+                <tr>
+                  <td><strong>食品饮料</strong></td>
+                  <td>食品经营许可证 / 食品生产许可证</td>
+                  <td><span class="tag tag-gold">中等</span></td>
+                  <td>预包装食品 vs 散装食品要求不同</td>
+                </tr>
+                <tr>
+                  <td><strong>保健品</strong></td>
+                  <td>保健食品批准证书 + 蓝帽子标志</td>
+                  <td><span class="tag tag-red">高</span></td>
+                  <td>严格审核，普通商家难通过</td>
+                </tr>
+                <tr>
+                  <td><strong>珠宝文玩</strong></td>
+                  <td>营业执照 + 鉴定证书/质检报告</td>
+                  <td><span class="tag tag-gold">中等</span></td>
+                  <td>部分平台要求先交押金</td>
+                </tr>
+                <tr>
+                  <td><strong>教育培训</strong></td>
+                  <td>办学许可证 / 教师资格证</td>
+                  <td><span class="tag tag-red">高</span></td>
+                  <td>学科类培训基本被封</td>
+                </tr>
+                <tr>
+                  <td><strong>生鲜水果</strong></td>
+                  <td>营业执照 + 产地证明/检疫证明</td>
+                  <td><span class="tag tag-gold">中等</span></td>
+                  <td>物流和售后要求极高</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="subsection" style="margin-top: 28px">
+          <h3>各平台专项红线</h3>
+          <div class="cards cards-2">
+            <div class="card">
+              <div class="card-icon primary">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 8v4M12 16h.01" />
+                </svg>
+              </div>
+              <h3>抖音专项</h3>
+              <ul>
+                <li class="danger">直播连麦违规连带处罚</li>
+                <li class="danger">跨境/免税资质虚假=永久封禁</li>
+                <li>引导站外交易直接封号</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-icon gold">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 6v6l4 2" />
+                </svg>
+              </div>
+              <h3>小红书专项</h3>
+              <ul>
+                <li class="danger">带货笔记必须标注"广告/合作"</li>
+                <li class="danger">低质带货（重复剪辑、无讲解）降权</li>
+                <li>虚拟商品须走特定通道</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-icon red">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+                </svg>
+              </div>
+              <h3>快手专项</h3>
+              <ul>
+                <li class="danger">消极处理售后累计3次=关闭带货权限</li>
+                <li class="danger">发布混淆信息=冻结货款</li>
+                <li>AI生成内容需要标注</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-icon green">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                </svg>
+              </div>
+              <h3>视频号专项</h3>
+              <ul>
+                <li class="danger">金融/医疗类必须持证</li>
+                <li>禁止矩阵账号批量注册引流</li>
+                <li>禁止诱导脱离平台交易</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider" />
+
+      <!-- 三、购买服务风险 -->
+      <section class="section fade-in" id="risks">
+        <div class="section-header">
+          <div class="section-number">03</div>
+          <h2>购买服务的真实风险</h2>
+          <p>大量新手的第一个坑——花钱走捷径。以下是已被司法机关定性的真实案例和平台处罚规则。</p>
+        </div>
+
+        <div class="subsection">
+          <h3>真实判例</h3>
+          <div class="cards cards-2" style="margin-bottom: 20px">
+            <div class="warning-card">
+              <h4>⚖️ 代开橱窗诈骗案（2025.12）</h4>
+              <p>
+                <strong>涉案金额：</strong>440万元 | <strong>受害人：</strong>3,141人<br />
+                <strong>判刑：</strong>主犯有期徒刑11年6个月，罚金15万元<br />
+                <strong>套路：</strong
+                >冒充平台官方→498元代开橱窗→用假AI粉丝骗信任→诱导支付4,980-15,880元买代运营→卷款失联
+              </p>
+            </div>
+            <div class="warning-card">
+              <h4>⚖️ 代运营诈骗案（2025.09）</h4>
+              <p>
+                <strong>涉案金额：</strong>300余万元 | <strong>受害人：</strong>遍布全国<br />
+                <strong>判刑：</strong>主犯有期徒刑10年，罚金15万元<br />
+                <strong>套路：</strong
+                >承诺"短视频代运营培训"→买粉刷量造虚假数据→诱导购买高价套餐（单笔29,800元）→不提供实质服务
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <h3>3种常见陷阱分类</h3>
+          <div class="cards cards-3">
+            <div class="card">
+              <div class="card-icon red">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M12 9v4M12 17h.01" />
+                </svg>
+              </div>
+              <h3>代开橱窗/代运营</h3>
+              <p>
+                大量机构没有真实运营能力。买假粉、刷流量制造假数据，收钱后不提供实质服务。<strong
+                  >90%以上是诈骗。</strong
+                >
+              </p>
+              <ul>
+                <li class="danger">买来的假粉丝会被平台有效粉丝机制剔除</li>
+                <li class="danger">检测到刷量行为=限流/封禁</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-icon red">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                  <path d="M2 17l10 5 10-5" />
+                </svg>
+              </div>
+              <h3>买粉/刷量</h3>
+              <p>
+                各平台2026年"有效粉丝"机制上线后，买粉不仅浪费钱，还可能导致账号被标记为低质量，进一步降低自然推荐权重。
+              </p>
+              <ul>
+                <li class="danger">买粉不计入任何带货门槛</li>
+                <li class="danger">严重者永久封禁</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-icon gold">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M12 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                  <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z" />
+                </svg>
+              </div>
+              <h3>"陪跑"服务</h3>
+              <p>
+                收2,980-29,800元不等，承诺"快速起号""月入过万"。实际只给注册、找对标等操作指导。合同中写"不得以效果不佳退款"——维权极难。
+              </p>
+              <ul>
+                <li class="warn">多家机构已被列为经营异常</li>
+                <li class="warn">合同模糊表述，很难退款</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="subsection" style="margin-top: 28px">
+          <h3>什么服务可以买</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>可考虑的服务</th>
+                  <th>说明</th>
+                  <th>风险等级</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>官方创作者课程</strong></td>
+                  <td>各平台创作者学院（免费/低价）</td>
+                  <td><span class="tag tag-green">安全</span></td>
+                </tr>
+                <tr>
+                  <td><strong>内容外包（剪辑/拍摄）</strong></td>
+                  <td>只拍视频不碰账号，你自己运营和提现</td>
+                  <td><span class="tag tag-gold">需甄别</span></td>
+                </tr>
+                <tr>
+                  <td><strong>数据分析工具</strong></td>
+                  <td>蝉妈妈、考古加、新榜等SaaS工具</td>
+                  <td><span class="tag tag-green">安全</span></td>
+                </tr>
+                <tr>
+                  <td><strong>千川/聚光投流代投</strong></td>
+                  <td>需通过平台官方认证服务商</td>
+                  <td><span class="tag tag-gold">需甄别</span></td>
+                </tr>
+                <tr style="background: rgba(192, 58, 43, 0.02)">
+                  <td><strong style="color: #c03a2b">❌ 代开橱窗</strong></td>
+                  <td>没有任何机构能帮你绕过平台规则</td>
+                  <td><span class="tag tag-red">绝对不要碰</span></td>
+                </tr>
+                <tr style="background: rgba(192, 58, 43, 0.02)">
+                  <td><strong style="color: #c03a2b">❌ 买粉刷量</strong></td>
+                  <td>2026年有效粉丝机制已堵死此路</td>
+                  <td><span class="tag tag-red">绝对不要碰</span></td>
+                </tr>
+                <tr style="background: rgba(192, 58, 43, 0.02)">
+                  <td><strong style="color: #c03a2b">❌ 承诺涨粉的代运营</strong></td>
+                  <td>绝大多数为诈骗，已有判刑案例</td>
+                  <td><span class="tag tag-red">绝对不要碰</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="info-box red" style="margin-top: 20px">
+          <div class="info-box-title">⚠️ 核心警告</div>
+          <p>
+            没有快捷方式。2026年各平台的"有效粉丝"校验和AI反作弊已足够精准。<br />
+            任何宣称"零门槛月入过万"的服务，要么是诈骗，要么会让你账号被封。<br />
+            老老实实发内容涨有效粉丝，虽然慢，但账号是健康且有长期价值的。
+          </p>
+        </div>
+      </section>
+
+      <hr class="section-divider" />
+
+      <!-- 四、平台选择指南 -->
+      <section class="section fade-in" id="guide">
+        <div class="section-header">
+          <div class="section-number">04</div>
+          <h2>平台选择与新手建议</h2>
+          <p>没有"最好的平台"，只有"最适合你当前阶段"的平台。</p>
+        </div>
+
+        <div class="subsection">
+          <h3>四大平台横向对比</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>维度</th>
+                  <th><span class="platform-badge dy">抖音</span></th>
+                  <th><span class="platform-badge xhs">小红书</span></th>
+                  <th><span class="platform-badge ks">快手</span></th>
+                  <th><span class="platform-badge wx">视频号</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>上手门槛</strong></td>
+                  <td>中等（需500粉才能短视频带货）</td>
+                  <td>中等（直播需1,000粉）</td>
+                  <td><span class="tag tag-green">最低</span>（0粉短视频带货）</td>
+                  <td><span class="tag tag-green">低</span></td>
+                </tr>
+                <tr>
+                  <td><strong>流量天花板</strong></td>
+                  <td><span class="tag tag-green">最高</span></td>
+                  <td>中等</td>
+                  <td>中等</td>
+                  <td>中等（依赖私域）</td>
+                </tr>
+                <tr>
+                  <td><strong>内容要求</strong></td>
+                  <td>前3秒强钩子</td>
+                  <td>精致种草图/视频</td>
+                  <td>接地气"老铁风"</td>
+                  <td>观点共鸣+社交货币</td>
+                </tr>
+                <tr>
+                  <td><strong>用户画像</strong></td>
+                  <td>全年龄段广泛覆盖</td>
+                  <td>一二线年轻女性为主</td>
+                  <td>下沉市场+小镇青年</td>
+                  <td>全年龄+中高龄偏多</td>
+                </tr>
+                <tr>
+                  <td><strong>适合品类</strong></td>
+                  <td>全品类（性价比优先）</td>
+                  <td>美妆/母婴/家居/穿搭</td>
+                  <td>低价刚需/农特产/日用品</td>
+                  <td>知识付费/养生/教育</td>
+                </tr>
+                <tr>
+                  <td><strong>新手推荐</strong></td>
+                  <td>⭐⭐⭐⭐</td>
+                  <td>⭐⭐⭐</td>
+                  <td><span class="tag tag-green">⭐⭐⭐⭐⭐</span></td>
+                  <td>⭐⭐⭐⭐</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="subsection" style="margin-top: 32px">
+          <h3>按自身情况选择</h3>
+          <div class="cards cards-2">
+            <div class="card">
+              <div class="card-icon blue">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M12 20h9" />
+                  <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+              </div>
+              <h3>纯小白，想最快出单</h3>
+              <p><strong>首选快手</strong></p>
+              <ul>
+                <li class="good">0粉即可发带货短视频，无需先涨粉</li>
+                <li class="good">新号3个月流量扶持，不会0播放</li>
+                <li class="good">技术服务费最低（1%-5%）</li>
+                <li>选品建议：9.9-29.9元低价刚需，高复购</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-icon primary">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                  <path d="M9 9h.01" />
+                  <path d="M15 9h.01" />
+                </svg>
+              </div>
+              <h3>有内容能力，追求爆发力</h3>
+              <p><strong>首选抖音</strong></p>
+              <ul>
+                <li class="primary">流量天花板最高，有爆发潜力</li>
+                <li class="warn">竞争最激烈，需先冲500粉</li>
+                <li>先发3-5条干货无挂车内容快速涨粉</li>
+                <li>选品：9.9-39元"三低一高"（低单价/低决策/低售后/高佣金）</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-icon gold">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 6v6l4 2" />
+                </svg>
+              </div>
+              <h3>擅长精致内容，女性品类</h3>
+              <p><strong>首选小红书</strong></p>
+              <ul>
+                <li class="good">0粉可挂笔记带货，0%技术服务费</li>
+                <li class="good">搜索长尾流量持续6-12个月</li>
+                <li class="danger">直播带货需1,000粉，门槛较高</li>
+                <li>适合：颜值高、实用性强、19.9-99元</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-icon green">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                </svg>
+              </div>
+              <h3>有私域基础，知识类</h3>
+              <p><strong>首选视频号</strong></p>
+              <ul>
+                <li class="good">社交裂变驱动，适合高信任门槛品类</li>
+                <li class="good">联动公众号+社群，转化率高</li>
+                <li>适合：知识付费、养生、教育课程</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="section-divider" />
+
+      <!-- 五、新手正确路径 -->
+      <section class="summary-section fade-in" id="path">
+        <div class="section-header">
+          <div class="section-number" style="color: var(--primary-lighter)">05</div>
+          <h2>给新手的正确路径</h2>
+          <p>以下路径不是唯一的，但被大量成功案例验证过——不走捷径，反而走得更快。</p>
+        </div>
+
+        <div class="summary-list">
+          <div class="summary-item">
+            <div class="summary-num">01</div>
+            <div>
+              <h4>准备期（第1周）</h4>
+              <p>注册实名认证 → 学习各平台"创作者学院"（免费） → 确定你的品类和选品策略</p>
+            </div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-num">02</div>
+            <div>
+              <h4>养号期（第2-3周）</h4>
+              <p>
+                每天发1-2条免费干货内容（不挂车），建立垂直标签。目标：快手直接起步，抖音冲到500粉
+              </p>
+            </div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-num">03</div>
+            <div>
+              <h4>开卖期（第4周）</h4>
+              <p>开通橱窗 → 从选品中心挑3-5个商品 → 每天发2-3条挂车内容测试数据</p>
+            </div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-num">04</div>
+            <div>
+              <h4>优化期（第2个月）</h4>
+              <p>根据数据复盘：哪些内容出单、哪个时段效果好、哪个品转化高。聚焦做高转化内容</p>
+            </div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-num">05</div>
+            <div>
+              <h4>放量期（第3个月）</h4>
+              <p>稳定出单后，小额测试投流（100-200元/天），评估ROI。ROI正向再加量</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline" style="margin-top: 28px">
+          <div class="timeline-item">
+            <div class="week">第1周</div>
+            <p>注册实名 → 学习官方课程 → 确定品类和选品</p>
+          </div>
+          <div class="timeline-item">
+            <div class="week">第2-3周</div>
+            <p>每天1-2条干货内容养号 → 快手直接起步 → 抖音冲到500粉</p>
+          </div>
+          <div class="timeline-item">
+            <div class="week">第4周</div>
+            <p>开通橱窗 → 选品上架 → 每天2-3条带货内容测试</p>
+          </div>
+          <div class="timeline-item">
+            <div class="week">第2个月</div>
+            <p>数据复盘聚焦高转化内容 → 优化选品和话术</p>
+          </div>
+          <div class="timeline-item">
+            <div class="week">第3个月</div>
+            <p>小额投流测试（100-200元/天）→ ROI正向再加量</p>
+          </div>
+        </div>
+
+        <div
+          class="info-box green"
+          style="margin-top: 28px; border-left-color: #2d7a4a; background: rgba(45, 122, 74, 0.03)"
+        >
+          <div class="info-box-title">核心原则</div>
+          <p>
+            不要想着花钱快速解决问题——此路在2026年基本已被堵死，而且诈骗率极高。<br />
+            老老实实发内容涨有效粉丝，虽然慢，但每个粉丝都是真实的，账号是健康且有长期价值的。<br /><br />
+            <strong>内容质量 = 1，运营技巧 = 0。</strong> 没有好内容，所有技巧都白搭。
+          </p>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p>
+          自媒体电商变现规则深度调研 &bull; 2025-2026 &bull;
+          数据来源：各平台官方公告、司法机关公开案例、行业调研报告
+        </p>
+      </footer>
+    </div>
+
+    <script>
+      const sections = document.querySelectorAll(".section, .summary-section, .hero");
+      const navLinks = document.querySelectorAll(".sidebar nav a");
+      const progressFill = document.getElementById("progressFill");
+
+      function updateActive() {
+        let current = "";
+        sections.forEach((s) => {
+          if (s.getBoundingClientRect().top < 300) current = s.id;
+        });
+        navLinks.forEach((a) =>
+          a.classList.toggle("active", a.getAttribute("href") === "#" + current),
+        );
+      }
+      function updateProgress() {
+        const p = document.documentElement.scrollHeight - window.innerHeight;
+        progressFill.style.width = (p > 0 ? (window.scrollY / p) * 100 : 0) + "%";
+      }
+      window.addEventListener("scroll", () => {
+        updateActive();
+        updateProgress();
+      });
+      window.addEventListener("load", () => {
+        updateActive();
+        updateProgress();
+      });
+    </script>
+  </body>
+</html>

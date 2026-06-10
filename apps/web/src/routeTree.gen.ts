@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WorksRouteImport } from './routes/works'
 import { Route as SkillsRouteImport } from './routes/skills'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SitemapPostsDotxmlRouteImport } from './routes/sitemap-posts[.]xml'
@@ -106,6 +107,11 @@ import { Route as ApiAdminLoginProviderStartRouteImport } from './routes/api/adm
 import { Route as ApiAccountLoginSocialCompleteRouteImport } from './routes/api/account/login/social/complete'
 import { Route as ApiAccountLoginProviderStartRouteImport } from './routes/api/account/login/$provider/start'
 
+const WorksRoute = WorksRouteImport.update({
+  id: '/works',
+  path: '/works',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SkillsRoute = SkillsRouteImport.update({
   id: '/skills',
   path: '/skills',
@@ -607,6 +613,7 @@ export interface FileRoutesByFullPath {
   '/sitemap-posts.xml': typeof SitemapPostsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/skills': typeof SkillsRoute
+  '/works': typeof WorksRoute
   '/admin': typeof AuthAdminRouteRouteWithChildren
   '/app': typeof AuthAppRouteRouteWithChildren
   '/login': typeof GuestLoginRoute
@@ -703,6 +710,7 @@ export interface FileRoutesByTo {
   '/sitemap-posts.xml': typeof SitemapPostsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/skills': typeof SkillsRoute
+  '/works': typeof WorksRoute
   '/login': typeof GuestLoginRoute
   '/reset-password': typeof GuestResetPasswordRoute
   '/signup': typeof GuestSignupRoute
@@ -799,6 +807,7 @@ export interface FileRoutesById {
   '/sitemap-posts.xml': typeof SitemapPostsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/skills': typeof SkillsRoute
+  '/works': typeof WorksRoute
   '/_auth/admin': typeof AuthAdminRouteRouteWithChildren
   '/_auth/app': typeof AuthAppRouteRouteWithChildren
   '/_guest/login': typeof GuestLoginRoute
@@ -897,6 +906,7 @@ export interface FileRouteTypes {
     | '/sitemap-posts.xml'
     | '/sitemap.xml'
     | '/skills'
+    | '/works'
     | '/admin'
     | '/app'
     | '/login'
@@ -993,6 +1003,7 @@ export interface FileRouteTypes {
     | '/sitemap-posts.xml'
     | '/sitemap.xml'
     | '/skills'
+    | '/works'
     | '/login'
     | '/reset-password'
     | '/signup'
@@ -1088,6 +1099,7 @@ export interface FileRouteTypes {
     | '/sitemap-posts.xml'
     | '/sitemap.xml'
     | '/skills'
+    | '/works'
     | '/_auth/admin'
     | '/_auth/app'
     | '/_guest/login'
@@ -1187,6 +1199,7 @@ export interface RootRouteChildren {
   SitemapPostsDotxmlRoute: typeof SitemapPostsDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SkillsRoute: typeof SkillsRoute
+  WorksRoute: typeof WorksRoute
   ApiAssetsRoute: typeof ApiAssetsRouteWithChildren
   ApiBackupsRoute: typeof ApiBackupsRoute
   ApiCommentsRoute: typeof ApiCommentsRouteWithChildren
@@ -1242,6 +1255,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/works': {
+      id: '/works'
+      path: '/works'
+      fullPath: '/works'
+      preLoaderRoute: typeof WorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/skills': {
       id: '/skills'
       path: '/skills'
@@ -2145,6 +2165,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapPostsDotxmlRoute: SitemapPostsDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SkillsRoute: SkillsRoute,
+  WorksRoute: WorksRoute,
   ApiAssetsRoute: ApiAssetsRouteWithChildren,
   ApiBackupsRoute: ApiBackupsRoute,
   ApiCommentsRoute: ApiCommentsRouteWithChildren,

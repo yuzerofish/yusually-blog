@@ -352,5 +352,7 @@
   "theme_toggle": "Toggle theme",
   "updated": "Updated",
   "upload": "Upload",
-  "view_all_posts": "View all posts"
+  "view_all_posts": "View all posts",
+  "works_title": "Works",
+  "works_subtitle": "Projects, tools, and ideas built by Yusually."
 }

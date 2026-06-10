@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skills 技能库</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          "Noto Sans SC",
+          -apple-system,
+          sans-serif;
+        background: #0b0d11;
+        color: #e4e7ed;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Background effects */
+      .bg-grid {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 60px 60px;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      .bg-glow {
+        position: fixed;
+        top: -30%;
+        left: -10%;
+        width: 60%;
+        height: 80%;
+        background: radial-gradient(ellipse, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      .bg-glow-2 {
+        position: fixed;
+        bottom: -20%;
+        right: -10%;
+        width: 50%;
+        height: 70%;
+        background: radial-gradient(ellipse, rgba(236, 72, 153, 0.08) 0%, transparent 70%);
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      /* Header */
+      .header {
+        position: relative;
+        z-index: 1;
+        padding: 60px 40px 40px;
+        text-align: center;
+      }
+
+      .header-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(99, 102, 241, 0.15);
+        border: 1px solid rgba(99, 102, 241, 0.25);
+        border-radius: 100px;
+        padding: 6px 16px 6px 10px;
+        font-size: 13px;
+        color: #a5b4fc;
+        margin-bottom: 24px;
+      }
+
+      .header-badge .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #22c55e;
+        animation: pulse-dot 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse-dot {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+
+      .header h1 {
+        font-size: 48px;
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        background: linear-gradient(135deg, #f0f4ff 0%, #a5b4fc 50%, #c084fc 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.15;
+      }
+
+      .header h1 span {
+        background: linear-gradient(135deg, #f472b6, #c084fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .header p {
+        margin-top: 12px;
+        font-size: 17px;
+        color: #8892a8;
+        font-weight: 400;
+      }
+
+      .header-stats {
+        display: flex;
+        justify-content: center;
+        gap: 32px;
+        margin-top: 28px;
+      }
+
+      .header-stats .stat {
+        text-align: center;
+      }
+
+      .header-stats .stat-num {
+        font-size: 28px;
+        font-weight: 700;
+        color: #e4e7ed;
+      }
+
+      .header-stats .stat-label {
+        font-size: 13px;
+        color: #6b7394;
+        margin-top: 2px;
+      }
+
+      /* Controls */
+      .controls {
+        position: relative;
+        z-index: 1;
+        max-width: 900px;
+        margin: 0 auto 40px;
+        padding: 0 40px;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .search-box {
+        flex: 1;
+        min-width: 200px;
+        position: relative;
+      }
+
+      .search-box svg {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 18px;
+        height: 18px;
+        color: #6b7394;
+      }
+
+      .search-box input {
+        width: 100%;
+        padding: 12px 14px 12px 42px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        color: #e4e7ed;
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+        transition: all 0.2s;
+      }
+
+      .search-box input:focus {
+        border-color: rgba(99, 102, 241, 0.4);
+        background: rgba(255, 255, 255, 0.06);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+
+      .search-box input::placeholder {
+        color: #5a6280;
+      }
+
+      .filter-group {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.03);
+        color: #8892a8;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: inherit;
+        white-space: nowrap;
+      }
+
+      .filter-btn:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: #c8cde0;
+      }
+
+      .filter-btn.active {
+        background: rgba(99, 102, 241, 0.15);
+        border-color: rgba(99, 102, 241, 0.3);
+        color: #a5b4fc;
+      }
+
+      .clear-btn {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: none;
+        background: transparent;
+        color: #6b7394;
+        font-size: 13px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.2s;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .clear-btn.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .clear-btn:hover {
+        color: #f87171;
+      }
+
+      /* Skills Grid */
+      .container {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 40px 80px;
+      }
+
+      .category-section {
+        margin-bottom: 48px;
+      }
+
+      .category-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .category-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+
+      .category-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #e4e7ed;
+      }
+
+      .category-count {
+        font-size: 13px;
+        color: #6b7394;
+        font-weight: 400;
+        margin-left: auto;
+      }
+
+      .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 12px;
+      }
+
+      /* Skill Card */
+      .skill-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 16px;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: default;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .skill-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.4), transparent);
+        opacity: 0;
+        transition: opacity 0.25s;
+      }
+
+      .skill-card:hover {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.12);
+        transform: translateY(-2px);
+      }
+
+      .skill-card:hover::before {
+        opacity: 1;
+      }
+
+      .skill-card.hidden {
+        display: none;
+      }
+
+      .skill-card .name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #e4e7ed;
+        font-family: "SF Mono", "Fira Code", monospace;
+        margin-bottom: 4px;
+        word-break: break-all;
+      }
+
+      .skill-card .desc {
+        font-size: 12px;
+        color: #6b7394;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .skill-card .tag {
+        display: inline-block;
+        margin-top: 8px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+      }
+
+      /* Category icon colors */
+      .cat-video .category-icon {
+        background: rgba(59, 130, 246, 0.15);
+      }
+      .cat-video .skill-card::before {
+        background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+      }
+      .cat-video .tag {
+        background: rgba(59, 130, 246, 0.12);
+        color: #93c5fd;
+      }
+
+      .cat-history .category-icon {
+        background: rgba(245, 158, 11, 0.15);
+      }
+      .cat-history .skill-card::before {
+        background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+      }
+      .cat-history .tag {
+        background: rgba(245, 158, 11, 0.12);
+        color: #fcd34d;
+      }
+
+      .cat-hot .category-icon {
+        background: rgba(239, 68, 68, 0.15);
+      }
+      .cat-hot .skill-card::before {
+        background: linear-gradient(90deg, transparent, #ef4444, transparent);
+      }
+      .cat-hot .tag {
+        background: rgba(239, 68, 68, 0.12);
+        color: #fca5a5;
+      }
+
+      .cat-baoyu .category-icon {
+        background: rgba(34, 197, 94, 0.15);
+      }
+      .cat-baoyu .skill-card::before {
+        background: linear-gradient(90deg, transparent, #22c55e, transparent);
+      }
+      .cat-baoyu .tag {
+        background: rgba(34, 197, 94, 0.12);
+        color: #86efac;
+      }
+
+      .cat-perspective .category-icon {
+        background: rgba(168, 85, 247, 0.15);
+      }
+      .cat-perspective .skill-card::before {
+        background: linear-gradient(90deg, transparent, #a855f7, transparent);
+      }
+      .cat-perspective .tag {
+        background: rgba(168, 85, 247, 0.12);
+        color: #d8b4fe;
+      }
+
+      .cat-other .category-icon {
+        background: rgba(148, 163, 184, 0.1);
+      }
+      .cat-other .skill-card::before {
+        background: linear-gradient(90deg, transparent, #94a3b8, transparent);
+      }
+      .cat-other .tag {
+        background: rgba(148, 163, 184, 0.1);
+        color: #94a3b8;
+      }
+
+      /* No results */
+      .no-results {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6b7394;
+        display: none;
+      }
+
+      .no-results.visible {
+        display: block;
+      }
+
+      .no-results svg {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 16px;
+        opacity: 0.4;
+      }
+
+      .no-results p {
+        font-size: 15px;
+      }
+
+      /* Scroll reveal */
+      .skill-card {
+        opacity: 0;
+        animation: fadeInUp 0.4s ease forwards;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .skill-card:nth-child(1) {
+        animation-delay: 0.02s;
+      }
+      .skill-card:nth-child(2) {
+        animation-delay: 0.04s;
+      }
+      .skill-card:nth-child(3) {
+        animation-delay: 0.06s;
+      }
+      .skill-card:nth-child(4) {
+        animation-delay: 0.08s;
+      }
+      .skill-card:nth-child(5) {
+        animation-delay: 0.1s;
+      }
+      .skill-card:nth-child(6) {
+        animation-delay: 0.12s;
+      }
+      .skill-card:nth-child(7) {
+        animation-delay: 0.14s;
+      }
+      .skill-card:nth-child(8) {
+        animation-delay: 0.16s;
+      }
+      .skill-card:nth-child(9) {
+        animation-delay: 0.18s;
+      }
+      .skill-card:nth-child(10) {
+        animation-delay: 0.2s;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .header {
+          padding: 40px 20px 30px;
+        }
+        .header h1 {
+          font-size: 32px;
+        }
+        .header-stats {
+          gap: 20px;
+        }
+        .header-stats .stat-num {
+          font-size: 22px;
+        }
+        .controls {
+          padding: 0 20px;
+        }
+        .container {
+          padding: 0 20px 60px;
+        }
+        .skills-grid {
+          grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        }
+      }
+
+      @media (max-width: 480px) {
+        .skills-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-badge">
+        <span class="dot"></span>
+        本地技能库
+      </div>
+      <h1>我的 <span>Skills</span></h1>
+      <p>自定义技能全景 · Claude Code 增强套件</p>
+      <div class="header-stats">
+        <div class="stat">
+          <div class="stat-num" id="totalCount">0</div>
+          <div class="stat-label">技能总数</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="categoryCount">0</div>
+          <div class="stat-label">分类</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="marketCount">0</div>
+          <div class="stat-label">技能市场</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="search-box">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.3-4.3" />
+        </svg>
+        <input type="text" id="searchInput" placeholder="搜索技能名称..." autocomplete="off" />
+      </div>
+      <div class="filter-group" id="filterGroup">
+        <button class="filter-btn active" data-filter="all">全部</button>
+      </div>
+      <button class="clear-btn" id="clearBtn">✕ 清除</button>
+    </div>
+
+    <!-- Container -->
+    <div class="container" id="container"></div>
+
+    <!-- No results -->
+    <div class="no-results" id="noResults">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.3-4.3" />
+        <path d="M8 11h6" />
+      </svg>
+      <p>没有找到匹配的技能</p>
+    </div>
+
+    <script>
+      const skillsData = [
+        {
+          category: "video",
+          icon: "🎬",
+          title: "视频管线",
+          skills: [
+            {
+              name: "text-to-video-skill",
+              desc: "文本→口播同步双视频全链路（Remotion + Hyperframes）",
+            },
+            { name: "video", desc: "视频基础能力" },
+            { name: "video-hyperframes", desc: "Hyperframes / Remotion 兼容的连续帧动画" },
+            { name: "video-voiceover-sync", desc: "AI 语音旁白与视频帧逐句同步" },
+            { name: "video-audio", desc: "视频音频处理" },
+            { name: "video-init", desc: "视频项目初始化" },
+            { name: "video-config", desc: "视频配置管理" },
+            { name: "video-preview", desc: "视频预览" },
+            { name: "video-merge", desc: "视频合并" },
+            { name: "video-i2v", desc: "图生视频 / image-to-video" },
+            { name: "video-i2v-from-storyboard", desc: "从分镜图生成视频" },
+            { name: "video-i2i", desc: "图生图 / image-to-image" },
+            { name: "video-t2i", desc: "文生图 / text-to-image" },
+            { name: "video-quick-create", desc: "快速创建视频" },
+            { name: "video-text-storyboard", desc: "文本分镜生成" },
+            { name: "video-upload", desc: "视频上传" },
+            { name: "video-downloader", desc: "视频下载" },
+            { name: "video-publish-douyin", desc: "抖音发布" },
+            { name: "video-publish-kuaishou", desc: "快手发布" },
+          ],
+        },
+        {
+          category: "history",
+          icon: "📜",
+          title: "历史排位赛",
+          skills: [
+            { name: "history-video-maker", desc: "历史排名数据视频渲染引擎" },
+            { name: "history-video-publisher", desc: "自动选题+渲染+发布全流程 SOP" },
+            { name: "shape-of-world-treemap-video", desc: "世界的形状 Treemap 知识短视频" },
+          ],
+        },
+        {
+          category: "hot",
+          icon: "🔥",
+          title: "热点 & 社交发布",
+          skills: [
+            { name: "laohan-redian", desc: "AI 热点三路并行抓取（AIHOT+opencli+抖音）" },
+            { name: "social-push", desc: "社交内容推送" },
+            { name: "rednote-skill", desc: "小红书笔记 skill" },
+            { name: "xiaohongshu-publisher", desc: "小红书自动发布器" },
+            { name: "xhs-cli", desc: "小红书 CLI 工具" },
+            { name: "maishou", desc: "（内容创作相关）" },
+          ],
+        },
+        {
+          category: "baoyu",
+          icon: "🖼️",
+          title: "宝宇内容创作",
+          skills: [
+            { name: "baoyu-comic", desc: "漫画风格插图生成" },
+            { name: "baoyu-cover-image", desc: "文章封面图生成（9种色板/6种渲染风格）" },
+            { name: "baoyu-format-markdown", desc: "Markdown 格式美化" },
+            { name: "baoyu-infographic", desc: "信息图生成" },
+            { name: "baoyu-markdown-to-html", desc: "Markdown → HTML 转换" },
+            { name: "baoyu-url-to-markdown", desc: "URL 抓取并转为 Markdown" },
+          ],
+        },
+        {
+          category: "perspective",
+          icon: "🧠",
+          title: "人物视角（女娲造人）",
+          skills: [
+            { name: "huashu-nuwa", desc: "女娲造人 — 深度调研→思维框架→可运行 Skill" },
+            { name: "annie-yi-perspective", desc: "伊能静（Annie Yi）思维框架与表达方式" },
+            { name: "dashu-perspective", desc: "大S（徐熙媛）思维框架与表达方式" },
+            { name: "feynman-perspective", desc: "理查德·费曼思维框架" },
+            { name: "munger-perspective", desc: "查理·芒格思维框架（穷查理宝典）" },
+            { name: "steve-jobs-perspective", desc: "史蒂夫·乔布斯思维框架" },
+          ],
+        },
+        {
+          category: "other",
+          icon: "🧩",
+          title: "其他",
+          skills: [
+            { name: "chart-visualization", desc: "AntV 数据可视化图表生成" },
+            { name: "swiftui-swipe-delete", desc: "SwiftUI 左滑删除/右滑撤销交互" },
+            { name: "chinese-editorial-report", desc: "中文编辑报告/调研报告排版" },
+          ],
+        },
+      ];
+
+      // Render
+      const container = document.getElementById("container");
+      const filterGroup = document.getElementById("filterGroup");
+      const searchInput = document.getElementById("searchInput");
+      const clearBtn = document.getElementById("clearBtn");
+      const noResults = document.getElementById("noResults");
+
+      function render(categoryFilter, searchTerm) {
+        container.innerHTML = "";
+        let totalVisible = 0;
+
+        skillsData.forEach((group) => {
+          const filtered = group.skills.filter((s) => {
+            const matchCategory = categoryFilter === "all" || group.category === categoryFilter;
+            const matchSearch =
+              !searchTerm ||
+              s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              s.desc.includes(searchTerm);
+            return matchCategory && matchSearch;
+          });
+
+          if (filtered.length === 0) return;
+
+          totalVisible += filtered.length;
+
+          const section = document.createElement("div");
+          section.className = `category-section cat-${group.category}`;
+
+          section.innerHTML = `
+      <div class="category-header">
+        <div class="category-icon">${group.icon}</div>
+        <div class="category-title">${group.title}</div>
+        <div class="category-count">${filtered.length} 个技能</div>
+      </div>
+      <div class="skills-grid">
+        ${filtered
+          .map(
+            (s, i) => `
+          <div class="skill-card" style="animation-delay:${(i * 0.03).toFixed(2)}s">
+            <div class="name">${s.name}</div>
+            ${s.desc ? `<div class="desc">${s.desc}</div>` : ""}
+            <span class="tag">${group.title}</span>
+          </div>
+        `,
+          )
+          .join("")}
+      </div>
+    `;
+
+          container.appendChild(section);
+        });
+
+        // Update counts
+        const allSkills = skillsData.flatMap((g) => g.skills);
+        document.getElementById("totalCount").textContent = allSkills.length;
+        document.getElementById("categoryCount").textContent = skillsData.length;
+
+        // No results
+        if (totalVisible === 0) {
+          noResults.classList.add("visible");
+        } else {
+          noResults.classList.remove("visible");
+        }
+      }
+
+      // Filter buttons
+      skillsData.forEach((group) => {
+        const btn = document.createElement("button");
+        btn.className = "filter-btn";
+        btn.dataset.filter = group.category;
+        btn.textContent = `${group.icon} ${group.title}`;
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          render(group.category, searchInput.value);
+          clearBtn.classList.add("visible");
+        });
+        filterGroup.appendChild(btn);
+      });
+
+      // Search
+      searchInput.addEventListener("input", () => {
+        const activeFilter = document.querySelector(".filter-btn.active");
+        const filter = activeFilter ? activeFilter.dataset.filter : "all";
+        render(filter, searchInput.value);
+        if (searchInput.value) {
+          clearBtn.classList.add("visible");
+        } else {
+          const active = document.querySelector(".filter-btn.active");
+          if (active && active.dataset.filter === "all") {
+            clearBtn.classList.remove("visible");
+          }
+        }
+      });
+
+      // Clear
+      clearBtn.addEventListener("click", () => {
+        searchInput.value = "";
+        document.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
+        document.querySelector('[data-filter="all"]').classList.add("active");
+        render("all", "");
+        clearBtn.classList.remove("visible");
+      });
+
+      // Handle "all" button
+      document.querySelector('[data-filter="all"]').addEventListener("click", function () {
+        document.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
+        this.classList.add("active");
+        render("all", searchInput.value);
+        if (!searchInput.value) clearBtn.classList.remove("visible");
+      });
+
+      // Initial render
+      render("all", "");
+
+      // Update market count
+      (async function () {
+        try {
+          const r = await fetch("https://skills.sh/api/skills?limit=1");
+          const d = await r.json();
+          document.getElementById("marketCount").textContent = d.total?.toLocaleString() || "—";
+        } catch {
+          document.getElementById("marketCount").textContent = "—";
+        }
+      })();
+    </script>
+  </body>
+</html>
