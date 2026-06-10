@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SkillsRouteImport } from './routes/skills'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SitemapPostsDotxmlRouteImport } from './routes/sitemap-posts[.]xml'
 import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
@@ -105,6 +106,11 @@ import { Route as ApiAdminLoginProviderStartRouteImport } from './routes/api/adm
 import { Route as ApiAccountLoginSocialCompleteRouteImport } from './routes/api/account/login/social/complete'
 import { Route as ApiAccountLoginProviderStartRouteImport } from './routes/api/account/login/$provider/start'
 
+const SkillsRoute = SkillsRouteImport.update({
+  id: '/skills',
+  path: '/skills',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -600,6 +606,7 @@ export interface FileRoutesByFullPath {
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap-posts.xml': typeof SitemapPostsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/skills': typeof SkillsRoute
   '/admin': typeof AuthAdminRouteRouteWithChildren
   '/app': typeof AuthAppRouteRouteWithChildren
   '/login': typeof GuestLoginRoute
@@ -695,6 +702,7 @@ export interface FileRoutesByTo {
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap-posts.xml': typeof SitemapPostsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/skills': typeof SkillsRoute
   '/login': typeof GuestLoginRoute
   '/reset-password': typeof GuestResetPasswordRoute
   '/signup': typeof GuestSignupRoute
@@ -790,6 +798,7 @@ export interface FileRoutesById {
   '/rss.xml': typeof RssDotxmlRoute
   '/sitemap-posts.xml': typeof SitemapPostsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/skills': typeof SkillsRoute
   '/_auth/admin': typeof AuthAdminRouteRouteWithChildren
   '/_auth/app': typeof AuthAppRouteRouteWithChildren
   '/_guest/login': typeof GuestLoginRoute
@@ -887,6 +896,7 @@ export interface FileRouteTypes {
     | '/rss.xml'
     | '/sitemap-posts.xml'
     | '/sitemap.xml'
+    | '/skills'
     | '/admin'
     | '/app'
     | '/login'
@@ -982,6 +992,7 @@ export interface FileRouteTypes {
     | '/rss.xml'
     | '/sitemap-posts.xml'
     | '/sitemap.xml'
+    | '/skills'
     | '/login'
     | '/reset-password'
     | '/signup'
@@ -1076,6 +1087,7 @@ export interface FileRouteTypes {
     | '/rss.xml'
     | '/sitemap-posts.xml'
     | '/sitemap.xml'
+    | '/skills'
     | '/_auth/admin'
     | '/_auth/app'
     | '/_guest/login'
@@ -1174,6 +1186,7 @@ export interface RootRouteChildren {
   RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapPostsDotxmlRoute: typeof SitemapPostsDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SkillsRoute: typeof SkillsRoute
   ApiAssetsRoute: typeof ApiAssetsRouteWithChildren
   ApiBackupsRoute: typeof ApiBackupsRoute
   ApiCommentsRoute: typeof ApiCommentsRouteWithChildren
@@ -1229,6 +1242,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/skills': {
+      id: '/skills'
+      path: '/skills'
+      fullPath: '/skills'
+      preLoaderRoute: typeof SkillsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -2124,6 +2144,7 @@ const rootRouteChildren: RootRouteChildren = {
   RssDotxmlRoute: RssDotxmlRoute,
   SitemapPostsDotxmlRoute: SitemapPostsDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SkillsRoute: SkillsRoute,
   ApiAssetsRoute: ApiAssetsRouteWithChildren,
   ApiBackupsRoute: ApiBackupsRoute,
   ApiCommentsRoute: ApiCommentsRouteWithChildren,
