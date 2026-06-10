@@ -35,13 +35,12 @@
       "migrations_dir": "../../packages/db/migrations",
     },
   ],
-  // R2 bucket (disabled until enabled in Cloudflare Dashboard)
-  // "r2_buckets": [
-  //   {
-  //     "binding": "CMS_STORAGE",
-  //     "bucket_name": "yusually-blog-assets",
-  //   },
-  // ],
+  "r2_buckets": [
+    {
+      "binding": "CMS_STORAGE",
+      "bucket_name": "yusually-blog-assets",
+    },
+  ],
   "kv_namespaces": [
     {
       "binding": "CMS_CACHE",
