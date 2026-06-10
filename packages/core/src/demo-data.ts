@@ -18,6 +18,7 @@ export const siteSettings: SiteSettings = {
   ],
   navigation: [
     { label: "Blog", href: "/blog", i18n: { label: { zh: "博客" } } },
+    { label: "Skills", href: "/skills", i18n: { label: { zh: "技能" } } },
     { label: "Projects", href: "/series", i18n: { label: { zh: "作品" } } },
     { label: "About", href: "/about", i18n: { label: { zh: "关于" } } },
   ],

@@ -4,21 +4,13 @@ import { getSiteSettingsForLocale, type SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { cn } from "@repo/ui/lib/utils";
 import { Link, useLocation } from "@tanstack/react-router";
-import {
-  BookOpenIcon,
-  FileTextIcon,
-  HomeIcon,
-  Loader2Icon,
-  SearchIcon,
-  UserCircleIcon,
-} from "lucide-react";
+import { BookOpenIcon, FileTextIcon, HomeIcon, SearchIcon, UserCircleIcon } from "lucide-react";
 import { useEffect } from "react";
 
 import { LanguageToggle } from "#/components/language-toggle";
 import { siteBrandLinkClassName, SiteBrandText } from "#/components/site-brand";
 import {
   resolveStylePreset,
-  StylePresetCycleButton,
   StylePresetRuntimeScript,
   useStylePreset,
 } from "#/components/style-preset-switcher";
@@ -37,12 +29,11 @@ export function SiteShell({
   const locale = getCurrentLocale();
   const siteSettings = providedSiteSettings ?? getSiteSettingsForLocale(locale);
   const settingsPreset = resolveStylePreset(siteSettings.themePreset, siteSettings.layoutPreset);
-  const { preset, nextPreset, selectPreset } = useStylePreset(settingsPreset);
+  const { preset } = useStylePreset(settingsPreset);
   const searchLabel = locale === "zh" ? "搜索" : "Search";
   const githubLink = siteSettings.socialLinks.find(isGitHubSocialLink);
   const footerSocialLinks = siteSettings.socialLinks.filter((link) => !isGitHubSocialLink(link));
   const navigation = getMarketingNavigation(siteSettings.navigation, locale);
-  const creatorCreditLabel = locale === "zh" ? "创作者" : "Created by";
   const localizedNavigation = navigation.map((item) => ({
     ...item,
     href: getLocalizedDocsHref(item.href, locale),
@@ -85,12 +76,6 @@ export function SiteShell({
               <span>{searchLabel}</span>
             </Link>
             <LanguageToggle currentLocale={locale} labelLocale={locale} />
-            <StylePresetCycleButton
-              locale={locale}
-              nextPreset={nextPreset}
-              onSelect={selectPreset}
-              className="hidden md:inline-flex"
-            />
             <ThemeToggle className="hidden md:inline-flex" />
             {githubLink ? <HeaderGitHubLink link={githubLink} /> : null}
             <HeaderAuthAction className="hidden md:inline-flex" />
@@ -107,20 +92,6 @@ export function SiteShell({
           <div>
             <p className="text-sm font-semibold">{siteSettings.name}</p>
             <p className="mt-1 text-xs text-muted-foreground">{siteSettings.description}</p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              Powered by{" "}
-              <a href="https://01mvp.com" className="font-semibold text-foreground hover:text-link">
-                01mvp.com
-              </a>
-              <span aria-hidden="true"> · </span>
-              {creatorCreditLabel}{" "}
-              <a
-                href="https://makerjackie.com"
-                className="font-semibold text-foreground hover:text-link"
-              >
-                Jackie
-              </a>
-            </p>
           </div>
           {footerSocialLinks.length ? (
             <div className="flex flex-wrap items-center gap-3">
@@ -328,18 +299,7 @@ function HeaderAuthAction({ className }: { readonly className?: string }) {
   const { user, isPending } = useAuth();
 
   if (isPending) {
-    return (
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        disabled
-        className={cn("min-w-14", className)}
-        aria-label={m.login()}
-      >
-        <Loader2Icon className="animate-spin" />
-      </Button>
-    );
+    return null;
   }
 
   if (user) {

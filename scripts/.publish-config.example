@@ -1,0 +1,10 @@
+# =============================================================================
+# Publish Pipeline Config
+# Copy this to .publish-config and fill in your tokens
+# =============================================================================
+
+# MultiPost API Token (from https://multipost.app → Developer → API Tokens)
+MP_TOKEN="your_multipost_api_token_here"
+
+# Blog API Token (from https://yusually.it.com/admin → Settings → API Tokens)
+BLOG_TOKEN="your_blog_api_token_here"
