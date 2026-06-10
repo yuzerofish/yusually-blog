@@ -26,6 +26,7 @@ import {
   GlobeIcon,
   ImageIcon,
   LockKeyholeIcon,
+  MapIcon,
   MessageSquareTextIcon,
   PencilIcon,
   RocketIcon,
@@ -159,7 +160,7 @@ function ShelfHome({ posts, locale }: HomeViewProps) {
               <ArrowRightIcon />
             </Button>
             <Button
-              render={<Link to="/demo" />}
+              render={<Link to="/about" />}
               variant="outline"
               nativeButton={false}
               size="lg"
@@ -860,12 +861,12 @@ function getHomeCopy(locale: SupportedLocale) {
 
   if (locale === "zh") {
     return {
-      eyebrow: "个人博客内容系统 · Cloudflare 托管 · 自动化部署",
-      heroTitle: "搭建你的永久精神家园",
+      eyebrow: "个人博客 · 地图 · 旅行 · 技术 · 自媒体",
+      heroTitle: "一个还在摸索世界的人。",
       heroBody:
-        "01mvp-blog-starter 是一套 Cloudflare 原生的个人博客内容系统。后台、评论、图床、RSS 开箱即用，初始化流程可以从配置一路跑到上线。",
-      primaryCta: "开始 AI 建站",
-      secondaryCta: "查看博客 Demo",
+        "从地图开始：路线追踪的乐趣、发现隐藏路径的惊喜、理解万物连接的快感。这份好奇心驱使我从地理走向技术，从旅行走向自媒体。",
+      primaryCta: "阅读博客",
+      secondaryCta: "关于 Yusually",
 
       // ── Why Free ──
       freeEyebrow: "免费边界",
@@ -1089,33 +1090,32 @@ function getHomeCopy(locale: SupportedLocale) {
 
       // ── Creator ──
       creatorEyebrow: "出品方",
-      creatorTitle: "由 MakerJackie 持续维护。",
-      creatorBody: "这里展示 01MVP 的 AI 建站方法、Jackie 的作品，以及可复用的 TanStack 全栈模板。",
-      creatorPrimaryCta: "查看 TanStack 全栈模板",
-      creatorSecondaryCta: "了解 Jackie",
+      creatorTitle: "由 Yusually 持续维护。",
+      creatorBody:
+        "这里展示 Yusualy 从地理到技术、从旅行到自媒体的探索轨迹，以及亲手搭建的项目和沉淀的思考。",
+      creatorPrimaryCta: "阅读博客",
+      creatorSecondaryCta: "关于 Yusualy",
       creatorSpotlights: [
         {
-          title: "Jackie / MakerJackie",
-          description:
-            "独立开发者，前 AI 算法工程师，周周黑客松社区发起人，长期记录 AI 创作、产品实验和可复用模板。",
-          href: "https://makerjackie.com",
-          cta: "查看作品",
-          icon: UserRoundIcon,
+          title: "TravelTrace",
+          description: "用路线和地图记录旅行的痕迹，把每一段旅程变成可视化的轨迹。",
+          href: "https://traveltrace.life",
+          cta: "查看",
+          icon: MapIcon,
         },
         {
-          title: "01MVP 实战手册",
-          description: "从想法、MVP、上线到迭代，围绕真实交付整理 AI 产品实战方法。",
-          href: "https://01mvp.com",
-          cta: "访问 01MVP",
+          title: "Shape of World",
+          description: "用数据可视化制作知识短视频，把抽象的数字变成可感知的排名和分布。",
+          href: "https://shapeof.world",
+          cta: "查看",
+          icon: GlobeIcon,
+        },
+        {
+          title: "感受自己的浪",
+          description: "从浮潜到人生的完整叙事 —— 一篇关于信任、节奏和自我发现的文章。",
+          href: "/blog/感受自己的浪",
+          cta: "阅读",
           icon: BookOpenIcon,
-        },
-        {
-          title: "TanStack 全栈模板",
-          description:
-            "基于 TanStack Start 的全栈产品模板，适合用 AI 快速搭建 SaaS、工具站和可上线应用。",
-          href: "https://01mvp.com/template",
-          cta: "查看模板",
-          icon: RocketIcon,
         },
       ] satisfies CreatorSpotlight[],
       poweredByLabel: "Powered by",
@@ -1125,12 +1125,12 @@ function getHomeCopy(locale: SupportedLocale) {
 
   // ── English ──
   return {
-    eyebrow: "Personal blog system · Cloudflare-hosted · automated deploy",
-    heroTitle: "Build your permanent home on the internet",
+    eyebrow: "Personal blog · Maps · Travel · Tech · Self-media",
+    heroTitle: "Someone still figuring out the world.",
     heroBody:
-      "01mvp-blog-starter is a Cloudflare-native personal blog system. Writing dashboard, comments, image hosting, and RSS ship out of the box, and the setup flow can take it from configuration to live deploy.",
-    primaryCta: "Start AI setup",
-    secondaryCta: "View blog demo",
+      "It started with maps: the joy of tracing routes, discovering hidden paths, and understanding how places connect. That curiosity led from geography to technology, from travel to self-media.",
+    primaryCta: "Read the blog",
+    secondaryCta: "About Yusually",
 
     // ── Why Free ──
     freeEyebrow: "Cost boundary",
@@ -1363,35 +1363,35 @@ function getHomeCopy(locale: SupportedLocale) {
 
     // ── Creator ──
     creatorEyebrow: "Made by",
-    creatorTitle: "Maintained by MakerJackie.",
+    creatorTitle: "Maintained by Yusually.",
     creatorBody:
-      "Explore 01MVP's AI website workflow, Jackie's projects, and the reusable TanStack full-stack template.",
-    creatorPrimaryCta: "View TanStack template",
-    creatorSecondaryCta: "Meet Jackie",
+      "Follow Yusually's journey from geography to technology, travel to self-media — with hand-built projects and thoughtful reflections.",
+    creatorPrimaryCta: "Read the blog",
+    creatorSecondaryCta: "About Yusually",
     creatorSpotlights: [
       {
-        title: "Jackie / MakerJackie",
+        title: "TravelTrace",
         description:
-          "Independent developer, former AI algorithm engineer, founder of Hackathon Weekly, and publisher of AI product experiments and reusable templates.",
-        href: "https://makerjackie.com",
-        cta: "View projects",
-        icon: UserRoundIcon,
+          "Record every journey through maps and routes, turning travel experiences into visual traces.",
+        href: "https://traveltrace.life",
+        cta: "View",
+        icon: MapIcon,
       },
       {
-        title: "01MVP handbook",
+        title: "Shape of World",
         description:
-          "A practical guide from idea, MVP, launch, and feedback to the next product iteration.",
-        href: "https://01mvp.com",
-        cta: "Visit 01MVP",
+          "Data visualization knowledge videos that turn abstract numbers into visible rankings.",
+        href: "https://shapeof.world",
+        cta: "View",
+        icon: GlobeIcon,
+      },
+      {
+        title: "Feeling My Own Waves",
+        description:
+          "A full narrative from snorkeling to life — a story about trust, rhythm, and self-discovery.",
+        href: "/blog/感受自己的浪",
+        cta: "Read",
         icon: BookOpenIcon,
-      },
-      {
-        title: "TanStack full-stack template",
-        description:
-          "A TanStack Start full-stack product template for shipping SaaS apps, tools, and AI-built products.",
-        href: "https://01mvp.com/template",
-        cta: "View template",
-        icon: RocketIcon,
       },
     ] satisfies CreatorSpotlight[],
     poweredByLabel: "Powered by",

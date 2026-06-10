@@ -1,23 +1,24 @@
 import type { Asset, Comment, Post, Series, SiteSettings, Tag } from "./types";
 
 export const siteSettings: SiteSettings = {
-  name: "01MVP Blog Starter",
+  name: "Yusually · Explorer of Worlds",
   description:
-    "A Cloudflare-native personal site for articles, videos, durable notes, and API-assisted publishing.",
-  url: "https://your-domain.example",
-  authorName: "01MVP",
+    "A personal blog about maps, technology, travel, and self-media — still figuring out the world, one discovery at a time.",
+  url: "https://yusually.it.com",
+  authorName: "Yusually",
   authorBio:
-    "Builder notes, product essays, and durable personal knowledge on an edge-native publishing stack.",
+    "Someone still figuring out the world. From maps to technology, from travel to self-media.",
   avatarUrl: "/og-default.svg",
   defaultOgImage: "/og-default.svg",
   socialLinks: [
-    { label: "GitHub", href: "https://github.com/01mvp/blog-starter" },
+    { label: "GitHub", href: "https://github.com/yuzerofish" },
+    { label: "TravelTrace", href: "https://traveltrace.life" },
+    { label: "Shape of World", href: "https://shapeof.world" },
     { label: "RSS", href: "/rss.xml" },
   ],
   navigation: [
-    { label: "Demo", href: "/demo", i18n: { label: { zh: "博客 Demo" } } },
-    { label: "Docs", href: "/docs", i18n: { label: { zh: "文档" } } },
-    { label: "Articles", href: "/blog", i18n: { label: { zh: "文章" } } },
+    { label: "Blog", href: "/blog", i18n: { label: { zh: "博客" } } },
+    { label: "Projects", href: "/series", i18n: { label: { zh: "作品" } } },
     { label: "About", href: "/about", i18n: { label: { zh: "关于" } } },
   ],
   rssEnabled: true,
@@ -32,16 +33,16 @@ export const siteSettings: SiteSettings = {
   emailNotificationsEnabled: false,
   manualEmailBroadcastsEnabled: false,
   indexingEnabled: true,
-  themePreset: "maker",
+  themePreset: "brutalist",
   layoutPreset: "shelf",
   locales: ["en", "zh"],
   primaryLanguage: "en",
   i18n: {
     description: {
-      zh: "基于 Cloudflare 的个人站点，用来沉淀文章、视频、长期笔记和 API 辅助发布工作流。",
+      zh: "一个还在摸索世界的人。从地图开始，走向技术、旅行与自媒体。",
     },
     authorBio: {
-      zh: "基于边缘原生发布栈记录构建笔记、产品文章和长期可沉淀的个人知识。",
+      zh: "一个还在摸索世界的人。从地图开始：路线追踪的乐趣、发现隐藏路径的惊喜、理解万物连接的快感。",
     },
   },
 };
