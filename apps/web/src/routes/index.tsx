@@ -18,6 +18,7 @@ import {
   ArchiveIcon,
   ArrowRightIcon,
   BookOpenIcon,
+  CameraIcon,
   CloudIcon,
   ExternalLinkIcon,
   FilesIcon,
@@ -1098,24 +1099,32 @@ function getHomeCopy(locale: SupportedLocale) {
       creatorSpotlights: [
         {
           title: "TravelTrace",
-          description: "用路线和地图记录旅行的痕迹，把每一段旅程变成可视化的轨迹。",
+          description:
+            "交互式旅行日记与路线可视化平台。用 React + Mapbox 搭建，记录旅程、标记回忆。",
           href: "https://traveltrace.life",
           cta: "查看",
           icon: MapIcon,
         },
         {
           title: "Shape of World",
-          description: "用数据可视化制作知识短视频，把抽象的数字变成可感知的排名和分布。",
+          description: "Treemap 数据探索平台，用可视化展示世界的构成 — GDP、人口、贸易等。",
           href: "https://shapeof.world",
           cta: "查看",
           icon: GlobeIcon,
+        },
+        {
+          title: "自媒体运营全维度调研",
+          description: "2025–2026 年中国主流平台自媒体运营的全维度研究报告。",
+          href: "/blog/自媒体运营全维度调研整合",
+          cta: "阅读",
+          icon: BookOpenIcon,
         },
         {
           title: "感受自己的浪",
           description: "从浮潜到人生的完整叙事 —— 一篇关于信任、节奏和自我发现的文章。",
           href: "/blog/感受自己的浪",
           cta: "阅读",
-          icon: BookOpenIcon,
+          icon: CameraIcon,
         },
       ] satisfies CreatorSpotlight[],
       poweredByLabel: "Powered by",
@@ -1380,10 +1389,18 @@ function getHomeCopy(locale: SupportedLocale) {
       {
         title: "Shape of World",
         description:
-          "Data visualization knowledge videos that turn abstract numbers into visible rankings.",
+          "Treemap data exploration visualizing how the world is composed — GDP, population, trade.",
         href: "https://shapeof.world",
         cta: "View",
         icon: GlobeIcon,
+      },
+      {
+        title: "Self-Media Research",
+        description:
+          "Comprehensive report on China's self-media operations across major platforms 2025-2026.",
+        href: "/blog/自媒体运营全维度调研整合",
+        cta: "Read",
+        icon: BookOpenIcon,
       },
       {
         title: "Feeling My Own Waves",
@@ -1391,7 +1408,7 @@ function getHomeCopy(locale: SupportedLocale) {
           "A full narrative from snorkeling to life — a story about trust, rhythm, and self-discovery.",
         href: "/blog/感受自己的浪",
         cta: "Read",
-        icon: BookOpenIcon,
+        icon: CameraIcon,
       },
     ] satisfies CreatorSpotlight[],
     poweredByLabel: "Powered by",

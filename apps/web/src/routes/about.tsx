@@ -1,7 +1,14 @@
 import { localizeSiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowRightIcon, ExternalLinkIcon, GlobeIcon, MapIcon, CameraIcon } from "lucide-react";
+import {
+  ArrowRightIcon,
+  BookOpenIcon,
+  ExternalLinkIcon,
+  GlobeIcon,
+  MapIcon,
+  CameraIcon,
+} from "lucide-react";
 
 import { SiteShell } from "#/components/site-shell";
 import { $getAboutPageData } from "#/lib/cms-server";
@@ -159,15 +166,26 @@ function getAboutCopy(locale: ReturnType<typeof getCurrentLocale>) {
       principles: [
         {
           icon: <MapIcon className="mt-1 size-4 shrink-0 text-link" />,
-          title: "旅行轨迹",
+          title: "TravelTrace",
           description:
-            "TravelTrace.life —— 用地图和路线记录走过的每一段旅程，把旅行体验变成可追溯的轨迹。",
+            "交互式旅行日记与路线可视化平台。源自对地图的热爱，用 React + Mapbox 搭建，记录旅程、标记回忆，通过优雅的地图界面分享冒险故事。",
         },
         {
           icon: <GlobeIcon className="mt-1 size-4 shrink-0 text-link" />,
-          title: "世界的形状",
+          title: "Shape of World",
           description:
-            "Shape of World —— 用数据可视化制作知识短视频，把抽象的数字变成可感知的排名和分布。",
+            "Treemap 数据探索平台，用可视化图表展示世界的构成 — GDP、人口、贸易等。通过美观的交互式地图观察复杂数据。",
+        },
+        {
+          icon: <CameraIcon className="mt-1 size-4 shrink-0 text-link" />,
+          title: "自媒体运营全维度调研",
+          description:
+            "关于 2025–2026 年中国主流平台自媒体运营的全维度研究报告。深度分析内容策略、变现模式和平台算法机制。",
+        },
+        {
+          icon: <BookOpenIcon className="mt-1 size-4 shrink-0 text-link" />,
+          title: "US Immigration 数据可视化",
+          description: "美国人口增长与移民来源的数据可视化项目，通过交互式图表展示人口变迁趋势。",
         },
         {
           icon: <CameraIcon className="mt-1 size-4 shrink-0 text-link" />,
@@ -180,14 +198,20 @@ function getAboutCopy(locale: ReturnType<typeof getCurrentLocale>) {
         {
           eyebrow: "Maps",
           title: "TravelTrace",
-          description: "用路线和地图记录旅行的痕迹。",
+          description: "交互式旅行日记与路线可视化平台，用地图和路线记录每一段旅程。",
           href: "https://traveltrace.life",
         },
         {
           eyebrow: "Data",
           title: "Shape of World",
-          description: "用数据可视化的方式呈现世界的排名和分布。",
+          description: "Treemap 数据探索平台，用可视化展示世界的构成。",
           href: "https://shapeof.world",
+        },
+        {
+          eyebrow: "Research",
+          title: "自媒体运营全维度调研",
+          description: "2025-2026 年中国主流平台自媒体运营研究报告。",
+          href: "/blog/自媒体运营全维度调研整合",
         },
         {
           eyebrow: "Water",
@@ -215,15 +239,27 @@ function getAboutCopy(locale: ReturnType<typeof getCurrentLocale>) {
     principles: [
       {
         icon: <MapIcon className="mt-1 size-4 shrink-0 text-link" />,
-        title: "Travel Maps",
+        title: "TravelTrace",
         description:
-          "TravelTrace.life — Record every journey through maps and routes, turning travel experiences into traceable paths.",
+          "Interactive travel journal and route visualization platform. Built with React + Mapbox, born from a love of maps. Trace journeys, pin memories, and share adventures.",
       },
       {
         icon: <GlobeIcon className="mt-1 size-4 shrink-0 text-link" />,
         title: "Shape of World",
         description:
-          "Shape of World — Data visualization knowledge videos that turn abstract numbers into visible rankings and distributions.",
+          "Treemap data exploration platform that visualizes how the world is composed — GDP, population, trade, and more. Beautiful, interactive data maps.",
+      },
+      {
+        icon: <CameraIcon className="mt-1 size-4 shrink-0 text-link" />,
+        title: "Self-Media Research",
+        description:
+          "A comprehensive research report on self-media operations across major Chinese platforms in 2025–2026. Deep analysis of content strategies, monetization, and platform algorithms.",
+      },
+      {
+        icon: <BookOpenIcon className="mt-1 size-4 shrink-0 text-link" />,
+        title: "US Immigration Data Viz",
+        description:
+          "US population growth and immigration origins data visualization project with interactive charts and demographic trends.",
       },
       {
         icon: <CameraIcon className="mt-1 size-4 shrink-0 text-link" />,
@@ -236,14 +272,20 @@ function getAboutCopy(locale: ReturnType<typeof getCurrentLocale>) {
       {
         eyebrow: "Maps",
         title: "TravelTrace",
-        description: "Record travel traces through routes and maps.",
+        description: "Interactive travel journal and route visualization platform.",
         href: "https://traveltrace.life",
       },
       {
         eyebrow: "Data",
         title: "Shape of World",
-        description: "Visualize world rankings and distributions through data.",
+        description: "Treemap data exploration visualizing global composition.",
         href: "https://shapeof.world",
+      },
+      {
+        eyebrow: "Research",
+        title: "Self-Media Research",
+        description: "Comprehensive report on China's self-media landscape 2025-2026.",
+        href: "/blog/自媒体运营全维度调研整合",
       },
       {
         eyebrow: "Water",
