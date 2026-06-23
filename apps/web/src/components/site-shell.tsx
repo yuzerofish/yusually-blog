@@ -122,8 +122,7 @@ export function SiteShell({
 type ShellNavigationItem = SiteSettings["navigation"][number];
 
 const defaultMarketingNavigation: ShellNavigationItem[] = [
-  { label: "Demo", href: "/demo", i18n: { label: { zh: "博客 Demo" } } },
-  { label: "Docs", href: "/docs", i18n: { label: { zh: "文档" } } },
+  { label: "Works", href: "/works", i18n: { label: { zh: "作品" } } },
   { label: "Articles", href: "/blog", i18n: { label: { zh: "文章" } } },
   { label: "About", href: "/about", i18n: { label: { zh: "关于" } } },
 ];
@@ -137,10 +136,41 @@ function getMarketingNavigation(
       ? configuredNavigation
       : defaultMarketingNavigation;
 
-  return navigation.map((item) => ({
+  return navigation.map((item) => {
+    const normalizedItem = normalizeMarketingNavigationItem(item);
+
+    return {
+      ...normalizedItem,
+      label: normalizedItem.i18n?.label?.[locale] ?? normalizedItem.label,
+    };
+  });
+}
+
+function normalizeMarketingNavigationItem(item: ShellNavigationItem): ShellNavigationItem {
+  if (item.href !== "/series" || !looksLikeWorksNavigationItem(item)) {
+    return item;
+  }
+
+  return {
     ...item,
-    label: item.i18n?.label?.[locale] ?? item.label,
-  }));
+    label: item.label === "Series" ? "Works" : item.label,
+    href: "/works",
+    i18n: {
+      ...item.i18n,
+      label: {
+        ...item.i18n?.label,
+        zh: item.i18n?.label?.zh ?? "作品",
+      },
+    },
+  };
+}
+
+function looksLikeWorksNavigationItem(item: ShellNavigationItem) {
+  const labels = [item.label, ...Object.values(item.i18n?.label ?? {})].map((label) =>
+    label.trim().toLowerCase(),
+  );
+
+  return labels.some((label) => ["works", "projects", "作品", "作品集"].includes(label));
 }
 
 function isLegacyStarterNavigation(navigation: ShellNavigationItem[]) {
