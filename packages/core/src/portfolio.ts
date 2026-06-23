@@ -106,6 +106,22 @@ export const portfolioItems: PortfolioItem[] = [
     newTab: true,
   },
   {
+    id: "webgl-watercolor-tool",
+    title: "WebGL Watercolor Tool",
+    titleZh: "WebGL 水彩流场",
+    description:
+      "Interactive browser-based watercolor canvas with pigment diffusion, paper grain, edge darkening, multi-color blending, PNG export, and WebGL fallback handling.",
+    descriptionZh:
+      "一个网页端交互水彩画布，支持颜料扩散、纸纹、边缘沉积、多选颜色混合、PNG 导出和 WebGL 降级提示。",
+    href: "/webgl-watercolor-tool/",
+    cta: "Paint",
+    ctaZh: "体验",
+    category: "Tools",
+    categoryZh: "工具",
+    iconName: "BarChart3Icon",
+    newTab: true,
+  },
+  {
     id: "snorkeling-philosophy",
     title: "Snorkeling Philosophy",
     titleZh: "浮潜哲学",
