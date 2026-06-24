@@ -45,6 +45,22 @@ export const portfolioItems: PortfolioItem[] = [
     iconName: "GlobeIcon",
   },
   {
+    id: "sun-glint-lagoon",
+    title: "Sun Glint Lagoon",
+    titleZh: "太阳直射水面",
+    description:
+      "Interactive Three.js lagoon study with image-based water color, animated sun glints, glassy surface distortion, and shallow-water caustic motion.",
+    descriptionZh:
+      "一个基于 Three.js 的清澈礁湖水面实验：图像取色、太阳直射高光、玻璃感水面扰动，以及浅水焦散的缓慢流动。",
+    href: "/sun-glint-lagoon/",
+    cta: "Open",
+    ctaZh: "体验",
+    category: "Visual Lab",
+    categoryZh: "视觉实验",
+    iconName: "CameraIcon",
+    newTab: true,
+  },
+  {
     id: "self-media-research",
     title: "Self-Media Research",
     titleZh: "自媒体运营全维度调研",
