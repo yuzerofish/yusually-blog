@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>SeeWish Wish Veil</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <main class="app-shell" aria-label="SeeWish Wish Veil prototype">
+      <video id="cameraBackground" class="camera-background" autoplay muted playsinline></video>
+      <div class="ambient-wash" aria-hidden="true"></div>
+      <canvas id="wishCanvas" aria-label="Interactive glowing wish veil"></canvas>
+
+      <section id="startOverlay" class="start-overlay" aria-label="Start camera">
+        <div class="start-panel">
+          <p class="brand">SeeWish</p>
+          <h1>Wish Veil</h1>
+          <p class="intro">Let the vision canvas open with a soft camera glow.</p>
+          <button id="startButton" class="primary-button" type="button">Start</button>
+          <p id="permissionNote" class="permission-note" aria-live="polite">
+            Camera access is requested after Start.
+          </p>
+        </div>
+      </section>
+
+      <button id="toggleUI" class="hud-button toggle-ui" type="button" aria-label="Hide controls">
+        Hide
+      </button>
+
+      <div id="hud" class="hud">
+        <div class="state-card">
+          <p class="state-title">Drop state</p>
+          <p id="stateLine">
+            The vision canvas slowly returns to its original position with a soft glowing rebound.
+          </p>
+        </div>
+
+        <div class="tool-dock" aria-label="Wish Veil controls">
+          <label class="hud-button upload-button" for="mediaInput">
+            Upload
+            <input id="mediaInput" type="file" accept="image/*,video/*" />
+          </label>
+          <button id="flipCamera" class="hud-button" type="button">Flip</button>
+          <label class="scale-control" for="scaleSlider">
+            <span>Scale</span>
+            <input id="scaleSlider" type="range" min="0.65" max="1.05" step="0.01" value="1" />
+          </label>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
