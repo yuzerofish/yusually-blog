@@ -82,6 +82,198 @@
     --home-ease: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
+  [data-work-surface] {
+    --work-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  [data-work-hero]::before {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image:
+      linear-gradient(
+        90deg,
+        color-mix(in oklch, var(--foreground), transparent 93%) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in oklch, var(--foreground), transparent 93%) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        130deg,
+        transparent 0%,
+        color-mix(in oklch, var(--link), transparent 72%) 48%,
+        transparent 52%
+      );
+    background-position:
+      0 0,
+      0 0,
+      -80% 50%;
+    background-size:
+      32px 32px,
+      32px 32px,
+      64% 160%;
+    content: "";
+    mask-image: linear-gradient(180deg, black 0%, black 70%, transparent 100%);
+    opacity: 0.5;
+    pointer-events: none;
+    animation: work-grid-scan 22s linear infinite;
+  }
+
+  [data-work-hero]::after {
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    left: 0;
+    z-index: 1;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      var(--foreground),
+      color-mix(in oklch, var(--link), var(--foreground) 18%),
+      var(--foreground)
+    );
+    content: "";
+    pointer-events: none;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: work-line-sweep 1.35s var(--work-ease) 0.15s forwards;
+  }
+
+  [data-work-console] {
+    box-shadow: 10px 10px 0 color-mix(in oklch, var(--foreground), transparent 88%);
+  }
+
+  [data-work-radar] {
+    background-image:
+      linear-gradient(
+        90deg,
+        color-mix(in oklch, var(--foreground), transparent 90%) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in oklch, var(--foreground), transparent 90%) 1px,
+        transparent 1px
+      );
+    background-size: 28px 28px;
+  }
+
+  [data-work-radar]::before {
+    position: absolute;
+    inset: 1.25rem;
+    background-image:
+      linear-gradient(
+        132deg,
+        transparent 0%,
+        transparent 31%,
+        color-mix(in oklch, var(--foreground), transparent 56%) 31.4%,
+        color-mix(in oklch, var(--foreground), transparent 56%) 32.4%,
+        transparent 32.8%,
+        transparent 100%
+      ),
+      linear-gradient(
+        24deg,
+        transparent 0%,
+        transparent 53%,
+        color-mix(in oklch, var(--link), transparent 40%) 53.4%,
+        color-mix(in oklch, var(--link), transparent 40%) 54.4%,
+        transparent 54.8%,
+        transparent 100%
+      ),
+      linear-gradient(
+        164deg,
+        transparent 0%,
+        transparent 63%,
+        color-mix(in oklch, var(--foreground), transparent 68%) 63.4%,
+        color-mix(in oklch, var(--foreground), transparent 68%) 64.3%,
+        transparent 64.7%,
+        transparent 100%
+      );
+    content: "";
+    opacity: 0.74;
+    pointer-events: none;
+  }
+
+  [data-work-radar]::after {
+    position: absolute;
+    top: -30%;
+    bottom: -30%;
+    left: -44%;
+    width: 36%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklch, var(--link), transparent 58%),
+      transparent
+    );
+    content: "";
+    opacity: 0.48;
+    pointer-events: none;
+    transform: rotate(18deg);
+    animation: work-radar-sweep 6.8s var(--work-ease) infinite;
+  }
+
+  [data-work-reveal],
+  [data-work-card],
+  [data-work-row],
+  [data-work-icon] {
+    --work-hover-x: 0px;
+    --work-hover-y: 0px;
+    --work-rise-y: 0px;
+    transform: translate3d(var(--work-hover-x), calc(var(--work-rise-y) + var(--work-hover-y)), 0);
+    transition:
+      opacity 700ms var(--work-ease) var(--work-reveal-delay, 0ms),
+      transform 700ms var(--work-ease) var(--work-reveal-delay, 0ms),
+      background-color 280ms var(--work-ease),
+      border-color 280ms var(--work-ease),
+      box-shadow 280ms var(--work-ease),
+      color 280ms var(--work-ease);
+  }
+
+  [data-work-motion-ready] [data-work-reveal]:not([data-work-reveal="visible"]) {
+    --work-rise-y: 18px;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  [data-work-motion-ready] [data-work-reveal="visible"] {
+    --work-rise-y: 0px;
+    opacity: 1;
+  }
+
+  [data-work-hero] [data-work-reveal] {
+    --work-rise-y: 18px;
+    opacity: 0;
+    animation: work-reveal-in 820ms var(--work-ease) var(--work-reveal-delay, 0ms) forwards;
+  }
+
+  [data-work-card]:hover {
+    --work-hover-y: -3px;
+    box-shadow: 0 18px 42px -34px color-mix(in oklch, var(--foreground), transparent 35%);
+  }
+
+  [data-work-row]:hover {
+    --work-hover-x: 6px;
+    background-color: color-mix(in oklch, var(--muted), transparent 44%);
+  }
+
+  [data-work-icon] {
+    transition:
+      color 280ms var(--work-ease),
+      background-color 280ms var(--work-ease),
+      transform 280ms var(--work-ease);
+  }
+
+  [data-work-card]:hover [data-work-icon],
+  [data-work-row]:hover [data-work-icon] {
+    color: var(--background);
+    background-color: var(--foreground);
+    transform: scale(1.06) rotate(-2deg);
+  }
+
   [data-home-hero]::before {
     position: absolute;
     inset: 0;
@@ -204,6 +396,48 @@
     transform: scale(1.055);
   }
 
+  @keyframes work-grid-scan {
+    0% {
+      background-position:
+        0 0,
+        0 0,
+        -80% 50%;
+    }
+    100% {
+      background-position:
+        32px 32px,
+        32px 32px,
+        160% 50%;
+    }
+  }
+
+  @keyframes work-line-sweep {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes work-radar-sweep {
+    0% {
+      left: -44%;
+    }
+    52%,
+    100% {
+      left: 108%;
+    }
+  }
+
+  @keyframes work-reveal-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 18px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
   @keyframes home-grid-drift {
     0% {
       background-position:
@@ -237,6 +471,29 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    [data-work-hero]::before,
+    [data-work-hero]::after,
+    [data-work-radar]::after {
+      animation: none;
+    }
+
+    [data-work-hero]::after {
+      transform: none;
+    }
+
+    [data-work-reveal],
+    [data-work-card],
+    [data-work-row],
+    [data-work-icon] {
+      transition: none;
+    }
+
+    [data-work-reveal] {
+      --work-rise-y: 0px;
+      opacity: 1;
+      animation: none;
+    }
+
     [data-home-hero]::before,
     [data-home-hero]::after {
       animation: none;
@@ -262,6 +519,11 @@
   }
 
   @media (scripting: none) {
+    [data-work-reveal] {
+      --work-rise-y: 0px;
+      opacity: 1;
+    }
+
     [data-home-reveal] {
       --home-rise-y: 0px;
       opacity: 1;
