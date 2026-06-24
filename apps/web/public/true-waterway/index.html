@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="从太平洋帆船与独木舟出发，重新理解《阿凡达：水之道》背后的真实海洋文明。"
+    />
+    <title>真实的水之道</title>
+    <meta property="og:title" content="真实的水之道" />
+    <meta
+      property="og:description"
+      content="从太平洋帆船与独木舟出发，重新理解《阿凡达：水之道》背后的真实海洋文明。"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="assets/waterway-visuals/site-logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/png" href="assets/waterway-visuals/site-logo.png" />
+    <link rel="apple-touch-icon" href="assets/waterway-visuals/site-logo.png" />
+    <link rel="preload" as="image" href="assets/waterway-visuals/01-hero-museum-canoe.png" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #0a1012;
+        --ink-2: #10191c;
+        --ink-3: #172225;
+        --paper: #eee7db;
+        --paper-2: #d9cdbd;
+        --text: #f2ede4;
+        --muted: #b9afa4;
+        --soft: rgba(242, 237, 228, 0.68);
+        --line: rgba(242, 237, 228, 0.16);
+        --line-strong: rgba(242, 237, 228, 0.28);
+        --teal: #5ca6a0;
+        --wood: #a66d45;
+        --rust: #8d4935;
+        --shadow: rgba(0, 0, 0, 0.38);
+        --radius: 10px;
+        --page-x: 5vw;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        background: var(--ink);
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        background:
+          radial-gradient(circle at 16% 12%, rgba(92, 166, 160, 0.12), transparent 28rem),
+          linear-gradient(180deg, var(--ink) 0%, #0c1316 42%, var(--ink-2) 100%);
+        color: var(--text);
+        font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+        line-height: 1.6;
+        letter-spacing: 0;
+        text-rendering: optimizeLegibility;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .site-nav {
+        position: fixed;
+        top: 16px;
+        left: 50%;
+        z-index: 40;
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        max-width: min(calc(100% - 32px), 980px);
+        min-height: 56px;
+        padding: 6px;
+        overflow-x: auto;
+        border: 1px solid rgba(242, 237, 228, 0.18);
+        border-radius: 999px;
+        background: rgba(8, 14, 16, 0.74);
+        box-shadow: 0 18px 50px var(--shadow);
+        backdrop-filter: blur(18px);
+        transform: translateX(-50%);
+        scrollbar-width: none;
+      }
+
+      .site-nav::-webkit-scrollbar {
+        display: none;
+      }
+
+      .site-nav a {
+        flex: 0 0 auto;
+        padding: 10px 15px;
+        border-radius: 999px;
+        color: rgba(242, 237, 228, 0.74);
+        font-size: 0.86rem;
+        line-height: 1;
+        white-space: nowrap;
+        transition:
+          color 180ms ease,
+          background 180ms ease,
+          transform 180ms ease;
+      }
+
+      .nav-logo {
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        overflow: hidden;
+        border: 1px solid rgba(242, 237, 228, 0.16);
+        background: rgba(238, 231, 219, 0.9);
+      }
+
+      .nav-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .site-nav a:hover,
+      .site-nav a:focus-visible {
+        color: var(--text);
+        background: rgba(242, 237, 228, 0.1);
+        outline: none;
+      }
+
+      .site-nav a:active {
+        transform: translateY(1px);
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      main {
+        overflow: clip;
+      }
+
+      .section {
+        position: relative;
+        min-height: 100dvh;
+        padding: 112px var(--page-x);
+      }
+
+      .hero {
+        position: relative;
+        isolation: isolate;
+        display: grid;
+        align-items: end;
+        min-height: 100dvh;
+        padding: 116px var(--page-x) 76px;
+      }
+
+      .hero-media,
+      .screen-media {
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+      }
+
+      .hero-media img,
+      .screen-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background:
+          linear-gradient(
+            90deg,
+            rgba(5, 8, 9, 0.88) 0%,
+            rgba(5, 8, 9, 0.58) 34%,
+            rgba(5, 8, 9, 0.18) 74%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(5, 8, 9, 0.1) 0%,
+            rgba(5, 8, 9, 0.32) 72%,
+            rgba(5, 8, 9, 0.86) 100%
+          );
+      }
+
+      .hero-copy {
+        width: min(900px, 100%);
+      }
+
+      .kicker {
+        margin: 0 0 26px;
+        color: var(--paper-2);
+        font-size: 1rem;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1,
+      h2,
+      .closing-copy p {
+        font-family: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "STSong", serif;
+        font-weight: 500;
+        letter-spacing: 0;
+      }
+
+      h1 {
+        max-width: 780px;
+        margin-bottom: 30px;
+        font-size: 4.8rem;
+        line-height: 1.04;
+      }
+
+      .hero-statement {
+        max-width: 780px;
+        margin-bottom: 0;
+        color: rgba(242, 237, 228, 0.84);
+        font-size: 1.45rem;
+        line-height: 1.82;
+      }
+
+      .section-head {
+        max-width: 860px;
+        margin-bottom: 52px;
+      }
+
+      .section-head h2,
+      .culture-panel h2,
+      .closing-copy h2,
+      .trail-intro h2 {
+        margin-bottom: 18px;
+        font-size: 4rem;
+        line-height: 1.08;
+      }
+
+      .section-head p,
+      .culture-panel > p,
+      .trail-intro p {
+        max-width: 700px;
+        margin-bottom: 0;
+        color: var(--soft);
+        font-size: 1.12rem;
+      }
+
+      .anatomy {
+        background:
+          linear-gradient(180deg, rgba(10, 16, 18, 0.94), rgba(14, 22, 24, 0.98)),
+          radial-gradient(circle at 78% 30%, rgba(92, 166, 160, 0.16), transparent 28rem);
+      }
+
+      .anatomy-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.75fr);
+        gap: 34px;
+        align-items: stretch;
+      }
+
+      .anatomy-plate {
+        margin: 0;
+        overflow: hidden;
+        border: 1px solid rgba(238, 231, 219, 0.28);
+        border-radius: var(--radius);
+        background: var(--paper);
+        box-shadow: 0 34px 80px rgba(0, 0, 0, 0.34);
+      }
+
+      .anatomy-plate img {
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+      }
+
+      .body-parts {
+        display: grid;
+        gap: 14px;
+      }
+
+      .part {
+        position: relative;
+        padding: 18px 18px 18px 20px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(238, 231, 219, 0.055);
+      }
+
+      .part::before {
+        content: "";
+        position: absolute;
+        top: 20px;
+        bottom: 20px;
+        left: 0;
+        width: 3px;
+        background: var(--teal);
+      }
+
+      .part b {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--paper);
+        font-size: 1.05rem;
+        font-weight: 600;
+      }
+
+      .part span {
+        color: rgba(242, 237, 228, 0.66);
+        font-size: 0.96rem;
+      }
+
+      .scale-note {
+        margin-top: 28px;
+        padding-top: 26px;
+        border-top: 1px solid var(--line);
+        color: rgba(242, 237, 228, 0.72);
+        font-size: 1.06rem;
+      }
+
+      .culture {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(360px, 0.78fr);
+        gap: 44px;
+        align-items: center;
+        background:
+          radial-gradient(circle at 16% 70%, rgba(166, 109, 69, 0.18), transparent 30rem),
+          linear-gradient(180deg, #10191c, #151e1f);
+      }
+
+      .culture-media {
+        overflow: hidden;
+        border-radius: var(--radius);
+        box-shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
+      }
+
+      .culture-media img {
+        aspect-ratio: 16 / 10;
+        height: 100%;
+        min-height: 520px;
+        object-fit: cover;
+      }
+
+      .culture-panel {
+        padding: 34px 0;
+      }
+
+      .terms {
+        margin-bottom: 22px;
+        color: var(--paper-2);
+        font-size: 1rem;
+      }
+
+      .trinity {
+        display: grid;
+        gap: 12px;
+        margin-top: 36px;
+      }
+
+      .trinity p {
+        margin: 0;
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line);
+        color: var(--text);
+        font-family: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "STSong", serif;
+        font-size: 2rem;
+        line-height: 1.34;
+      }
+
+      .closing {
+        position: relative;
+        isolation: isolate;
+        display: grid;
+        align-items: end;
+        min-height: 100dvh;
+        padding: 112px var(--page-x) 124px;
+      }
+
+      .closing::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background:
+          radial-gradient(circle at 72% 44%, rgba(92, 166, 160, 0.08), transparent 22rem),
+          linear-gradient(90deg, rgba(5, 8, 9, 0.94), rgba(5, 8, 9, 0.76) 42%, rgba(5, 8, 9, 0.32)),
+          linear-gradient(180deg, rgba(5, 8, 9, 0.16), rgba(5, 8, 9, 0.9));
+      }
+
+      .closing-copy {
+        width: min(660px, 100%);
+        text-shadow: 0 18px 46px rgba(0, 0, 0, 0.62);
+      }
+
+      .closing-copy h2 {
+        color: var(--paper-2);
+        font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+
+      .closing-copy p {
+        margin-bottom: 0;
+        font-size: clamp(2rem, 3vw, 3.15rem);
+        line-height: 1.42;
+      }
+
+      .trail {
+        display: grid;
+        align-items: center;
+        min-height: 100dvh;
+        background:
+          linear-gradient(180deg, #10191c 0%, #0c1316 100%),
+          radial-gradient(circle at 88% 10%, rgba(92, 166, 160, 0.12), transparent 34rem);
+      }
+
+      .trail-map {
+        position: relative;
+        overflow: hidden;
+        width: min(100%, 1520px);
+        margin: 0 auto;
+        border: 1px solid rgba(238, 231, 219, 0.22);
+        border-radius: var(--radius);
+        background: var(--paper);
+        box-shadow: 0 40px 120px rgba(0, 0, 0, 0.42);
+      }
+
+      .trail-map img {
+        aspect-ratio: 1672 / 941;
+        object-fit: contain;
+      }
+
+      .hotspot {
+        position: absolute;
+        display: block;
+        border-radius: 8px;
+        background: rgba(92, 166, 160, 0);
+        outline: 0;
+        transition:
+          background 180ms ease,
+          box-shadow 180ms ease,
+          transform 180ms ease;
+      }
+
+      .hotspot:hover,
+      .hotspot:focus-visible {
+        background: rgba(92, 166, 160, 0.08);
+        box-shadow:
+          inset 0 0 0 2px rgba(92, 166, 160, 0.72),
+          0 18px 44px rgba(5, 8, 9, 0.18);
+      }
+
+      .hotspot:active {
+        transform: translateY(1px);
+      }
+
+      .hotspot-tepapa {
+        top: 41.7%;
+        left: 4%;
+        width: 21.7%;
+        height: 42.4%;
+      }
+
+      .hotspot-smithsonian {
+        top: 41.7%;
+        left: 26.9%;
+        width: 21.8%;
+        height: 42.4%;
+      }
+
+      .hotspot-nzmm {
+        top: 41.7%;
+        left: 50.3%;
+        width: 21.8%;
+        height: 42.4%;
+      }
+
+      .hotspot-australian {
+        top: 41.7%;
+        left: 73.5%;
+        width: 21.8%;
+        height: 42.4%;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+
+      @keyframes rise-in {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .hero-copy,
+        .section-head,
+        .culture-panel,
+        .closing-copy,
+        .trail-intro {
+          animation: rise-in 780ms ease both;
+        }
+      }
+
+      @media (max-width: 1120px) {
+        h1 {
+          font-size: 4rem;
+        }
+
+        .section-head h2,
+        .culture-panel h2,
+        .trail-intro h2 {
+          font-size: 3.35rem;
+        }
+
+        .anatomy-layout,
+        .culture {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 760px) {
+        :root {
+          --page-x: 18px;
+        }
+
+        .site-nav {
+          right: 12px;
+          left: 12px;
+          max-width: none;
+          border-radius: 18px;
+          transform: none;
+        }
+
+        .site-nav a {
+          padding: 10px 12px;
+          font-size: 0.82rem;
+        }
+
+        .hero,
+        .section,
+        .closing {
+          padding-top: 98px;
+          padding-bottom: 64px;
+        }
+
+        .hero {
+          align-items: end;
+        }
+
+        .hero::after {
+          background:
+            linear-gradient(
+              180deg,
+              rgba(5, 8, 9, 0.28) 0%,
+              rgba(5, 8, 9, 0.58) 42%,
+              rgba(5, 8, 9, 0.94) 100%
+            ),
+            linear-gradient(90deg, rgba(5, 8, 9, 0.74), rgba(5, 8, 9, 0.24));
+        }
+
+        h1 {
+          font-size: 2.7rem;
+          line-height: 1.1;
+        }
+
+        .hero-statement {
+          font-size: 1.12rem;
+          line-height: 1.72;
+        }
+
+        .section-head {
+          margin-bottom: 32px;
+        }
+
+        .section-head h2,
+        .culture-panel h2,
+        .trail-intro h2 {
+          font-size: 2.45rem;
+        }
+
+        .anatomy-layout,
+        .culture {
+          gap: 24px;
+        }
+
+        .body-parts {
+          grid-template-columns: 1fr;
+        }
+
+        .culture-media img {
+          min-height: 340px;
+        }
+
+        .trinity p {
+          font-size: 1.55rem;
+        }
+
+        .closing-copy p {
+          font-size: 1.58rem;
+          line-height: 1.52;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="site-nav" aria-label="页面章节">
+      <a class="nav-logo" href="#hero" aria-label="回到真实的水之道开场">
+        <img src="assets/waterway-visuals/site-logo.png" alt="" width="128" height="128" />
+      </a>
+      <a href="#hero">Hero</a>
+      <a href="#body">船的身体</a>
+      <a href="#worldview">世界观</a>
+      <a href="#pandora">Before Pandora</a>
+      <a href="#trail">Museum Trail</a>
+    </nav>
+
+    <main>
+      <section class="hero" id="hero" aria-label="开场">
+        <div class="hero-media" aria-hidden="true">
+          <img
+            src="assets/waterway-visuals/01-hero-museum-canoe.png"
+            alt=""
+            width="1680"
+            height="945"
+            fetchpriority="high"
+          />
+        </div>
+        <div class="hero-copy reveal">
+          <p class="kicker">真实的水之道</p>
+          <h1>我站在那些帆船和独木舟前，突然意识到：</h1>
+          <p class="hero-statement">
+            《阿凡达：水之道》不是凭空幻想。<br />
+            它的真实版本，早已在太平洋上航行了几千年。
+          </p>
+        </div>
+      </section>
+
+      <section class="section anatomy" id="body">
+        <div class="section-head reveal">
+          <h2>船不是船，是身体</h2>
+          <p>速度、平衡、承重和捕风，全部被做进结构里。它更像一副能在海上呼吸的骨架。</p>
+        </div>
+
+        <div class="anatomy-layout">
+          <figure class="anatomy-plate reveal">
+            <img
+              src="assets/waterway-visuals/02-canoe-anatomy.png"
+              alt="太平洋独木舟解剖式标注图"
+              width="1680"
+              height="945"
+            />
+          </figure>
+
+          <div class="body-parts reveal" aria-label="船体结构说明">
+            <div class="part">
+              <b>外伸浮木</b>
+              <span>像平衡翼，让船把海浪变成侧向支撑。</span>
+            </div>
+            <div class="part">
+              <b>双体船</b>
+              <span>像并行的身体，把速度、容量和稳定性一起放大。</span>
+            </div>
+            <div class="part">
+              <b>蟹爪帆</b>
+              <span>像捕风的翅膀，把风向翻译成航线。</span>
+            </div>
+            <div class="part">
+              <b>植物纤维捆扎</b>
+              <span>像肌腱，不靠金属，也能让结构保持韧性。</span>
+            </div>
+            <div class="part">
+              <b>异常尺寸</b>
+              <span>巨大不是为了夸张，而是为了让海成为道路。</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="scale-note reveal">
+          当它被悬挂在展厅里，船身突然不像交通工具，而像一具来自海洋文明的完整身体。
+        </p>
+      </section>
+
+      <section class="section culture" id="worldview">
+        <div class="culture-media reveal">
+          <img
+            src="assets/waterway-visuals/04-people-craft-community.png"
+            alt="海边社群正在为独木舟捆扎植物纤维"
+            width="1680"
+            height="945"
+          />
+        </div>
+
+        <div class="culture-panel reveal">
+          <h2>部落不是装饰，是世界观</h2>
+          <p class="terms">Pasifika / Polynesian / Māori / Tokelau</p>
+          <p>
+            这些船不是孤立的物件。它们属于祖先知识、迁徙路线、岛屿关系，也属于今天的身份和气候危机。
+          </p>
+
+          <div class="trinity" aria-label="船连接的三件事">
+            <p>船连接祖先。</p>
+            <p>船连接岛屿。</p>
+            <p>船连接今天的身份和气候危机。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="closing" id="pandora" aria-label="Before Pandora">
+        <div class="screen-media" aria-hidden="true">
+          <img
+            src="assets/waterway-visuals/05-closing-reversal.png"
+            alt=""
+            width="1680"
+            height="945"
+          />
+        </div>
+        <div class="closing-copy reveal">
+          <h2>Before Pandora</h2>
+          <p>
+            电影把真实的海洋文明翻译成了科幻。<br />
+            但真正震撼的不是潘多拉，<br />
+            而是地球上本来就存在这样的水之道。
+          </p>
+        </div>
+      </section>
+
+      <section class="section trail" id="trail">
+        <h2 class="sr-only">Museum Trail</h2>
+        <figure class="trail-map reveal" aria-label="航海档案博物馆路线图">
+          <img
+            src="assets/waterway-visuals/06-museum-trail-hotspots.png"
+            alt="航海档案地图，包含 Te Papa、Smithsonian、New Zealand Maritime Museum、Australian Museum 四张博物馆卡片"
+            width="1672"
+            height="941"
+          />
+          <a
+            class="hotspot hotspot-tepapa"
+            href="https://collections.tepapa.govt.nz/topic/2354?page=1&amp;rtp=1&amp;ros=2&amp;asr=1&amp;assoc=all&amp;mb=c&amp;sros=1&amp;srtp=0&amp;sasr=0"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="打开 Te Papa Pacific canoes 页面"
+          >
+            <span class="sr-only">Te Papa Pacific canoes</span>
+          </a>
+          <a
+            class="hotspot hotspot-smithsonian"
+            href="https://naturalhistory.si.edu/research/anthropology/programs/recovering-voices/outreach/news-research-updates/canoe-collections-pacific-islands?utm_source=chatgpt.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="打开 Smithsonian Pacific canoe collections 页面"
+          >
+            <span class="sr-only">Smithsonian Pacific canoe collections</span>
+          </a>
+          <a
+            class="hotspot hotspot-nzmm"
+            href="https://www.maritimemuseum.co.nz/vaka-of-oceania?utm_source=chatgpt.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="打开 New Zealand Maritime Museum Vaka of Oceania 页面"
+          >
+            <span class="sr-only">New Zealand Maritime Museum Vaka of Oceania</span>
+          </a>
+          <a
+            class="hotspot hotspot-australian"
+            href="https://australian.museum/exhibition/wansolmoana/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="打开 Australian Museum Wansolmoana 页面"
+          >
+            <span class="sr-only">Australian Museum Wansolmoana</span>
+          </a>
+        </figure>
+      </section>
+    </main>
+  </body>
+</html>

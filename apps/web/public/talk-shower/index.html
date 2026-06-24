@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="中国过去五年脱口秀演员、上场时间、热度、风格和嘲讽内容的滚动研究页。"
+    />
+    <title>Talk Shower | 中国脱口秀过去五年样本库</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="chapter-badge" aria-live="polite">
+      <span id="badgeYear">2021-2025</span>
+      <strong id="badgeTitle">样本库启动</strong>
+    </div>
+
+    <header
+      class="hero chapter"
+      data-year="2021-2025"
+      data-title="过去五年的舞台暗线"
+      data-accent="#00d4d8"
+    >
+      <img class="backdrop" src="assets/hero-stage.png" alt="" />
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="kicker">TALK SHOWER / STAND-UP DATA</p>
+          <h1>中国脱口秀过去五年样本库</h1>
+          <p class="lede">
+            从《脱口秀大会》到《喜剧之王单口季》与《脱口秀和 Ta
+            的朋友们》，把演员、上场时间、热度、风格和主要嘲讽对象压缩成一个可滚动的数据产品。
+          </p>
+          <div class="hero-actions" aria-label="关键入口">
+            <a class="button primary" href="#atlas">进入样本</a>
+          </div>
+        </div>
+        <aside class="hero-meter" aria-label="样本摘要">
+          <span>sample</span>
+          <strong id="heroSample">26</strong>
+          <span>estimated stage min</span>
+          <strong id="heroMinutes">--</strong>
+          <span>heat avg</span>
+          <strong id="heroHeat">--</strong>
+        </aside>
+      </div>
+    </header>
+
+    <main>
+      <section id="chapters" class="scrollytelling" aria-label="五年章节">
+        <div class="sticky-rail">
+          <div class="product-sticky">
+            <p class="kicker">STICKY PRODUCT</p>
+            <h2 id="stickyTitle">章节雷达</h2>
+            <p id="stickyBody">滚动时，右侧产品卡会停在视口里，跟随章节切换数据、颜色和人物。</p>
+            <div class="sticky-names" id="stickyNames"></div>
+          </div>
+        </div>
+        <div class="chapter-stack" id="timelineMount"></div>
+      </section>
+
+      <section
+        id="atlas"
+        class="atlas chapter"
+        data-year="DATA"
+        data-title="演员风格矩阵"
+        data-accent="#ffb000"
+      >
+        <div class="section-head">
+          <p class="kicker">COMEDIAN ATLAS</p>
+          <h2>演员、上场时间、热度与嘲讽对象</h2>
+          <p>主题筛选会同步影响卡片、排行和固定浮标；每张卡都能展开成一个小档案。</p>
+        </div>
+
+        <div class="tool-grid">
+          <aside class="control-panel" aria-label="筛选与排序">
+            <label class="control-label" for="searchInput">搜索</label>
+            <input id="searchInput" type="search" placeholder="演员 / 风格 / 主题" />
+
+            <label class="control-label" for="sortSelect">排序</label>
+            <select id="sortSelect">
+              <option value="heat">热度</option>
+              <option value="stage">上场时间</option>
+              <option value="name">姓名</option>
+            </select>
+
+            <div class="control-label">主题</div>
+            <div class="chip-grid" id="themeChips"></div>
+
+            <div id="quoteStrip" class="quote-strip" hidden></div>
+
+            <div class="rank-panel">
+              <h3>Stage top</h3>
+              <ol id="stageRank"></ol>
+            </div>
+          </aside>
+
+          <div class="card-field">
+            <div class="result-line">
+              <span id="resultCount">--</span>
+              <span id="activeTheme">ALL THEMES</span>
+            </div>
+            <div class="cards" id="cardsMount"></div>
+            <button id="cardsToggle" class="show-more" type="button"></button>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="insight chapter"
+        data-year="INSIGHT"
+        data-title="嘲讽对象的迁移"
+        data-accent="#ff4d2e"
+      >
+        <img class="backdrop" src="assets/theme-desk.png" alt="" />
+        <div class="insight-grid">
+          <div class="insight-title">
+            <p class="kicker">SATIRE MAP</p>
+          </div>
+          <div class="theme-map" id="themeMap"></div>
+          <button id="themeToggle" class="show-more show-more-wide" type="button"></button>
+        </div>
+      </section>
+
+      <section class="sources" aria-label="资料来源">
+        <div class="section-head compact">
+          <p class="kicker">SOURCE LOG</p>
+          <h2>资料来源</h2>
+        </div>
+        <div class="source-grid" id="sourcesMount"></div>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ocean Fish Nursery</title>
+    <link rel="stylesheet" href="web/styles.css" />
+  </head>
+  <body>
+    <main class="game-shell" aria-label="Ocean Fish Nursery">
+      <canvas id="game" width="960" height="640"></canvas>
+
+      <section class="hud hud-top" aria-label="状态">
+        <div class="stat"><span>金币</span><strong id="coins">120</strong></div>
+        <div class="stat"><span>小鱼</span><strong id="fishCount">0</strong></div>
+        <div class="stat"><span>成鱼</span><strong id="adultCount">0</strong></div>
+        <div class="stat"><span>第</span><strong id="day">1天</strong></div>
+        <div class="stat water"><span>水质</span><strong id="water">100%</strong></div>
+        <div class="goal-chip">目标：喂鱼长大，卖金鱼赚钱</div>
+      </section>
+
+      <button class="help-button" id="helpButton" type="button" aria-label="查看玩法">?</button>
+      <button class="info-button" id="infoButton" type="button" aria-label="查看开发信息">
+        信息
+      </button>
+
+      <section class="notice" id="notice" aria-live="polite">选“投喂”，点海面放饲料</section>
+
+      <section class="intro" id="intro" aria-label="玩法说明">
+        <div class="intro-card">
+          <h1>海底养鱼场</h1>
+          <p>把小鱼喂成金鱼，再卖掉赚钱。</p>
+          <ol>
+            <li><strong>投喂</strong><span>选投喂，点海面放饲料。</span></li>
+            <li><strong>成长</strong><span>小鱼吃到饲料会慢慢长大。</span></li>
+            <li><strong>赚钱</strong><span>金鱼可以卖，也会带来收入。</span></li>
+          </ol>
+          <button id="startGame" type="button">开始养鱼</button>
+        </div>
+      </section>
+
+      <section class="info-panel is-hidden" id="infoPanel" aria-label="开发信息">
+        <div class="info-card">
+          <header class="info-head">
+            <div>
+              <h2>这个小游戏是怎么做出来的</h2>
+              <p>先让 AI 生成像素素材，再用 Canvas 写一个简单养成循环。</p>
+            </div>
+            <button id="closeInfo" type="button">关闭</button>
+          </header>
+
+          <div class="info-body">
+            <article>
+              <h3>实现逻辑</h3>
+              <ol>
+                <li>确定玩法闭环：投喂 → 小鱼吃饲料 → 成长 → 金鱼收益 → 买鱼或清水。</li>
+                <li>用 imagegen 生成海底背景和透明鱼类素材。</li>
+                <li>用 HTML Canvas 绘制背景、鱼、饲料、泡泡和海草。</li>
+                <li>用 JavaScript 保存游戏状态：金币、天数、水质、鱼群、饲料。</li>
+                <li>每一帧让鱼游向目标；如果附近有饲料，就游过去吃并增加成长值。</li>
+              </ol>
+            </article>
+
+            <article>
+              <h3>提示 AI 的通用写法</h3>
+              <p>告诉 AI 四件事：主题、玩法、技术、素材风格。越具体，越容易一次做成可玩的版本。</p>
+              <pre><code>做一个可以直接在浏览器运行的小游戏。
+主题：海洋里养小鱼。
+技术：HTML + CSS + JavaScript Canvas，不依赖后端。
+玩法：点击投喂，小鱼会游过去吃；吃够后长成金鱼；金鱼能赚钱；可以清洁水质和买新鱼。
+界面：第一屏就能玩，要有清楚的新手提示和工具栏。
+素材：使用像素风海底背景、小鱼、饲料、海草、泡泡。</code></pre>
+            </article>
+
+            <article>
+              <h3>素材提示词示例</h3>
+              <pre><code>生成一张俯视角像素风海底养鱼场背景。
+画面中央留出可游玩的浅沙区域，周围有珊瑚、海草、贝壳和水波纹。
+风格可爱、清晰、适合 2D 休闲养成小游戏，不要文字和 UI。
+
+再生成一张像素风精灵图，包含小鱼、金鱼、饲料、海草、泡泡、贝壳。
+所有物体分开摆放，背景用纯色，方便抠成透明 PNG。</code></pre>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="toolbar" aria-label="工具栏">
+        <button class="tool is-active" data-tool="feed" aria-pressed="true" title="投喂">
+          <img src="assets/sprites/food.png" alt="" />
+          <span>投喂</span>
+        </button>
+        <button class="tool" data-action="buyFish" title="买鱼">
+          <img src="assets/sprites/fish_blue.png" alt="" />
+          <span>买鱼</span>
+        </button>
+        <button class="tool" data-tool="kelp" aria-pressed="false" title="海草">
+          <img src="assets/sprites/seaweed.png" alt="" />
+          <span>种海草</span>
+        </button>
+        <button class="tool" data-tool="sell" aria-pressed="false" title="出售">
+          <img src="assets/sprites/shell.png" alt="" />
+          <span>卖金鱼</span>
+        </button>
+        <button class="tool" data-action="clean" title="清洁">
+          <img src="assets/sprites/bubble.png" alt="" />
+          <span>清水</span>
+        </button>
+        <button class="tool wide" data-action="nextDay" title="下一天">
+          <img src="assets/sprites/sign.png" alt="" />
+          <span>过一天</span>
+        </button>
+      </section>
+    </main>
+
+    <script src="web/game.js"></script>
+  </body>
+</html>

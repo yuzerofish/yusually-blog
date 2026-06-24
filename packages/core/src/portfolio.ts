@@ -61,6 +61,54 @@ export const portfolioItems: PortfolioItem[] = [
     newTab: true,
   },
   {
+    id: "talk-shower",
+    title: "Talk Shower",
+    titleZh: "Talk Shower 脱口秀样本库",
+    description:
+      "Scrollable research product for five years of Chinese stand-up: performers, stage time, heat, styles, satire targets, source logs, and interactive filters.",
+    descriptionZh:
+      "一个关于中国脱口秀过去五年的滚动研究产品：演员、上场时间、热度、风格、嘲讽对象、资料来源与交互筛选。",
+    href: "/talk-shower/",
+    cta: "Explore",
+    ctaZh: "查看样本",
+    category: "Research",
+    categoryZh: "研究",
+    iconName: "BarChart3Icon",
+    newTab: true,
+  },
+  {
+    id: "true-waterway",
+    title: "The Real Way of Water",
+    titleZh: "真实的水之道",
+    description:
+      "Immersive visual essay connecting Avatar: The Way of Water to real Pacific canoe cultures, museum objects, craft knowledge, and oceanic identity.",
+    descriptionZh:
+      "一页沉浸式视觉叙事：从太平洋帆船、独木舟和博物馆物件出发，重新理解《阿凡达：水之道》背后的真实海洋文明。",
+    href: "/true-waterway/",
+    cta: "Read",
+    ctaZh: "进入",
+    category: "Essay",
+    categoryZh: "视觉叙事",
+    iconName: "CameraIcon",
+    newTab: true,
+  },
+  {
+    id: "ocean-fish-nursery",
+    title: "Ocean Fish Nursery",
+    titleZh: "海底养鱼场",
+    description:
+      "Playable browser mini game about raising fish under the sea. Feed baby fish, keep the water clean, grow gold fish, and sell them for coins, with AI-generated pixel-style assets.",
+    descriptionZh:
+      "一个可以直接在浏览器游玩的海底养鱼小游戏：投喂小鱼、保持水质、养成金鱼并卖出赚钱，同时展示了用 AI 生成像素风素材和 Canvas 实现玩法的过程。",
+    href: "/ocean-fish-nursery/",
+    cta: "Play",
+    ctaZh: "开始养鱼",
+    category: "Game",
+    categoryZh: "小游戏",
+    iconName: "BarChart3Icon",
+    newTab: true,
+  },
+  {
     id: "self-media-research",
     title: "Self-Media Research",
     titleZh: "自媒体运营全维度调研",
