@@ -61,6 +61,22 @@ export const portfolioItems: PortfolioItem[] = [
     newTab: true,
   },
   {
+    id: "seewish-wish-veil",
+    title: "SeeWish Wish Veil",
+    titleZh: "SeeWish 愿望光幕",
+    description:
+      "Interactive vision-board prototype with a soft glowing canvas. Upload an image or video, pull the translucent veil, and watch it settle back with slow cloth-like physics.",
+    descriptionZh:
+      "一个用于愿景板的互动原型：上传图片或视频后，媒体会显影在柔光半透明光幕上。拖拽时产生柔软拉扯，松手后缓慢回到平静状态。",
+    href: "/seewish-wish-veil/",
+    cta: "Open",
+    ctaZh: "体验",
+    category: "Visual Lab",
+    categoryZh: "视觉实验",
+    iconName: "CameraIcon",
+    newTab: true,
+  },
+  {
     id: "talk-shower",
     title: "Talk Shower",
     titleZh: "Talk Shower 脱口秀样本库",
