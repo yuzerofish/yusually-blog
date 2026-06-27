@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>关于 · 末日乐园分镜实验</title>
+    <meta
+      name="description"
+      content="一次把长篇小说理解、拆解并改造成分镜影院阅读器的个人 AI 实验说明。仅用于个人学习与非商业试用。"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #050505;
+        --ink: #f5f2ea;
+        --muted: #b6aea2;
+        --soft: #ded4bf;
+        --line: rgba(255, 255, 255, 0.15);
+        --panel: rgba(255, 255, 255, 0.055);
+        --accent: #d7c7a1;
+        --warning: #c77f62;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: var(--bg);
+        color: var(--ink);
+      }
+
+      body {
+        background:
+          radial-gradient(ellipse at 50% 0%, rgba(215, 199, 161, 0.12), transparent 46%),
+          radial-gradient(ellipse at 50% 44%, rgba(255, 255, 255, 0.04), transparent 38%), #050505;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+        border-bottom: 1px solid rgba(215, 199, 161, 0.42);
+      }
+
+      a:hover,
+      a:focus-visible {
+        color: #fff1cb;
+        border-bottom-color: #fff1cb;
+        outline: none;
+      }
+
+      .page {
+        width: min(1120px, calc(100% - 36px));
+        margin: 0 auto;
+        padding: 56px 0 72px;
+      }
+
+      .hero {
+        min-height: 76vh;
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+        gap: clamp(28px, 5vw, 70px);
+        align-items: center;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .kicker {
+        margin: 0 0 16px;
+        color: var(--accent);
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(38px, 7vw, 86px);
+        line-height: 1.02;
+        letter-spacing: 0;
+      }
+
+      .lead {
+        margin: 28px 0 0;
+        max-width: 760px;
+        color: var(--soft);
+        font-size: clamp(18px, 2.2vw, 24px);
+        line-height: 1.78;
+      }
+
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 30px;
+      }
+
+      .button {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 18px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.07);
+      }
+
+      .button.primary {
+        color: #15110b;
+        background: var(--accent);
+        border-color: rgba(255, 255, 255, 0.34);
+      }
+
+      .reader-ghost {
+        position: relative;
+        min-height: 420px;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--line);
+        background:
+          radial-gradient(ellipse at center, rgba(255, 255, 255, 0.06), transparent 44%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+        box-shadow: 0 34px 90px rgba(0, 0, 0, 0.42);
+        overflow: hidden;
+      }
+
+      .reader-ghost::before {
+        content: "";
+        position: absolute;
+        inset: 12%;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: inset 0 0 70px rgba(0, 0, 0, 0.44);
+      }
+
+      .film-frame {
+        width: min(92%, 520px);
+        aspect-ratio: 16 / 7;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.02)),
+          repeating-linear-gradient(90deg, transparent 0 48px, rgba(255, 255, 255, 0.06) 49px 50px),
+          #101010;
+        display: grid;
+        place-items: center;
+        color: #ece7dd;
+        font-size: clamp(18px, 2.8vw, 30px);
+        text-align: center;
+        padding: 22px;
+      }
+
+      .meta-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin: 28px 0 0;
+      }
+
+      .meta-card,
+      .section {
+        border: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      .meta-card {
+        padding: 18px;
+      }
+
+      .meta-card h2,
+      .section h2 {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.42;
+      }
+
+      .meta-card p,
+      .section p,
+      .section li {
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.78;
+      }
+
+      .meta-card p,
+      .section p {
+        margin: 10px 0 0;
+      }
+
+      .section-grid {
+        display: grid;
+        gap: 18px;
+        padding: 34px 0 0;
+      }
+
+      .section {
+        padding: clamp(22px, 4vw, 34px);
+      }
+
+      .method {
+        margin: 16px 0 0;
+        padding-left: 1.25em;
+        display: grid;
+        gap: 12px;
+      }
+
+      .method strong {
+        color: var(--ink);
+      }
+
+      .notice {
+        border-left: 3px solid var(--warning);
+        background: rgba(199, 127, 98, 0.1);
+        padding: 14px 16px;
+        color: #ead8cf;
+      }
+
+      footer {
+        margin-top: 44px;
+        padding-top: 22px;
+        border-top: 1px solid var(--line);
+        color: #8f887f;
+        font-size: 13px;
+        line-height: 1.7;
+      }
+
+      @media (max-width: 840px) {
+        .page {
+          width: min(100% - 28px, 680px);
+          padding-top: 36px;
+        }
+
+        .hero {
+          min-height: auto;
+          grid-template-columns: 1fr;
+          padding-bottom: 34px;
+        }
+
+        .reader-ghost {
+          min-height: 300px;
+        }
+
+        .meta-strip {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <div>
+          <p class="kicker">Novel-to-Comic Lab</p>
+          <h1>关于</h1>
+          <p class="lead">
+            这是一次个人 AI
+            漫画化实验：我选择《末日乐园》，因为它是我最喜欢的一部小说。公开页面只记录动机、Skill
+            来源和版权边界，不发布连续漫画正文。
+          </p>
+          <div class="cta-row">
+            <a class="button primary" href="#method">看制作来源</a>
+            <a class="button" href="#rights">版权声明</a>
+          </div>
+        </div>
+        <div class="reader-ghost" aria-label="分镜影院概念图">
+          <div class="film-frame">黑场里，一次只看一个分镜</div>
+        </div>
+      </section>
+
+      <section class="meta-strip" aria-label="原作与边界">
+        <article class="meta-card">
+          <h2>原作</h2>
+          <p>《末日乐园》，作者：须尾俱全。作者信息参考起点中文网公开作品信息。</p>
+        </article>
+        <article class="meta-card">
+          <h2>参考评分</h2>
+          <p>豆瓣图书《末日乐园·极温地狱》在 2026-06-27 检索时显示评分 8.5，评分会随时间变化。</p>
+        </article>
+        <article class="meta-card">
+          <h2>项目性质</h2>
+          <p>个人学习、技术验证、非商业试用。禁止商用、禁止转载、禁止二次分发。</p>
+        </article>
+      </section>
+
+      <div class="section-grid">
+        <section class="section">
+          <h2>为什么做这件事</h2>
+          <p>
+            我做这个分镜实验，是因为《末日乐园》是我最喜欢的一部小说。须尾俱全的想象力非常强，尤其是道具系统、世界规则和各种不可预期的处境，经常让我觉得这不是套路化的末日故事，而是一个持续向外生长的想象宇宙。
+          </p>
+          <p>
+            我想测试 AI
+            是否真的能接住这种天马行空：不只是画出一张漂亮图，而是把道具的奇特规则、人物面对未知时的反应、以及那种“离谱但成立”的故事能量转成清晰分镜。
+          </p>
+        </section>
+
+        <section class="section" id="method">
+          <h2>制作来源与 Skill 信息</h2>
+          <ol class="method">
+            <li>
+              <strong>使用 Skill：</strong><code>book-to-comic</code>，按截图信息，Skill
+              作者/分享账号为 onebluecloud。
+            </li>
+            <li>
+              <strong>能力描述：</strong
+              >截图强调画风可选、可自动配风格、保持人物一致、整章连贯出图，并可输出长图、PDF、CBZ、EPUB
+              等形式。
+            </li>
+            <li>
+              <strong>发布策略：</strong
+              >完整漫画保留为本地个人试用；公开网站只展示动机、来源说明和版权边界。
+            </li>
+          </ol>
+        </section>
+
+        <section class="section" id="rights">
+          <h2>版权声明</h2>
+          <p class="notice">
+            本项目不是官方授权改编，不代表原作者、连载平台、出版方或任何权利方授权。当前仅用于个人学习、技术验证和非商业试用；未经权利方授权，不应公开发布完整漫画正文、连续阅读资产、PDF/CBZ
+            或商业化衍生品。
+          </p>
+          <p>
+            原作与平台信息可参考
+            <a href="https://www.qidian.com/book/3312802/" target="_blank" rel="noreferrer"
+              >起点中文网作品页</a
+            >；评分信息可参考
+            <a href="https://book.douban.com/subject/30246175/" target="_blank" rel="noreferrer"
+              >豆瓣图书条目</a
+            >。公开评分与条目内容会随平台更新。
+          </p>
+        </section>
+      </div>
+
+      <footer>
+        Published as a process note for a personal AI reading and adaptation workflow. No commercial
+        use. No redistribution of source text or continuous comic adaptation.
+      </footer>
+    </main>
+  </body>
+</html>

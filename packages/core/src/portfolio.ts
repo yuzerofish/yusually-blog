@@ -77,6 +77,22 @@ export const portfolioItems: PortfolioItem[] = [
     newTab: true,
   },
   {
+    id: "grasping-sand-hand",
+    title: "Grasping Sand Hand",
+    titleZh: "握沙之手",
+    description:
+      "A zen scroll-driven web piece: a fist releases sand into an empty palm as the scene shifts from dark tension into soft lavender light.",
+    descriptionZh:
+      "一个带禅意的滚动网页作品：握紧的拳头慢慢放开沙子，场景从阴郁僵硬过渡到柔软淡紫的空掌状态。",
+    href: "/grasping-sand-hand/",
+    cta: "Open",
+    ctaZh: "体验",
+    category: "Visual Lab",
+    categoryZh: "视觉实验",
+    iconName: "CameraIcon",
+    newTab: true,
+  },
+  {
     id: "talk-shower",
     title: "Talk Shower",
     titleZh: "Talk Shower 脱口秀样本库",
@@ -90,6 +106,22 @@ export const portfolioItems: PortfolioItem[] = [
     category: "Research",
     categoryZh: "研究",
     iconName: "BarChart3Icon",
+    newTab: true,
+  },
+  {
+    id: "novel-to-comic-lab",
+    title: "Novel-to-Comic Lab",
+    titleZh: "小说转漫画分镜实验",
+    description:
+      "A personal note about adapting my favorite novel into cinematic comic frames, crediting the book-to-comic Skill inspiration and keeping the full comic private for rights reasons.",
+    descriptionZh:
+      "一篇关于把最喜欢的小说改成漫画分镜的个人说明：记录 book-to-comic Skill 灵感来源，并因版权边界只公开动机与说明，不发布连续漫画正文。",
+    href: "/novel-to-comic-lab/",
+    cta: "Read",
+    ctaZh: "查看说明",
+    category: "Process",
+    categoryZh: "方法",
+    iconName: "BookOpenIcon",
     newTab: true,
   },
   {
@@ -122,6 +154,22 @@ export const portfolioItems: PortfolioItem[] = [
     category: "Game",
     categoryZh: "小游戏",
     iconName: "BarChart3Icon",
+    newTab: true,
+  },
+  {
+    id: "ocean-canoe-museum",
+    title: "Ocean Canoe Museum",
+    titleZh: "海洋文化寻船记",
+    description:
+      "Playable educational museum game prototype about Pacific canoe culture. Explore canoe exhibits, unlock the voyage journal, collect AI-generated pixel assets, and learn why boat length matters for ocean travel.",
+    descriptionZh:
+      "一个可玩的海洋文化博物馆探索原型：调查独木舟展品、解锁航海日志、收集 AI 生成的像素素材，并通过船身长度故事理解远航船只为什么要这样建造。",
+    href: "/ocean-canoe-museum/",
+    cta: "Play",
+    ctaZh: "开始探索",
+    category: "Game",
+    categoryZh: "小游戏",
+    iconName: "BookOpenIcon",
     newTab: true,
   },
   {

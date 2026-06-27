@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>海洋文化寻船记 - 游戏实机 UI</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main id="game-shell" aria-label="海洋文化寻船记游戏界面">
+      <canvas id="game-canvas" width="1691" height="930"></canvas>
+
+      <section class="quest-card ui-panel" aria-label="探索目标">
+        <div class="compass" aria-hidden="true">✦</div>
+        <div>
+          <div class="quest-head">探索目标 <strong id="quest-count">2/5</strong></div>
+          <div id="quest-text" class="quest-sub">了解船身长度</div>
+        </div>
+      </section>
+
+      <section class="map-card ui-panel" aria-label="博物馆地图">
+        <div class="panel-row">
+          <h2>博物馆地图</h2>
+          <button id="menu-button" class="icon-button" type="button" aria-label="菜单">☰</button>
+        </div>
+        <div class="museum-map">
+          <span class="room r1"></span>
+          <span class="room r2"></span>
+          <span class="room r3"></span>
+          <span class="room r4"></span>
+          <span class="room r5"></span>
+          <span class="map-pin p1 active"></span>
+          <span class="map-pin p2 active"></span>
+          <span class="map-pin p3 active"></span>
+          <span class="map-pin p4 active"></span>
+          <span class="map-pin p5 active"></span>
+          <span id="player-map-pin" class="player-map-pin"></span>
+        </div>
+      </section>
+
+      <section id="journal" class="journal-card ui-panel" aria-label="航海日志">
+        <button id="journal-close" class="close-button" type="button" aria-label="收起航海日志">
+          ×
+        </button>
+        <h2>航海日志</h2>
+        <div class="journal-tabs" role="tablist" aria-label="日志分类">
+          <button class="tab active" type="button" data-tab="boats">△<span>船只图鉴</span></button>
+          <button class="tab" type="button" data-tab="stories">♣<span>岛屿故事</span></button>
+          <button class="tab" type="button" data-tab="symbols">◉<span>航海符号</span></button>
+          <button class="tab" type="button" data-tab="stars">✦<span>星象线索</span></button>
+        </div>
+        <article class="boat-dossier">
+          <h3 id="boat-name">斐济 · 瓦卡独木舟</h3>
+          <div class="canoe-thumb" aria-hidden="true">
+            <img src="assets/generated/canoe-thumbnail.png" alt="" />
+          </div>
+          <dl>
+            <div>
+              <dt>长度</dt>
+              <dd id="boat-length">12.6 米</dd>
+            </div>
+            <div>
+              <dt>用途</dt>
+              <dd id="boat-use">远航 / 运输 / 探索</dd>
+            </div>
+            <div>
+              <dt>岛屿文化</dt>
+              <dd id="boat-culture">斐济（太平洋）</dd>
+            </div>
+            <div>
+              <dt>制造原因</dt>
+              <dd id="boat-reason">适应长途航行与海洋资源交流</dd>
+            </div>
+          </dl>
+        </article>
+        <div class="unlock-row">
+          <span>已解锁 <strong id="unlock-count">2/5</strong></span>
+          <div class="progress-bars" aria-hidden="true">
+            <i class="filled"></i><i class="filled"></i><i class="filled"></i><i></i><i></i>
+          </div>
+        </div>
+      </section>
+
+      <section class="inventory-card ui-panel" aria-label="已收集物品">
+        <h2>已收集的物品</h2>
+        <div id="inventory-list" class="inventory-grid">
+          <button class="item-slot" type="button" data-item="船桨">
+            <img class="item-art" src="assets/generated/item-paddle.png" alt="" />
+            <span>船桨</span>
+          </button>
+          <button class="item-slot" type="button" data-item="帆布纹样">
+            <img class="item-art" src="assets/generated/item-sailcloth.png" alt="" />
+            <span>帆布纹样</span>
+          </button>
+          <button class="item-slot" type="button" data-item="星图">
+            <img class="item-art" src="assets/generated/item-star-chart.png" alt="" />
+            <span>星图</span>
+          </button>
+          <button class="item-slot empty" type="button" aria-label="空物品栏"></button>
+        </div>
+      </section>
+
+      <section id="dialogue" class="dialogue-card ui-panel" aria-label="馆长对话">
+        <div class="curator-portrait" aria-hidden="true">
+          <img src="assets/generated/curator-kula.png" alt="" />
+        </div>
+        <div>
+          <h2 id="speaker">库拉馆长</h2>
+          <p id="dialogue-text">先从船头走到船尾。你会发现，船身长度本身就是远航的答案。</p>
+        </div>
+        <span class="next-caret" aria-hidden="true"></span>
+      </section>
+
+      <nav class="bottom-nav ui-panel" aria-label="游戏菜单">
+        <button type="button" data-view="map"><span>◇</span>地图</button>
+        <button class="active" type="button" data-view="journal"><span>▤</span>航海日志</button>
+        <button type="button" data-view="bag"><span>▣</span>背包</button>
+        <button type="button" data-view="settings"><span>⚙</span>设置</button>
+      </nav>
+
+      <div id="interaction-prompt" class="interaction-prompt hidden">E 查看展品</div>
+
+      <section id="exhibit-card" class="exhibit-card ui-panel hidden" aria-label="展品说明">
+        <button id="close-card" class="close-button" type="button" aria-label="关闭展品说明">
+          ×
+        </button>
+        <div id="card-kicker" class="card-kicker">独木舟展厅</div>
+        <h2 id="card-title">为什么会有这么大的船？</h2>
+        <div id="card-body" class="card-body"></div>
+      </section>
+    </main>
+
+    <script src="src/game.js"></script>
+  </body>
+</html>

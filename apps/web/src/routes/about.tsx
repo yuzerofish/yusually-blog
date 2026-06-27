@@ -78,9 +78,14 @@ function AboutPage() {
             </div>
 
             <aside className="border border-border bg-muted/35 p-5">
-              <div className="flex aspect-square w-full items-center justify-center bg-muted">
-                <MapIcon className="size-16 text-link/50" />
-              </div>
+              <img
+                src="/yusually-about-avatar.jpg"
+                alt={copy.avatarAlt}
+                width={1200}
+                height={1200}
+                decoding="async"
+                className="aspect-square w-full border border-border bg-muted object-cover"
+              />
               <div className="mt-5">
                 <p className="text-sm font-semibold text-link uppercase">{copy.profileTag}</p>
                 <p className="mt-2 text-2xl font-semibold">{copy.profileTitle}</p>
@@ -157,6 +162,7 @@ function getAboutCopy(locale: ReturnType<typeof getCurrentLocale>) {
         "我是 Yusualy —— 一个还在摸索世界的人。从地图开始：路线追踪的乐趣、发现隐藏路径的惊喜、理解万物连接的快感。这份好奇心驱使我从地理走向技术，从旅行走向自媒体。在巴西 Bonito 的透明河流里，我学会了浮潜，也学会了相信自己可以漂浮。",
       primaryAction: "阅读博客",
       secondaryAction: "TravelTrace",
+      avatarAlt: "Yusually 的个人头像",
       profileTag: "Explorer of Worlds",
       profileTitle: "Yusually",
       profileBody:
@@ -236,6 +242,7 @@ function getAboutCopy(locale: ReturnType<typeof getCurrentLocale>) {
       "I'm Yusualy — someone still figuring out the world. It started with maps: the joy of tracing routes, discovering hidden paths, and understanding how places connect. That curiosity led me from geography to technology, from travel to self-media.",
     primaryAction: "Read the blog",
     secondaryAction: "TravelTrace",
+    avatarAlt: "Portrait of Yusually",
     profileTag: "Explorer of Worlds",
     profileTitle: "Yusually",
     profileBody:
