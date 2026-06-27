@@ -4,14 +4,7 @@ import { getSiteSettingsForLocale, type SiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { cn } from "@repo/ui/lib/utils";
 import { Link, useLocation } from "@tanstack/react-router";
-import {
-  BookOpenIcon,
-  FileTextIcon,
-  GlobeIcon,
-  HomeIcon,
-  SearchIcon,
-  UserCircleIcon,
-} from "lucide-react";
+import { FileTextIcon, GlobeIcon, HomeIcon, SearchIcon, UserCircleIcon } from "lucide-react";
 import { useEffect } from "react";
 
 import { LanguageToggle } from "#/components/language-toggle";

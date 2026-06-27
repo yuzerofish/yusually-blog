@@ -53,6 +53,7 @@ export default defineConfig({
       ".wrangler",
       ".netlify",
       "dist",
+      "apps/web/public/**",
     ],
   },
 
@@ -126,6 +127,7 @@ export default defineConfig({
       "build/",
       "**/.source/**",
       "worker-configuration.d.ts",
+      "apps/web/public/**",
     ],
   },
 });

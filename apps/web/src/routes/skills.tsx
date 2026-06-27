@@ -1,13 +1,5 @@
 import { localizeSiteSettings } from "@repo/core";
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  BookOpenIcon,
-  CameraIcon,
-  ExternalLinkIcon,
-  GlobeIcon,
-  MapIcon,
-  SparklesIcon,
-} from "lucide-react";
 
 import { SiteShell } from "#/components/site-shell";
 import { $getAboutPageData } from "#/lib/cms-server";
