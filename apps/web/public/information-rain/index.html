@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>信息暴雨</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="experience" aria-label="信息暴雨交互视频">
+      <section class="stage" id="stage" aria-label="拖动或滑动画面切换视觉状态">
+        <video
+          id="baseVideo"
+          class="video-layer video-base"
+          src="assets/source-video.mp4"
+          muted
+          playsinline
+          preload="auto"
+        ></video>
+        <video
+          id="fxVideo"
+          class="video-layer video-fx"
+          src="assets/source-video.mp4"
+          muted
+          playsinline
+          preload="auto"
+          aria-hidden="true"
+        ></video>
+
+        <canvas id="rainCanvas" aria-hidden="true"></canvas>
+        <div class="wind-field" aria-hidden="true"></div>
+        <div class="mist-veil" aria-hidden="true"></div>
+        <div class="split-handle" id="splitHandle" aria-hidden="true">
+          <span></span>
+        </div>
+
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">JIMENG / WIND LOAD</p>
+            <h1>信息暴雨</h1>
+          </div>
+          <button
+            class="sound-button"
+            id="musicToggle"
+            type="button"
+            aria-label="播放背景音乐"
+            aria-pressed="false"
+            title="播放背景音乐"
+          >
+            <span class="sound-glyph" aria-hidden="true"></span>
+            <span>音乐</span>
+          </button>
+        </header>
+
+        <aside class="phase-readout" aria-live="polite">
+          <strong id="phaseValue">0%</strong>
+          <span>WIND SHIFT</span>
+        </aside>
+      </section>
+
+      <section class="control-dock" aria-label="画面控制">
+        <div class="scrub-row">
+          <span>原像</span>
+          <input
+            id="phaseSlider"
+            type="range"
+            min="0"
+            max="1000"
+            value="0"
+            aria-label="滑动画面变化"
+          />
+          <span>风暴</span>
+        </div>
+        <div class="dock-meta">
+          <span>SCRUB / MUTATION</span>
+          <span id="timecode">00:00 / 00:05</span>
+        </div>
+      </section>
+
+      <audio id="backgroundMusic" src="assets/background-music.mp3" loop preload="auto" autoplay></audio>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

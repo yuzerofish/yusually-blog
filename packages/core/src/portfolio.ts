@@ -77,6 +77,22 @@ export const portfolioItems: PortfolioItem[] = [
     newTab: true,
   },
   {
+    id: "information-rain",
+    title: "Information Rain",
+    titleZh: "信息暴雨",
+    description:
+      "An interactive audiovisual web piece where a still video portrait is pressed under falling data curtains, slow scrubbing, fogged facial loading, and a low-frequency ambient score.",
+    descriptionZh:
+      "一个交互式视听网页作品：静止人像被下坠的信息幕压住，滑动时缓慢推进雾中面具、横向风感和低频氛围音乐。",
+    href: "/information-rain/",
+    cta: "Open",
+    ctaZh: "体验",
+    category: "Visual Lab",
+    categoryZh: "视觉实验",
+    iconName: "CameraIcon",
+    newTab: true,
+  },
+  {
     id: "grasping-sand-hand",
     title: "Grasping Sand Hand",
     titleZh: "握沙之手",
