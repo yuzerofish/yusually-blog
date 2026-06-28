@@ -77,14 +77,14 @@ function setPhase(nextPhase, shouldSeek = true) {
   root.style.setProperty("--storm", phase.toFixed(3));
   root.style.setProperty("--base-scale", (1.015 + phase * 0.05).toFixed(3));
   root.style.setProperty("--base-x", `${(0.5 - phase) * 12}px`);
-  root.style.setProperty("--base-bright", (1.14 + phase * 0.08).toFixed(3));
-  root.style.setProperty("--base-sat", (0.18 + phase * 0.06).toFixed(3));
+  root.style.setProperty("--base-bright", (0.62 + phase * 0.22).toFixed(3));
+  root.style.setProperty("--base-sat", (0.76 + phase * 0.2).toFixed(3));
   root.style.setProperty("--fx-scale", (1.035 + phase * 0.11).toFixed(3));
   root.style.setProperty("--fx-x", `${-3 - phase * 22}px`);
   root.style.setProperty("--fx-blur", `${(phase * 1.55).toFixed(2)}px`);
-  root.style.setProperty("--fx-opacity", (0.16 + phase * 0.22).toFixed(3));
-  root.style.setProperty("--fx-contrast", (0.92 + phase * 0.32).toFixed(3));
-  root.style.setProperty("--canvas-opacity", (0.48 - phase * 0.1).toFixed(3));
+  root.style.setProperty("--fx-opacity", (0.28 + phase * 0.56).toFixed(3));
+  root.style.setProperty("--fx-contrast", (1.12 + phase * 0.92).toFixed(3));
+  root.style.setProperty("--canvas-opacity", (0.88 - phase * 0.22).toFixed(3));
 
   if (shouldSeek) {
     syncVideoTime(targetTime);
@@ -132,11 +132,11 @@ function resizeCanvas() {
 }
 
 function drawCurtain(now, width, height) {
-  const pressure = clamp(0.8 - phase * 0.45, 0.24, 0.8);
+  const pressure = clamp(1.05 - phase * 0.88, 0.34, 1.05);
   const topFog = ctx.createLinearGradient(0, 0, 0, height * 0.72);
-  topFog.addColorStop(0, `rgba(255, 255, 255, ${0.34 + pressure * 0.22})`);
-  topFog.addColorStop(0.38, `rgba(239, 243, 241, ${0.12 + pressure * 0.12})`);
-  topFog.addColorStop(1, "rgba(255, 255, 255, 0)");
+  topFog.addColorStop(0, `rgba(244, 247, 245, ${0.12 + pressure * 0.18})`);
+  topFog.addColorStop(0.38, `rgba(12, 14, 16, ${0.08 + pressure * 0.18})`);
+  topFog.addColorStop(1, "rgba(5, 6, 8, 0)");
   ctx.fillStyle = topFog;
   ctx.fillRect(0, 0, width, height * 0.74);
 
@@ -154,10 +154,10 @@ function drawCurtain(now, width, height) {
     ctx.clip();
 
     if (column.solid) {
-      ctx.fillStyle =
-        column.tone > 0.52
-          ? `rgba(185, 199, 199, ${0.1 + pressure * 0.18})`
-          : `rgba(255, 255, 255, ${0.18 + pressure * 0.32})`;
+      const isDark = column.tone > 0.44;
+      ctx.fillStyle = isDark
+        ? `rgba(0, 3, 6, ${0.22 + pressure * 0.54})`
+        : `rgba(244, 247, 245, ${0.2 + pressure * 0.42})`;
       ctx.fillRect(x, y, column.width, visibleLength);
     }
 
@@ -171,38 +171,37 @@ function drawCurtain(now, width, height) {
       const alpha = clamp(bit.alpha * columnAlpha * pulse, 0.08, 0.86);
 
       if (bit.text) {
+        const whiteInk = column.tone < 0.48;
         ctx.font = `${column.fontSize}px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`;
-        ctx.fillStyle =
-          column.tone < 0.56
-            ? `rgba(49, 88, 93, ${alpha * 0.58})`
-            : `rgba(120, 140, 141, ${alpha * 0.5})`;
+        ctx.fillStyle = whiteInk
+          ? `rgba(236, 241, 240, ${alpha})`
+          : `rgba(0, 4, 8, ${alpha})`;
         ctx.fillText(column.phrase, x + 1, bitY);
       } else {
         const blockWidth = Math.max(1, column.width * bit.w);
-        ctx.fillStyle =
-          column.tone > 0.5
-            ? `rgba(185, 199, 199, ${alpha * 0.42})`
-            : `rgba(255, 255, 255, ${alpha * 0.68})`;
+        ctx.fillStyle = column.tone > 0.5
+          ? `rgba(0, 3, 6, ${alpha})`
+          : `rgba(244, 247, 245, ${alpha})`;
         ctx.fillRect(x + bit.x, bitY, blockWidth, bit.h);
       }
     });
 
     const edgeAlpha = clamp(columnAlpha * pressure, 0.1, 0.68);
-    ctx.fillStyle = `rgba(37, 127, 144, ${edgeAlpha * 0.16})`;
+    ctx.fillStyle = `rgba(255, 255, 255, ${edgeAlpha * 0.34})`;
     ctx.fillRect(x + column.width - 1, y, 1, visibleLength);
     ctx.restore();
   });
 }
 
 function drawFragments(now, width, height) {
-  ctx.globalCompositeOperation = "source-over";
+  ctx.globalCompositeOperation = "screen";
   fragments.forEach((drop, index) => {
     const speed = drop.speed * (0.56 + phase * 2.05);
     const wind = (phase - 0.16) * 0.07 * now * drop.drift;
     const x = (drop.x + wind + Math.sin(now * 0.0011 + index) * 20 + width * 3) % (width + 140) - 70;
     const y = (drop.y + now * 0.033 * speed) % (height + 80) - 40;
-    const alpha = 0.05 + phase * 0.18 + Math.sin(now * 0.003 + index) * 0.04;
-    const hue = drop.tone > 0.82 ? "155, 102, 36" : drop.tone > 0.62 ? "166, 91, 100" : "37, 127, 144";
+    const alpha = 0.08 + phase * 0.34 + Math.sin(now * 0.003 + index) * 0.06;
+    const hue = drop.tone > 0.82 ? "255, 184, 92" : drop.tone > 0.62 ? "239, 93, 114" : "120, 242, 255";
 
     ctx.font = `${drop.size + phase * 4}px ui-monospace, SFMono-Regular, Menlo, monospace`;
     ctx.fillStyle = `rgba(${hue}, ${clamp(alpha, 0.03, 0.46)})`;
