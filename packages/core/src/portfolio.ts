@@ -93,6 +93,22 @@ export const portfolioItems: PortfolioItem[] = [
     newTab: true,
   },
   {
+    id: "life-props",
+    title: "Wonder Life Props",
+    titleZh: "奇思妙想人生道具",
+    description:
+      "A dark, playful card-drawing gallery inspired by imaginative fictional props. Draw a strange life prop, read its origin and usage, and face ordinary days with a lighter mindset.",
+    descriptionZh:
+      "一个黑色抽卡式人生道具展示柜：从具体场景、情绪和荒诞想象里提炼道具，抽一张卡，用更有趣的心态面对普通生活。",
+    href: "/life-props/",
+    cta: "Draw",
+    ctaZh: "抽一张",
+    category: "Life",
+    categoryZh: "生活",
+    iconName: "BookOpenIcon",
+    newTab: true,
+  },
+  {
     id: "talk-shower",
     title: "Talk Shower",
     titleZh: "Talk Shower 脱口秀样本库",

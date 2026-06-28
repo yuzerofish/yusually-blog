@@ -1,0 +1,1017 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="《末日乐园》道具与原创趣味道具的黑色 3D 旋转展示柜。">
+  <meta property="og:title" content="奇思妙想人生道具">
+  <meta property="og:description" content="道具卡片横向排队，滚轮切换到对应 3D 道具。">
+  <meta property="og:image" content="assets/meta/og-image.png">
+  <title>奇思妙想人生道具</title>
+  <link rel="icon" href="assets/meta/favicon.png" type="image/png">
+  <link rel="preload" href="assets/artifacts/wallet.png" as="image">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050506;
+      --panel: #0b0b0d;
+      --panel-strong: #101014;
+      --ink: #f5f1e8;
+      --soft: #c6c0b4;
+      --muted: #807b70;
+      --line: rgba(255, 255, 255, 0.14);
+      --accent: #d9ff4f;
+      --accent-soft: rgba(217, 255, 79, 0.18);
+      --font-body: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC",
+        "Heiti SC", "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      overflow: hidden;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 50% 110%, rgba(217, 255, 79, 0.09), transparent 32%),
+        radial-gradient(circle at 12% 20%, rgba(76, 231, 255, 0.07), transparent 28%),
+        radial-gradient(circle at 88% 18%, rgba(255, 79, 146, 0.06), transparent 28%),
+        #050506;
+      font: 16px/1.62 var(--font-body);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.2;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 74px 74px;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      height: 100dvh;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      gap: 12px;
+      padding: 18px 22px 22px;
+      isolation: isolate;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(160px, 1fr) auto;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .brand {
+      min-width: 0;
+    }
+
+    .brand h1 {
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(22px, 2.3vw, 34px);
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      max-width: 42em;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .top-actions {
+      justify-self: end;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .about-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.05);
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .about-link:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    .counter {
+      justify-self: end;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .home-rail {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      padding: 2px 0 6px;
+    }
+
+    .home-rail::before,
+    .home-rail::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      z-index: 2;
+      width: 54px;
+      pointer-events: none;
+    }
+
+    .home-rail::before {
+      left: 0;
+      background: linear-gradient(90deg, #050506, transparent);
+    }
+
+    .home-rail::after {
+      right: 0;
+      background: linear-gradient(270deg, #050506, transparent);
+    }
+
+    .thumb-track {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-padding-inline: 36px;
+      padding: 2px 36px 6px;
+      scrollbar-width: none;
+    }
+
+    .thumb-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .thumb-card {
+      --wiggle-delay: 0ms;
+      flex: 0 0 102px;
+      display: grid;
+      grid-template-rows: 72px auto;
+      gap: 6px;
+      align-items: center;
+      min-height: 112px;
+      padding: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: var(--ink);
+      background: #0b0b0d;
+      cursor: pointer;
+      transition: transform 220ms ease, border-color 220ms ease, background 220ms ease;
+    }
+
+    .thumb-card:hover {
+      transform: translateY(-4px) rotate(-1deg);
+      border-color: color-mix(in srgb, var(--accent) 58%, white);
+      background: #111115;
+    }
+
+    .thumb-card.is-active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft), 0 16px 42px rgba(0, 0, 0, 0.42);
+    }
+
+    .thumb-card img {
+      width: 100%;
+      height: 72px;
+      object-fit: contain;
+      border-radius: 6px;
+      background: #030304;
+      animation: tinyShake 3.8s ease-in-out var(--wiggle-delay) infinite;
+    }
+
+    .thumb-card span {
+      min-width: 0;
+      color: rgba(245, 241, 232, 0.78);
+      font-size: 11px;
+      line-height: 1.25;
+      font-weight: 800;
+      text-align: center;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .showcase {
+      position: relative;
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    .orbit-guide {
+      position: absolute;
+      left: 50%;
+      bottom: -52%;
+      width: min(1180px, 122vw);
+      aspect-ratio: 1;
+      translate: -50% 0;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 50%;
+      pointer-events: none;
+      box-shadow:
+        inset 0 0 60px rgba(217, 255, 79, 0.05),
+        0 0 80px rgba(76, 231, 255, 0.03);
+    }
+
+    .orbit-guide::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      translate: -50% -50%;
+      background: var(--accent);
+      box-shadow: 0 0 24px var(--accent-soft);
+    }
+
+    .card-layer {
+      position: relative;
+      width: min(1040px, 92vw);
+      height: min(650px, 100%);
+      min-height: 0;
+      perspective: 1400px;
+    }
+
+    .artifact-card {
+      --accent: #d9ff4f;
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-rows: minmax(280px, 1fr) auto;
+      align-content: end;
+      padding: clamp(14px, 2.2vh, 22px);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #101014 0%, #08080a 100%);
+      box-shadow: 0 34px 90px rgba(0, 0, 0, 0.64);
+      opacity: 0;
+      pointer-events: none;
+      transform:
+        translate3d(42%, 18%, -170px)
+        rotateZ(9deg)
+        rotateY(-12deg)
+        scale(0.78);
+      transition:
+        transform 620ms cubic-bezier(.2, .88, .22, 1),
+        opacity 360ms ease,
+        filter 360ms ease;
+      will-change: transform, opacity;
+    }
+
+    .artifact-card.is-active {
+      z-index: 4;
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate3d(0, 0, 0) rotateZ(0deg) rotateY(0deg) scale(1);
+    }
+
+    .artifact-card.is-exiting {
+      z-index: 3;
+      opacity: 0;
+      transform:
+        translate3d(-40%, 24%, -220px)
+        rotateZ(-12deg)
+        rotateY(14deg)
+        scale(0.76);
+    }
+
+    .artifact-card.is-next {
+      z-index: 2;
+      opacity: 0.42;
+      filter: saturate(0.82) brightness(0.72);
+      transform:
+        translate3d(32%, 14%, -190px)
+        rotateZ(8deg)
+        rotateY(-18deg)
+        scale(0.78);
+    }
+
+    .artifact-card.is-prev {
+      z-index: 1;
+      opacity: 0.28;
+      filter: saturate(0.72) brightness(0.62);
+      transform:
+        translate3d(-34%, 18%, -210px)
+        rotateZ(-10deg)
+        rotateY(18deg)
+        scale(0.74);
+    }
+
+    .image-area {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .image-area::after {
+      content: "";
+      position: absolute;
+      left: 16%;
+      right: 16%;
+      bottom: 4%;
+      height: 22px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--accent) 32%, transparent);
+      filter: blur(24px);
+      opacity: 0.78;
+      pointer-events: none;
+    }
+
+    .artifact-image {
+      position: relative;
+      z-index: 1;
+      width: auto;
+      max-width: 86%;
+      height: clamp(290px, 40vh, 365px);
+      object-fit: contain;
+      object-position: center;
+      background: #030304;
+      filter: drop-shadow(0 28px 46px rgba(0, 0, 0, 0.52));
+      animation: propFloat 6s ease-in-out infinite;
+    }
+
+    .artifact-copy {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 9px;
+      justify-items: center;
+      text-align: center;
+      padding-top: clamp(6px, 1.2vh, 12px);
+    }
+
+    .artifact-title {
+      max-width: 16em;
+      margin: 0;
+      font-family: var(--font-body);
+      font-size: clamp(24px, 3vw, 40px);
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: 0;
+      text-wrap: balance;
+      overflow-wrap: anywhere;
+    }
+
+    .subtitle {
+      max-width: 38em;
+      margin: 0;
+      color: var(--soft);
+      font-size: clamp(12px, 1.15vw, 15px);
+      line-height: 1.38;
+      font-weight: 700;
+      text-wrap: pretty;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      width: min(760px, 100%);
+      margin-top: 2px;
+    }
+
+    .detail-box {
+      min-height: 78px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      background: #0d0d10;
+      text-align: left;
+    }
+
+    .detail-box h2 {
+      margin: 0 0 5px;
+      color: var(--accent);
+      font-size: 12px;
+      line-height: 1.2;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .detail-box p {
+      margin: 0;
+      color: rgba(245, 241, 232, 0.84);
+      font-size: 12px;
+      line-height: 1.44;
+      text-wrap: pretty;
+    }
+
+    .controls {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      z-index: 5;
+      display: flex;
+      gap: 8px;
+    }
+
+    .controls button {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 8px;
+      color: var(--ink);
+      background: #111115;
+      cursor: pointer;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .controls button:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      background: #17171c;
+    }
+
+    @keyframes tinyShake {
+      0%, 100% {
+        translate: 0 0;
+        rotate: -0.3deg;
+      }
+      36% {
+        translate: 0 -2px;
+        rotate: 0.7deg;
+      }
+      72% {
+        translate: 0 1px;
+        rotate: -0.5deg;
+      }
+    }
+
+    @keyframes propFloat {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-10px) rotate(0.6deg);
+      }
+    }
+
+    @media (max-width: 780px) {
+      body {
+        overflow: hidden;
+      }
+
+      .app {
+        padding: 14px 12px 16px;
+        gap: 8px;
+      }
+
+      .topbar {
+        grid-template-columns: 1fr auto;
+      }
+
+      .top-actions {
+        gap: 8px;
+      }
+
+      .about-link {
+        min-height: 28px;
+        padding: 4px 8px;
+        font-size: 12px;
+      }
+
+      .brand p {
+        display: none;
+      }
+
+      .thumb-card {
+        flex-basis: 82px;
+        grid-template-rows: 56px auto;
+        min-height: 94px;
+        padding: 6px;
+      }
+
+      .thumb-card img {
+        height: 56px;
+      }
+
+      .thumb-card span {
+        font-size: 10px;
+      }
+
+      .card-layer {
+        width: min(94vw, 560px);
+        height: 100%;
+        min-height: 0;
+      }
+
+      .artifact-card {
+        grid-template-rows: minmax(210px, 0.92fr) auto;
+        padding: 14px;
+      }
+
+      .artifact-image {
+        width: auto;
+        max-width: 86%;
+        height: clamp(210px, 31vh, 290px);
+      }
+
+      .artifact-copy {
+        gap: 10px;
+      }
+
+      .artifact-title {
+        font-size: clamp(22px, 6.8vw, 32px);
+      }
+
+      .subtitle {
+        font-size: 13px;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        max-height: 205px;
+        overflow: auto;
+        padding-right: 2px;
+      }
+
+      .detail-box {
+        min-height: auto;
+        padding: 11px 12px;
+      }
+
+      .detail-box p {
+        font-size: 12px;
+      }
+
+      .controls {
+        display: none;
+      }
+
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app" aria-label="奇思妙想人生道具展示柜">
+    <header class="topbar">
+      <div class="brand">
+        <h1>奇思妙想人生道具</h1>
+        <p>下方道具卡排成一列轻微抖动；点击卡片可直接定位。滚轮上下滑动会变成左右切换，卡片沿底部圆轨进出。</p>
+      </div>
+      <div class="top-actions">
+        <a class="about-link" href="about.html">关于</a>
+        <div class="counter" id="counter">01 / 21</div>
+      </div>
+    </header>
+
+    <section class="showcase" id="showcase" aria-live="polite">
+      <div class="orbit-guide" aria-hidden="true"></div>
+      <div class="card-layer" id="card-layer"></div>
+      <div class="controls" aria-label="切换道具">
+        <button type="button" id="prev-button" aria-label="上一个道具">←</button>
+        <button type="button" id="next-button" aria-label="下一个道具">→</button>
+      </div>
+    </section>
+
+    <section class="home-rail" aria-label="道具卡片队列">
+      <div class="thumb-track" id="thumb-track"></div>
+    </section>
+  </main>
+
+  <script>
+    const artifacts = [
+      {
+        id: "wallet",
+        name: "糟糕！钱包不见了",
+        kind: "特殊物品",
+        image: "assets/artifacts/wallet.png",
+        accent: "#d9ff4f",
+        subtitle: "让敌人的特殊物品暂时变成一堆心理阴影。",
+        intro: "坐完传说中的 300 路公交后，一摸身上连裤兜都像被偷走了。这份悲啸被提取成物品，外观看起来像一只被掏空的发光钱包。",
+        usage: "向敌对目标问出“你坐过 300 路吗？”，目标身上的特殊物品会进入短时冻结状态。"
+      },
+      {
+        id: "lunch",
+        name: "不能吃的午餐",
+        kind: "消耗 / 陷阱物品",
+        image: "assets/artifacts/lunch.png",
+        accent: "#a8ff3f",
+        subtitle: "包装纸诚实得可疑，饭菜香得要命。",
+        intro: "包装像毒蘑菇广告，警告感拉满；打开以后却是葱花炒蛋、炖猪手、清炒芥兰和米饭。越像快餐，越像陷阱。",
+        usage: "放入口中并咀嚼。吃下去的人会死。只有看过包装的人能看见饭菜，想扔掉包装只把饭给别人吃，行不通。"
+      },
+      {
+        id: "litter",
+        name: "猫砂",
+        kind: "特殊物品",
+        image: "assets/artifacts/litter.png",
+        accent: "#ff9f1c",
+        subtitle: "亮橙色，扎眼，但偏偏能把踪迹藏起来。",
+        intro: "猫科动物会掩盖气味和行踪；这袋亮橙色猫砂把这个逻辑推到荒诞。它醒目到不合理，却能让痕迹消失。",
+        usage: "在自己走过或停留过的地方撒一层，顶尖猎人也难以追踪。容量有限，用完拉倒。"
+      },
+      {
+        id: "laugh",
+        name: "在春花飘落的时节你甜美的笑声仿佛柔软了世界",
+        kind: "特殊物品",
+        image: "assets/artifacts/laugh.png",
+        accent: "#ff89b7",
+        subtitle: "一段少女笑声，专门驱散男性目标的恶念。",
+        intro: "这件物品来自一段被提取出来的初恋记忆：微风、春花、少女的笑声，以及制作者后来再也没有恋爱过的悲伤余味。",
+        usage: "激活后，听见声音的男性目标会被洗净杀意、仇恨与暴虐。对女性完全无效。"
+      },
+      {
+        id: "ding",
+        name: "天边闪亮的一声叮",
+        kind: "进阶能力",
+        image: "assets/artifacts/ding.png",
+        accent: "#ffe45e",
+        subtitle: "把目标打成天边的一个光点，方向和落点都不讲道理。",
+        intro: "能力来自 90 年代漫画的经典处理：不能出现血腥镜头时，就把对手一拳打飞到天边，最后只剩一个闪亮的点。",
+        usage: "触发后可把目标击飞。落点、方向和距离随机，唯一能确定的是对方会飞远。"
+      },
+      {
+        id: "dark-ding",
+        name: "画风突变版一声叮",
+        kind: "升级能力",
+        image: "assets/artifacts/dark-ding.png",
+        accent: "#ff4f92",
+        subtitle: "当天边被天花板挡住，能力选择直接改变画风。",
+        intro: "当室内或头顶有阻隔时，原版一声叮无法把目标送上天边，于是升级版选择了更黑色幽默的物理处理。",
+        usage: "双手同时触碰目标，两侧冲击在中间叠加。页面视觉用马赛克爆发处理这个能力，保留荒诞感。"
+      },
+      {
+        id: "frisbee",
+        name: "犬用飞盘",
+        kind: "追踪道具",
+        image: "assets/artifacts/frisbee.png",
+        accent: "#ff9d2e",
+        subtitle: "叼住它，像非常不体面但有效的导航仪一样找路。",
+        intro: "橙黄色飞盘外圈镶着小圆灯，原理来自“狗为什么总能把飞盘叼回来”的奇怪答案。",
+        usage: "咬住飞盘的叼口，方向灯会亮起，并引导使用者回到基座录入的地点。"
+      },
+      {
+        id: "belt",
+        name: "一匹狼商务休闲皮带型防护罩",
+        kind: "防御物品",
+        image: "assets/artifacts/belt.png",
+        accent: "#f5b84b",
+        subtitle: "听起来像男装广告，实际能替你硬吃致命白光。",
+        intro: "它有商务休闲皮带的名字，也有防护罩的工作内容。报告里它被当作从沙鲸尸体上找回来的救命装备。",
+        usage: "启用后展开护罩并消耗剩余能量。面对高强度攻击时，能量会迅速下跌，直至腰带碎裂。"
+      },
+      {
+        id: "sponge",
+        name: "独家鲁迅同款海绵",
+        kind: "压制物品",
+        image: "assets/artifacts/sponge.png",
+        accent: "#ffd24d",
+        subtitle: "被说成救命物的黄色海绵，也是一枚布局用的钩子。",
+        intro: "一块黄色海绵被交到薛衾手里，被解释为能压住异能发作与进化的物品。它柔软，却带着冷意。",
+        usage: "随身携带即可压制异能；变沉后要把内部液体挤出来。道具功能是真实的，递出它的人心却另有用途。"
+      },
+      {
+        id: "girlfriend",
+        name: "女友的疑心病",
+        kind: "搜索道具",
+        image: "assets/artifacts/girlfriend.png",
+        accent: "#ff78b6",
+        subtitle: "把恋爱里的侦探本能，做成小范围寻物仪。",
+        intro: "它把“形迹可疑时总能发现蛛丝马迹”的能力提取成扫描道具，用来寻找小范围内隐藏的特殊物品。",
+        usage: "举起道具扫过空间，它会用线索提示目标位置。它不保证百分之百可靠，有时会误判或被蒙蔽。"
+      },
+      {
+        id: "water",
+        name: "须尾俱全的水文功力",
+        kind: "辅助能力",
+        image: "assets/artifacts/water.png",
+        accent: "#70e5ff",
+        subtitle: "把剧情拖住三秒，在战斗里就能救命。",
+        intro: "能力来自一种必要时能写很多字而剧情毫无进展的神技。读者把这种停滞提取出来，变成战斗中的拖延手段。",
+        usage: "施加到目标身上，让下一步行动迟迟不发生。最多约三秒，一天可用五次；目标越多，时效越短。"
+      },
+      {
+        id: "housewife",
+        name: "被刀下冤魂缠身的家庭主妇",
+        kind: "战斗能力",
+        image: "assets/artifacts/housewife.png",
+        accent: "#7dff74",
+        subtitle: "上一顿切过什么，下一场战斗就可能钻出什么。",
+        intro: "做菜时被刀切开的食材，会在战斗中以武器形态出现。黄瓜、蘑菇这类生活物件忽然拥有了战斗轮廓。",
+        usage: "用意念指挥食材武器。必须是被刀切开的食材；做了新的料理后会刷新。"
+      },
+      {
+        id: "door-handle",
+        name: "自作多情的门把手",
+        kind: "原创设定",
+        image: "assets/artifacts/door-handle.png",
+        accent: "#f7b955",
+        subtitle: "只要你碰它，它就认为你想进来。",
+        intro: "黄铜圆门把手背后没有门，只有一小块坚持认为自己是门的木板。被轻轻碰一下，它已经安排好了三十集室内生活。",
+        usage: "按在任意平面上并转动，只要平面厚度不超过三米，就会打开一扇持续八秒的临时门。"
+      },
+      {
+        id: "auto-reply",
+        name: "给前任的自动回复纸条",
+        kind: "原创设定",
+        image: "assets/artifacts/auto-reply.png",
+        accent: "#ffd36b",
+        subtitle: "替你说出最冷静、最体面、最没用的话。",
+        intro: "一张边角永远卷起的便签纸，像一句说出口又收回去的话。它诞生于凌晨两点十九分之后的第七次删除。",
+        usage: "贴在目标身上或目标将接触的物品上。目标下一次攻击、质问、追击或精神污染时，会被纸条自动回复并陷入沉默。"
+      },
+      {
+        id: "weekly-report",
+        name: "被老板已读不回的周报",
+        kind: "原创设定",
+        image: "assets/artifacts/weekly-report.png",
+        accent: "#9ad9ff",
+        subtitle: "让一切努力暂时进入无人反馈的真空。",
+        intro: "三页格式整齐的 A4 纸，页脚仿佛自动显示“辛苦了”，但没有人知道是谁辛苦。",
+        usage: "把第一页展示给目标。目标读完第一段后进入“已读不回”状态，不会主动回应使用者。"
+      },
+      {
+        id: "buddha-incense",
+        name: "临时抱佛脚香炉",
+        kind: "原创设定",
+        image: "assets/artifacts/buddha-incense.png",
+        accent: "#d6a45d",
+        subtitle: "越临时，烟越大；越心虚，保佑越偏。",
+        intro: "掌心大小的铜香炉，炉里没有香，燃烧的是突然冒出来的信仰。",
+        usage: "双手捧住香炉，承认自己确实没准备好。下一次行动会获得“勉强过关”的修正。"
+      },
+      {
+        id: "eraser",
+        name: "不会承认错误的橡皮擦",
+        kind: "原创设定",
+        image: "assets/artifacts/eraser.png",
+        accent: "#f4f4e9",
+        subtitle: "它擦掉的不是错误，是证据。",
+        intro: "一块普通白橡皮，橡皮屑会自动聚成一小堆，形状很像推卸责任。它最擅长把刚发生的小后果擦淡。",
+        usage: "擦拭某个轻微后果，让旁观者记忆变得模糊。脚印、手印、低级失误都可被弱化。"
+      },
+      {
+        id: "queue-shadow",
+        name: "替你排队的影子",
+        kind: "原创设定",
+        image: "assets/artifacts/queue-shadow.png",
+        accent: "#7a6bff",
+        subtitle: "影子负责等待，本人负责不耐烦。",
+        intro: "它看起来只是一团比普通影子更有耐心的黑影。光线越强越像老实人，光线越暗越像正在偷偷插队的人。",
+        usage: "让影子落在队伍末尾并宣布“我先离开一下”。影子会保留排队资格；轮到它时，会轻轻拽动使用者脚踝。"
+      },
+      {
+        id: "familiar-umbrella",
+        name: "只认熟人的雨伞",
+        kind: "原创设定",
+        image: "assets/artifacts/familiar-umbrella.png",
+        accent: "#4dff9a",
+        subtitle: "陌生的雨会被挡住，熟人的麻烦会被请进来。",
+        intro: "一把深绿色长柄伞，伞面内侧仿佛写满“来都来了”。它能区分陌生危险和熟人添乱。",
+        usage: "撑开后阻挡陌生来源的液体、粉尘、小型投射物与低强度诅咒。若来源是熟人，它会主动让开。"
+      },
+      {
+        id: "boast-sticker",
+        name: "夸夸其谈扩音贴",
+        kind: "原创设定",
+        image: "assets/artifacts/boast-sticker.png",
+        accent: "#ff5b4f",
+        subtitle: "把一句吹牛，放大成短暂现实。",
+        intro: "红底金色的小贴纸，由饭局、面试、酒后宣言和战前狠话里溢出的自信黏合而成。",
+        usage: "贴在胸口、武器或发抖的膝盖上，然后大声说出一句夸张陈述。陈述会获得极短现实加成。"
+      },
+      {
+        id: "monday-socks",
+        name: "周一限定的好运袜",
+        kind: "原创设定",
+        image: "assets/artifacts/monday-socks.png",
+        accent: "#72d7ff",
+        subtitle: "只有周一有效，所以显得格外可疑。",
+        intro: "灰蓝色短袜来自人类在周一早晨仍然准时起床这件不可思议的事，因此含有微量但顽固的好运。",
+        usage: "当地时间周一早上六点到十点之间穿上，并完整走出十步。它会为当天第一件倒霉事提供修正。"
+      }
+    ];
+
+    const track = document.getElementById("thumb-track");
+    const cardLayer = document.getElementById("card-layer");
+    const counter = document.getElementById("counter");
+    const prevButton = document.getElementById("prev-button");
+    const nextButton = document.getElementById("next-button");
+    let activeIndex = 0;
+    let previousIndex = 0;
+    let wheelLocked = false;
+
+    function pad(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    function createEl(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+
+    function buildThumb(item, index) {
+      const button = createEl("button", "thumb-card");
+      button.type = "button";
+      button.style.setProperty("--wiggle-delay", `${(index % 7) * 130}ms`);
+      button.style.setProperty("--accent", item.accent);
+      button.setAttribute("aria-label", `定位到${item.name}`);
+      button.dataset.index = index;
+
+      const image = new Image();
+      image.src = item.image;
+      image.alt = "";
+      image.decoding = "async";
+      image.loading = index < 8 ? "eager" : "lazy";
+
+      button.append(image, createEl("span", null, item.name));
+      button.addEventListener("click", () => goTo(index));
+      return button;
+    }
+
+    function buildArtifactCard(item, index) {
+      const article = createEl("article", "artifact-card");
+      article.id = `artifact-${item.id}`;
+      article.style.setProperty("--accent", item.accent);
+      article.setAttribute("aria-labelledby", `${item.id}-title`);
+      article.dataset.index = index;
+
+      const imageArea = createEl("div", "image-area");
+      const image = new Image();
+      image.className = "artifact-image";
+      image.src = item.image;
+      image.alt = `${item.name}的 3D 立体道具图`;
+      image.width = 1254;
+      image.height = 1254;
+      image.decoding = "async";
+      image.loading = index === 0 ? "eager" : "lazy";
+      imageArea.appendChild(image);
+
+      const copy = createEl("div", "artifact-copy");
+      const title = createEl("h2", "artifact-title", item.name);
+      title.id = `${item.id}-title`;
+      const subtitle = createEl("p", "subtitle", item.subtitle);
+      const detailGrid = createEl("div", "detail-grid");
+
+      [["介绍", item.intro], ["使用", item.usage]].forEach(([label, content]) => {
+        const box = createEl("section", "detail-box");
+        box.append(createEl("h2", null, label), createEl("p", null, content));
+        detailGrid.appendChild(box);
+      });
+
+      copy.append(title, subtitle, detailGrid);
+      article.append(imageArea, copy);
+      return article;
+    }
+
+    artifacts.forEach((item, index) => {
+      track.appendChild(buildThumb(item, index));
+      cardLayer.appendChild(buildArtifactCard(item, index));
+    });
+
+    const thumbCards = [...track.querySelectorAll(".thumb-card")];
+    const cards = [...cardLayer.querySelectorAll(".artifact-card")];
+
+    function circularDistance(index, target) {
+      const total = artifacts.length;
+      const direct = index - target;
+      if (direct > total / 2) return direct - total;
+      if (direct < -total / 2) return direct + total;
+      return direct;
+    }
+
+    function render() {
+      const total = artifacts.length;
+      const current = artifacts[activeIndex];
+      document.documentElement.style.setProperty("--accent", current.accent);
+      counter.textContent = `${pad(activeIndex + 1)} / ${pad(total)}`;
+      cards.forEach((card, index) => {
+        const distance = circularDistance(index, activeIndex);
+        card.classList.toggle("is-active", distance === 0);
+        card.classList.toggle("is-prev", distance === -1);
+        card.classList.toggle("is-next", distance === 1);
+        card.classList.toggle("is-exiting", index === previousIndex && index !== activeIndex);
+      });
+
+      thumbCards.forEach((button, index) => {
+        button.classList.toggle("is-active", index === activeIndex);
+        button.setAttribute("aria-current", index === activeIndex ? "true" : "false");
+      });
+
+      thumbCards[activeIndex]?.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest"
+      });
+    }
+
+    function goTo(index) {
+      previousIndex = activeIndex;
+      activeIndex = (index + artifacts.length) % artifacts.length;
+      render();
+    }
+
+    function move(delta) {
+      goTo(activeIndex + delta);
+    }
+
+    prevButton.addEventListener("click", () => move(-1));
+    nextButton.addEventListener("click", () => move(1));
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft" || event.key === "ArrowUp") move(-1);
+      if (event.key === "ArrowRight" || event.key === "ArrowDown") move(1);
+    });
+
+    window.addEventListener("wheel", (event) => {
+      if (Math.abs(event.deltaY) < 8 && Math.abs(event.deltaX) < 8) return;
+      event.preventDefault();
+      if (wheelLocked) return;
+      wheelLocked = true;
+      const dominant = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+      move(dominant > 0 ? 1 : -1);
+      window.setTimeout(() => {
+        wheelLocked = false;
+      }, 520);
+    }, { passive: false });
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    window.addEventListener("touchstart", (event) => {
+      const touch = event.touches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+    }, { passive: true });
+
+    window.addEventListener("touchend", (event) => {
+      const touch = event.changedTouches[0];
+      const dx = touch.clientX - touchStartX;
+      const dy = touch.clientY - touchStartY;
+      if (Math.max(Math.abs(dx), Math.abs(dy)) < 36) return;
+      move(Math.abs(dy) > Math.abs(dx) ? (dy < 0 ? 1 : -1) : (dx < 0 ? 1 : -1));
+    }, { passive: true });
+
+    render();
+  </script>
+</body>
+</html>

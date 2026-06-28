@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="关于《奇思妙想人生道具》：为什么做这个网站，以及它如何被制作出来。">
+  <meta property="og:title" content="关于 - 奇思妙想人生道具">
+  <meta property="og:description" content="如果你觉得人生不够有趣，可以来这里抽一张道具卡，用更有趣的心态面对生活。">
+  <meta property="og:image" content="assets/meta/og-image.png">
+  <title>关于 - 奇思妙想人生道具</title>
+  <link rel="icon" href="assets/meta/favicon.png" type="image/png">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050506;
+      --panel: #101014;
+      --ink: #f5f1e8;
+      --soft: #c9c2b8;
+      --muted: #8f887d;
+      --accent: #d9ff4f;
+      --line: rgba(255, 255, 255, 0.14);
+      --font-body: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC",
+        "Heiti SC", "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 22% 12%, rgba(217, 255, 79, 0.12), transparent 28%),
+        radial-gradient(circle at 86% 28%, rgba(255, 79, 146, 0.08), transparent 30%),
+        radial-gradient(circle at 50% 100%, rgba(76, 231, 255, 0.08), transparent 34%),
+        #050506;
+      font: 16px/1.76 var(--font-body);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.18;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 74px 74px;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(920px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0 56px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      display: grid;
+      gap: 4px;
+    }
+
+    .brand strong {
+      font-size: 18px;
+      line-height: 1.15;
+      font-weight: 900;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 6px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.05);
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .back-link:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    .hero {
+      display: grid;
+      gap: 22px;
+      margin-bottom: 24px;
+      padding: clamp(24px, 4vw, 42px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)), var(--panel);
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
+    }
+
+    h1 {
+      max-width: 12em;
+      margin: 0;
+      font-size: clamp(36px, 7vw, 72px);
+      line-height: 1.02;
+      font-weight: 900;
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    .lead {
+      max-width: 42em;
+      margin: 0;
+      color: var(--soft);
+      font-size: clamp(17px, 2.4vw, 22px);
+      line-height: 1.68;
+      font-weight: 700;
+      text-wrap: pretty;
+    }
+
+    .content {
+      display: grid;
+      gap: 18px;
+    }
+
+    .section {
+      padding: clamp(20px, 3vw, 30px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(12, 12, 15, 0.82);
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      color: var(--accent);
+      font-size: 20px;
+      line-height: 1.25;
+      font-weight: 900;
+    }
+
+    p {
+      margin: 0;
+      color: rgba(245, 241, 232, 0.88);
+      text-wrap: pretty;
+    }
+
+    p + p {
+      margin-top: 13px;
+    }
+
+    .closing {
+      color: var(--ink);
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        width: min(100% - 24px, 920px);
+        padding-top: 20px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="brand">
+        <strong>奇思妙想人生道具</strong>
+        <span>About this project</span>
+      </div>
+      <a class="back-link" href="index.html">返回抽卡</a>
+    </header>
+
+    <section class="hero">
+      <h1>为什么做这个网站</h1>
+      <p class="lead">如果你觉得人生不够有趣，可以来这里抽一张卡，抽一个道具，用一种更轻、更荒诞、更有趣的心态去面对你的人生。</p>
+    </section>
+
+    <div class="content">
+      <section class="section">
+        <h2>起点</h2>
+        <p>第一次读《末日乐园》的时候，我就被作者描写道具的方式吸引住了。</p>
+        <p>在那之前，我以为“道具”通常意味着某种很厉害、很宏大、很有装备感的东西：神器、武器、护盾、药剂，或者某种听起来就很强的能力。但《末日乐园》里的道具不是这样。它们常常来自一个非常具体的场景，一种尴尬的情绪，一个荒诞的念头，甚至是一段很日常、很狼狈的人生经验。</p>
+        <p>这让我第一次意识到：原来道具不一定要高高在上。它可以是一种心情，可以是一个场景，可以是某个瞬间被夸张、提炼、变成可以拿在手里的东西。</p>
+      </section>
+
+      <section class="section">
+        <h2>这个想法为什么击中我</h2>
+        <p>这种奇思妙想、荒诞又有趣的想象力，一下子击中了我。也是因为这个原因，我一直很想做一个类似的东西。</p>
+        <p>所以在这个网站里，我整理了一些《末日乐园》中我觉得很有趣的道具，也仿照这种“从具体场景和情绪里长出功能”的方式，原创了一组人生道具。</p>
+        <p>我希望它不只是一个道具展示页，而是一个可以让人换一种心态看生活的小入口。</p>
+      </section>
+
+      <section class="section">
+        <h2>它是怎么做出来的</h2>
+        <p>这个网站是一个静态网页，用 HTML、CSS 和 JavaScript 制作。页面里的每件道具先被整理成“标题、介绍、使用方式”，再被放进一个可以横向切换的黑色展示柜。</p>
+        <p>道具图片使用 AI 图像生成工具制作。我把每件道具都设定成黑色背景、霓虹边缘光、玩具感、立体 3D 的收藏品，让它们看起来像来自同一个人生道具盒。</p>
+        <p>交互上，下方是一排道具卡片，可以直接点击定位；滚轮上下滑动时，会被转换成左右切换，像抽卡一样把一个道具送走，再把下一个道具带进来。</p>
+      </section>
+
+      <section class="section">
+        <h2>希望它带来的感觉</h2>
+        <p class="closing">如果最近的生活有点无聊，或者你只是想换一种角度看待眼前的事情，就来这里抽一张道具卡。</p>
+        <p>也许它不能真的改变什么，但它可以提醒你：人生里的尴尬、拖延、好运、误会、迟疑和狼狈，也都可以被重新想象成某种奇怪但有用的道具。</p>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
