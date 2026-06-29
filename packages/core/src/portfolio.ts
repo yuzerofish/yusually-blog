@@ -141,6 +141,22 @@ export const portfolioItems: PortfolioItem[] = [
     newTab: true,
   },
   {
+    id: "spiritual-wealth-freedom",
+    title: "Spiritual Wealth Freedom",
+    titleZh: "精神财富自由",
+    description:
+      "A quiet three-question web ritual about life after financial freedom. Serif typography, a low-interference voice control, and a silent pause let the answer stay on screen.",
+    descriptionZh:
+      "一个关于财富自由后生活的安静三问网页：宋体文字、低干扰语音入口和回答后的静默停留，让答案自己浮出来。",
+    href: "/spiritual-wealth-freedom/",
+    cta: "Reflect",
+    ctaZh: "进入",
+    category: "Life",
+    categoryZh: "生活",
+    iconName: "BookOpenIcon",
+    newTab: true,
+  },
+  {
     id: "talk-shower",
     title: "Talk Shower",
     titleZh: "Talk Shower 脱口秀样本库",
