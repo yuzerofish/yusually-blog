@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>数据潮汐 | 滚动影像</title>
+    <meta
+      name="description"
+      content="A scroll-driven video page built from the data tide scene."
+    />
+    <link rel="preload" href="assets/poster.jpg" as="image" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="scrub-stage" id="scrubStage" aria-label="数据潮汐滚动影像">
+      <section class="pinned-scene">
+        <video
+          id="scrubVideo"
+          class="scrub-video"
+          src="assets/information-rain.mp4"
+          poster="assets/poster.jpg"
+          preload="auto"
+          muted
+          playsinline
+        ></video>
+        <audio
+          id="scoreAudio"
+          src="assets/information-rain-audio.m4a"
+          preload="auto"
+          loop
+        ></audio>
+
+        <div class="image-wash" aria-hidden="true"></div>
+
+        <header class="scene-title" aria-label="页面标题">
+          <h1>数据潮汐</h1>
+        </header>
+
+        <button
+          id="soundToggle"
+          class="sound-toggle"
+          type="button"
+          aria-pressed="false"
+          aria-label="开启原声"
+        >
+          <span aria-hidden="true"></span>
+          原声
+        </button>
+
+        <aside class="readout" aria-label="视频进度">
+          <span id="frameLabel">00.00</span>
+          <div class="rail" aria-hidden="true">
+            <span id="progressBar"></span>
+          </div>
+          <span id="durationLabel">03.96</span>
+        </aside>
+
+        <ol class="chapter-marks" aria-label="片段节点">
+          <li style="--mark: 0%">压下</li>
+          <li style="--mark: 28%">凝视</li>
+          <li style="--mark: 58%">分解</li>
+          <li style="--mark: 86%">远点</li>
+        </ol>
+      </section>
+    </main>
+
+    <script src="main.js"></script>
+  </body>
+</html>

@@ -93,6 +93,22 @@ export const portfolioItems: PortfolioItem[] = [
     newTab: true,
   },
   {
+    id: "data-tide",
+    title: "Data Tide",
+    titleZh: "数据潮汐",
+    description:
+      "A scroll-driven audiovisual web piece built from a short AI video scene: the page scrubs through a pressed data-rain portrait while the original soundtrack loops underneath.",
+    descriptionZh:
+      "一个由 AI 视频片段生成的滚动视听网页作品：页面用滚动擦动时间轴，让被信息雨压住的人像缓慢变化，并保留原视频声音作为配乐。",
+    href: "/data-tide/",
+    cta: "Open",
+    ctaZh: "体验",
+    category: "Visual Lab",
+    categoryZh: "视觉实验",
+    iconName: "CameraIcon",
+    newTab: true,
+  },
+  {
     id: "grasping-sand-hand",
     title: "Grasping Sand Hand",
     titleZh: "握沙之手",
