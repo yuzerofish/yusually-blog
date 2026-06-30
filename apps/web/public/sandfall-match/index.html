@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sandfall Match</title>
+  <meta name="description" content="Sandfall Match is a calm match-3 iOS game about clearing pressure stones, opening locks, and letting light fall away.">
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f4efe4;
+      --ink: #342e27;
+      --muted: #70685d;
+      --line: #d5c5ae;
+      --gold: #d6a950;
+      --water: #6d9ca2;
+      --white: rgba(255, 255, 255, 0.58);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.55;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .shell {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 28px 20px 44px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 36px;
+    }
+
+    .brand {
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    nav {
+      display: flex;
+      gap: 16px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(280px, 0.8fr);
+      gap: 36px;
+      align-items: center;
+      min-height: 68vh;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(42px, 7vw, 76px);
+      line-height: 0.98;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 620px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 20px;
+    }
+
+    .status {
+      display: inline-flex;
+      margin-top: 22px;
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .phone {
+      width: min(100%, 360px);
+      justify-self: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: #17130f;
+      box-shadow: 0 28px 70px rgba(52, 46, 39, 0.2);
+    }
+
+    .phone img {
+      display: block;
+      width: 100%;
+      border-radius: 20px;
+    }
+
+    section {
+      padding: 36px 0 0;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 26px;
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .card p,
+    .plain p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .screens {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .screens img {
+      width: 100%;
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #1b1713;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      margin-top: 42px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 760px) {
+      header,
+      footer {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .hero,
+      .grid,
+      .screens {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .phone {
+        max-width: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand">Sandfall Match / 落沙消消乐</div>
+      <nav aria-label="Primary">
+        <a href="#play">Play</a>
+        <a href="#screens">Screenshots</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="support.html">Support</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="title">
+        <div>
+          <h1 id="title">Sandfall Match</h1>
+          <p class="subtitle">A calm match-3 iOS game about clearing pressure stones, opening locks, and letting light fall to the bottom.</p>
+          <div class="status">A focused one-board calm puzzle for iPhone.</div>
+        </div>
+        <div class="phone" aria-label="Gameplay screenshot">
+          <img src="assets/screenshots/02-board.png" alt="Sandfall Match board screenshot">
+        </div>
+      </section>
+
+      <section id="play">
+        <h2>How It Plays</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>Swap to match</h3>
+            <p>Tap adjacent movable tiles and match three or more to clear pressure from the board.</p>
+          </article>
+          <article class="card">
+            <h3>Open locks</h3>
+            <p>Locks cannot move. Make matches beside them twice to loosen the path.</p>
+          </article>
+          <article class="card">
+            <h3>Guide lights</h3>
+            <p>Clear beneath each light until it falls into the sand bed at the bottom.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="plain">
+        <h2>Current Scope</h2>
+        <p>Sandfall Match is intentionally scoped as a one-board calm puzzle: a quiet board, a clear goal, and a soft rhythm of pressure stones, locks, sand, water, and light.</p>
+      </section>
+
+      <section id="screens">
+        <h2>Screenshots</h2>
+        <div class="screens">
+          <img src="assets/screenshots/01-guide.png" alt="Guide screenshot">
+          <img src="assets/screenshots/02-board.png" alt="Board screenshot">
+          <img src="assets/screenshots/03-about.png" alt="About and rules screenshot">
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>Sandfall Match / 落沙消消乐</span>
+      <span><a href="privacy.html">Privacy</a> · <a href="support.html">Support</a></span>
+    </footer>
+  </div>
+</body>
+</html>

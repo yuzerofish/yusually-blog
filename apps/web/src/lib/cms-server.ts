@@ -1,4 +1,11 @@
-import { type Comment, type Post, type Series, type SiteSettings, type Tag } from "@repo/core";
+import {
+  siteSettings as fallbackSiteSettings,
+  type Comment,
+  type Post,
+  type Series,
+  type SiteSettings,
+  type Tag,
+} from "@repo/core";
 import { createServerFn } from "@tanstack/react-start";
 
 export type BlogPostPageData = {
@@ -86,11 +93,11 @@ export const $getHomePageData = createServerFn({ method: "GET" }).handler(
   async (): Promise<HomePageData> => {
     const { getD1SiteSettings, listD1Posts, listD1Series, listD1Tags } = await import("./cms-d1");
     const [siteSettings, posts, featuredPosts, tags, series] = await Promise.all([
-      getD1SiteSettings(),
-      listD1Posts({ limit: 12 }),
-      listD1Posts({ featured: true, limit: 3 }),
-      listD1Tags(),
-      listD1Series(),
+      withHomeFallback(getD1SiteSettings(), fallbackSiteSettings),
+      withHomeFallback(listD1Posts({ limit: 12 }), []),
+      withHomeFallback(listD1Posts({ featured: true, limit: 3 }), []),
+      withHomeFallback(listD1Tags(), []),
+      withHomeFallback(listD1Series(), []),
     ]);
 
     return {
@@ -102,6 +109,15 @@ export const $getHomePageData = createServerFn({ method: "GET" }).handler(
     };
   },
 );
+
+async function withHomeFallback<T>(promise: Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await promise;
+  } catch (error) {
+    console.warn("[home] Falling back while loading homepage data", error);
+    return fallback;
+  }
+}
 
 export const $getBlogIndexPage = createServerFn({ method: "GET" })
   .inputValidator(

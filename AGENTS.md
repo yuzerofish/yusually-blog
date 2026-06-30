@@ -19,6 +19,8 @@ Opinionated full-stack TypeScript monorepo: TanStack Start + Drizzle + Better Au
 
 - Keep replies, docs, and UI copy direct. Avoid formulaic AI openings, overly reassuring catchphrases, and stock contrastive filler patterns.
 - Reader-facing pages and docs must not expose internal reasoning, author notes, or agent-only implementation instructions.
+- Treat visible website/app copy as visitor-facing editorial copy, never as a PRD, ticket, implementation note, or AI plan. Do not describe UI mechanics with internal phrases such as "assets", "status", "keywords", "expose", "entry", "same card", "filter logic", or "implementation"; translate them into what the visitor can feel, choose, or discover.
+- Before finishing UI work, review every changed visible string and remove any copy that sounds like the user's prompt, an agent summary, a product requirement, or a configuration label unless the screen is explicitly an admin/debug surface.
 
 ## Essentials
 

@@ -77,6 +77,38 @@ export const portfolioItems: PortfolioItem[] = [
     newTab: true,
   },
   {
+    id: "electronic-fluid",
+    title: "Electronic Fluid",
+    titleZh: "电子流体",
+    description:
+      "Interactive glowing fluid canvas that follows the pointer with luminous ribbons, electric trails, soft bloom, and subtle stage movement.",
+    descriptionZh:
+      "一个跟随鼠标游走的电子流体画布：发光丝带、电流轨迹、柔和辉光和轻微舞台跟随组成可交互的视觉实验。",
+    href: "/electronic-fluid/",
+    cta: "Open",
+    ctaZh: "体验",
+    category: "Visual Lab",
+    categoryZh: "视觉实验",
+    iconName: "CameraIcon",
+    newTab: true,
+  },
+  {
+    id: "oryzo-effect-study",
+    title: "ORYZO Effect Study",
+    titleZh: "ORYZO 视觉复刻学习",
+    description:
+      "A learning recreation of oryzo.ai focused on scroll-driven product storytelling, dark stage composition, horizontal media rails, and visible source-credit notes.",
+    descriptionZh:
+      "一个对 oryzo.ai 的前端视觉复刻学习：研究滚动驱动的产品叙事、暗色舞台构图、横向媒体轨道，并在页面中明确标注原网址与学习用途。",
+    href: "/oryzo-effect-study/",
+    cta: "Open",
+    ctaZh: "查看",
+    category: "Visual Lab",
+    categoryZh: "视觉实验",
+    iconName: "CameraIcon",
+    newTab: true,
+  },
+  {
     id: "information-rain",
     title: "Information Rain",
     titleZh: "信息暴雨",
@@ -157,6 +189,22 @@ export const portfolioItems: PortfolioItem[] = [
     newTab: true,
   },
   {
+    id: "release-practice",
+    title: "Release Practice",
+    titleZh: "释放练习",
+    description:
+      "A quiet guided release exercise. Name the strongest feeling, answer with typing or voice, and move through a small sequence of questions without visual noise.",
+    descriptionZh:
+      "一个安静的释放练习：先看见当下最明显的感觉，可以打字也可以语音回答，再顺着几个问题慢慢放下。",
+    href: "/release-practice/",
+    cta: "Practice",
+    ctaZh: "进入",
+    category: "Life",
+    categoryZh: "生活",
+    iconName: "BookOpenIcon",
+    newTab: true,
+  },
+  {
     id: "talk-shower",
     title: "Talk Shower",
     titleZh: "Talk Shower 脱口秀样本库",
@@ -218,6 +266,69 @@ export const portfolioItems: PortfolioItem[] = [
     category: "Game",
     categoryZh: "小游戏",
     iconName: "BarChart3Icon",
+    newTab: true,
+  },
+  {
+    id: "let-go-2048",
+    title: "Let Go 2048",
+    titleZh: "松开 2048",
+    description:
+      "A quiet 2048 variant for iPhone. Merge knots, stones, sand, water, breath, and light into a gentler release-oriented mini game.",
+    descriptionZh:
+      "一个安静、解压取向的 iPhone 2048 变体：把心结、压力石、细沙、水滴、呼吸和光合成一局更温和的小游戏。",
+    href: "/let-go-2048/",
+    cta: "Open",
+    ctaZh: "打开",
+    category: "Game",
+    categoryZh: "小游戏",
+    iconName: "BookOpenIcon",
+    newTab: true,
+  },
+  {
+    id: "zen-stress-shot",
+    title: "Zen Stress Shot",
+    titleZh: "泡泡压力",
+    description:
+      "Official site for a calm bubble-shooter iPhone game about aiming softly, clearing pressure clusters, and opening a quiet zen garden.",
+    descriptionZh:
+      "一个安静的 iPhone 泡泡射击游戏官网：轻轻瞄准、清理压力簇，让禅意小花园慢慢恢复开阔。",
+    href: "/zen-stress-shot/",
+    cta: "Open",
+    ctaZh: "打开",
+    category: "Game",
+    categoryZh: "小游戏",
+    iconName: "BookOpenIcon",
+    newTab: true,
+  },
+  {
+    id: "stress-merge-shot",
+    title: "Stress Merge Shot",
+    titleZh: "压力合成弹",
+    description:
+      "Official site for a gentle shooting-and-merging iPhone game where pressure states bounce, meet, and loosen into release light.",
+    descriptionZh:
+      "一个轻柔的 iPhone 击打合成游戏官网：发射压力状态，让它们碰撞、合成，最后松成一束释放的光。",
+    href: "/stress-merge-shot/",
+    cta: "Open",
+    ctaZh: "打开",
+    category: "Game",
+    categoryZh: "小游戏",
+    iconName: "BarChart3Icon",
+    newTab: true,
+  },
+  {
+    id: "sandfall-match",
+    title: "Sandfall Match",
+    titleZh: "消消乐",
+    description:
+      "Official site for a calm match-3 iPhone game about clearing pressure stones, opening locks, and letting soft light fall through.",
+    descriptionZh: "一个安静的 iPhone 消消乐游戏官网：消除压力石、打开锁扣，让柔和的光慢慢落下来。",
+    href: "/sandfall-match/",
+    cta: "Open",
+    ctaZh: "打开",
+    category: "Game",
+    categoryZh: "小游戏",
+    iconName: "BookOpenIcon",
     newTab: true,
   },
   {

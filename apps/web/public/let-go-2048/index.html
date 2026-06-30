@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Let Go 2048 is a quiet 2048 variant about merging pressure into light. In development for iPhone."
+    />
+    <title>Let Go 2048</title>
+    <link rel="icon" href="assets/generated/app-icon.png" />
+    <link rel="preload" href="assets/generated/website-hero.png" as="image" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header" data-header>
+      <a class="brand" href="#top" aria-label="Let Go 2048 home">
+        <img src="assets/generated/app-icon.png" alt="" />
+        <span>Let Go 2048</span>
+      </a>
+      <button class="menu-toggle" type="button" aria-label="Open navigation" data-menu-toggle>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav class="site-nav" data-nav>
+        <a href="#gameplay">Gameplay</a>
+        <a href="#states">States</a>
+        <a href="#news">Updates</a>
+        <a href="#download">iOS</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="support.html">Support</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <img class="hero-art" src="assets/generated/website-hero.png" alt="" />
+        <div class="hero-copy">
+          <p class="eyebrow">Let Go 2048</p>
+          <h1 id="hero-title">Let Go 2048</h1>
+          <p class="hero-text">
+            A quieter 2048 rhythm for iPhone. Slide, merge, and watch knots, stones,
+            sand, water, breath, and light loosen in the palm of your hand.
+          </p>
+          <div class="hero-actions">
+            <a class="store-button primary" href="#download">iOS status</a>
+            <a class="store-button secondary" href="#gameplay">See gameplay</a>
+          </div>
+        </div>
+        <a class="scroll-cue" href="#gameplay" aria-label="Scroll to gameplay">Gameplay</a>
+      </section>
+
+      <section class="feature-band" id="gameplay" aria-labelledby="gameplay-title">
+        <div class="section-copy">
+          <p class="eyebrow">Core Loop</p>
+          <h2 id="gameplay-title">Not about pushing harder. About letting go.</h2>
+          <p>
+            Swipe the 4x4 board in any direction and merge matching states. Each merge
+            avoids noisy explosions: pressure cracks, falls into sand, softens into water,
+            opens into breath, and finally turns into light.
+          </p>
+        </div>
+        <div class="phone-showcase" aria-label="Game screen preview">
+          <img src="assets/generated/game-screen.png?v=ui-pass-20260627d" alt="Let Go 2048 game screen" />
+        </div>
+      </section>
+
+      <section class="quiet-grid" aria-label="Game features">
+        <article>
+          <img src="assets/tiles/tile-8-cracked-stone.png" alt="" />
+          <h3>Soft feedback</h3>
+          <p>Stones crack gently, sand falls slowly, and the board stays calm instead of interrupting you.</p>
+        </article>
+        <article>
+          <img src="assets/tiles/tile-128-water-ripple.png" alt="" />
+          <h3>Breath chains</h3>
+          <p>Multiple merges in one swipe become a quiet breath chain. Single moves stay understated.</p>
+        </article>
+        <article>
+          <img src="assets/tiles/tile-2048-release-light.png" alt="" />
+          <h3>Gentle endings</h3>
+          <p>A full board is not framed as failure. The game simply suggests making room again.</p>
+        </article>
+      </section>
+
+      <section class="evolution" id="states" aria-labelledby="states-title">
+        <div class="section-copy compact">
+          <p class="eyebrow">Tile Evolution</p>
+          <h2 id="states-title">From knot to release light</h2>
+        </div>
+        <div class="state-track">
+          <article class="state-tile">
+            <img src="assets/tiles/tile-2-heart-knot.png" alt="" />
+            <span>2</span>
+            <strong>Knot</strong>
+          </article>
+          <article class="state-tile">
+            <img src="assets/tiles/tile-4-pressure-stone.png" alt="" />
+            <span>4</span>
+            <strong>Stone</strong>
+          </article>
+          <article class="state-tile">
+            <img src="assets/tiles/tile-8-cracked-stone.png" alt="" />
+            <span>8</span>
+            <strong>Crack</strong>
+          </article>
+          <article class="state-tile">
+            <img src="assets/tiles/tile-32-sand.png" alt="" />
+            <span>32</span>
+            <strong>Sand</strong>
+          </article>
+          <article class="state-tile">
+            <img src="assets/tiles/tile-64-water-drop.png" alt="" />
+            <span>64</span>
+            <strong>Drop</strong>
+          </article>
+          <article class="state-tile">
+            <img src="assets/tiles/tile-256-breath-ring.png" alt="" />
+            <span>256</span>
+            <strong>Breath</strong>
+          </article>
+          <article class="state-tile">
+            <img src="assets/tiles/tile-1024-light-point.png" alt="" />
+            <span>1024</span>
+            <strong>Light</strong>
+          </article>
+          <article class="state-tile">
+            <img src="assets/tiles/tile-2048-release-light.png" alt="" />
+            <span>2048</span>
+            <strong>Release</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="news" id="news" aria-labelledby="news-title">
+        <div class="section-copy compact">
+          <p class="eyebrow">News</p>
+          <h2 id="news-title">Development notes</h2>
+        </div>
+        <div class="news-list">
+          <article>
+            <time datetime="2026-06-27">2026.06.27</time>
+            <h3>iOS prototype started</h3>
+            <p>The first version focuses on a 4x4 board, standard 2048 merges, room-to-let-go feedback, and gentle endings.</p>
+          </article>
+          <article>
+            <time datetime="2026-06-27">2026.06.27</time>
+            <h3>Visual direction set</h3>
+            <p>Pressure stones, sand, drops, and light states use real bitmap assets instead of a candy-game look.</p>
+          </article>
+          <article>
+            <time datetime="2026-06-27">2026.06.27</time>
+            <h3>Website preview prepared</h3>
+            <p>This static site now reflects the overseas preparation lane with English-first copy and trust links.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="download" id="download" aria-labelledby="download-title">
+        <img class="download-icon" src="assets/generated/app-icon.png" alt="" />
+        <div>
+          <p class="eyebrow">In development for iOS</p>
+          <h2 id="download-title">Set this round down, slowly.</h2>
+          <p>Let Go 2048 is being prepared as an iPhone mini-game template. TestFlight and App Store availability are not yet promised.</p>
+        </div>
+        <div class="download-actions">
+          <a class="store-button primary" href="support.html">Get support</a>
+          <a class="store-button secondary" href="privacy.html">Read privacy</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Let Go 2048 / 松开 2048</span>
+      <a href="privacy.html">Privacy</a>
+      <a href="support.html">Support</a>
+      <a href="#top">Back to top</a>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

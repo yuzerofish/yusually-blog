@@ -81,7 +81,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         },
         {
           name: "msapplication-TileColor",
-          content: "#2C261F",
+          content: "#0E0F0E",
         },
         {
           name: "msapplication-config",
@@ -91,19 +91,14 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       links: [
         {
           rel: "icon",
-          href: "/favicon.ico",
-          sizes: "any",
-        },
-        {
-          rel: "icon",
-          type: "image/svg+xml",
-          href: "/favicon.svg",
-        },
-        {
-          rel: "icon",
           type: "image/png",
           sizes: "32x32",
-          href: "/favicon-32x32.png",
+          href: "/yusually-icon-orbit-32.png?v=yusually-orbit-20260629",
+        },
+        {
+          rel: "icon",
+          href: "/yusually-favicon-orbit.ico?v=yusually-orbit-20260629",
+          sizes: "any",
         },
         {
           rel: "manifest",
@@ -113,12 +108,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         {
           rel: "apple-touch-icon",
           sizes: "180x180",
-          href: "/apple-touch-icon.png",
+          href: "/apple-touch-icon-orbit.png?v=yusually-orbit-20260629",
         },
         {
           rel: "mask-icon",
-          href: "/safari-pinned-tab.svg",
-          color: "#2C261F",
+          href: "/yusually-mask-icon-orbit.svg?v=yusually-orbit-20260629",
+          color: "#E77735",
         },
         {
           rel: "alternate",

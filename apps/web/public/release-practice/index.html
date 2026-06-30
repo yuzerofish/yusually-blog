@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>释放练习</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f8f5fb;
+      --paper-deep: #eee8f5;
+      --ink: #2d2936;
+      --ink-soft: rgba(45, 41, 54, 0.62);
+      --lavender: #78658f;
+      --lavender-strong: #66527d;
+      --lavender-faint: rgba(120, 101, 143, 0.12);
+      --lavender-line: rgba(120, 101, 143, 0.24);
+      --white-soft: rgba(255, 255, 255, 0.58);
+      --edge-left: max(42px, env(safe-area-inset-left));
+      --edge-right: max(42px, env(safe-area-inset-right));
+      --content-width: min(620px, calc(100vw - var(--edge-left) - var(--edge-right)));
+      font-family: "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC", serif;
+      letter-spacing: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0) 42%),
+        linear-gradient(165deg, var(--paper), var(--paper-deep));
+      transition:
+        background-color 520ms ease,
+        color 520ms ease;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(120, 101, 143, 0.045), transparent 17%, transparent 83%, rgba(120, 101, 143, 0.035)),
+        repeating-linear-gradient(90deg, rgba(45, 41, 54, 0.018) 0 1px, transparent 1px 118px);
+      opacity: 0.7;
+    }
+
+    button,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .flow {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: calc(env(safe-area-inset-top) + 42px) var(--edge-right) calc(env(safe-area-inset-bottom) + 42px) var(--edge-left);
+      place-items: center;
+      transition:
+        opacity 560ms ease,
+        filter 560ms ease,
+        transform 560ms ease;
+    }
+
+    .flow.is-leaving {
+      opacity: 0;
+      filter: blur(7px);
+      transform: translateY(-6px);
+      pointer-events: none;
+    }
+
+    .scene {
+      display: grid;
+      width: var(--content-width);
+      max-width: 100%;
+      justify-items: center;
+      gap: 30px;
+      transform: translateY(-3vh);
+    }
+
+    .prompt {
+      min-height: 3.18em;
+      width: 100%;
+      margin: 0;
+      color: var(--ink);
+      font-size: 46px;
+      font-weight: 400;
+      line-height: 1.58;
+      text-align: center;
+      text-wrap: balance;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+
+    .prompt-char {
+      display: inline-block;
+      opacity: 0;
+      filter: blur(5px);
+      animation: promptIn 980ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation-delay: var(--delay, 0ms);
+      will-change: opacity, filter;
+    }
+
+    .controls {
+      display: grid;
+      width: 100%;
+      justify-items: center;
+      gap: 22px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition:
+        opacity 1280ms cubic-bezier(0.16, 1, 0.3, 1),
+        transform 1280ms cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .controls.is-ready {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .feeling-field {
+      position: relative;
+      width: min(560px, 100%);
+      min-height: 132px;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      transition:
+        border-color 260ms ease,
+        background-color 260ms ease,
+        box-shadow 260ms ease;
+    }
+
+    .feeling-field::before {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 50%;
+      z-index: 3;
+      width: 2px;
+      height: 1.64em;
+      border-radius: 999px;
+      background: rgba(102, 82, 125, 0.72);
+      opacity: 0;
+      transform: translateX(-50%);
+      pointer-events: none;
+      animation: caretBlink 1.08s steps(1, end) infinite;
+    }
+
+    .feeling-field:focus-within:not(.has-text)::before {
+      opacity: 1;
+    }
+
+    .feeling-field:focus-within {
+      border-color: transparent;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .feeling-input {
+      display: block;
+      width: 100%;
+      min-height: 132px;
+      padding: 0 72px 26px;
+      border: 0;
+      outline: 0;
+      resize: none;
+      background: transparent;
+      color: var(--ink-soft);
+      caret-color: var(--lavender-strong);
+      font-size: 26px;
+      font-weight: 400;
+      line-height: 1.86;
+      text-align: center;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      appearance: none;
+    }
+
+    .feeling-field:not(.has-text) .feeling-input {
+      caret-color: transparent;
+    }
+
+    .feeling-input::selection {
+      background: rgba(120, 101, 143, 0.18);
+      color: var(--ink);
+    }
+
+    .round-tool {
+      display: grid;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      place-items: center;
+      border: 1px solid rgba(120, 101, 143, 0.18);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.56);
+      color: rgba(102, 82, 125, 0.68);
+      cursor: pointer;
+      transition:
+        color 220ms ease,
+        border-color 220ms ease,
+        background-color 220ms ease,
+        opacity 220ms ease,
+        transform 220ms ease;
+    }
+
+    .round-tool:hover,
+    .round-tool:focus-visible {
+      border-color: rgba(120, 101, 143, 0.36);
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--lavender-strong);
+      outline: 0;
+    }
+
+    .round-tool:active,
+    .choice-button:active {
+      transform: translateY(1px) scale(0.985);
+    }
+
+    .voice-button {
+      position: absolute;
+      right: 16px;
+      bottom: 18px;
+      opacity: 0.42;
+    }
+
+    .continue-button {
+      position: absolute;
+      right: 16px;
+      top: 0;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(3px);
+    }
+
+    .feeling-field.has-text .continue-button {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .voice-glyph {
+      position: relative;
+      width: 14px;
+      height: 20px;
+      border: 2px solid currentColor;
+      border-radius: 999px;
+    }
+
+    .voice-glyph::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 8px;
+      width: 24px;
+      height: 15px;
+      border: 2px solid currentColor;
+      border-top: 0;
+      border-radius: 0 0 14px 14px;
+      transform: translateX(-50%);
+    }
+
+    .voice-glyph::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 22px;
+      width: 2px;
+      height: 7px;
+      border-radius: 999px;
+      background: currentColor;
+      transform: translateX(-50%);
+    }
+
+    .continue-glyph {
+      width: 12px;
+      height: 12px;
+      border-top: 2px solid currentColor;
+      border-right: 2px solid currentColor;
+      transform: translateX(-2px) rotate(45deg);
+    }
+
+    body.is-recording .voice-button {
+      border-color: rgba(120, 101, 143, 0.46);
+      background: rgba(120, 101, 143, 0.13);
+      color: var(--lavender-strong);
+    }
+
+    .choice-grid {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .choice-button {
+      min-width: 146px;
+      min-height: 56px;
+      padding: 0 28px;
+      border: 1px solid rgba(120, 101, 143, 0.22);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.54);
+      color: rgba(45, 41, 54, 0.76);
+      cursor: pointer;
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1;
+      white-space: nowrap;
+      box-shadow: 0 16px 50px rgba(72, 55, 91, 0.07);
+      transition:
+        background-color 220ms ease,
+        border-color 220ms ease,
+        color 220ms ease,
+        box-shadow 220ms ease,
+        transform 220ms ease;
+    }
+
+    .choice-button:hover,
+    .choice-button:focus-visible {
+      border-color: rgba(120, 101, 143, 0.42);
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--ink);
+      outline: 0;
+      box-shadow: 0 18px 58px rgba(72, 55, 91, 0.11);
+    }
+
+    .choice-button.is-primary {
+      border-color: rgba(102, 82, 125, 0.72);
+      background: var(--lavender-strong);
+      color: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 18px 58px rgba(102, 82, 125, 0.18);
+    }
+
+    .choice-button.is-primary:hover,
+    .choice-button.is-primary:focus-visible {
+      background: #5d486f;
+      color: rgba(255, 255, 255, 0.98);
+    }
+
+    .choice-button.is-wide {
+      min-width: 170px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @keyframes promptIn {
+      from {
+        opacity: 0;
+        filter: blur(5px);
+      }
+
+      to {
+        opacity: 1;
+        filter: blur(0);
+      }
+    }
+
+    @keyframes caretBlink {
+      0%,
+      48% {
+        opacity: 0.86;
+      }
+
+      49%,
+      100% {
+        opacity: 0.16;
+      }
+    }
+
+    @media (max-width: 640px) {
+      :root {
+        --edge-left: max(36px, env(safe-area-inset-left));
+        --edge-right: max(36px, env(safe-area-inset-right));
+      }
+
+      .flow {
+        padding-top: calc(env(safe-area-inset-top) + 34px);
+        padding-bottom: calc(env(safe-area-inset-bottom) + 34px);
+      }
+
+      .scene {
+        gap: 28px;
+        transform: translateY(-2vh);
+      }
+
+      .prompt {
+        font-size: 34px;
+        line-height: 1.62;
+      }
+
+      .feeling-field,
+      .feeling-input {
+        min-height: 128px;
+      }
+
+      .feeling-input {
+        padding: 0 62px 24px;
+        font-size: 22px;
+        line-height: 1.84;
+      }
+
+      .round-tool {
+        width: 46px;
+        height: 46px;
+      }
+
+      .choice-grid {
+        gap: 12px;
+      }
+
+      .choice-button {
+        min-width: 132px;
+        min-height: 54px;
+        padding: 0 20px;
+        font-size: 20px;
+      }
+
+      .choice-button.is-wide {
+        min-width: 146px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      :root {
+        --edge-left: max(28px, env(safe-area-inset-left));
+        --edge-right: max(28px, env(safe-area-inset-right));
+      }
+
+      .prompt {
+        font-size: 31px;
+      }
+
+      .choice-button {
+        width: min(100%, 210px);
+      }
+    }
+
+    @media (max-height: 680px) {
+      .scene {
+        gap: 24px;
+        transform: translateY(0);
+      }
+
+      .prompt {
+        font-size: 30px;
+        line-height: 1.46;
+      }
+
+      .feeling-field,
+      .feeling-input {
+        min-height: 104px;
+      }
+
+      .feeling-input {
+        padding-bottom: 18px;
+        font-size: 20px;
+        line-height: 1.62;
+      }
+
+      .choice-button {
+        min-height: 50px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body,
+      .flow,
+      .controls,
+      .feeling-field,
+      .round-tool,
+      .choice-button {
+        transition-duration: 1ms;
+      }
+
+      .prompt-char {
+        opacity: 1;
+        filter: blur(0);
+        transform: none;
+        animation: none;
+      }
+
+      .feeling-field::before {
+        animation: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="flow" id="flow" aria-live="polite">
+    <section class="scene" aria-label="释放练习">
+      <h1 class="prompt" id="prompt"></h1>
+      <div class="controls" id="controls"></div>
+    </section>
+  </main>
+
+  <script>
+    const steps = [
+      { id: "feeling", prompt: "现在最明显的感觉是什么？" },
+      { id: "release", prompt: "你愿意释放它吗？" },
+      { id: "when", prompt: "什么时候？" },
+      { id: "check", prompt: "感觉还在吗？" }
+    ];
+
+    const body = document.body;
+    const flow = document.getElementById("flow");
+    const promptEl = document.getElementById("prompt");
+    const controls = document.getElementById("controls");
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    let stepIndex = 0;
+    let answerText = "";
+    let recognition = null;
+    let recognizing = false;
+    let voiceBaseText = "";
+    let fallbackTimer = null;
+    let controlsTimer = null;
+    let resetTimer = null;
+
+    function prefersReducedMotion() {
+      return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
+
+    function charDelay(index) {
+      return 88 + (index % 3) * 10;
+    }
+
+    function renderPrompt(text) {
+      promptEl.textContent = "";
+      let delay = 0;
+
+      Array.from(text).forEach((char, index) => {
+        const span = document.createElement("span");
+        span.className = "prompt-char";
+        span.textContent = char.trim() ? char : "\u00a0";
+        span.style.setProperty("--delay", `${delay}ms`);
+        promptEl.appendChild(span);
+        delay += charDelay(index);
+      });
+
+      return delay + 1260;
+    }
+
+    function clearTimers() {
+      window.clearTimeout(controlsTimer);
+      window.clearTimeout(resetTimer);
+    }
+
+    function clearControls() {
+      controls.classList.remove("is-ready");
+      controls.replaceChildren();
+    }
+
+    function createButton(text, options = {}) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `choice-button${options.primary ? " is-primary" : ""}${options.wide ? " is-wide" : ""}`;
+      button.textContent = text;
+      button.addEventListener("click", options.onClick);
+      return button;
+    }
+
+    function revealControls() {
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          controls.classList.add("is-ready");
+        });
+      });
+    }
+
+    function setRecordingState(active) {
+      recognizing = active;
+      body.classList.toggle("is-recording", active);
+      const button = document.getElementById("voiceButton");
+      if (button) {
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      }
+    }
+
+    function finishRecordingState() {
+      window.clearTimeout(fallbackTimer);
+      fallbackTimer = window.setTimeout(() => setRecordingState(false), 420);
+    }
+
+    function buildRecognition(input, field) {
+      if (!SpeechRecognition) {
+        return null;
+      }
+
+      const instance = new SpeechRecognition();
+      instance.lang = "zh-CN";
+      instance.continuous = true;
+      instance.interimResults = true;
+
+      instance.onstart = () => setRecordingState(true);
+      instance.onend = finishRecordingState;
+      instance.onerror = finishRecordingState;
+      instance.onresult = (event) => {
+        let transcript = "";
+        for (let i = 0; i < event.results.length; i += 1) {
+          transcript += event.results[i][0].transcript;
+        }
+
+        const spacer = voiceBaseText && transcript ? "\n" : "";
+        input.value = `${voiceBaseText}${spacer}${transcript}`;
+        updateFeelingState(input, field);
+      };
+
+      return instance;
+    }
+
+    function startVoiceInput(input, field) {
+      input.focus({ preventScroll: true });
+      voiceBaseText = input.value.trimEnd();
+      recognition = buildRecognition(input, field);
+
+      setRecordingState(true);
+
+      try {
+        if (recognition) {
+          recognition.start();
+        } else {
+          window.clearTimeout(fallbackTimer);
+          fallbackTimer = window.setTimeout(() => setRecordingState(false), 1200);
+        }
+      } catch {
+        window.clearTimeout(fallbackTimer);
+        fallbackTimer = window.setTimeout(() => setRecordingState(false), 1200);
+      }
+    }
+
+    function stopVoiceInput() {
+      window.clearTimeout(fallbackTimer);
+      const activeRecognition = recognition;
+      recognition = null;
+
+      if (activeRecognition && recognizing) {
+        try {
+          activeRecognition.stop();
+        } catch {
+          setRecordingState(false);
+        }
+      } else {
+        setRecordingState(false);
+      }
+    }
+
+    function updateFeelingState(input, field) {
+      const hasText = Boolean(input.value.trim());
+      field.classList.toggle("has-text", hasText);
+    }
+
+    function submitFeeling(input) {
+      const value = input.value.trim();
+      if (!value) {
+        return;
+      }
+
+      answerText = value;
+      stopVoiceInput();
+      goToStep(1);
+    }
+
+    function renderFeelingControls() {
+      const field = document.createElement("div");
+      field.className = "feeling-field";
+
+      const label = document.createElement("label");
+      label.className = "sr-only";
+      label.setAttribute("for", "feelingInput");
+      label.textContent = "现在最明显的感觉";
+
+      const input = document.createElement("textarea");
+      input.className = "feeling-input";
+      input.id = "feelingInput";
+      input.rows = 4;
+      input.autocomplete = "off";
+      input.autocapitalize = "off";
+      input.spellcheck = false;
+      input.value = answerText;
+
+      const voiceButton = document.createElement("button");
+      voiceButton.type = "button";
+      voiceButton.className = "round-tool voice-button";
+      voiceButton.id = "voiceButton";
+      voiceButton.setAttribute("aria-label", "语音输入");
+      voiceButton.setAttribute("aria-pressed", "false");
+      voiceButton.innerHTML = '<span class="voice-glyph" aria-hidden="true"></span>';
+
+      const continueButton = document.createElement("button");
+      continueButton.type = "button";
+      continueButton.className = "round-tool continue-button";
+      continueButton.setAttribute("aria-label", "继续");
+      continueButton.innerHTML = '<span class="continue-glyph" aria-hidden="true"></span>';
+
+      input.addEventListener("input", () => updateFeelingState(input, field));
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+          event.preventDefault();
+          submitFeeling(input);
+        }
+      });
+
+      voiceButton.addEventListener("click", () => {
+        if (recognizing) {
+          stopVoiceInput();
+        } else {
+          startVoiceInput(input, field);
+        }
+      });
+
+      continueButton.addEventListener("click", () => submitFeeling(input));
+
+      field.append(label, input, continueButton, voiceButton);
+      controls.appendChild(field);
+      updateFeelingState(input, field);
+      revealControls();
+      input.focus({ preventScroll: true });
+    }
+
+    function renderReleaseControls() {
+      const grid = document.createElement("div");
+      grid.className = "choice-grid";
+      grid.append(
+        createButton("愿意", { primary: true, onClick: () => goToStep(2) }),
+        createButton("还不愿意", { onClick: () => {} })
+      );
+      controls.appendChild(grid);
+      revealControls();
+      grid.querySelector("button").focus({ preventScroll: true });
+    }
+
+    function renderWhenControls() {
+      const grid = document.createElement("div");
+      grid.className = "choice-grid";
+      grid.append(
+        createButton("现在", { primary: true, wide: true, onClick: () => goToStep(3) })
+      );
+      controls.appendChild(grid);
+      revealControls();
+      grid.querySelector("button").focus({ preventScroll: true });
+    }
+
+    function finishRound() {
+      stopVoiceInput();
+      flow.classList.add("is-leaving");
+      resetTimer = window.setTimeout(() => {
+        answerText = "";
+        stepIndex = 0;
+        flow.classList.remove("is-leaving");
+        goToStep(0);
+      }, prefersReducedMotion() ? 0 : 680);
+    }
+
+    function renderCheckControls() {
+      const grid = document.createElement("div");
+      grid.className = "choice-grid";
+      grid.append(
+        createButton("完全释放", { primary: true, onClick: finishRound }),
+        createButton("还有一些", { onClick: finishRound }),
+        createButton("不太行", { onClick: finishRound })
+      );
+      controls.appendChild(grid);
+      revealControls();
+      grid.querySelector("button").focus({ preventScroll: true });
+    }
+
+    function renderControlsForStep() {
+      const step = steps[stepIndex];
+
+      if (step.id === "feeling") {
+        renderFeelingControls();
+      }
+
+      if (step.id === "release") {
+        renderReleaseControls();
+      }
+
+      if (step.id === "when") {
+        renderWhenControls();
+      }
+
+      if (step.id === "check") {
+        renderCheckControls();
+      }
+    }
+
+    function goToStep(nextIndex) {
+      clearTimers();
+      stopVoiceInput();
+      stepIndex = nextIndex;
+      clearControls();
+      const delay = renderPrompt(steps[stepIndex].prompt);
+      controlsTimer = window.setTimeout(renderControlsForStep, prefersReducedMotion() ? 0 : delay);
+    }
+
+    goToStep(0);
+  </script>
+</body>
+</html>

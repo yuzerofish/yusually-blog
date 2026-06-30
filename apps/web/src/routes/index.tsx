@@ -41,6 +41,25 @@ type CreatorSpotlight = {
   readonly href: string;
   readonly cta: string;
   readonly icon: LucideIcon;
+  readonly meta: string;
+};
+
+type HomeMetric = {
+  readonly label: string;
+  readonly value: string;
+};
+
+type WorkbenchItem = {
+  readonly title: string;
+  readonly description: string;
+  readonly href: string;
+  readonly cta: string;
+  readonly category: string;
+  readonly status: string;
+  readonly keywords: readonly string[];
+  readonly previewSrc: string;
+  readonly previewAlt: string;
+  readonly featured?: boolean;
 };
 
 type HomeRevealStyle = CSSProperties & {
@@ -68,61 +87,191 @@ function ShelfHome({ posts, locale }: HomeViewProps) {
   return (
     <div data-home-surface className="bg-background">
       <HomeMotionController />
-      {/* ── Hero ── */}
       <section
         data-home-hero
-        className="relative isolate overflow-hidden border-b-2 border-foreground"
+        className="relative isolate overflow-hidden border-b-2 border-foreground bg-foreground text-background"
       >
-        <div className="relative z-10 mx-auto max-w-6xl px-4 pt-12 pb-10 sm:px-6 sm:pt-16 sm:pb-14 lg:px-8 lg:pt-24 lg:pb-20 xl:px-12">
-          <p
-            data-home-reveal
-            style={getRevealStyle(0)}
-            className="text-sm font-semibold tracking-wide text-muted-foreground uppercase"
-          >
-            {copy.eyebrow}
-          </p>
-          <h1
-            data-home-reveal
-            style={getRevealStyle(90)}
-            className="mt-6 max-w-5xl text-4xl leading-[0.98] font-semibold text-balance sm:text-6xl lg:text-7xl"
-          >
-            {copy.heroTitle}
-          </h1>
-          <p
-            data-home-reveal
-            style={getRevealStyle(180)}
-            className="mt-6 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg"
-          >
-            {copy.heroBody}
-          </p>
-          <div data-home-reveal style={getRevealStyle(270)} className="mt-8 flex flex-wrap gap-3">
-            <Button
-              render={<a href={"/blog"} aria-label={copy.primaryCta} />}
-              nativeButton={false}
-              size="lg"
-              className="hover:-translate-y-0.5"
+        <img
+          data-home-hero-image
+          src="/home/yusually-atlas-lab-hero.png"
+          alt={copy.heroImageAlt}
+          className="absolute inset-0 z-0 h-full w-full object-cover"
+        />
+        <div data-home-hero-scrim className="absolute inset-0 z-[1]" />
+
+        <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-8rem)] max-w-6xl flex-col justify-start px-4 pt-12 pb-36 sm:px-6 sm:pt-16 sm:pb-12 lg:min-h-[calc(100dvh-10rem)] lg:px-8 lg:pt-24 xl:px-12">
+          <div className="max-w-4xl">
+            <p
+              data-home-reveal
+              style={getRevealStyle(0)}
+              className="text-sm font-semibold tracking-wide text-background/76 uppercase"
             >
-              {copy.primaryCta}
-              <ArrowRightIcon />
-            </Button>
-            <Button
-              render={<Link to="/about" />}
-              variant="outline"
-              nativeButton={false}
-              size="lg"
-              className="hover:-translate-y-0.5"
+              {copy.eyebrow}
+            </p>
+            <h1
+              data-home-reveal
+              style={getRevealStyle(90)}
+              className="mt-5 max-w-4xl text-4xl leading-[0.95] font-semibold text-balance sm:text-6xl lg:text-7xl"
             >
-              <FileTextIcon />
-              {copy.secondaryCta}
-            </Button>
+              {copy.heroTitle}
+            </h1>
+            <p
+              data-home-reveal
+              style={getRevealStyle(180)}
+              className="mt-6 max-w-2xl text-base leading-7 text-background/78 sm:text-lg"
+            >
+              {copy.heroBody}
+            </p>
+            <div data-home-reveal style={getRevealStyle(270)} className="mt-8 flex flex-wrap gap-3">
+              <Button
+                render={<Link to="/works" aria-label={copy.primaryCta} />}
+                nativeButton={false}
+                size="lg"
+                className="border-background bg-background text-foreground hover:-translate-y-0.5 hover:bg-background/92"
+              >
+                {copy.primaryCta}
+                <ArrowRightIcon />
+              </Button>
+              <Button
+                render={<Link to="/blog" search={{ q: "", tag: "", series: "", page: 1 }} />}
+                variant="outline"
+                nativeButton={false}
+                size="lg"
+                className="border-background/48 bg-transparent text-background hover:-translate-y-0.5 hover:bg-background/12"
+              >
+                <FileTextIcon />
+                {copy.secondaryCta}
+              </Button>
+            </div>
+          </div>
+
+          <div className="mt-14 grid gap-3 lg:grid-cols-[minmax(0,0.7fr)_minmax(18rem,0.3fr)] lg:items-end">
+            <div
+              data-home-reveal
+              style={getRevealStyle(360)}
+              className="grid max-w-3xl grid-cols-3 border border-background/28 bg-foreground/18 backdrop-blur-md"
+            >
+              {copy.heroMetrics.map((metric) => (
+                <div
+                  key={metric.label}
+                  className="border-r border-background/24 p-4 last:border-r-0"
+                >
+                  <p className="text-2xl leading-none font-semibold tabular-nums sm:text-3xl">
+                    {metric.value}
+                  </p>
+                  <p className="mt-2 text-xs leading-4 font-medium text-background/68">
+                    {metric.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div
+              data-home-reveal
+              data-home-artifact-card
+              style={getRevealStyle(450)}
+              className="border border-background/24 bg-background/10 p-4 text-background shadow-2xl backdrop-blur-md"
+            >
+              <p className="text-xs font-semibold tracking-wide text-background/64 uppercase">
+                {copy.artifactEyebrow}
+              </p>
+              <p className="mt-3 text-lg leading-tight font-semibold">{copy.artifactTitle}</p>
+              <p className="mt-3 text-sm leading-6 text-background/72">{copy.artifactBody}</p>
+            </div>
           </div>
         </div>
       </section>
+
+      <WorkbenchSection copy={copy} />
 
       <LatestPostsSection copy={copy} latestPosts={latestPosts} locale={locale} />
 
       <CreatorSection copy={copy} />
     </div>
+  );
+}
+
+function WorkbenchSection({ copy }: { readonly copy: ReturnType<typeof getHomeCopy> }) {
+  return (
+    <section className="border-b border-border bg-background">
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
+        <div className="grid gap-8 lg:grid-cols-[0.34fr_0.66fr]">
+          <div data-home-reveal className="max-w-md">
+            <p className="text-sm font-semibold text-link uppercase">{copy.workbenchEyebrow}</p>
+            <h2 className="mt-3 text-3xl leading-tight font-semibold text-balance">
+              {copy.workbenchTitle}
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-muted-foreground">{copy.workbenchBody}</p>
+          </div>
+
+          <div className="grid gap-px border border-border bg-border md:grid-cols-2">
+            {copy.workbenchItems.map((item, index) => (
+              <WorkbenchCard key={item.href} item={item} index={index} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function WorkbenchCard({ index, item }: { readonly index: number; readonly item: WorkbenchItem }) {
+  const isExternal = item.href.startsWith("http");
+
+  return (
+    <a
+      href={item.href}
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noreferrer" : undefined}
+      data-home-reveal
+      data-home-card
+      data-home-workbench-card
+      style={getRevealStyle(index * 70)}
+      className={`group flex min-h-full flex-col bg-background transition hover:bg-muted/35 ${
+        item.featured ? "md:col-span-2" : ""
+      }`}
+    >
+      <span
+        data-home-workbench-preview
+        className={`relative block overflow-hidden bg-muted ${
+          item.featured ? "aspect-[16/7]" : "aspect-[4/3]"
+        }`}
+      >
+        <img src={item.previewSrc} alt={item.previewAlt} className="h-full w-full object-cover" />
+        <span className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-foreground/72 to-transparent" />
+        <span className="absolute bottom-3 left-3 border border-background/28 bg-foreground/48 px-2.5 py-1 text-xs font-semibold text-background backdrop-blur-md">
+          {item.category}
+        </span>
+      </span>
+
+      <span className="flex flex-1 flex-col p-5">
+        <span className="flex items-start justify-between gap-4">
+          <span className="text-xl leading-tight font-semibold text-balance group-hover:text-link">
+            {item.title}
+          </span>
+          <span className="shrink-0 bg-muted px-2 py-1 text-xs font-semibold text-muted-foreground">
+            {item.status}
+          </span>
+        </span>
+        <span className="mt-3 block text-sm leading-6 text-muted-foreground">
+          {item.description}
+        </span>
+        <span className="mt-4 flex flex-wrap gap-2">
+          {item.keywords.map((keyword) => (
+            <span
+              key={keyword}
+              className="border border-border bg-background px-2.5 py-1 text-xs font-medium text-muted-foreground"
+            >
+              {keyword}
+            </span>
+          ))}
+        </span>
+        <span className="mt-auto flex items-center gap-2 pt-5 text-sm font-semibold text-link">
+          {item.cta}
+          <ExternalLinkIcon className="size-4" />
+        </span>
+      </span>
+    </a>
   );
 }
 
@@ -176,6 +325,7 @@ function CreatorSpotlightCard({
       <span className="mt-5 block text-lg leading-tight font-semibold group-hover:text-link">
         {item.title}
       </span>
+      <span className="mt-2 block text-xs font-semibold text-link uppercase">{item.meta}</span>
       <span className="mt-3 block text-sm leading-6 text-muted-foreground">{item.description}</span>
       <span className="mt-5 flex items-center gap-2 text-sm font-semibold text-link">
         {item.cta}
@@ -365,12 +515,85 @@ function isReaderFacingPost(post: { title: string; slug: string }) {
 function getHomeCopy(locale: SupportedLocale) {
   if (locale === "zh") {
     return {
-      eyebrow: "个人博客 · 地图 · 旅行 · 技术 · 自媒体",
-      heroTitle: "一个还在摸索世界的人。",
+      eyebrow: "Yusually atlas lab · 地图 · 数据 · 旅行 · 创作工具",
+      heroTitle: "把世界的路径、浪和数据做成作品。",
       heroBody:
-        "从地图开始：路线追踪的乐趣、发现隐藏路径的惊喜、理解万物连接的快感。这份好奇心驱使我从地理走向技术，从旅行走向自媒体。",
-      primaryCta: "阅读博客",
-      secondaryCta: "关于 Yusually",
+        "这里不是普通博客入口，而是一个持续生长的个人工作台：旅行路线、世界数据、水下叙事、小游戏和创作工具，都被整理成可以直接进入的作品。",
+      heroImageAlt: "一张由地图、水纹、旅行照片和创作工具组成的桌面主视觉",
+      primaryCta: "进入作品集",
+      secondaryCta: "阅读最新文章",
+      heroMetrics: [
+        { label: "公开作品入口", value: "25" },
+        { label: "视觉与交互类型", value: "5" },
+        { label: "精选项目", value: "4" },
+      ] satisfies HomeMetric[],
+      artifactEyebrow: "当前主视觉",
+      artifactTitle: "个人地图仪器",
+      artifactBody: "地图、数据片、海水高光和创作工具，组成这个站点的新视觉锚点。",
+
+      // ── Workbench ──
+      workbenchEyebrow: "作品入口",
+      workbenchTitle: "从一张画面进入一个作品。",
+      workbenchBody:
+        "每个入口都先露出一点现场感：地图的纹理、数据的结构、海水的光、游戏的界面。你可以顺着感兴趣的画面继续走进去。",
+      workbenchItems: [
+        {
+          title: "Yusually Works",
+          description: "完整作品墙，按地图数据、视觉叙事、游戏 App、研究内容和工具练习筛选。",
+          href: "/works",
+          cta: "浏览作品墙",
+          category: "作品集",
+          status: "25 个入口",
+          keywords: ["地图", "影像", "工具"],
+          previewSrc: "/works/portfolio-hero-imagen.png",
+          previewAlt: "地图、数据、旅行和水下光线融合的作品集主视觉",
+          featured: true,
+        },
+        {
+          title: "TravelTrace",
+          description: "把旅行路线、停留点和记忆整理成可分享的地图轨迹。",
+          href: "https://traveltrace.life",
+          cta: "打开项目",
+          category: "地图产品",
+          status: "已上线",
+          keywords: ["路线", "Mapbox", "旅行记录"],
+          previewSrc: "/works/portfolio-hero-imagen.png",
+          previewAlt: "旅行路线和世界地图的视觉预览",
+        },
+        {
+          title: "Shape of World",
+          description: "用树图和世界数据展示国家、人口、经济和结构关系。",
+          href: "https://shapeof.world",
+          cta: "查看数据",
+          category: "数据产品",
+          status: "已上线",
+          keywords: ["Treemap", "世界数据", "交互探索"],
+          previewSrc: "/works/previews/shape-of-world.webp",
+          previewAlt: "Shape of World 数据树图界面预览",
+        },
+        {
+          title: "真实的水之道",
+          description: "把水、独木舟和人生叙事做成带有展览感的视觉页面。",
+          href: "/true-waterway/",
+          cta: "进入叙事",
+          category: "视觉叙事",
+          status: "可阅读",
+          keywords: ["水", "独木舟", "影像叙事"],
+          previewSrc: "/true-waterway/assets/waterway-visuals/01-hero-museum-canoe.png",
+          previewAlt: "真实的水之道页面中的独木舟视觉",
+        },
+        {
+          title: "Skills 技能库",
+          description: "把创作、视频、研究和人物视角技能整理成可检索的工具目录。",
+          href: "/skills-portfolio/",
+          cta: "探索工具",
+          category: "创作工具",
+          status: "可浏览",
+          keywords: ["技能库", "工作流", "创作系统"],
+          previewSrc: "/works/previews/skills-portfolio.webp",
+          previewAlt: "Skills 技能库目录界面预览",
+        },
+      ] satisfies WorkbenchItem[],
 
       // ── Content ──
       contentEyebrow: "博客",
@@ -388,6 +611,7 @@ function getHomeCopy(locale: SupportedLocale) {
             "交互式旅行日记与路线可视化平台。用 React + Mapbox 搭建，记录旅程、标记回忆。",
           href: "https://traveltrace.life",
           cta: "查看",
+          meta: "地图产品",
           icon: MapIcon,
         },
         {
@@ -395,6 +619,7 @@ function getHomeCopy(locale: SupportedLocale) {
           description: "Treemap 数据探索平台，用可视化展示世界的构成 — GDP、人口、贸易等。",
           href: "https://shapeof.world",
           cta: "查看",
+          meta: "数据可视化",
           icon: GlobeIcon,
         },
         {
@@ -402,6 +627,7 @@ function getHomeCopy(locale: SupportedLocale) {
           description: "2025–2026 年中国主流平台自媒体运营的全维度研究报告。",
           href: "/self-media-report/自媒体运营全维度调研整合.html",
           cta: "阅读",
+          meta: "研究报告",
           icon: BookOpenIcon,
         },
         {
@@ -410,6 +636,7 @@ function getHomeCopy(locale: SupportedLocale) {
             "交互式技能库目录，展示全部 Claude Code 自定义技能 — 视频管线、内容创作、人物视角等。",
           href: "/skills-portfolio/",
           cta: "探索",
+          meta: "工具目录",
           icon: BarChart3Icon,
         },
         {
@@ -417,6 +644,7 @@ function getHomeCopy(locale: SupportedLocale) {
           description: "从浮潜到人生的完整叙事 —— 一篇关于信任、节奏和自我发现的文章。",
           href: "/blog/感受自己的浪",
           cta: "阅读",
+          meta: "个人叙事",
           icon: CameraIcon,
         },
       ] satisfies CreatorSpotlight[],
@@ -425,12 +653,92 @@ function getHomeCopy(locale: SupportedLocale) {
 
   // ── English ──
   return {
-    eyebrow: "Personal blog · Maps · Travel · Tech · Self-media",
-    heroTitle: "Someone still figuring out the world.",
+    eyebrow: "Yusually atlas lab · Maps · Data · Travel · Creative tools",
+    heroTitle: "Turning routes, waves, and data into visible work.",
     heroBody:
-      "It started with maps: the joy of tracing routes, discovering hidden paths, and understanding how places connect. That curiosity led from geography to technology, from travel to self-media.",
-    primaryCta: "Read the blog",
-    secondaryCta: "About Yusually",
+      "This is a growing personal workbench, not just a blog front door. Travel routes, world data, underwater stories, small games, and creative tools are collected as things you can open and inspect.",
+    heroImageAlt:
+      "A desk scene combining maps, water light, travel photos, and creative tools into a personal atlas object",
+    primaryCta: "Enter the works",
+    secondaryCta: "Read latest posts",
+    heroMetrics: [
+      { label: "Works to open", value: "25" },
+      { label: "Ways to browse", value: "5" },
+      { label: "Featured works", value: "4" },
+    ] satisfies HomeMetric[],
+    artifactEyebrow: "Current view",
+    artifactTitle: "A personal atlas in motion",
+    artifactBody:
+      "Maps, data, ocean light, and studio tools come together as the front door of the site.",
+
+    // ── Workbench ──
+    workbenchEyebrow: "Works to open",
+    workbenchTitle: "Step into each work through its first image.",
+    workbenchBody:
+      "Each work gives you a glimpse of the place inside: map texture, data structure, ocean light, game interface, or a tool surface worth opening.",
+    workbenchItems: [
+      {
+        title: "Yusually Works",
+        description:
+          "A collected wall of maps, visual stories, small apps, research pieces, and creative tools.",
+        href: "/works",
+        cta: "Browse the wall",
+        category: "Portfolio",
+        status: "25 works",
+        keywords: ["Maps", "Images", "Tools"],
+        previewSrc: "/works/portfolio-hero-imagen.png",
+        previewAlt: "Portfolio hero visual combining maps, data, travel, and underwater light",
+        featured: true,
+      },
+      {
+        title: "TravelTrace",
+        description:
+          "A map product for turning journeys, stops, and memories into shareable traces.",
+        href: "https://traveltrace.life",
+        cta: "Open project",
+        category: "Map product",
+        status: "Live",
+        keywords: ["Routes", "Mapbox", "Travel journal"],
+        previewSrc: "/works/portfolio-hero-imagen.png",
+        previewAlt: "Travel route and world map visual preview",
+      },
+      {
+        title: "Shape of World",
+        description:
+          "Treemap exploration for countries, population, economics, and global structure.",
+        href: "https://shapeof.world",
+        cta: "View data",
+        category: "Data product",
+        status: "Live",
+        keywords: ["Treemap", "World data", "Exploration"],
+        previewSrc: "/works/previews/shape-of-world.webp",
+        previewAlt: "Shape of World treemap interface preview",
+      },
+      {
+        title: "The real way of water",
+        description:
+          "A visual essay around water, canoes, and life, staged with an exhibition feeling.",
+        href: "/true-waterway/",
+        cta: "Enter story",
+        category: "Visual story",
+        status: "Readable",
+        keywords: ["Water", "Canoe", "Image-led"],
+        previewSrc: "/true-waterway/assets/waterway-visuals/01-hero-museum-canoe.png",
+        previewAlt: "Canoe visual from The real way of water",
+      },
+      {
+        title: "Skills Portfolio",
+        description:
+          "A searchable directory for creation, video, research, and perspective-shifting skills.",
+        href: "/skills-portfolio/",
+        cta: "Explore tools",
+        category: "Creative tools",
+        status: "Open",
+        keywords: ["Skill library", "Workflow", "System"],
+        previewSrc: "/works/previews/skills-portfolio.webp",
+        previewAlt: "Skills Portfolio directory interface preview",
+      },
+    ] satisfies WorkbenchItem[],
 
     // ── Content ──
     contentEyebrow: "Blog",
@@ -448,6 +756,7 @@ function getHomeCopy(locale: SupportedLocale) {
           "Record every journey through maps and routes, turning travel experiences into visual traces.",
         href: "https://traveltrace.life",
         cta: "View",
+        meta: "Map product",
         icon: MapIcon,
       },
       {
@@ -456,6 +765,7 @@ function getHomeCopy(locale: SupportedLocale) {
           "Treemap data exploration visualizing how the world is composed — GDP, population, trade.",
         href: "https://shapeof.world",
         cta: "View",
+        meta: "Data visualization",
         icon: GlobeIcon,
       },
       {
@@ -464,6 +774,7 @@ function getHomeCopy(locale: SupportedLocale) {
           "Comprehensive report on China's self-media operations across major platforms 2025-2026.",
         href: "/self-media-report/自媒体运营全维度调研整合.html",
         cta: "Read",
+        meta: "Research report",
         icon: BookOpenIcon,
       },
       {
@@ -472,6 +783,7 @@ function getHomeCopy(locale: SupportedLocale) {
           "Interactive skill directory of all Claude Code skills — video pipeline, content creation, perspectives, and more.",
         href: "/skills-portfolio/",
         cta: "Explore",
+        meta: "Tool directory",
         icon: BarChart3Icon,
       },
       {
@@ -480,6 +792,7 @@ function getHomeCopy(locale: SupportedLocale) {
           "A full narrative from snorkeling to life — a story about trust, rhythm, and self-discovery.",
         href: "/blog/感受自己的浪",
         cta: "Read",
+        meta: "Personal essay",
         icon: CameraIcon,
       },
     ] satisfies CreatorSpotlight[],

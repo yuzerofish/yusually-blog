@@ -274,40 +274,56 @@
     transform: scale(1.06) rotate(-2deg);
   }
 
+  [data-work-hero]::before {
+    background-image: none;
+    opacity: 0;
+    animation: none;
+  }
+
+  [data-work-hero-image] {
+    filter: saturate(0.95) contrast(1.04);
+    transform: scale(1.015);
+  }
+
+  [data-work-preview] img,
+  [data-work-preview] video {
+    transform: scale(1.01);
+    transition:
+      filter 420ms var(--work-ease),
+      transform 520ms var(--work-ease);
+  }
+
+  [data-work-card]:hover [data-work-preview] img,
+  [data-work-card]:hover [data-work-preview] video {
+    filter: saturate(1.05) contrast(1.03);
+    transform: scale(1.055);
+  }
+
   [data-home-hero]::before {
     position: absolute;
     inset: 0;
-    z-index: 0;
+    z-index: 2;
     background-image:
       linear-gradient(
         90deg,
-        color-mix(in oklch, var(--foreground), transparent 92%) 1px,
+        color-mix(in oklch, var(--background), transparent 91%) 1px,
         transparent 1px
       ),
       linear-gradient(
         180deg,
-        color-mix(in oklch, var(--foreground), transparent 92%) 1px,
+        color-mix(in oklch, var(--background), transparent 92%) 1px,
         transparent 1px
-      ),
-      linear-gradient(
-        115deg,
-        transparent 0%,
-        color-mix(in oklch, var(--accent), var(--background) 22%) 34%,
-        transparent 68%
       );
     background-position:
       0 0,
-      0 0,
-      -40% 50%;
+      0 0;
     background-size:
-      36px 36px,
-      36px 36px,
-      58% 140%;
+      42px 42px,
+      42px 42px;
     content: "";
     mask-image: linear-gradient(180deg, black 0%, black 62%, transparent 100%);
-    opacity: 0.42;
+    opacity: 0.12;
     pointer-events: none;
-    animation: home-grid-drift 24s linear infinite;
   }
 
   [data-home-hero]::after {
@@ -315,7 +331,7 @@
     right: 0;
     bottom: -1px;
     left: 0;
-    z-index: 1;
+    z-index: 3;
     height: 2px;
     background: linear-gradient(
       90deg,
@@ -328,6 +344,36 @@
     transform: scaleX(0);
     transform-origin: left;
     animation: home-line-sweep 1.45s var(--home-ease) 0.15s forwards;
+  }
+
+  [data-home-hero-image] {
+    filter: saturate(0.92) contrast(1.05) brightness(0.74);
+    transform: scale(1.01);
+  }
+
+  [data-home-hero-scrim] {
+    background:
+      radial-gradient(
+        circle at 70% 45%,
+        color-mix(in oklch, var(--foreground), transparent 76%) 0%,
+        color-mix(in oklch, var(--foreground), transparent 28%) 46%,
+        var(--foreground) 100%
+      ),
+      linear-gradient(
+        90deg,
+        color-mix(in oklch, var(--foreground), transparent 6%) 0%,
+        color-mix(in oklch, var(--foreground), transparent 18%) 38%,
+        color-mix(in oklch, var(--foreground), transparent 62%) 74%,
+        color-mix(in oklch, var(--foreground), transparent 10%) 100%
+      );
+    opacity: 0.78;
+    pointer-events: none;
+  }
+
+  [data-home-artifact-card] {
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklch, var(--background), transparent 76%),
+      0 24px 80px -56px color-mix(in oklch, var(--background), transparent 8%);
   }
 
   [data-home-reveal],
@@ -394,6 +440,48 @@
 
   [data-home-cover]:hover img {
     transform: scale(1.055);
+  }
+
+  [data-home-workbench-preview] img {
+    filter: saturate(0.96) contrast(1.04);
+    transform: scale(1.01);
+    transition:
+      filter 520ms var(--home-ease),
+      transform 620ms var(--home-ease);
+  }
+
+  [data-home-workbench-card]:hover [data-home-workbench-preview] img {
+    filter: saturate(1.05) contrast(1.06);
+    transform: scale(1.055);
+  }
+
+  @media (max-width: 767px) {
+    [data-home-hero]::before {
+      background-size:
+        34px 34px,
+        34px 34px;
+      opacity: 0.09;
+    }
+
+    [data-home-hero-image] {
+      object-position: 57% 50%;
+    }
+
+    [data-home-hero-scrim] {
+      background:
+        linear-gradient(
+          180deg,
+          color-mix(in oklch, var(--foreground), transparent 8%) 0%,
+          color-mix(in oklch, var(--foreground), transparent 18%) 52%,
+          color-mix(in oklch, var(--foreground), transparent 4%) 100%
+        ),
+        linear-gradient(
+          90deg,
+          color-mix(in oklch, var(--foreground), transparent 8%) 0%,
+          color-mix(in oklch, var(--foreground), transparent 35%) 100%
+        );
+      opacity: 0.84;
+    }
   }
 
   @keyframes work-grid-scan {
@@ -507,7 +595,8 @@
     [data-home-card],
     [data-home-row],
     [data-home-icon],
-    [data-home-cover] img {
+    [data-home-cover] img,
+    [data-home-workbench-preview] img {
       transition: none;
     }
 

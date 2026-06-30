@@ -8,8 +8,8 @@
   <meta property="og:description" content="道具卡片横向排队，滚轮切换到对应 3D 道具。">
   <meta property="og:image" content="assets/meta/og-image.png">
   <title>奇思妙想人生道具</title>
-  <link rel="icon" href="assets/meta/favicon.png" type="image/png">
-  <link rel="preload" href="assets/artifacts/wallet.png" as="image">
+  <link rel="icon" href="assets/meta/favicon-64.png" type="image/png">
+  <link rel="preload" href="assets/artifacts/optimized/wallet.webp" as="image" type="image/webp">
   <style>
     :root {
       color-scheme: dark;
@@ -870,6 +870,14 @@
       return node;
     }
 
+    function optimizedImagePath(source) {
+      return source.replace("assets/artifacts/", "assets/artifacts/optimized/").replace(".png", ".webp");
+    }
+
+    function thumbImagePath(source) {
+      return source.replace("assets/artifacts/", "assets/artifacts/thumbs/").replace(".png", ".webp");
+    }
+
     function buildThumb(item, index) {
       const button = createEl("button", "thumb-card");
       button.type = "button";
@@ -879,10 +887,12 @@
       button.dataset.index = index;
 
       const image = new Image();
-      image.src = item.image;
+      image.src = thumbImagePath(item.image);
       image.alt = "";
+      image.width = 192;
+      image.height = 192;
       image.decoding = "async";
-      image.loading = index < 8 ? "eager" : "lazy";
+      image.loading = index < 4 ? "eager" : "lazy";
 
       button.append(image, createEl("span", null, item.name));
       button.addEventListener("click", () => goTo(index));
@@ -899,10 +909,10 @@
       const imageArea = createEl("div", "image-area");
       const image = new Image();
       image.className = "artifact-image";
-      image.src = item.image;
+      image.dataset.src = optimizedImagePath(item.image);
       image.alt = `${item.name}的 3D 立体道具图`;
-      image.width = 1254;
-      image.height = 1254;
+      image.width = 900;
+      image.height = 900;
       image.decoding = "async";
       image.loading = index === 0 ? "eager" : "lazy";
       imageArea.appendChild(image);
@@ -932,6 +942,14 @@
     const thumbCards = [...track.querySelectorAll(".thumb-card")];
     const cards = [...cardLayer.querySelectorAll(".artifact-card")];
 
+    function loadArtifactImage(index) {
+      const card = cards[(index + artifacts.length) % artifacts.length];
+      const image = card?.querySelector(".artifact-image");
+      if (image?.dataset.src && !image.getAttribute("src")) {
+        image.src = image.dataset.src;
+      }
+    }
+
     function circularDistance(index, target) {
       const total = artifacts.length;
       const direct = index - target;
@@ -945,6 +963,9 @@
       const current = artifacts[activeIndex];
       document.documentElement.style.setProperty("--accent", current.accent);
       counter.textContent = `${pad(activeIndex + 1)} / ${pad(total)}`;
+      loadArtifactImage(activeIndex);
+      loadArtifactImage(activeIndex - 1);
+      loadArtifactImage(activeIndex + 1);
       cards.forEach((card, index) => {
         const distance = circularDistance(index, activeIndex);
         card.classList.toggle("is-active", distance === 0);

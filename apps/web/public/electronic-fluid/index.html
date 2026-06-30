@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Electronic Fluid</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #f8f3ff;
+        --muted: rgba(248, 243, 255, 0.58);
+        --panel: #0b0915;
+        --panel-edge: rgba(255, 255, 255, 0.12);
+        --pink: #ff2cd8;
+        --violet: #9d3cff;
+        --cyan: #4de4ff;
+        --amber: #f7d275;
+        --tilt-x: 0deg;
+        --tilt-y: 0deg;
+        --drift-x: 0px;
+        --drift-y: 0px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        min-height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #03030a;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      body {
+        display: grid;
+        place-items: center;
+      }
+
+      .shell {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        isolation: isolate;
+        background:
+          radial-gradient(circle at 18% 18%, rgba(77, 228, 255, 0.24), transparent 24%),
+          radial-gradient(circle at 84% 12%, rgba(255, 44, 216, 0.16), transparent 28%),
+          linear-gradient(135deg, #090b18 0%, #02030a 42%, #090613 100%);
+      }
+
+      .shell::before {
+        content: "";
+        position: absolute;
+        inset: -18vmax;
+        z-index: -2;
+        opacity: 0.58;
+        transform: translate3d(calc(var(--drift-x) * -0.36), calc(var(--drift-y) * -0.36), 0);
+        background:
+          conic-gradient(
+            from 128deg at 60% 42%,
+            transparent 0deg,
+            rgba(77, 228, 255, 0.42) 44deg,
+            rgba(246, 243, 177, 0.34) 72deg,
+            rgba(18, 73, 255, 0.44) 122deg,
+            transparent 158deg,
+            rgba(255, 44, 216, 0.22) 234deg,
+            transparent 288deg
+          );
+        filter: blur(40px) saturate(1.35);
+        animation: atmosphere 18s ease-in-out infinite alternate;
+      }
+
+      .shell::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.026) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+        background-size: 100% 4px, 4px 100%;
+        mix-blend-mode: soft-light;
+        opacity: 0.28;
+      }
+
+      .stage {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: min(78vw, 1120px);
+        aspect-ratio: 1.72;
+        min-height: 420px;
+        overflow: hidden;
+        border: 1px solid var(--panel-edge);
+        border-radius: 10px;
+        background:
+          radial-gradient(circle at 50% 50%, rgba(255, 44, 216, 0.12), transparent 31%),
+          var(--panel);
+        box-shadow:
+          0 34px 110px rgba(0, 0, 0, 0.62),
+          0 0 80px rgba(128, 53, 255, 0.17),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+        transform:
+          translate3d(calc(-50% + var(--drift-x)), calc(-50% + var(--drift-y)), 0)
+          perspective(1100px)
+          rotateX(var(--tilt-y))
+          rotateY(var(--tilt-x));
+        transition: box-shadow 180ms ease;
+        will-change: transform;
+      }
+
+      canvas {
+        position: absolute;
+        inset: -7%;
+        width: 114%;
+        height: 114%;
+      }
+
+      #fluid {
+        filter: saturate(1.55) contrast(1.08);
+      }
+
+      #spark {
+        mix-blend-mode: screen;
+        filter:
+          drop-shadow(0 0 10px rgba(255, 44, 216, 0.42))
+          drop-shadow(0 0 20px rgba(77, 228, 255, 0.22));
+      }
+
+      .veil {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at 50% 50%, transparent 0 34%, rgba(8, 7, 18, 0.34) 68%, rgba(4, 3, 10, 0.84) 100%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 18%, transparent 80%, rgba(0, 0, 0, 0.2));
+      }
+
+      .chrome {
+        position: absolute;
+        inset: 20px 22px;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        pointer-events: none;
+        color: var(--ink);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 9px;
+      }
+
+      .topline,
+      .bottomline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        opacity: 0.72;
+      }
+
+      .topline nav,
+      .bottomline .ticks {
+        display: flex;
+        gap: 18px;
+      }
+
+      .word {
+        align-self: center;
+        justify-self: center;
+        transform: translateY(2%);
+        color: white;
+        font-family:
+          "Cormorant Garamond", "Bodoni 72", "Didot", Georgia, serif;
+        font-size: clamp(74px, 13vw, 178px);
+        font-style: italic;
+        font-weight: 400;
+        letter-spacing: 0;
+        text-transform: none;
+        text-shadow:
+          0 0 28px rgba(255, 44, 216, 0.48),
+          0 0 82px rgba(157, 60, 255, 0.34);
+      }
+
+      .hint {
+        position: absolute;
+        left: 50%;
+        bottom: max(26px, 6vh);
+        z-index: 4;
+        width: min(560px, calc(100vw - 42px));
+        transform: translateX(-50%);
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 14px;
+        line-height: 1.55;
+        text-align: center;
+        text-shadow: 0 2px 16px rgba(0, 0, 0, 0.8);
+      }
+
+      .cursor-light {
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 5;
+        width: 18px;
+        height: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate3d(-50px, -50px, 0);
+        mix-blend-mode: screen;
+        box-shadow:
+          0 0 16px rgba(255, 44, 216, 0.82),
+          0 0 38px rgba(77, 228, 255, 0.36);
+      }
+
+      @keyframes atmosphere {
+        from {
+          transform: translate3d(calc(var(--drift-x) * -0.36), calc(var(--drift-y) * -0.36), 0) rotate(0deg) scale(1);
+        }
+
+        to {
+          transform: translate3d(calc(var(--drift-x) * -0.36), calc(var(--drift-y) * -0.36), 0) rotate(7deg) scale(1.05);
+        }
+      }
+
+      @media (max-width: 760px) {
+        .stage {
+          width: min(86vw, 620px);
+          min-height: 310px;
+          aspect-ratio: 0.92;
+        }
+
+        .chrome {
+          inset: 16px;
+        }
+
+        .topline nav {
+          gap: 10px;
+        }
+
+        .word {
+          font-size: clamp(62px, 24vw, 128px);
+        }
+
+        .hint {
+          bottom: 22px;
+          font-size: 13px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .shell::before {
+          animation: none;
+        }
+
+        .stage {
+          transition: transform 180ms ease;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell" aria-label="Electronic fluid playground">
+      <section class="stage" aria-label="Interactive glowing fluid canvas">
+        <canvas id="fluid"></canvas>
+        <canvas id="spark"></canvas>
+        <div class="veil"></div>
+        <div class="chrome" aria-hidden="true">
+          <div class="topline">
+            <span>signal</span>
+            <nav>
+              <span>flow</span>
+              <span>trace</span>
+              <span>field</span>
+            </nav>
+          </div>
+          <div class="word">hello</div>
+          <div class="bottomline">
+            <span>slow drift</span>
+            <span class="ticks"><span>01</span><span>02</span><span>03</span></span>
+            <span>electric tide</span>
+          </div>
+        </div>
+      </section>
+      <p class="hint">Move across the dark field. The light will lag, curl, and gather around your path.</p>
+      <div class="cursor-light" aria-hidden="true"></div>
+    </main>
+
+    <script>
+      (() => {
+        const root = document.documentElement;
+        const stage = document.querySelector(".stage");
+        const cursor = document.querySelector(".cursor-light");
+        const fluid = document.querySelector("#fluid");
+        const spark = document.querySelector("#spark");
+        const ftx = fluid.getContext("2d", { alpha: true });
+        const stx = spark.getContext("2d", { alpha: true });
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        const pointer = {
+          x: 0,
+          y: 0,
+          sx: window.innerWidth * 0.5,
+          sy: window.innerHeight * 0.5,
+          px: 0,
+          py: 0,
+          vx: 0,
+          vy: 0,
+          speed: 0,
+          active: false,
+        };
+
+        const stagePoint = { x: 0, y: 0 };
+        const particles = [];
+        const sparks = [];
+        const tones = [
+          { h: 310, s: 99, l: 58 },
+          { h: 286, s: 97, l: 58 },
+          { h: 194, s: 100, l: 65 },
+          { h: 47, s: 95, l: 72 },
+        ];
+
+        let dpr = Math.min(window.devicePixelRatio || 1, 2);
+        let width = 1;
+        let height = 1;
+        let bounds = stage.getBoundingClientRect();
+        let last = performance.now();
+
+        function resize() {
+          dpr = Math.min(window.devicePixelRatio || 1, 2);
+          bounds = stage.getBoundingClientRect();
+          width = Math.max(1, Math.round(bounds.width * 1.14));
+          height = Math.max(1, Math.round(bounds.height * 1.14));
+
+          for (const canvas of [fluid, spark]) {
+            canvas.width = Math.round(width * dpr);
+            canvas.height = Math.round(height * dpr);
+            canvas.style.width = "114%";
+            canvas.style.height = "114%";
+          }
+
+          ftx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          stx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          seedParticles();
+        }
+
+        function seedParticles() {
+          const count = reducedMotion ? 520 : Math.min(1380, Math.max(720, Math.floor((width * height) / 520)));
+          particles.length = 0;
+
+          for (let i = 0; i < count; i += 1) {
+            const loop = i / count;
+            const angle = loop * Math.PI * 2;
+            const r = 0.18 + Math.random() * 0.34;
+            const x = width * (0.5 + Math.sin(angle) * r);
+            const y = height * (0.5 + Math.sin(angle * 2) * r * 0.42);
+            particles.push({
+              x: x + (Math.random() - 0.5) * width * 0.15,
+              y: y + (Math.random() - 0.5) * height * 0.14,
+              ox: x,
+              oy: y,
+              px: x,
+              py: y,
+              vx: (Math.random() - 0.5) * 0.4,
+              vy: (Math.random() - 0.5) * 0.4,
+              hue: tones[Math.floor(Math.random() * 3)].h + (Math.random() - 0.5) * 16,
+              size: 0.8 + Math.random() * 2.8,
+              life: 80 + Math.random() * 180,
+              seed: Math.random() * 1000,
+            });
+          }
+        }
+
+        function stageCoordinates(clientX, clientY) {
+          bounds = stage.getBoundingClientRect();
+          const xRatio = (clientX - bounds.left) / bounds.width;
+          const yRatio = (clientY - bounds.top) / bounds.height;
+          return {
+            x: (xRatio + 0.07) * (width / 1.14),
+            y: (yRatio + 0.07) * (height / 1.14),
+          };
+        }
+
+        function movePointer(clientX, clientY) {
+          pointer.active = true;
+          pointer.sx += (clientX - pointer.sx) * 0.55;
+          pointer.sy += (clientY - pointer.sy) * 0.55;
+          const next = stageCoordinates(clientX, clientY);
+          pointer.x = next.x;
+          pointer.y = next.y;
+
+          const nx = clientX / window.innerWidth - 0.5;
+          const ny = clientY / window.innerHeight - 0.5;
+          root.style.setProperty("--drift-x", `${nx * 26}px`);
+          root.style.setProperty("--drift-y", `${ny * 22}px`);
+          root.style.setProperty("--tilt-x", `${nx * 5.6}deg`);
+          root.style.setProperty("--tilt-y", `${ny * -4.8}deg`);
+          cursor.style.transform = `translate3d(${clientX - 9}px, ${clientY - 9}px, 0)`;
+        }
+
+        window.addEventListener("pointermove", (event) => {
+          movePointer(event.clientX, event.clientY);
+        });
+
+        window.addEventListener("pointerdown", (event) => {
+          movePointer(event.clientX, event.clientY);
+          burst(pointer.x, pointer.y, 26);
+        });
+
+        window.addEventListener("resize", resize);
+
+        function drawBlob(ctx, x, y, radius, hue, alpha) {
+          const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+          gradient.addColorStop(0, `hsla(${hue}, 100%, 64%, ${alpha})`);
+          gradient.addColorStop(0.26, `hsla(${hue}, 100%, 58%, ${alpha * 0.62})`);
+          gradient.addColorStop(0.58, `hsla(${hue + 18}, 96%, 50%, ${alpha * 0.18})`);
+          gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        function burst(x, y, count) {
+          for (let i = 0; i < count; i += 1) {
+            const angle = Math.random() * Math.PI * 2;
+            const force = 1.4 + Math.random() * 5.8;
+            sparks.push({
+              x,
+              y,
+              px: x,
+              py: y,
+              vx: Math.cos(angle) * force,
+              vy: Math.sin(angle) * force,
+              hue: tones[Math.floor(Math.random() * tones.length)].h,
+              life: 24 + Math.random() * 32,
+              age: 0,
+            });
+          }
+        }
+
+        function idlePointer(time) {
+          const t = time * 0.00028;
+          const cx = window.innerWidth * (0.5 + Math.sin(t * 2.1) * 0.22);
+          const cy = window.innerHeight * (0.5 + Math.cos(t * 1.36) * 0.16);
+          movePointer(cx, cy);
+          pointer.active = false;
+        }
+
+        function flowAngle(x, y, time, seed) {
+          return (
+            Math.sin(x * 0.008 + time * 0.0013 + seed) +
+            Math.cos(y * 0.009 - time * 0.0011) +
+            Math.sin((x + y) * 0.004 + time * 0.0008)
+          ) * Math.PI;
+        }
+
+        function drawRibbon(ctx, time, hue, phaseOffset, alpha, thickness, glow) {
+          const phase = time * 0.00032 + phaseOffset;
+          const points = 180;
+
+          ctx.save();
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+
+          function trace() {
+            ctx.beginPath();
+
+            for (let i = 0; i <= points; i += 1) {
+              const u = i / points;
+              const a = u * Math.PI * 2;
+              const breathing = Math.sin(time * 0.0005 + a * 3 + phaseOffset) * 0.018;
+              const x = width * (0.5 + Math.sin(a + phase) * (0.27 + breathing));
+              const y =
+                height *
+                (0.5 +
+                  Math.sin(a * 2 - phase * 1.3) * 0.205 +
+                  Math.cos(a * 3 + phase) * 0.024);
+
+              if (i === 0) {
+                ctx.moveTo(x, y);
+              } else {
+                ctx.lineTo(x, y);
+              }
+            }
+          }
+
+          trace();
+          ctx.shadowBlur = glow * 1.1;
+          ctx.shadowColor = `hsla(${hue}, 100%, 62%, ${alpha * 1.8})`;
+          ctx.strokeStyle = `hsla(${hue}, 100%, 58%, ${alpha * 0.16})`;
+          ctx.lineWidth = thickness * 2.15;
+          ctx.stroke();
+
+          trace();
+          ctx.shadowBlur = glow * 0.55;
+          ctx.shadowColor = `hsla(${hue}, 100%, 64%, ${alpha})`;
+          ctx.strokeStyle = `hsla(${hue}, 100%, 59%, ${alpha * 0.48})`;
+          ctx.lineWidth = thickness * 0.72;
+          ctx.stroke();
+
+          trace();
+          ctx.shadowBlur = Math.max(6, glow * 0.12);
+          ctx.shadowColor = `hsla(${hue}, 100%, 72%, ${alpha * 1.5})`;
+          ctx.strokeStyle = `hsla(${hue}, 100%, 72%, ${Math.min(0.9, alpha * 1.9)})`;
+          ctx.lineWidth = Math.max(1.1, thickness * 0.08);
+          ctx.stroke();
+
+          ctx.restore();
+        }
+
+        function animate(now) {
+          const dt = Math.min(32, now - last);
+          const step = dt / 16.67;
+          last = now;
+
+          if (!pointer.active && now < 2400) {
+            idlePointer(now);
+          }
+
+          pointer.vx = pointer.x - pointer.px;
+          pointer.vy = pointer.y - pointer.py;
+          pointer.speed += (Math.hypot(pointer.vx, pointer.vy) - pointer.speed) * 0.16;
+          pointer.px = pointer.x;
+          pointer.py = pointer.y;
+          stagePoint.x += (pointer.x - stagePoint.x) * 0.12;
+          stagePoint.y += (pointer.y - stagePoint.y) * 0.12;
+
+          ftx.globalCompositeOperation = "source-over";
+          ftx.fillStyle = reducedMotion ? "rgba(7, 6, 15, 0.2)" : "rgba(7, 6, 15, 0.08)";
+          ftx.fillRect(0, 0, width, height);
+
+          ftx.globalCompositeOperation = "lighter";
+          const pulse = Math.min(1, pointer.speed / 42);
+          drawBlob(ftx, width * 0.35, height * 0.43, width * 0.22, 282, 0.075);
+          drawBlob(ftx, width * 0.55, height * 0.58, width * 0.18, 318, 0.105);
+          drawBlob(ftx, width * 0.68, height * 0.42, width * 0.17, 292, 0.085);
+          drawRibbon(ftx, now, 288, 0, 0.1, width * 0.027, 38);
+          drawRibbon(ftx, now, 316, 1.75, 0.13, width * 0.024, 44);
+          drawRibbon(ftx, now, 194, 3.2, 0.05, width * 0.011, 22);
+          drawBlob(ftx, stagePoint.x, stagePoint.y, 98 + pulse * 135, 308 + pulse * 22, 0.28 + pulse * 0.3);
+          drawBlob(ftx, stagePoint.x + pointer.vx * 3, stagePoint.y + pointer.vy * 3, 48 + pulse * 86, 190, 0.12 + pulse * 0.22);
+
+          for (const p of particles) {
+            p.px = p.x;
+            p.py = p.y;
+
+            const dx = p.x - pointer.x;
+            const dy = p.y - pointer.y;
+            const distSq = dx * dx + dy * dy + 80;
+            const dist = Math.sqrt(distSq);
+            const influence = Math.max(0, 1 - dist / (170 + pointer.speed * 2.2));
+            const angle = flowAngle(p.x, p.y, now, p.seed);
+            const loopPull = Math.sin((p.seed + now * 0.0002) * 2) * 0.08;
+
+            p.vx += Math.cos(angle) * 0.055 * step;
+            p.vy += Math.sin(angle) * 0.055 * step;
+            p.vx += ((p.ox - p.x) * 0.00055 + loopPull) * step;
+            p.vy += (p.oy - p.y) * 0.00058 * step;
+
+            if (influence > 0) {
+              const swirl = (0.55 + pulse * 1.8) * influence * step;
+              p.vx += (-dy / dist) * swirl + pointer.vx * 0.019 * influence;
+              p.vy += (dx / dist) * swirl + pointer.vy * 0.019 * influence;
+              p.hue += (310 - p.hue) * 0.016 * influence;
+            }
+
+            p.vx *= 0.972;
+            p.vy *= 0.972;
+            p.x += p.vx * step;
+            p.y += p.vy * step;
+
+            if (p.x < -40 || p.x > width + 40 || p.y < -40 || p.y > height + 40) {
+              p.x = width * (0.28 + Math.random() * 0.5);
+              p.y = height * (0.26 + Math.random() * 0.48);
+              p.vx *= 0.1;
+              p.vy *= 0.1;
+            }
+
+            const alpha = 0.022 + influence * 0.24 + Math.min(0.09, Math.hypot(p.vx, p.vy) * 0.012);
+            ftx.lineWidth = Math.max(0.75, p.size * 0.58 + influence * 1.9);
+            ftx.strokeStyle = `hsla(${p.hue}, 100%, 66%, ${alpha * 1.15})`;
+            ftx.beginPath();
+            ftx.moveTo(p.px, p.py);
+            ftx.lineTo(p.x, p.y);
+            ftx.stroke();
+          }
+
+          stx.clearRect(0, 0, width, height);
+          stx.globalCompositeOperation = "lighter";
+          stx.lineCap = "round";
+          drawRibbon(stx, now, 312, 0.35, 0.13, 1.2, 10);
+          drawRibbon(stx, now, 196, 3.4, 0.055, 0.9, 8);
+
+          if (pointer.speed > 14 && Math.random() < 0.7) {
+            burst(pointer.x, pointer.y, 1 + Math.floor(pointer.speed / 20));
+          }
+
+          for (let i = sparks.length - 1; i >= 0; i -= 1) {
+            const s = sparks[i];
+            s.age += step;
+            s.px = s.x;
+            s.py = s.y;
+            s.vx *= 0.94;
+            s.vy *= 0.94;
+            s.vy += 0.018 * step;
+            s.x += s.vx * step;
+            s.y += s.vy * step;
+            const life = Math.max(0, 1 - s.age / s.life);
+            stx.lineWidth = 1.1 + life * 1.8;
+            stx.strokeStyle = `hsla(${s.hue}, 100%, 70%, ${life * 0.72})`;
+            stx.beginPath();
+            stx.moveTo(s.px, s.py);
+            stx.lineTo(s.x, s.y);
+            stx.stroke();
+
+            if (life <= 0) {
+              sparks.splice(i, 1);
+            }
+          }
+
+          requestAnimationFrame(animate);
+        }
+
+        resize();
+        pointer.x = width * 0.5;
+        pointer.y = height * 0.5;
+        pointer.px = pointer.x;
+        pointer.py = pointer.y;
+        burst(pointer.x, pointer.y, 46);
+        requestAnimationFrame(animate);
+      })();
+    </script>
+  </body>
+</html>
